@@ -1,11 +1,14 @@
+// src/app/layout.js
 import { Geist, Geist_Mono } from "next/font/google";
+import Providers from "./providers"; // <-- import our client wrapper
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
 
+// These font imports are still valid in a server component
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -19,11 +22,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <ClerkProvider>
+        {/* Body is still server-rendered, but we wrap the children in our Providers */}
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <Providers>{children}</Providers>
+        </body>
+      </ClerkProvider>
     </html>
   );
 }
