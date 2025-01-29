@@ -49,8 +49,10 @@ export default function CourseDetails() {
           { title: "Singleton Pattern", duration: "45 min", completed: true },
           { title: "Factory Method Pattern", duration: "50 min", completed: true },
           { title: "Abstract Factory Pattern", duration: "55 min", completed: false },
+          { type: "game", title: "Pattern Matching Challenge", duration: "15 min", completed: false },
           { title: "Builder Pattern", duration: "45 min", completed: false },
-          { title: "Prototype Pattern", duration: "40 min", completed: false }
+          { title: "Prototype Pattern", duration: "40 min", completed: false },
+          { type: "quiz", title: "Creational Patterns Quiz", duration: "30 min", completed: false }
         ]
       },
       {
@@ -59,7 +61,9 @@ export default function CourseDetails() {
           { title: "Adapter Pattern", duration: "45 min", completed: false },
           { title: "Bridge Pattern", duration: "50 min", completed: false },
           { title: "Composite Pattern", duration: "45 min", completed: false },
-          { title: "Decorator Pattern", duration: "55 min", completed: false }
+          { type: "game", title: "Structure Builder Game", duration: "15 min", completed: false },
+          { title: "Decorator Pattern", duration: "55 min", completed: false },
+          { type: "quiz", title: "Structural Patterns Quiz", duration: "30 min", completed: false }
         ]
       },
       {
@@ -68,7 +72,9 @@ export default function CourseDetails() {
           { title: "Observer Pattern", duration: "50 min", completed: false },
           { title: "Strategy Pattern", duration: "45 min", completed: false },
           { title: "Command Pattern", duration: "45 min", completed: false },
-          { title: "State Pattern", duration: "40 min", completed: false }
+          { type: "game", title: "Pattern Flow Challenge", duration: "15 min", completed: false },
+          { title: "State Pattern", duration: "40 min", completed: false },
+          { type: "quiz", title: "Behavioral Patterns Quiz", duration: "30 min", completed: false }
         ]
       }
     ]
@@ -175,19 +181,41 @@ export default function CourseDetails() {
                         {chapter.lessons.map((lesson, lessonIndex) => (
                           <div
                             key={lessonIndex}
-                            className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+                            className={`flex items-center justify-between p-4 hover:bg-gray-50 transition-colors ${
+                              lesson.type === 'game' ? 'bg-amber-50' : 
+                              lesson.type === 'quiz' ? 'bg-violet-50' : ''
+                            }`}
                           >
                             <div className="flex items-center gap-3">
-                              {lesson.completed ? (
+                              {lesson.type === 'game' ? (
+                                <div className="w-5 h-5 text-amber-500">
+                                  <Trophy className="w-5 h-5" />
+                                </div>
+                              ) : lesson.type === 'quiz' ? (
+                                <div className="w-5 h-5 text-violet-500">
+                                  <GraduationCap className="w-5 h-5" />
+                                </div>
+                              ) : lesson.completed ? (
                                 <CheckCircle className="w-5 h-5 text-emerald-500" />
                               ) : (
                                 <Lock className="w-5 h-5 text-gray-400" />
                               )}
-                              <span className="text-gray-900">{lesson.title}</span>
+                              <div>
+                                <span className="text-gray-900">{lesson.title}</span>
+                                {(lesson.type === 'game' || lesson.type === 'quiz') && (
+                                  <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-white">
+                                    {lesson.type === 'game' ? 'Mini-Game' : 'Chapter Quiz'}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                             <div className="flex items-center gap-4">
                               <span className="text-sm text-gray-500">{lesson.duration}</span>
-                              <button className="text-violet-600 hover:text-violet-700">
+                              <button className={`hover:text-violet-700 ${
+                                lesson.type === 'game' ? 'text-amber-500' :
+                                lesson.type === 'quiz' ? 'text-violet-500' :
+                                'text-violet-600'
+                              }`}>
                                 <PlayCircle className="w-5 h-5" />
                               </button>
                             </div>
