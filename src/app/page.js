@@ -200,8 +200,30 @@ export default function Home() {
                         <p className="text-sm text-gray-600 line-clamp-2">{course.description}</p>
                       </div>
                     </div>
+
+                    {/* Book Reference */}
+                    <div className="mt-6 flex items-start gap-3 p-3 bg-white/60 rounded-lg border border-violet-100">
+                      <div className="flex-shrink-0 w-10 h-12 bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded flex items-center justify-center">
+                        <svg className="w-6 h-6 text-violet-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                        </svg>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs font-medium text-violet-600 mb-0.5">Based on the book</div>
+                        <div className="text-sm font-medium text-gray-900 truncate">
+                          {course.id === "design-patterns" && "Design Patterns: Elements of Reusable Object-Oriented Software"}
+                          {course.id === "system-design" && "Designing Data-Intensive Applications"}
+                          {course.id === "advanced-oop-clean-code" && "Clean Code: A Handbook of Agile Software Craftsmanship"}
+                        </div>
+                        <div className="text-xs text-gray-500 mt-0.5">
+                          {course.id === "design-patterns" && "by Gang of Four"}
+                          {course.id === "system-design" && "by Martin Kleppmann"}
+                          {course.id === "advanced-oop-clean-code" && "by Robert C. Martin"}
+                        </div>
+                      </div>
+                    </div>
                     
-                    <div className="mt-auto pt-8 space-y-4">
+                    <div className="mt-auto pt-6 space-y-4">
                       <div className="flex items-center gap-6 text-sm text-gray-600">
                         <div className="flex items-center gap-2">
                           <Clock className="w-4 h-4" style={{ color: '#6B7280' }} />
