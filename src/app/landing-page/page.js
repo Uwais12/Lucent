@@ -27,72 +27,141 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Hero Card */}
-      <div className="max-w-[90%] mx-auto mt-24">
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-b from-violet-900 via-violet-800/95 to-violet-900 shadow-2xl border border-white/10">
-          {/* Background Elements */}
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
-            {/* Optimized Gradient Orbs */}
-            <div className="absolute -left-40 -top-40 w-96 h-96 bg-violet-500 rounded-full mix-blend-multiply will-change-transform opacity-70 animate-blob" style={{ filter: 'blur(64px)' }}></div>
-            <div className="absolute -right-40 -top-40 w-96 h-96 bg-fuchsia-500 rounded-full mix-blend-multiply will-change-transform opacity-70 animate-blob animation-delay-2000" style={{ filter: 'blur(64px)' }}></div>
-            <div className="absolute -bottom-80 left-20 w-[35rem] h-[35rem] bg-pink-500 rounded-full mix-blend-multiply will-change-transform opacity-50 animate-blob animation-delay-4000" style={{ filter: 'blur(96px)' }}></div>
+      {/* Hero Section */}
+      <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Effects */}
+        <div className="absolute inset-0 bg-gradient-to-b from-violet-950 via-violet-900 to-white">
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-20"></div>
+          {/* Optimized Floating Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -left-40 top-20 w-[500px] h-[500px] bg-violet-500/30 rounded-full mix-blend-soft-light will-change-transform animate-float" style={{ filter: 'blur(80px)' }}></div>
+            <div className="absolute -right-40 top-40 w-[600px] h-[600px] bg-fuchsia-500/30 rounded-full mix-blend-soft-light will-change-transform animate-float-delayed" style={{ filter: 'blur(90px)' }}></div>
+            <div className="absolute left-1/4 bottom-20 w-[700px] h-[700px] bg-pink-500/20 rounded-full mix-blend-soft-light will-change-transform animate-float-slow" style={{ filter: 'blur(100px)' }}></div>
           </div>
-          
-          {/* Content */}
-          <div className="relative will-change-transform">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 text-center">
-              <h1 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                Master Advanced Software
-                <span className="block bg-gradient-to-r from-violet-200 to-fuchsia-200 text-transparent bg-clip-text">
-                  Concepts Through Daily Micro-Challenges
-                </span>
+          {/* Decorative Lines */}
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)' }}></div>
+        </div>
+
+        {/* Main Content */}
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
+          {/* Welcome Badge - Centered */}
+          <div className="flex justify-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/10 text-white/80 text-sm">
+              <Sparkles className="w-4 h-4" />
+              <span>Welcome to the Future of Learning</span>
+            </div>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Column */}
+            <div className="relative z-10 space-y-8">
+              <h1 className="text-4xl lg:text-6xl font-bold">
+                <span className="text-white leading-tight">Master Advanced</span>
+                <span className="block mt-2 bg-gradient-to-r from-violet-200 via-fuchsia-200 to-pink-200 text-transparent bg-clip-text">Software Concepts</span>
+                <span className="block text-2xl lg:text-3xl mt-4 text-white/90">in bite-sized daily challenges</span>
               </h1>
-              <p className="text-xl md:text-2xl text-violet-200 max-w-3xl mx-auto mb-12">
-                Transform complex engineering books into bite-sized, interactive lessons.
-                Just 15 minutes a day to level up your skills.
+
+              <p className="text-xl text-white/80 max-w-xl">
+                Break down complex engineering books into 15-minute interactive lessons.
+                Build lasting knowledge, one small challenge at a time.
               </p>
-              <button className="px-8 py-4 bg-white text-violet-900 rounded-xl font-medium hover:bg-violet-50 transition-all duration-200 flex items-center justify-center gap-2 mx-auto group">
-                Start Your Journey
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              
-              {/* Quick Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto mt-20">
-                <div className="text-center relative h-32">
-                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 rounded-lg transform rotate-3 will-change-transform" style={{ backdropFilter: 'blur(8px)' }}></div>
-                  <div className="relative p-4 transform rotate-3 h-full flex flex-col items-center justify-center">
-                    <Users className="w-6 h-6 text-white/80 mb-2" />
-                    <div className="text-4xl font-bold text-white mb-1">2.5K+</div>
-                    <div className="text-white/90 font-medium">Active Learners</div>
-                  </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button className="px-8 py-4 bg-white rounded-xl font-medium text-violet-900 hover:bg-violet-50 transition-all duration-200 flex items-center justify-center gap-2 group shadow-lg shadow-white/10">
+                  Start Your Journey
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+
+              {/* Quick Stats - Refined */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12 mb-8">
+                <div className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/15 transition-colors">
+                  <div className="text-2xl font-bold text-white mb-1">2.5K+</div>
+                  <div className="text-sm text-white/80 font-medium">Active Learners</div>
                 </div>
-                <div className="text-center relative h-32">
-                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 rounded-lg transform -rotate-3 will-change-transform" style={{ backdropFilter: 'blur(8px)' }}></div>
-                  <div className="relative p-4 transform -rotate-3 h-full flex flex-col items-center justify-center">
-                    <GraduationCap className="w-6 h-6 text-white/80 mb-2" />
-                    <div className="text-4xl font-bold text-white mb-1">15+</div>
-                    <div className="text-white/90 font-medium">Expert Courses</div>
-                  </div>
+                <div className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/15 transition-colors">
+                  <div className="text-2xl font-bold text-white mb-1">15+</div>
+                  <div className="text-sm text-white/80 font-medium">Expert Courses</div>
                 </div>
-                <div className="text-center relative h-32">
-                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 rounded-lg transform rotate-3 will-change-transform" style={{ backdropFilter: 'blur(8px)' }}></div>
-                  <div className="relative p-4 transform rotate-3 h-full flex flex-col items-center justify-center">
-                    <Trophy className="w-6 h-6 text-white/80 mb-2" />
-                    <div className="text-4xl font-bold text-white mb-1">92%</div>
-                    <div className="text-white/90 font-medium">Completion Rate</div>
-                  </div>
+                <div className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/15 transition-colors">
+                  <div className="text-2xl font-bold text-white mb-1">92%</div>
+                  <div className="text-sm text-white/80 font-medium">Completion Rate</div>
                 </div>
-                <div className="text-center relative h-32">
-                  <div className="absolute inset-0 bg-gradient-to-r from-violet-500/30 to-fuchsia-500/30 rounded-lg transform -rotate-3 will-change-transform" style={{ backdropFilter: 'blur(8px)' }}></div>
-                  <div className="relative p-4 transform -rotate-3 h-full flex flex-col items-center justify-center">
-                    <Star className="w-6 h-6 text-white/80 mb-2" />
-                    <div className="text-4xl font-bold text-white mb-1">4.9/5</div>
-                    <div className="text-white/90 font-medium">User Rating</div>
-                  </div>
+                <div className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/15 transition-colors">
+                  <div className="text-2xl font-bold text-white mb-1">4.9/5</div>
+                  <div className="text-sm text-white/80 font-medium">User Rating</div>
                 </div>
               </div>
             </div>
+
+            {/* Right Column - Course Cards */}
+            <div className="relative lg:block">
+              <div className="relative max-w-md mx-auto space-y-6">
+                {/* System Design Card */}
+                <div className="relative w-full rounded-2xl bg-gradient-to-br from-violet-600/20 to-fuchsia-600/20 border border-white/10 backdrop-blur-sm p-6 shadow-2xl hover:translate-y-[-4px] transition-transform duration-300">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
+                      <BookOpen className="w-6 h-6 text-violet-200" />
+                    </div>
+                    <div>
+                      <div className="text-lg font-semibold text-white">System Design</div>
+                      <div className="text-sm text-white/60">Based on Designing Data-Intensive Applications</div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm text-white/60">Daily Progress</div>
+                        <div className="px-2 py-1 rounded-md bg-violet-500/20 text-violet-200 text-xs">5 day streak 🔥</div>
+                      </div>
+                      <div className="text-sm text-white/80">15 min/day</div>
+                    </div>
+                    <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full w-2/3 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Distributed Systems Card */}
+                <div className="relative w-full rounded-2xl bg-gradient-to-br from-fuchsia-600/20 to-pink-600/20 border border-white/10 backdrop-blur-sm p-6 shadow-2xl hover:translate-y-[-4px] transition-transform duration-300">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-fuchsia-500/20 flex items-center justify-center">
+                      <Brain className="w-6 h-6 text-fuchsia-200" />
+                    </div>
+                    <div>
+                      <div className="text-lg font-semibold text-white">Distributed Systems</div>
+                      <div className="text-sm text-white/60">From Theory to Practice</div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm text-white/60">Daily Progress</div>
+                        <div className="px-2 py-1 rounded-md bg-fuchsia-500/20 text-fuchsia-200 text-xs">3 day streak ⚡️</div>
+                      </div>
+                      <div className="text-sm text-white/80">15 min/day</div>
+                    </div>
+                    <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full w-1/3 bg-gradient-to-r from-fuchsia-500 to-pink-500 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Elements */}
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-violet-500/30 rounded-full mix-blend-soft-light animate-float-slow" style={{ filter: 'blur(40px)' }}></div>
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-fuchsia-500/30 rounded-full mix-blend-soft-light animate-float" style={{ filter: 'blur(30px)' }}></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
+          <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-lg">
+            <div className="text-white/90 text-sm font-medium">Scroll to explore</div>
+          </div>
+          <div className="w-6 h-10 rounded-full border-2 border-white/40 bg-white/5 backdrop-blur-sm flex items-start p-1 shadow-lg">
+            <div className="w-1 h-2 bg-white/90 rounded-full animate-scroll-down"></div>
           </div>
         </div>
       </div>
