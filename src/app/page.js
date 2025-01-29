@@ -1,75 +1,40 @@
 "use client";
 import { useEffect, useState } from "react";
-import { BarChart, BookOpen, Trophy, Code } from "lucide-react";
+import { BarChart, BookOpen, Trophy, Code, Zap, Target, Clock, ArrowRight } from "lucide-react";
 import Navbar from "./components/Navbar";
 
 export default function Home() {
-  // State for courses
+  // State management
   const [courses, setCourses] = useState([]);
-  const [coursesLoading, setCoursesLoading] = useState(true);
-  const [coursesError, setCoursesError] = useState(null);
-
-  // State for quizzes
   const [quizzes, setQuizzes] = useState([]);
-  const [quizzesLoading, setQuizzesLoading] = useState(true);
-  const [quizzesError, setQuizzesError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Collapsible toggles
-  const [showAllCourses, setShowAllCourses] = useState(false);
-  const [showAllQuizzes, setShowAllQuizzes] = useState(false);
-
-  // Fetch courses
+  // Fetch data
   useEffect(() => {
-    fetch("/api/courses")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setCourses(data);
-        } else {
-          setCourses([]);
-          console.error("Unexpected API response:", data);
-        }
-        setCoursesLoading(false);
+    Promise.all([
+      fetch("/api/courses").then(res => res.json()),
+      fetch("/api/quizzes").then(res => res.json())
+    ])
+      .then(([coursesData, quizzesData]) => {
+        setCourses(Array.isArray(coursesData) ? coursesData : []);
+        setQuizzes(Array.isArray(quizzesData) ? quizzesData : []);
+        setIsLoading(false);
       })
-      .catch((err) => {
-        setCoursesError("Failed to load courses.");
-        setCoursesLoading(false);
+      .catch(err => {
+        setError("Failed to load content");
+        setIsLoading(false);
       });
   }, []);
 
-  // Fetch quizzes
-  useEffect(() => {
-    fetch("/api/quizzes")
-      .then((res) => res.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setQuizzes(data);
-        } else {
-          setQuizzes([]);
-          console.error("Unexpected Quiz API response:", data);
-        }
-        setQuizzesLoading(false);
-      })
-      .catch((err) => {
-        setQuizzesError("Failed to load quizzes.");
-        setQuizzesLoading(false);
-      });
-  }, []);
+  if (isLoading) return <div className="flex items-center justify-center min-h-screen">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+      <p className="mt-4 text-secondary">Loading your dashboard...</p>
+    </div>
+  </div>;
 
-  // Handle loading states & errors
-  if (coursesLoading && quizzesLoading) {
-    return <p className="text-center mt-6">Loading content...</p>;
-  }
-  if (coursesError) {
-    return <p className="text-center mt-6 text-red-500">{coursesError}</p>;
-  }
-  if (quizzesError) {
-    return <p className="text-center mt-6 text-red-500">{quizzesError}</p>;
-  }
-
-  // Decide how many items to show if not expanded
-  const visibleCourses = showAllCourses ? courses : courses.slice(0, 3);
-  const visibleQuizzes = showAllQuizzes ? quizzes : quizzes.slice(0, 3);
+  if (error) return <div className="text-center mt-6 text-red-500">{error}</div>;
 
   return (
     <div className="min-h-screen bg-background pattern-bg">
@@ -78,7 +43,7 @@ export default function Home() {
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Header / Welcome */}
+          {/* Welcome Section */}
           <div className="mb-12">
             <h1 className="text-4xl font-bold mb-2 text-foreground">
               Welcome back, Developer
@@ -89,185 +54,136 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Optionally show a Resume card if user has progress */}
-          {/*
-          <div className="mb-8">
-            <div className="card p-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">
-                  Resume Your Last Lesson
-                </h2>
-                <p className="text-sm text-secondary mt-1">
-                  Continue where you left off in "Singleton Pattern"
-                </p>
+          {/* Stats Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <div className="stats-card hover-lift">
+              <div className="flex items-center justify-between mb-4">
+                <Zap className="w-6 h-6 text-primary" />
+                <span className="badge badge-primary">Today</span>
               </div>
-              <a
-                href="/lesson/singleton"
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Resume
-              </a>
+              <div className="stats-value">2,450</div>
+              <div className="stats-label">XP Earned</div>
             </div>
-          </div>
-          */}
-
-          {/* Progress & Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            {/* Progress Card */}
-            <div className="card p-8">
-              <h2 className="text-2xl font-semibold mb-6 text-foreground flex items-center">
-                <Trophy className="mr-2 text-yellow-500" />
-                Your Progress
-              </h2>
-              <div className="space-y-6">
-                {/* Example: Design Patterns progress */}
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium text-secondary">
-                      Design Patterns
-                    </span>
-                    <span className="text-sm font-medium text-primary">
-                      25%
-                    </span>
-                  </div>
-                  <div className="h-2 bg-secondary/10 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        background:
-                          "linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%)",
-                        width: "25%",
-                      }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Example: System Design progress */}
-                <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium text-secondary">
-                      System Design
-                    </span>
-                    <span className="text-sm font-medium text-primary">
-                      40%
-                    </span>
-                  </div>
-                  <div className="h-2 bg-secondary/10 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{
-                        background:
-                          "linear-gradient(90deg, var(--accent) 0%, var(--info) 100%)",
-                        width: "40%",
-                      }}
-                    ></div>
-                  </div>
-                </div>
+            
+            <div className="stats-card hover-lift">
+              <div className="flex items-center justify-between mb-4">
+                <Target className="w-6 h-6 text-accent" />
+                <span className="badge badge-accent">Streak</span>
               </div>
+              <div className="stats-value">7</div>
+              <div className="stats-label">Days</div>
             </div>
-
-            {/* Stats Card */}
-            <div className="card p-8">
-              <h2 className="text-2xl font-semibold mb-6 text-foreground flex items-center">
-                <BarChart className="mr-2 text-purple-500" />
-                Your Stats
-              </h2>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="p-4 rounded-lg bg-card-background colorful-border text-center">
-                  <p className="text-3xl font-bold text-primary">6</p>
-                  <p className="text-sm text-secondary mt-1">
-                    Lessons Completed
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg bg-card-background colorful-border text-center">
-                  <p className="text-3xl font-bold text-accent">2</p>
-                  <p className="text-sm text-secondary mt-1">
-                    Quizzes Completed
-                  </p>
-                </div>
-                <div className="p-4 rounded-lg bg-card-background colorful-border text-center">
-                  <p className="text-3xl font-bold text-info">3</p>
-                  <p className="text-sm text-secondary mt-1">Day Streak</p>
-                </div>
-                <div className="p-4 rounded-lg bg-card-background colorful-border text-center">
-                  <p className="text-3xl font-bold text-gradient">90%</p>
-                  <p className="text-sm text-secondary mt-1">Accuracy</p>
-                </div>
+            
+            <div className="stats-card hover-lift">
+              <div className="flex items-center justify-between mb-4">
+                <Trophy className="w-6 h-6 text-primary" />
+                <span className="badge badge-primary">Completed</span>
               </div>
+              <div className="stats-value">12</div>
+              <div className="stats-label">Challenges</div>
+            </div>
+            
+            <div className="stats-card hover-lift">
+              <div className="flex items-center justify-between mb-4">
+                <Clock className="w-6 h-6 text-accent" />
+                <span className="badge badge-accent">Time</span>
+              </div>
+              <div className="stats-value">24h</div>
+              <div className="stats-label">Learning Time</div>
             </div>
           </div>
 
-          {/* Courses Section */}
-          <h2 className="text-2xl font-semibold mb-6 text-foreground flex items-center">
-            <BookOpen className="mr-2 text-blue-500" />
-            Continue Learning
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
-            {visibleCourses.length > 0 ? (
-              visibleCourses.map((course) => (
-                <li
-                  key={course.id}
-                  className="p-4 border border-gray-200 rounded-lg shadow-sm list-none bg-white"
-                >
-                  <a
-                    href={`/course/${course.id}`}
-                    className="text-blue-600 text-lg font-semibold hover:underline"
-                  >
-                    {course.title}
-                  </a>
-                  <p className="text-gray-700 mt-1">{course.description}</p>
-                </li>
-              ))
-            ) : (
-              <p className="text-gray-600">No courses available.</p>
-            )}
-          </div>
-          {courses.length > 3 && (
-            <div className="mb-12">
-              <button
-                onClick={() => setShowAllCourses(!showAllCourses)}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                {showAllCourses ? "Show Less" : "Show All Courses"}
+          {/* Continue Learning Section */}
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="section-title">Continue Learning</h2>
+              <button className="text-primary hover:text-primary-dark flex items-center gap-2 transition-colors">
+                View All <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-          )}
-
-          {/* Quizzes Section */}
-          <h2 className="text-2xl font-semibold mb-6 text-foreground flex items-center">
-            <Code className="mr-2 text-green-500" />
-            Test Your Knowledge
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-4">
-            {visibleQuizzes.length > 0 ? (
-              visibleQuizzes.map((quiz) => (
-                <li
-                  key={quiz.id}
-                  className="p-4 border border-gray-200 rounded-lg shadow-sm list-none bg-white"
-                >
-                  <a
-                    href={`/quiz/${quiz.id}`}
-                    className="text-blue-600 text-lg font-semibold hover:underline"
-                  >
-                    {quiz.title}
-                  </a>
-                  <p className="text-gray-700 mt-1">{quiz.description}</p>
-                </li>
-              ))
-            ) : (
-              <p className="text-gray-600">No quizzes available.</p>
-            )}
+            <div className="card p-6 hover-lift">
+              <div className="flex items-start gap-6">
+                <div className="flex-shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Code className="w-8 h-8 text-primary" />
+                  </div>
+                </div>
+                <div className="flex-grow">
+                  <h3 className="text-lg font-semibold mb-2">Design Patterns</h3>
+                  <p className="text-secondary mb-4">Continue with Singleton Pattern implementation</p>
+                  <div className="progress-bar">
+                    <div className="progress-bar-fill" style={{ width: '45%' }}></div>
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-sm text-secondary">45% Complete</span>
+                    <span className="text-sm text-primary">25min left</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          {quizzes.length > 3 && (
-            <div className="mb-12">
-              <button
-                onClick={() => setShowAllQuizzes(!showAllQuizzes)}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-              >
-                {showAllQuizzes ? "Show Less" : "Show All Quizzes"}
+
+          {/* Course Grid */}
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="section-title">Featured Courses</h2>
+              <button className="text-primary hover:text-primary-dark flex items-center gap-2 transition-colors">
+                Browse Library <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-          )}
+            <div className="content-grid">
+              {courses.slice(0, 3).map((course) => (
+                <div key={course.id} className="card p-6 hover-lift">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
+                      <BookOpen className="w-6 h-6 text-accent" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{course.title}</h3>
+                      <p className="text-sm text-secondary">{course.description}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-sm text-secondary">8 Lessons</span>
+                    <button className="text-primary hover:text-primary-dark text-sm font-medium">
+                      Start Learning
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Available Quizzes */}
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="section-title">Challenge Yourself</h2>
+              <button className="text-primary hover:text-primary-dark flex items-center gap-2 transition-colors">
+                All Quizzes <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="content-grid">
+              {quizzes.slice(0, 3).map((quiz) => (
+                <div key={quiz.id} className="card p-6 hover-lift">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <BarChart className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{quiz.title}</h3>
+                      <p className="text-sm text-secondary">{quiz.description}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between mt-4">
+                    <span className="text-sm text-secondary">10 Questions</span>
+                    <button className="text-primary hover:text-primary-dark text-sm font-medium">
+                      Take Quiz
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </main>
     </div>
