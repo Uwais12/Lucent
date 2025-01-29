@@ -58,7 +58,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             <div className="stats-card hover-lift">
               <div className="flex items-center justify-between mb-4">
-                <Zap className="w-6 h-6 text-primary" />
+                <Zap className="w-6 h-6" style={{ color: '#F59E0B' }} />
                 <span className="badge badge-primary">Today</span>
               </div>
               <div className="stats-value">2,450</div>
@@ -67,7 +67,7 @@ export default function Home() {
             
             <div className="stats-card hover-lift">
               <div className="flex items-center justify-between mb-4">
-                <Target className="w-6 h-6 text-accent" />
+                <Target className="w-6 h-6" style={{ color: '#EC4899' }} />
                 <span className="badge badge-accent">Streak</span>
               </div>
               <div className="stats-value">7</div>
@@ -76,7 +76,7 @@ export default function Home() {
             
             <div className="stats-card hover-lift">
               <div className="flex items-center justify-between mb-4">
-                <Trophy className="w-6 h-6 text-primary" />
+                <Trophy className="w-6 h-6" style={{ color: '#F7B955' }} />
                 <span className="badge badge-primary">Completed</span>
               </div>
               <div className="stats-value">12</div>
@@ -85,7 +85,7 @@ export default function Home() {
             
             <div className="stats-card hover-lift">
               <div className="flex items-center justify-between mb-4">
-                <Clock className="w-6 h-6 text-accent" />
+                <Clock className="w-6 h-6" style={{ color: '#06B6D4' }} />
                 <span className="badge badge-accent">Time</span>
               </div>
               <div className="stats-value">24h</div>
@@ -105,7 +105,7 @@ export default function Home() {
               <div className="flex items-start gap-6">
                 <div className="flex-shrink-0">
                   <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Code className="w-8 h-8 text-primary" />
+                    <Code className="w-8 h-8" style={{ color: '#8B5CF6' }} />
                   </div>
                 </div>
                 <div className="flex-grow">
@@ -136,7 +136,7 @@ export default function Home() {
                 <div key={course.id} className="card p-6 hover-lift">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-                      <BookOpen className="w-6 h-6 text-accent" />
+                      <BookOpen className="w-6 h-6" style={{ color: '#10B981' }} />
                     </div>
                     <div>
                       <h3 className="font-semibold">{course.title}</h3>
@@ -167,7 +167,7 @@ export default function Home() {
                 <div key={quiz.id} className="card p-6 hover-lift">
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                      <BarChart className="w-6 h-6 text-primary" />
+                      <BarChart className="w-6 h-6" style={{ color: '#3B82F6' }} />
                     </div>
                     <div>
                       <h3 className="font-semibold">{quiz.title}</h3>
