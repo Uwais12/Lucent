@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import {
   Plus,
@@ -10,9 +10,9 @@ import {
   BookOpen,
   ChevronRight,
   Save,
-  X
-} from 'lucide-react';
-import Navbar from '../components/Navbar';
+  X,
+} from "lucide-react";
+import Navbar from "../components/Navbar";
 
 export default function AdminPanel() {
   const router = useRouter();
@@ -34,61 +34,79 @@ export default function AdminPanel() {
       title: "",
       author: "",
       coverUrl: "",
-      amazonUrl: ""
+      amazonUrl: "",
     },
-    chapters: [{
-      title: "",
-      description: "",
-      order: 1,
-      lessons: [{
+    chapters: [
+      {
         title: "",
         description: "",
         order: 1,
-        duration: 30,
-        parts: [],
-        endOfLessonQuiz: {
-          title: "",
+        lessons: [
+          {
+            title: "",
+            slug: "",
+            description: "",
+            order: 1,
+            duration: 30,
+            parts: [
+              {
+                title: "Introduction Part",
+                content: "This is the introductory content.",
+                order: 1,
+                duration: 5,
+              },
+            ],
+            endOfLessonQuiz: {
+              title: "Lesson Quiz",
+              description: "",
+              duration: 15,
+              passingScore: 70,
+              questions: [],
+            },
+          },
+        ],
+        endOfChapterQuiz: {
+          title: "Chapter Quiz",
           description: "",
-          duration: 15,
-          passingScore: 70,
-          questions: []
-        }
-      }],
-      endOfChapterQuiz: {
-        title: "",
-        description: "",
-        duration: 30,
-        passingScore: 75,
-        questions: []
-      }
-    }],
+          duration: 30,
+          passingScore: 75,
+          questions: [],
+        },
+      },
+    ],
     prerequisites: [],
     learningOutcomes: [],
     estimatedDuration: 0,
     enrolledCount: 0,
     rating: {
       average: 0,
-      count: 0
-    }
+      count: 0,
+    },
+    endOfCourseExam: {
+      title: "Final Course Exam",
+      description: "",
+      duration: 60,
+      passingScore: 80,
+      questions: [],
+    },
   };
-
   // Check if user is admin
   useEffect(() => {
     const checkAdminStatus = async () => {
       if (isLoaded && user?.id) {
         try {
-          const response = await fetch('/api/profile');
+          const response = await fetch("/api/profile");
           const data = await response.json();
-          
-          if (data.role !== 'ADMIN') {
-            router.push('/');
+
+          if (data.role !== "ADMIN") {
+            router.push("/");
           }
         } catch (error) {
-          console.error('Error checking admin status:', error);
-          router.push('/');
+          console.error("Error checking admin status:", error);
+          router.push("/");
         }
       } else if (isLoaded) {
-        router.push('/');
+        router.push("/");
       }
     };
 
@@ -99,16 +117,16 @@ export default function AdminPanel() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch('/api/admin/courses');
+        const response = await fetch("/api/admin/courses");
         const data = await response.json();
-        
+
         if (response.ok) {
           setCourses(data);
         } else {
-          setError(data.error || 'Failed to load courses');
+          setError(data.error || "Failed to load courses");
         }
       } catch (err) {
-        setError('Failed to load courses');
+        setError("Failed to load courses");
       } finally {
         setLoading(false);
       }
@@ -131,52 +149,82 @@ export default function AdminPanel() {
 
   const handleSaveCourse = async () => {
     try {
-      const response = await fetch('/api/admin/courses', {
-        method: editingCourse._id ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const updatedCourse = { ...editingCourse };
+      updatedCourse.slug = generateSlug(updatedCourse.title);
+
+      updatedCourse.chapters = updatedCourse.chapters.map((chapter) => ({
+        ...chapter,
+        lessons: chapter.lessons.map((lesson) => ({
+          ...lesson,
+          slug: lesson.slug || generateSlug(lesson.title),
+          endOfLessonQuiz: {
+            ...lesson.endOfLessonQuiz,
+            title: lesson.endOfLessonQuiz.title || `${lesson.title} Quiz`, // Add default title
+          },
+        })),
+        endOfChapterQuiz: {
+          ...chapter.endOfChapterQuiz,
+          title:
+            chapter.endOfChapterQuiz.title || `${chapter.title} Final Quiz`, // Add default title
         },
-        body: JSON.stringify(editingCourse),
+      }));
+
+      updatedCourse.endOfCourseExam = {
+        ...updatedCourse.endOfCourseExam,
+        title: updatedCourse.endOfCourseExam.title || "Final Course Exam", // Add default title
+      };
+
+      const response = await fetch("/api/admin/courses", {
+        method: editingCourse._id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedCourse),
       });
 
       const data = await response.json();
-      
+
       if (response.ok) {
-        // Update courses list
-        setCourses(prevCourses => {
-          if (editingCourse._id) {
-            return prevCourses.map(c => c._id === editingCourse._id ? data : c);
-          }
-          return [...prevCourses, data];
-        });
+        setCourses((prevCourses) =>
+          editingCourse._id
+            ? prevCourses.map((c) => (c._id === editingCourse._id ? data : c))
+            : [...prevCourses, data]
+        );
         setIsEditing(false);
         setEditingCourse(null);
       } else {
-        setError(data.error || 'Failed to save course');
+        setError(data.error || "Failed to save course");
       }
     } catch (err) {
-      setError('Failed to save course');
+      setError("Failed to save course");
     }
   };
 
   const handleDeleteCourse = async (courseId) => {
-    if (!confirm('Are you sure you want to delete this course?')) return;
+    if (!confirm("Are you sure you want to delete this course?")) return;
 
     try {
       const response = await fetch(`/api/admin/courses/${courseId}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
-        setCourses(prevCourses => prevCourses.filter(c => c._id !== courseId));
+        setCourses((prevCourses) =>
+          prevCourses.filter((c) => c._id !== courseId)
+        );
       } else {
         const data = await response.json();
-        setError(data.error || 'Failed to delete course');
+        setError(data.error || "Failed to delete course");
       }
     } catch (err) {
-      setError('Failed to delete course');
+      setError("Failed to delete course");
     }
   };
+
+  function generateSlug(title) {
+    return title
+      .toLowerCase()
+      .replace(/[\s]+/g, "-")
+      .replace(/[^\w-]/g, "");
+  }
 
   if (!isLoaded || loading) {
     return (
@@ -204,7 +252,9 @@ export default function AdminPanel() {
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">Admin Panel</h1>
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                  Admin Panel
+                </h1>
                 <div className="accent-bar"></div>
               </div>
               <button
@@ -227,7 +277,9 @@ export default function AdminPanel() {
                       <BookOpen className="w-6 h-6 text-violet-600" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{course.title}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        {course.title}
+                      </h3>
                       <p className="text-gray-500">{course.description}</p>
                     </div>
                   </div>
@@ -256,7 +308,7 @@ export default function AdminPanel() {
               <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {editingCourse._id ? 'Edit Course' : 'Create Course'}
+                    {editingCourse._id ? "Edit Course" : "Create Course"}
                   </h2>
                   <button
                     onClick={() => setIsEditing(false)}
@@ -277,10 +329,12 @@ export default function AdminPanel() {
                       <input
                         type="text"
                         value={editingCourse.title}
-                        onChange={(e) => setEditingCourse({
-                          ...editingCourse,
-                          title: e.target.value
-                        })}
+                        onChange={(e) =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            title: e.target.value,
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                         required
                       />
@@ -292,10 +346,12 @@ export default function AdminPanel() {
                       <input
                         type="text"
                         value={editingCourse.slug}
-                        onChange={(e) => setEditingCourse({
-                          ...editingCourse,
-                          slug: e.target.value
-                        })}
+                        onChange={(e) =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            slug: e.target.value,
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                         required
                       />
@@ -309,10 +365,12 @@ export default function AdminPanel() {
                     </label>
                     <textarea
                       value={editingCourse.description}
-                      onChange={(e) => setEditingCourse({
-                        ...editingCourse,
-                        description: e.target.value
-                      })}
+                      onChange={(e) =>
+                        setEditingCourse({
+                          ...editingCourse,
+                          description: e.target.value,
+                        })
+                      }
                       rows={4}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                       required
@@ -327,10 +385,12 @@ export default function AdminPanel() {
                       </label>
                       <select
                         value={editingCourse.level}
-                        onChange={(e) => setEditingCourse({
-                          ...editingCourse,
-                          level: e.target.value
-                        })}
+                        onChange={(e) =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            level: e.target.value,
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                         required
                       >
@@ -345,11 +405,15 @@ export default function AdminPanel() {
                       </label>
                       <input
                         type="text"
-                        value={editingCourse.tags.join(', ')}
-                        onChange={(e) => setEditingCourse({
-                          ...editingCourse,
-                          tags: e.target.value.split(',').map(tag => tag.trim())
-                        })}
+                        value={editingCourse.tags.join(", ")}
+                        onChange={(e) =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            tags: e.target.value
+                              .split(",")
+                              .map((tag) => tag.trim()),
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                         placeholder="e.g., javascript, react, web"
                       />
@@ -358,7 +422,9 @@ export default function AdminPanel() {
 
                   {/* Book Information */}
                   <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Book Information</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Book Information
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -367,10 +433,15 @@ export default function AdminPanel() {
                         <input
                           type="text"
                           value={editingCourse.book.title}
-                          onChange={(e) => setEditingCourse({
-                            ...editingCourse,
-                            book: { ...editingCourse.book, title: e.target.value }
-                          })}
+                          onChange={(e) =>
+                            setEditingCourse({
+                              ...editingCourse,
+                              book: {
+                                ...editingCourse.book,
+                                title: e.target.value,
+                              },
+                            })
+                          }
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                           required
                         />
@@ -382,10 +453,15 @@ export default function AdminPanel() {
                         <input
                           type="text"
                           value={editingCourse.book.author}
-                          onChange={(e) => setEditingCourse({
-                            ...editingCourse,
-                            book: { ...editingCourse.book, author: e.target.value }
-                          })}
+                          onChange={(e) =>
+                            setEditingCourse({
+                              ...editingCourse,
+                              book: {
+                                ...editingCourse.book,
+                                author: e.target.value,
+                              },
+                            })
+                          }
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                           required
                         />
@@ -399,10 +475,15 @@ export default function AdminPanel() {
                         <input
                           type="text"
                           value={editingCourse.book.coverUrl}
-                          onChange={(e) => setEditingCourse({
-                            ...editingCourse,
-                            book: { ...editingCourse.book, coverUrl: e.target.value }
-                          })}
+                          onChange={(e) =>
+                            setEditingCourse({
+                              ...editingCourse,
+                              book: {
+                                ...editingCourse.book,
+                                coverUrl: e.target.value,
+                              },
+                            })
+                          }
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                         />
                       </div>
@@ -413,10 +494,15 @@ export default function AdminPanel() {
                         <input
                           type="text"
                           value={editingCourse.book.amazonUrl}
-                          onChange={(e) => setEditingCourse({
-                            ...editingCourse,
-                            book: { ...editingCourse.book, amazonUrl: e.target.value }
-                          })}
+                          onChange={(e) =>
+                            setEditingCourse({
+                              ...editingCourse,
+                              book: {
+                                ...editingCourse.book,
+                                amazonUrl: e.target.value,
+                              },
+                            })
+                          }
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                         />
                       </div>
@@ -430,11 +516,15 @@ export default function AdminPanel() {
                         Prerequisites (one per line)
                       </label>
                       <textarea
-                        value={editingCourse.prerequisites.join('\n')}
-                        onChange={(e) => setEditingCourse({
-                          ...editingCourse,
-                          prerequisites: e.target.value.split('\n').filter(p => p.trim())
-                        })}
+                        value={editingCourse.prerequisites.join("\n")}
+                        onChange={(e) =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            prerequisites: e.target.value
+                              .split("\n")
+                              .filter((p) => p.trim()),
+                          })
+                        }
                         rows={4}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                         placeholder="Basic JavaScript knowledge&#10;Understanding of HTML/CSS&#10;Familiarity with React"
@@ -445,11 +535,15 @@ export default function AdminPanel() {
                         Learning Outcomes (one per line)
                       </label>
                       <textarea
-                        value={editingCourse.learningOutcomes.join('\n')}
-                        onChange={(e) => setEditingCourse({
-                          ...editingCourse,
-                          learningOutcomes: e.target.value.split('\n').filter(o => o.trim())
-                        })}
+                        value={editingCourse.learningOutcomes.join("\n")}
+                        onChange={(e) =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            learningOutcomes: e.target.value
+                              .split("\n")
+                              .filter((o) => o.trim()),
+                          })
+                        }
                         rows={4}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                         placeholder="Build full-stack applications&#10;Implement authentication&#10;Deploy to production"
@@ -460,42 +554,54 @@ export default function AdminPanel() {
                   {/* Chapters */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-gray-900">Chapters</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Chapters
+                      </h3>
                       <button
-                        onClick={() => setEditingCourse({
-                          ...editingCourse,
-                          chapters: [...editingCourse.chapters, {
-                            title: "",
-                            description: "",
-                            order: editingCourse.chapters.length + 1,
-                            lessons: [],
-                            endOfChapterQuiz: {
-                              title: "",
-                              description: "",
-                              duration: 30,
-                              passingScore: 75,
-                              questions: []
-                            }
-                          }]
-                        })}
+                        onClick={() =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            chapters: [
+                              ...editingCourse.chapters,
+                              {
+                                title: "",
+                                description: "",
+                                order: editingCourse.chapters.length + 1,
+                                lessons: [],
+                                endOfChapterQuiz: {
+                                  title: "",
+                                  description: "",
+                                  duration: 30,
+                                  passingScore: 75,
+                                  questions: [],
+                                },
+                              },
+                            ],
+                          })
+                        }
                         className="px-3 py-1 bg-violet-100 text-violet-600 rounded-lg text-sm font-medium hover:bg-violet-200 transition-colors flex items-center gap-1"
                       >
                         <Plus className="w-4 h-4" />
                         Add Chapter
                       </button>
                     </div>
-                    
+
                     {editingCourse.chapters.map((chapter, chapterIndex) => (
-                      <div key={chapterIndex} className="border border-gray-200 rounded-lg p-4 space-y-4">
+                      <div
+                        key={chapterIndex}
+                        className="border border-gray-200 rounded-lg p-4 space-y-4"
+                      >
                         <div className="flex items-center justify-between">
-                          <h4 className="font-medium text-gray-900">Chapter {chapterIndex + 1}</h4>
+                          <h4 className="font-medium text-gray-900">
+                            Chapter {chapterIndex + 1}
+                          </h4>
                           <button
                             onClick={() => {
                               const newChapters = [...editingCourse.chapters];
                               newChapters.splice(chapterIndex, 1);
                               setEditingCourse({
                                 ...editingCourse,
-                                chapters: newChapters
+                                chapters: newChapters,
                               });
                             }}
                             className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
@@ -516,11 +622,11 @@ export default function AdminPanel() {
                                 const newChapters = [...editingCourse.chapters];
                                 newChapters[chapterIndex] = {
                                   ...chapter,
-                                  title: e.target.value
+                                  title: e.target.value,
                                 };
                                 setEditingCourse({
                                   ...editingCourse,
-                                  chapters: newChapters
+                                  chapters: newChapters,
                                 });
                               }}
                               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
@@ -537,11 +643,11 @@ export default function AdminPanel() {
                                 const newChapters = [...editingCourse.chapters];
                                 newChapters[chapterIndex] = {
                                   ...chapter,
-                                  description: e.target.value
+                                  description: e.target.value,
                                 };
                                 setEditingCourse({
                                   ...editingCourse,
-                                  chapters: newChapters
+                                  chapters: newChapters,
                                 });
                               }}
                               rows={2}
@@ -558,27 +664,32 @@ export default function AdminPanel() {
                               </label>
                               <button
                                 onClick={() => {
-                                  const newChapters = [...editingCourse.chapters];
+                                  const newChapters = [
+                                    ...editingCourse.chapters,
+                                  ];
                                   newChapters[chapterIndex] = {
                                     ...chapter,
-                                    lessons: [...chapter.lessons, {
-                                      title: "",
-                                      description: "",
-                                      order: chapter.lessons.length + 1,
-                                      duration: 30,
-                                      parts: [],
-                                      endOfLessonQuiz: {
+                                    lessons: [
+                                      ...chapter.lessons,
+                                      {
                                         title: "",
                                         description: "",
-                                        duration: 15,
-                                        passingScore: 70,
-                                        questions: []
-                                      }
-                                    }]
+                                        order: chapter.lessons.length + 1,
+                                        duration: 30,
+                                        parts: [],
+                                        endOfLessonQuiz: {
+                                          title: "",
+                                          description: "",
+                                          duration: 15,
+                                          passingScore: 70,
+                                          questions: [],
+                                        },
+                                      },
+                                    ],
                                   };
                                   setEditingCourse({
                                     ...editingCourse,
-                                    chapters: newChapters
+                                    chapters: newChapters,
                                   });
                                 }}
                                 className="px-2 py-1 bg-violet-100 text-violet-600 rounded text-sm font-medium hover:bg-violet-200 transition-colors flex items-center gap-1"
@@ -589,16 +700,26 @@ export default function AdminPanel() {
                             </div>
 
                             {chapter.lessons.map((lesson, lessonIndex) => (
-                              <div key={lessonIndex} className="border border-gray-200 rounded p-3 space-y-3">
+                              <div
+                                key={lessonIndex}
+                                className="border border-gray-200 rounded p-3 space-y-3"
+                              >
                                 <div className="flex items-center justify-between">
-                                  <h5 className="text-sm font-medium text-gray-900">Lesson {lessonIndex + 1}</h5>
+                                  <h5 className="text-sm font-medium text-gray-900">
+                                    Lesson {lessonIndex + 1}
+                                  </h5>
                                   <button
                                     onClick={() => {
-                                      const newChapters = [...editingCourse.chapters];
-                                      newChapters[chapterIndex].lessons.splice(lessonIndex, 1);
+                                      const newChapters = [
+                                        ...editingCourse.chapters,
+                                      ];
+                                      newChapters[chapterIndex].lessons.splice(
+                                        lessonIndex,
+                                        1
+                                      );
                                       setEditingCourse({
                                         ...editingCourse,
-                                        chapters: newChapters
+                                        chapters: newChapters,
                                       });
                                     }}
                                     className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
@@ -612,14 +733,18 @@ export default function AdminPanel() {
                                     type="text"
                                     value={lesson.title}
                                     onChange={(e) => {
-                                      const newChapters = [...editingCourse.chapters];
-                                      newChapters[chapterIndex].lessons[lessonIndex] = {
+                                      const newChapters = [
+                                        ...editingCourse.chapters,
+                                      ];
+                                      newChapters[chapterIndex].lessons[
+                                        lessonIndex
+                                      ] = {
                                         ...lesson,
-                                        title: e.target.value
+                                        title: e.target.value,
                                       };
                                       setEditingCourse({
                                         ...editingCourse,
-                                        chapters: newChapters
+                                        chapters: newChapters,
                                       });
                                     }}
                                     placeholder="Lesson Title"
@@ -629,14 +754,18 @@ export default function AdminPanel() {
                                   <textarea
                                     value={lesson.description}
                                     onChange={(e) => {
-                                      const newChapters = [...editingCourse.chapters];
-                                      newChapters[chapterIndex].lessons[lessonIndex] = {
+                                      const newChapters = [
+                                        ...editingCourse.chapters,
+                                      ];
+                                      newChapters[chapterIndex].lessons[
+                                        lessonIndex
+                                      ] = {
                                         ...lesson,
-                                        description: e.target.value
+                                        description: e.target.value,
                                       };
                                       setEditingCourse({
                                         ...editingCourse,
-                                        chapters: newChapters
+                                        chapters: newChapters,
                                       });
                                     }}
                                     placeholder="Lesson Description"
@@ -649,14 +778,18 @@ export default function AdminPanel() {
                                       type="number"
                                       value={lesson.duration}
                                       onChange={(e) => {
-                                        const newChapters = [...editingCourse.chapters];
-                                        newChapters[chapterIndex].lessons[lessonIndex] = {
+                                        const newChapters = [
+                                          ...editingCourse.chapters,
+                                        ];
+                                        newChapters[chapterIndex].lessons[
+                                          lessonIndex
+                                        ] = {
                                           ...lesson,
-                                          duration: parseInt(e.target.value)
+                                          duration: parseInt(e.target.value),
                                         };
                                         setEditingCourse({
                                           ...editingCourse,
-                                          chapters: newChapters
+                                          chapters: newChapters,
                                         });
                                       }}
                                       placeholder="Duration (minutes)"
@@ -682,10 +815,12 @@ export default function AdminPanel() {
                       <input
                         type="number"
                         value={editingCourse.estimatedDuration}
-                        onChange={(e) => setEditingCourse({
-                          ...editingCourse,
-                          estimatedDuration: parseInt(e.target.value)
-                        })}
+                        onChange={(e) =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            estimatedDuration: parseInt(e.target.value),
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                         required
                       />
@@ -697,10 +832,12 @@ export default function AdminPanel() {
                       <input
                         type="number"
                         value={editingCourse.enrolledCount}
-                        onChange={(e) => setEditingCourse({
-                          ...editingCourse,
-                          enrolledCount: parseInt(e.target.value)
-                        })}
+                        onChange={(e) =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            enrolledCount: parseInt(e.target.value),
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                       />
                     </div>
@@ -714,13 +851,15 @@ export default function AdminPanel() {
                         min="0"
                         max="5"
                         value={editingCourse.rating.average}
-                        onChange={(e) => setEditingCourse({
-                          ...editingCourse,
-                          rating: {
-                            ...editingCourse.rating,
-                            average: parseFloat(e.target.value)
-                          }
-                        })}
+                        onChange={(e) =>
+                          setEditingCourse({
+                            ...editingCourse,
+                            rating: {
+                              ...editingCourse.rating,
+                              average: parseFloat(e.target.value),
+                            },
+                          })
+                        }
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent"
                       />
                     </div>
@@ -750,4 +889,4 @@ export default function AdminPanel() {
       </main>
     </div>
   );
-} 
+}
