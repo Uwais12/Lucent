@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Trophy, ChevronLeft } from "lucide-react";
+import { Trophy, ChevronLeft, Star } from "lucide-react";
+import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 
 export default function LessonQuizPage() {
@@ -13,15 +14,16 @@ export default function LessonQuizPage() {
   const [error, setError] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [quizResult, setQuizResult] = useState(null);
 
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
-        const response = await fetch(`/api/lessons/${params.slug}`);
+        const response = await fetch(`/api/quizzes/${params.slug}`);
         const data = await response.json();
 
-        if (response.ok) {
-          setQuiz(data.endOfLessonQuiz);
+        if (response.ok && !data.error) {
+          setQuiz(data);
         } else {
           setError(data.error || 'Failed to load quiz');
         }
@@ -51,9 +53,9 @@ export default function LessonQuizPage() {
         const userAnswer = answers[index];
         const isCorrect = userAnswer === question.correctAnswer;
         if (isCorrect) {
-          earnedPoints += question.points;
+          earnedPoints += question.points || 10; // Default to 10 points if not specified
         }
-        totalPoints += question.points;
+        totalPoints += question.points || 10;
       });
 
       const score = Math.round((earnedPoints / totalPoints) * 100);
@@ -67,19 +69,48 @@ export default function LessonQuizPage() {
           lessonSlug: params.slug,
           score,
           passed,
-          answers
+          answers,
+          courseId: quiz.courseId,
+          chapterId: quiz.chapterId,
+          lessonId: quiz.lessonId
         })
       });
 
       if (response.ok) {
+        const data = await response.json();
         setSubmitted(true);
-        setFeedback(
-          passed 
-            ? `Congratulations! You passed with a score of ${score}%` 
-            : `You scored ${score}%. You need ${quiz.passingScore}% to pass. Try again!`
-        );
+        setQuizResult(data);
+
+        // Build feedback message
+        let feedbackMsg = passed 
+          ? `Congratulations! You passed with a score of ${score}%` 
+          : `You scored ${score}%. You need ${quiz.passingScore}% to pass. Try again!`;
+
+        // Add XP info
+        if (data.xpGained) {
+          feedbackMsg += `\nYou earned ${data.xpGained} XP!`;
+        }
+
+        // Add level up info
+        if (data.levelUp) {
+          feedbackMsg += `\nLevel Up! You are now level ${data.level}!`;
+        }
+
+        setFeedback(feedbackMsg);
+
+        // Handle navigation after delay
+        if (passed) {
+          setTimeout(() => {
+            if (data.nextLessonSlug) {
+              router.push(`/lesson/${data.nextLessonSlug}`);
+            } else if (data.isCompleted) {
+              router.push(`/course/${data.courseId}`);
+            }
+          }, 5000); // Give more time to see results and achievements
+        }
       }
     } catch (error) {
+      console.error('Error submitting quiz:', error);
       setError('Failed to submit quiz');
     }
   };
@@ -143,12 +174,17 @@ export default function LessonQuizPage() {
                     {question.options.map((option, optionIndex) => (
                       <button
                         key={optionIndex}
-                        onClick={() => handleAnswerChange(index, option)}
+                        onClick={() => !submitted && handleAnswerChange(index, option)}
                         className={`w-full text-left p-3 rounded-lg border transition-colors ${
                           answers[index] === option
-                            ? 'bg-violet-100 border-violet-500 text-violet-700'
+                            ? submitted
+                              ? answers[index] === question.correctAnswer
+                                ? 'bg-green-100 border-green-500 text-green-700'
+                                : 'bg-red-100 border-red-500 text-red-700'
+                              : 'bg-violet-100 border-violet-500 text-violet-700'
                             : 'border-gray-200 hover:border-violet-500'
-                        }`}
+                        } ${submitted ? 'cursor-default' : 'cursor-pointer'}`}
+                        disabled={submitted}
                       >
                         {option}
                       </button>
@@ -161,12 +197,17 @@ export default function LessonQuizPage() {
                     {['true', 'false'].map((option) => (
                       <button
                         key={option}
-                        onClick={() => handleAnswerChange(index, option)}
+                        onClick={() => !submitted && handleAnswerChange(index, option)}
                         className={`px-6 py-2 rounded-lg border transition-colors ${
                           answers[index]?.toLowerCase() === option
-                            ? 'bg-violet-100 border-violet-500 text-violet-700'
+                            ? submitted
+                              ? answers[index] === question.correctAnswer
+                                ? 'bg-green-100 border-green-500 text-green-700'
+                                : 'bg-red-100 border-red-500 text-red-700'
+                              : 'bg-violet-100 border-violet-500 text-violet-700'
                             : 'border-gray-200 hover:border-violet-500'
-                        }`}
+                        } ${submitted ? 'cursor-default' : 'cursor-pointer'}`}
+                        disabled={submitted}
                       >
                         {option.charAt(0).toUpperCase() + option.slice(1)}
                       </button>
@@ -190,8 +231,8 @@ export default function LessonQuizPage() {
             ))}
           </div>
 
-          {/* Submit Button */}
-          {!submitted && (
+          {/* Submit Button or Results */}
+          {!submitted ? (
             <div className="mt-8 flex justify-end">
               <button
                 onClick={submitQuiz}
@@ -205,16 +246,117 @@ export default function LessonQuizPage() {
                 Submit Quiz
               </button>
             </div>
+          ) : (
+            <div className="mt-8 space-y-4">
+              {/* Results Card */}
+              <div className="card p-6 bg-gradient-to-br from-violet-50 to-fuchsia-50">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Quiz Results</h3>
+                  <div className="flex items-center gap-2">
+                    <Star className="w-5 h-5 text-yellow-500" />
+                    <span className="text-lg font-semibold">{quizResult.score}%</span>
+                  </div>
+                </div>
+                
+                {quizResult.score >= 70 ? (
+                  <>
+                    {/* XP and Level */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span>XP Earned</span>
+                        <span className="font-medium text-violet-600">+{quizResult.xpGained} XP</span>
+                      </div>
+                      {quizResult.levelUp && (
+                        <div className="flex items-center justify-between text-sm">
+                          <span>New Level</span>
+                          <span className="font-medium text-emerald-600">Level {quizResult.level}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center justify-between text-sm">
+                        <span>Course Progress</span>
+                        <span className="font-medium text-violet-600">{quizResult.completionPercentage}%</span>
+                      </div>
+                    </div>
+
+                    {/* Success Message */}
+                    <div className="mt-4 p-4 bg-green-50 text-green-700 rounded-lg">
+                      <p className="text-center font-medium">
+                        {quizResult.nextLessonSlug
+                          ? "Congratulations! Moving to the next lesson in a few seconds..."
+                          : "Congratulations! You've completed the course!"}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Failed Message */}
+                    <div className="mt-4 p-4 bg-amber-50 text-amber-700 rounded-lg">
+                      <p className="text-center font-medium">
+                        You need 70% or higher to pass this quiz and complete the lesson.
+                      </p>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="mt-4 flex gap-4 justify-center">
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+                      >
+                        Retry Quiz
+                      </button>
+                      <Link
+                        href={`/lesson/${params.slug}`}
+                        className="px-6 py-2 border border-violet-600 text-violet-600 rounded-lg hover:bg-violet-50 transition-colors"
+                      >
+                        Review Lesson
+                      </Link>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Navigation */}
+              <div className="mt-4 flex justify-between">
+                <Link
+                  href={`/lesson/${params.slug}`}
+                  className="flex items-center gap-2 text-violet-600 hover:text-violet-700"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                  Back to Lesson
+                </Link>
+                {quizResult.score >= 70 ? (
+                  <Link
+                    href="/"
+                    className="text-violet-600 hover:text-violet-700"
+                  >
+                    Home
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => {
+                      if (confirm("You haven't passed the quiz yet. Going home will not mark this lesson as complete. Continue?")) {
+                        router.push('/');
+                      }
+                    }}
+                    className="text-violet-600 hover:text-violet-700"
+                  >
+                    Home
+                  </button>
+                )}
+              </div>
+            </div>
           )}
 
           {/* Feedback */}
           {feedback && (
             <div className={`mt-8 p-4 rounded-lg ${
-              submitted && feedback.includes('Congratulations')
+              submitted && quizResult?.passed
                 ? 'bg-green-100 text-green-700'
                 : 'bg-red-100 text-red-700'
             }`}>
-              {feedback}
+              {feedback.split('\n').map((line, i) => (
+                <p key={i} className="mb-1">{line}</p>
+              ))}
             </div>
           )}
         </div>

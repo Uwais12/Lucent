@@ -174,6 +174,22 @@ export default function LessonPage() {
           ...prev,
           xp: data.newXp
         }));
+
+        // Update lesson completion status
+        const updateResponse = await fetch(`/api/lessons/${lesson.slug}/complete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (updateResponse.ok) {
+          const { nextLessonSlug } = await updateResponse.json();
+          if (nextLessonSlug) {
+            router.push(`/lesson/${nextLessonSlug}`);
+          } else {
+            // If no next lesson, go back to course page
+            router.push(`/course/${lesson.courseId}`);
+          }
+        }
       }
     } catch (error) {
       console.error('Error updating XP:', error);
@@ -188,10 +204,23 @@ export default function LessonPage() {
       }
       
       setCurrentPartIndex(index);
+
+      // If this is the last part and all exercises are completed, show quiz button
+      if (index === lesson.parts.length - 1) {
+        const allExercisesCompleted = lesson.parts.every((part, idx) => 
+          !part.exercise || progress.completedExercises.has(idx)
+        );
+        
+        if (allExercisesCompleted) {
+          await handleLessonComplete();
+        }
+      }
     }
   };
 
-  const startQuiz = () => {
+  const startQuiz = async () => {
+    // Mark the lesson as complete before starting the quiz
+    await handleLessonComplete();
     // Navigate to the quiz page with the lesson slug
     router.push(`/quiz/${lesson.slug}`);
   };
