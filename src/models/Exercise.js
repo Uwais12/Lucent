@@ -54,40 +54,58 @@ const ExerciseSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+    trim: true,
+    maxlength: 200
   },
   description: {
     type: String,
     required: true,
+    trim: true,
+    maxlength: 1000
   },
   points: {
     type: Number,
     default: 10,
+    min: 1,
+    max: 100
   },
   content: {
     type: mongoose.Schema.Types.Mixed,
     required: true,
     validate: {
       validator: function(content) {
+        if (!content) return false;
+
         switch (this.type) {
           case 'drag-and-drop':
             return (
               Array.isArray(content.items) &&
               Array.isArray(content.targets) &&
               Array.isArray(content.correctPairs) &&
+              content.items.length > 0 &&
               content.items.length === content.targets.length &&
-              content.items.length === content.correctPairs.length
+              content.correctPairs.every(pair => 
+                Array.isArray(pair) && 
+                pair.length === 2 &&
+                pair.every(num => typeof num === 'number')
+              )
             );
           case 'fill-in-blanks':
             return (
               typeof content.text === 'string' &&
               Array.isArray(content.blanks) &&
-              content.blanks.every(blank => blank.id && blank.answer)
+              content.blanks.length > 0 &&
+              content.blanks.every(blank => 
+                blank.id && 
+                typeof blank.answer === 'string'
+              )
             );
           case 'multiple-choice':
             return (
               typeof content.question === 'string' &&
               Array.isArray(content.options) &&
               content.options.length >= 2 &&
+              content.options.every(opt => typeof opt === 'string') &&
               content.options.includes(content.correctAnswer)
             );
           case 'code-challenge':
@@ -95,13 +113,18 @@ const ExerciseSchema = new mongoose.Schema({
               typeof content.instructions === 'string' &&
               Array.isArray(content.testCases) &&
               content.testCases.length > 0 &&
-              typeof content.solution === 'string'
+              typeof content.solution === 'string' &&
+              content.testCases.every(test => 
+                Array.isArray(test.input) &&
+                test.expectedOutput !== undefined &&
+                typeof test.description === 'string'
+              )
             );
           default:
             return false;
         }
       },
-      message: 'Invalid content structure for exercise type'
+      message: props => `Invalid content structure for exercise type: ${props.value.type}`
     }
   },
   difficulty: {
@@ -109,21 +132,46 @@ const ExerciseSchema = new mongoose.Schema({
     enum: ['beginner', 'intermediate', 'advanced'],
     default: 'beginner'
   },
-  tags: [String],
+  tags: {
+    type: [String],
+    default: [],
+    validate: {
+      validator: function(tags) {
+        return tags.every(tag => typeof tag === 'string' && tag.length > 0);
+      },
+      message: 'Tags must be non-empty strings'
+    }
+  },
   timeLimit: {
-    type: Number, // in minutes
-    default: 5
+    type: Number,
+    default: 5,
+    min: 1,
+    max: 60
   },
   attempts: {
     type: Number,
-    default: 0
+    default: 0,
+    min: 0
   },
   successRate: {
     type: Number,
-    default: 0
+    default: 0,
+    min: 0,
+    max: 100
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// Add index for type and difficulty
+ExerciseSchema.index({ type: 1, difficulty: 1 });
+ExerciseSchema.index({ tags: 1 });
+
+// Virtual for calculating success rate
+ExerciseSchema.virtual('calculatedSuccessRate').get(function() {
+  return this.attempts > 0 ? (this.successRate / this.attempts) * 100 : 0;
 });
 
 // Example exercises for each type

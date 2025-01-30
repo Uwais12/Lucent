@@ -24,23 +24,103 @@ const ExerciseSchema = new mongoose.Schema({
 
 // Schema for end-of-lesson quizzes
 const QuizSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String },
-  questions: [
-    {
-      type: {
-        type: String,
-        enum: ["multiple-choice", "true-false", "short-answer"],
-        required: true,
-      },
-      question: { type: String, required: true },
-      options: [String], // For multiple choice
-      correctAnswer: { type: String, required: true },
-      points: { type: Number, default: 10 },
+  title: { 
+    type: String, 
+    required: true,
+    trim: true,
+    maxlength: 200
+  },
+  description: { 
+    type: String,
+    trim: true,
+    maxlength: 1000
+  },
+  questions: [{
+    type: {
+      type: String,
+      enum: ["multiple-choice", "true-false", "short-answer"],
+      required: true,
     },
-  ],
-  passingScore: { type: Number, default: 70 }, // percentage
-  duration: { type: Number, required: true }, // in minutes
+    question: { 
+      type: String, 
+      required: true,
+      trim: true,
+      maxlength: 1000
+    },
+    options: {
+      type: [String],
+      validate: {
+        validator: function(options) {
+          // Only validate options for multiple-choice questions
+          if (this.type === 'multiple-choice') {
+            return options && options.length >= 2 && options.every(opt => typeof opt === 'string' && opt.trim().length > 0);
+          }
+          return true;
+        },
+        message: 'Multiple choice questions must have at least 2 valid options'
+      }
+    },
+    correctAnswer: { 
+      type: String, 
+      required: true,
+      validate: {
+        validator: function(answer) {
+          if (this.type === 'multiple-choice') {
+            return this.options.includes(answer);
+          }
+          if (this.type === 'true-false') {
+            return ['true', 'false'].includes(answer.toLowerCase());
+          }
+          return typeof answer === 'string' && answer.trim().length > 0;
+        },
+        message: 'Invalid correct answer for question type'
+      }
+    },
+    points: { 
+      type: Number, 
+      default: 10,
+      min: 1,
+      max: 100
+    },
+    explanation: {
+      type: String,
+      trim: true,
+      maxlength: 1000
+    }
+  }],
+  passingScore: { 
+    type: Number, 
+    default: 70,
+    min: 0,
+    max: 100
+  },
+  duration: { 
+    type: Number, 
+    required: true,
+    min: 1,
+    max: 180
+  },
+  attempts: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  averageScore: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100
+  }
+});
+
+// Add validation for minimum number of questions
+QuizSchema.path('questions').validate(function(questions) {
+  return questions && questions.length > 0;
+}, 'Quiz must have at least one question');
+
+// Virtual for total points
+QuizSchema.virtual('totalPoints').get(function() {
+  return this.questions.reduce((sum, q) => sum + (q.points || 10), 0);
 });
 
 // Schema for lesson parts

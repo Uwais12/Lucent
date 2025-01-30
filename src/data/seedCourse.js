@@ -23,7 +23,7 @@ export const ddiaCourse = {
           slug: "analytical-vs-operational-systems",
           description:
             "Explore the differences between analytical and operational systems, including their data models, workloads, and query patterns. Learn how these systems are used in modern enterprises to support both transactional and analytical operations.",
-          order: 2,
+          order: 1,
           duration: 90,
           parts: [
             {
@@ -44,6 +44,8 @@ export const ddiaCourse = {
                 type: "drag-and-drop",
                 title: "Match System Characteristics",
                 description: "Match each system type with its characteristics",
+                points: 10,
+                difficulty: "beginner",
                 content: {
                   items: [
                     { id: 1, text: "Real-time Processing" },
@@ -59,7 +61,7 @@ export const ddiaCourse = {
                   ],
                   correctPairs: [[1, 1], [2, 2], [3, 3], [4, 4]]
                 }
-              },
+              }
             },
             {
               title: "Characterizing Transaction Processing and Analytics",
@@ -85,6 +87,8 @@ export const ddiaCourse = {
                 type: "fill-in-blanks",
                 title: "Complete the System Characteristics",
                 description: "Fill in the blanks to complete the statements about OLTP and OLAP systems",
+                points: 15,
+                difficulty: "intermediate",
                 content: {
                   text: "In [1] systems, data is typically accessed through [2] queries, while [3] systems process [4] amounts of data through aggregation.",
                   blanks: [
@@ -94,134 +98,60 @@ export const ddiaCourse = {
                     { id: "4", answer: "large", hint: "Volume of data processed in analytical systems" }
                   ]
                 }
-              },
-            },
-            {
-              title: "Data Warehousing",
-              content: `
-                **Data warehouses** are designed to handle analytical queries efficiently. They often store data that has been extracted from operational systems and transformed to be more suitable for analysis.
-        
-                Key features of data warehouses:
-                - They store large volumes of historical data.
-                - They support complex queries that aggregate or summarize data.
-                - They often use columnar storage formats to optimize query performance.
-        
-                Examples of data warehousing technologies include Amazon Redshift, Google BigQuery, and Snowflake.
-              `,
-              order: 3,
-              duration: 20,
-              exercise: {
-                type: "multiple-choice",
-                title: "Data Warehouse Concepts",
-                description: "Test your understanding of data warehousing concepts",
-                content: {
-                  question: "Which of the following is NOT a typical characteristic of a data warehouse?",
-                  options: [
-                    "Real-time transaction processing",
-                    "Historical data storage",
-                    "Complex aggregation queries",
-                    "Columnar storage format"
-                  ],
-                  correctAnswer: "Real-time transaction processing",
-                  explanation: "Data warehouses are designed for analytical processing and typically don't handle real-time transactions, which is a characteristic of OLTP systems."
-                }
-              },
-            },
-            {
-              title: "Systems of Record and Derived Data",
-              content: `
-                Operational systems often act as **systems of record**, meaning they hold the source of truth for an organization's data. However, this data is frequently transformed to create **derived data** that serves specific analytical purposes.
-        
-                Derived data may include:
-                - Aggregated data, such as monthly sales totals.
-                - Materialized views that precompute expensive query results.
-                - Machine learning models trained on historical data.
-        
-                While derived data can improve query performance and support advanced analytics, it comes with trade-offs, such as the need for data synchronization and potential staleness.
-              `,
-              order: 4,
-              duration: 25,
-              exercise: {
-                type: "code-challenge",
-                title: "Implement a Data Transformation",
-                description: "Write a function to transform operational data into an analytical format",
-                content: {
-                  instructions: "Create a function that takes an array of transaction records and returns aggregated daily totals",
-                  initialCode: `function aggregateTransactions(transactions) {
-  // Your code here
-  // transactions is an array of objects with { date, amount } properties
-  // Return an object with dates as keys and total amounts as values
-}`,
-                  testCases: [
-                    {
-                      input: [[
-                        { date: "2024-03-01", amount: 100 },
-                        { date: "2024-03-01", amount: 200 },
-                        { date: "2024-03-02", amount: 150 }
-                      ]],
-                      expectedOutput: {
-                        "2024-03-01": 300,
-                        "2024-03-02": 150
-                      },
-                      description: "Should correctly aggregate transactions by date"
-                    }
-                  ],
-                  hints: [
-                    "Use reduce() to group transactions by date",
-                    "Remember to initialize accumulator values for new dates"
-                  ],
-                  solution: `function aggregateTransactions(transactions) {
-  return transactions.reduce((acc, {date, amount}) => {
-    acc[date] = (acc[date] || 0) + amount;
-    return acc;
-  }, {});
-}`
-                }
-              },
-            },
+              }
+            }
           ],
           endOfLessonQuiz: {
             title: "Analytical vs Operational Systems Quiz",
-            description:
-              "Test your knowledge of analytical and operational systems.",
+            description: "Test your knowledge of analytical and operational systems",
             duration: 20,
             passingScore: 70,
             questions: [
               {
                 type: "multiple-choice",
-                question:
-                  "Which system is optimized for point queries on individual records?",
-                options: ["Operational system", "Analytical system"],
+                question: "Which system is optimized for point queries on individual records?",
+                options: [
+                  "Operational system",
+                  "Analytical system",
+                  "Hybrid system",
+                  "None of the above"
+                ],
                 correctAnswer: "Operational system",
                 points: 10,
+                explanation: "Operational systems (OLTP) are optimized for point queries that access individual records quickly."
               },
               {
-                type: "short-answer",
-                question:
-                  "Name two key differences between OLTP and OLAP systems.",
-                correctAnswer:
-                  "OLTP focuses on point queries and real-time updates, while OLAP performs large-scale scans and aggregates over historical data.",
-                points: 15,
-              },
-            ],
-          },
-        },
+                type: "true-false",
+                question: "Analytical systems typically process larger datasets than operational systems.",
+                correctAnswer: "true",
+                points: 10,
+                explanation: "Analytical systems (OLAP) are designed to process large datasets for analysis and reporting."
+              }
+            ]
+          }
+        }
       ],
       endOfChapterQuiz: {
         title: "Chapter 1 Final Quiz",
-        description: "Comprehensive test of Chapter 1",
+        description: "Comprehensive test of data-intensive applications concepts",
         duration: 30,
         passingScore: 75,
         questions: [
           {
             type: "multiple-choice",
-            question: "Sample question for Chapter 1",
-            options: ["Option 1", "Option 2", "Option 3"],
-            correctAnswer: "Option 1",
+            question: "What is the primary characteristic of an operational system?",
+            options: [
+              "Real-time transaction processing",
+              "Complex analytical queries",
+              "Historical data analysis",
+              "Batch processing"
+            ],
+            correctAnswer: "Real-time transaction processing",
             points: 10,
-          },
-        ],
-      },
+            explanation: "Operational systems are designed for real-time transaction processing with low latency."
+          }
+        ]
+      }
     },
     {
       title: "Data Models and Query Languages",
@@ -248,17 +178,20 @@ export const ddiaCourse = {
                 type: "multiple-choice",
                 title: "NoSQL Understanding",
                 description: "Test your understanding of NoSQL fundamentals",
+                points: 10,
+                difficulty: "beginner",
                 content: {
                   question: "What does NoSQL commonly mean today?",
                   options: [
                     "No SQL Allowed",
                     "Not Only SQL",
                     "New SQL",
-                    "No Scalability Quotient Limits",
+                    "No Scalability Quotient Limits"
                   ],
                   correctAnswer: "Not Only SQL",
-                },
-              },
+                  explanation: "NoSQL stands for 'Not Only SQL', indicating that these databases can work alongside traditional SQL databases."
+                }
+              }
             },
             {
               title: "The Object-Relational Mismatch",
@@ -270,30 +203,26 @@ export const ddiaCourse = {
               exercise: {
                 type: "drag-and-drop",
                 title: "Map Objects to Relations",
-                description:
-                  "Match object-oriented concepts with their relational database implementations",
+                description: "Match object-oriented concepts with their relational database implementations",
+                points: 15,
+                difficulty: "intermediate",
                 content: {
                   items: [
                     { id: 1, text: "Object References" },
                     { id: 2, text: "Arrays/Lists" },
                     { id: 3, text: "Inheritance" },
-                    { id: 4, text: "Object Properties" },
+                    { id: 4, text: "Object Properties" }
                   ],
                   targets: [
                     { id: 1, text: "Foreign Keys" },
                     { id: 2, text: "Join Tables" },
                     { id: 3, text: "Table per Class/Single Table" },
-                    { id: 4, text: "Table Columns" },
+                    { id: 4, text: "Table Columns" }
                   ],
-                  correctPairs: [
-                    [1, 1],
-                    [2, 2],
-                    [3, 3],
-                    [4, 4],
-                  ],
-                },
-              },
-            },
+                  correctPairs: [[1, 1], [2, 2], [3, 3], [4, 4]]
+                }
+              }
+            }
           ],
           endOfLessonQuiz: {
             title: "Relational vs Document Models Quiz",
@@ -301,26 +230,25 @@ export const ddiaCourse = {
             questions: [
               {
                 type: "multiple-choice",
-                question:
-                  "What is the main advantage of using normalized data with many-to-one relationships?",
+                question: "What is the main advantage of using normalized data with many-to-one relationships?",
                 options: [
                   "It saves storage space",
                   "It ensures consistency when updating values",
-                  "It makes queries faster",
+                  "It makes queries faster"
                 ],
                 correctAnswer: "It ensures consistency when updating values",
                 points: 10,
-              },
+                explanation: "Normalized data ensures that when a value needs to be updated, it only needs to be changed in one place."
+              }
             ],
             duration: 15,
-            passingScore: 70,
-          },
+            passingScore: 70
+          }
         },
         {
           title: "Query Languages for Data",
           slug: "query-languages-for-data",
-          description:
-            "Understanding different query languages and their use cases",
+          description: "Understanding different query languages and their use cases",
           order: 2,
           duration: 45,
           parts: [
@@ -333,14 +261,21 @@ export const ddiaCourse = {
                 type: "multiple-choice",
                 title: "Query Languages Quiz",
                 description: "Test your understanding of query languages",
+                points: 10,
+                difficulty: "intermediate",
                 content: {
-                  question:
-                    "What is the main advantage of declarative query languages?",
-                  options: ["Option 1", "Option 2", "Option 3", "Option 4"],
-                  correctAnswer: 1,
-                },
-              },
-            },
+                  question: "What is the main advantage of declarative query languages?",
+                  options: [
+                    "They specify what data you want, not how to get it",
+                    "They are faster to execute",
+                    "They use less memory",
+                    "They are easier to debug"
+                  ],
+                  correctAnswer: "They specify what data you want, not how to get it",
+                  explanation: "Declarative languages allow you to specify the result you want, leaving the database system to determine the best way to execute the query."
+                }
+              }
+            }
           ],
           endOfLessonQuiz: {
             title: "Query Languages Quiz",
@@ -353,10 +288,11 @@ export const ddiaCourse = {
                 question: "SQL is a declarative query language.",
                 correctAnswer: "true",
                 points: 10,
-              },
-            ],
-          },
-        },
+                explanation: "SQL is indeed a declarative language as it describes what data you want rather than how to get it."
+              }
+            ]
+          }
+        }
       ],
       endOfChapterQuiz: {
         title: "Chapter 2 Final Quiz",
@@ -366,14 +302,14 @@ export const ddiaCourse = {
         questions: [
           {
             type: "multiple-choice",
-            question:
-              "Which data model is most suitable for highly interconnected data?",
+            question: "Which data model is most suitable for highly interconnected data?",
             options: ["Relational", "Graph", "Document"],
             correctAnswer: "Graph",
             points: 10,
-          },
-        ],
-      },
+            explanation: "Graph databases are specifically designed to handle highly interconnected data with complex relationships."
+          }
+        ]
+      }
     },
   ],
   prerequisites: [
@@ -402,16 +338,17 @@ export const ddiaCourse = {
     questions: [
       {
         type: "multiple-choice",
-        question:
-          "What is the primary advantage of document databases over relational databases?",
+        question: "What is the primary advantage of document databases over relational databases?",
         options: [
           "Better schema flexibility",
           "Stronger consistency guarantees",
           "More efficient joins",
+          "Lower storage requirements"
         ],
         correctAnswer: "Better schema flexibility",
         points: 20,
-      },
-    ],
+        explanation: "Document databases offer better schema flexibility as they don't require a predefined schema structure."
+      }
+    ]
   },
 };

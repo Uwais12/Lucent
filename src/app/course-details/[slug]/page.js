@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import {
   BookOpen,
@@ -17,13 +18,19 @@ import {
   GraduationCap,
   Star,
 } from "lucide-react";
-import Navbar from "../../components/Navbar";
+import Navbar from "@/app/components/Navbar";
+import Dialog from "@/components/Dialog";
 
 export default function CourseDetails() {
   const params = useParams();
+  const router = useRouter();
+  const { user, isLoaded } = useUser();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
+  const [enrolling, setEnrolling] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -32,8 +39,16 @@ export default function CourseDetails() {
         const data = await response.json();
 
         if (response.ok) {
-          console.log(data);
           setCourse(data);
+          // Check if user is enrolled
+          if (isLoaded && user) {
+            const userResponse = await fetch("/api/profile");
+            const userData = await userResponse.json();
+            const enrolled = userData.progress?.courses?.some(
+              (c) => c.courseId === data._id
+            );
+            setIsEnrolled(enrolled);
+          }
         } else {
           setError(data.error || "Failed to load course");
         }
@@ -44,8 +59,47 @@ export default function CourseDetails() {
       }
     };
 
-    fetchCourse();
-  }, [params.slug]);
+    if (params.slug) {
+      fetchCourse();
+    }
+  }, [params.slug, isLoaded, user]);
+
+  const handleEnrollClick = () => {
+    if (!isLoaded || !user) {
+      router.push("/sign-in");
+      return;
+    }
+    setIsEnrollDialogOpen(true);
+  };
+
+  const handleEnrollConfirm = async () => {
+    try {
+      setEnrolling(true);
+      const response = await fetch("/api/courses/enroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseId: course._id }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsEnrolled(true);
+        // Update enrolled count in UI
+        setCourse((prev) => ({
+          ...prev,
+          enrolledCount: prev.enrolledCount + 1,
+        }));
+      } else {
+        setError(data.error || "Failed to enroll in course");
+      }
+    } catch (err) {
+      setError("Failed to enroll in course");
+    } finally {
+      setEnrolling(false);
+      setIsEnrollDialogOpen(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -91,9 +145,27 @@ export default function CourseDetails() {
                 </p>
               </div>
               <div>
-                <button className="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-200 flex items-center gap-2 shadow-md shadow-violet-200">
-                  <PlayCircle className="w-5 h-5" />
-                  Start Learning
+                <button
+                  onClick={handleEnrollClick}
+                  className={`px-6 py-3 bg-gradient-to-r ${
+                    isEnrolled
+                      ? "from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+                      : "from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
+                  } text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-md shadow-violet-200`}
+                  disabled={enrolling}
+                >
+                  {enrolling ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white" />
+                  ) : (
+                    <>
+                      {isEnrolled ? (
+                        <CheckCircle className="w-5 h-5" />
+                      ) : (
+                        <PlayCircle className="w-5 h-5" />
+                      )}
+                      {isEnrolled ? "Enrolled" : "Start Learning"}
+                    </>
+                  )}
                 </button>
               </div>
             </div>
@@ -308,6 +380,50 @@ export default function CourseDetails() {
           </div>
         </div>
       </main>
+
+      {/* Enrollment Dialog */}
+      <Dialog
+        isOpen={isEnrollDialogOpen}
+        onClose={() => setIsEnrollDialogOpen(false)}
+        title="Enroll in Course"
+      >
+        <div className="p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Ready to start learning?
+          </h3>
+          <div className="space-y-4 text-gray-600">
+            <p>You&apos;re about to enroll in <strong>{course?.title}</strong>.</p>
+            <p>Here&apos;s what you need to know:</p>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>You can only complete one lesson per day</li>
+              <li>Each lesson includes interactive exercises and a mini quiz</li>
+              <li>There will be a comprehensive course quiz at the end</li>
+              <li>Upon completion, you&apos;ll earn:
+                <ul className="list-disc pl-5 mt-2">
+                  <li>XP points for your progress</li>
+                  <li>Gems for completing exercises and quizzes</li>
+                  <li>A &quot;{course?.title}&quot; badge for your profile</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div className="mt-6 flex justify-end gap-3">
+            <button
+              onClick={() => setIsEnrollDialogOpen(false)}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleEnrollConfirm}
+              disabled={enrolling}
+              className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50"
+            >
+              {enrolling ? "Enrolling..." : "Confirm Enrollment"}
+            </button>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 }
