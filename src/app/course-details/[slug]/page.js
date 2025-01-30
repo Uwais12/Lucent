@@ -146,7 +146,7 @@ export default function CourseDetails() {
               </div>
               <div>
                 <button
-                  onClick={handleEnrollClick}
+                  onClick={isEnrolled ? () => router.push(`/course/${course._id}/lessons/${course.currentLesson || 1}`) : handleEnrollClick}
                   className={`px-6 py-3 bg-gradient-to-r ${
                     isEnrolled
                       ? "from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
@@ -159,11 +159,11 @@ export default function CourseDetails() {
                   ) : (
                     <>
                       {isEnrolled ? (
-                        <CheckCircle className="w-5 h-5" />
+                        <PlayCircle className="w-5 h-5" />
                       ) : (
                         <PlayCircle className="w-5 h-5" />
                       )}
-                      {isEnrolled ? "Enrolled" : "Start Learning"}
+                      {isEnrolled ? "Continue Learning" : "Start Learning"}
                     </>
                   )}
                 </button>
@@ -262,12 +262,21 @@ export default function CourseDetails() {
                         {chapter.lessons.map((lesson, lessonIndex) => (
                           <Link
                             key={lessonIndex}
-                            href={`/lesson/${lesson.slug}`}
+                            href={isEnrolled ? `/lesson/${lesson.slug}` : '#'}
+                            onClick={!isEnrolled ? handleEnrollClick : undefined}
                             className="block"
                           >
                             <div className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors cursor-pointer">
                               <div className="flex items-center gap-3">
-                                <Lock className="w-5 h-5 text-gray-400" />
+                                {isEnrolled ? (
+                                  lesson.completed ? (
+                                    <CheckCircle className="w-5 h-5 text-emerald-500" />
+                                  ) : (
+                                    <PlayCircle className="w-5 h-5 text-violet-600" />
+                                  )
+                                ) : (
+                                  <Lock className="w-5 h-5 text-gray-400" />
+                                )}
                                 <div>
                                   <span className="text-gray-900">
                                     {lesson.title}
@@ -281,7 +290,9 @@ export default function CourseDetails() {
                                 <span className="text-sm text-gray-500">
                                   {lesson.duration} min
                                 </span>
-                                <PlayCircle className="w-5 h-5 text-violet-600" />
+                                {isEnrolled && (
+                                  <PlayCircle className="w-5 h-5 text-violet-600" />
+                                )}
                               </div>
                             </div>
                           </Link>

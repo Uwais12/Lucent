@@ -13,6 +13,7 @@ import {
   Target,
   Clock,
   ArrowRight,
+  PlayCircle,
 } from "lucide-react";
 
 import Navbar from "./components/Navbar";
@@ -233,6 +234,20 @@ export default function Home() {
                       <span>Certificate</span>
                     </div>
                     <div className="mt-auto pt-6 space-y-4">
+                      {course.isEnrolled && (
+                        <div className="space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Progress</span>
+                            <span className="text-violet-600 font-medium">{course.progress || 0}%</span>
+                          </div>
+                          <div className="h-2 bg-violet-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"
+                              style={{ width: `${course.progress || 0}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between">
                         <Link
                           href={`/course-details/${course.slug}`}
@@ -242,11 +257,27 @@ export default function Home() {
                         </Link>
                         <button
                           onClick={() =>
-                            router.push(`/course-details/${course.slug}`)
+                            router.push(course.isEnrolled 
+                              ? `/course/${course._id}/lessons/${course.currentLesson || 1}`
+                              : `/course-details/${course.slug}`)
                           }
-                          className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors"
+                          className={`px-4 py-2 ${
+                            course.isEnrolled
+                              ? "bg-emerald-600 hover:bg-emerald-700"
+                              : "bg-violet-600 hover:bg-violet-700"
+                          } text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2`}
                         >
-                          Start Learning
+                          {course.isEnrolled ? (
+                            <>
+                              <PlayCircle className="w-4 h-4" />
+                              Continue Learning
+                            </>
+                          ) : (
+                            <>
+                              <PlayCircle className="w-4 h-4" />
+                              Start Learning
+                            </>
+                          )}
                         </button>
                       </div>
                     </div>

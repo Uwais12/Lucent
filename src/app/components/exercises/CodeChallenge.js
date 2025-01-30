@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
 
 export default function CodeChallenge({ exercise, onComplete }) {
@@ -6,10 +6,36 @@ export default function CodeChallenge({ exercise, onComplete }) {
   const [output, setOutput] = useState(null);
   const [isCorrect, setIsCorrect] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [showHint, setShowHint] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState(0);
+  const [attempts, setAttempts] = useState(0);
+  const [feedback, setFeedback] = useState('');
+  const [syntaxErrors, setSyntaxErrors] = useState([]);
+
+  const validateCode = useCallback(() => {
+    try {
+      // Basic syntax check
+      new Function(code);
+      setSyntaxErrors([]);
+      return true;
+    } catch (error) {
+      setSyntaxErrors([{
+        line: error.lineNumber || 1,
+        message: error.message
+      }]);
+      return false;
+    }
+  }, [code]);
 
   const runTests = async () => {
+    if (!validateCode()) {
+      setFeedback('Please fix the syntax errors before running the tests.');
+      return;
+    }
+
     setIsRunning(true);
     setOutput(null);
+    setAttempts(prev => prev + 1);
 
     try {
       // Create a function from the user's code
@@ -38,8 +64,17 @@ export default function CodeChallenge({ exercise, onComplete }) {
       setIsCorrect(allPassed);
       setOutput(testResults);
 
-      if (allPassed && onComplete) {
-        onComplete(exercise.points);
+      if (allPassed) {
+        setFeedback(getSuccessFeedback(attempts));
+        if (onComplete) {
+          const score = Math.max(
+            exercise.points - (hintsUsed * 2),
+            Math.floor(exercise.points * 0.6)
+          );
+          onComplete(score);
+        }
+      } else {
+        setFeedback(getIncorrectFeedback(attempts, testResults));
       }
     } catch (error) {
       setOutput([{
@@ -47,9 +82,48 @@ export default function CodeChallenge({ exercise, onComplete }) {
         error: 'Syntax error: ' + error.message,
       }]);
       setIsCorrect(false);
+      setFeedback('There was an error running your code. Check for syntax errors.');
     } finally {
       setIsRunning(false);
     }
+  };
+
+  const getSuccessFeedback = (attempts) => {
+    if (attempts === 1) return 'Perfect! All tests passed on your first try! 🎉';
+    if (attempts <= 3) return 'Great job! You got all tests passing! 🌟';
+    return 'Well done! Your persistence paid off - all tests are passing! ⭐';
+  };
+
+  const getIncorrectFeedback = (attempts, results) => {
+    const passedCount = results.filter(r => r.passed).length;
+    const totalCount = results.length;
+    const progress = Math.round((passedCount / totalCount) * 100);
+
+    const baseMessage = `Progress: ${progress}% (${passedCount}/${totalCount} tests passing). `;
+    
+    if (attempts === 1) return baseMessage + 'Keep going! Check the failed test cases for clues.';
+    if (attempts === 2) return baseMessage + 'Getting closer! Look at the patterns in the test cases.';
+    return baseMessage + 'Consider using a hint if you need help.';
+  };
+
+  const getHint = () => {
+    setHintsUsed(prev => prev + 1);
+    setShowHint(true);
+    
+    // Get a relevant hint based on the current state
+    let hint = '';
+    if (output && output.some(result => !result.passed)) {
+      const failedTest = output.find(result => !result.passed);
+      hint = `Hint: For input ${JSON.stringify(failedTest.input)}, your code returned ${
+        failedTest.error 
+          ? 'an error'
+          : JSON.stringify(failedTest.actual)
+      }. Expected: ${JSON.stringify(failedTest.expected)}`;
+    } else {
+      hint = exercise.content.hints?.[hintsUsed] || 'Try breaking down the problem into smaller steps.';
+    }
+    
+    setFeedback(hint);
   };
 
   return (
@@ -77,9 +151,25 @@ export default function CodeChallenge({ exercise, onComplete }) {
               lineNumbers: 'on',
               scrollBeyondLastLine: false,
               automaticLayout: true,
+              suggest: {
+                showKeywords: true,
+                showSnippets: true,
+              },
             }}
           />
         </div>
+
+        {/* Syntax Errors */}
+        {syntaxErrors.length > 0 && (
+          <div className="space-y-2">
+            {syntaxErrors.map((error, index) => (
+              <div key={index} className="p-3 bg-red-50 text-red-700 rounded-lg">
+                <div className="font-medium">Syntax Error:</div>
+                <div className="text-sm">{error.message}</div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Test Cases */}
         <div>
@@ -88,7 +178,13 @@ export default function CodeChallenge({ exercise, onComplete }) {
             {exercise.content.testCases.map((testCase, index) => (
               <div
                 key={index}
-                className="p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm"
+                className={`p-3 border rounded-lg text-sm transition-colors ${
+                  output && output[index]
+                    ? output[index].passed
+                      ? 'bg-green-50 border-green-200'
+                      : 'bg-red-50 border-red-200'
+                    : 'bg-gray-50 border-gray-200'
+                }`}
               >
                 <div className="font-mono">
                   Input: {JSON.stringify(testCase.input)}
@@ -114,29 +210,48 @@ export default function CodeChallenge({ exercise, onComplete }) {
           </div>
         </div>
 
-        {/* Run Button */}
-        <div>
-          <button
-            onClick={runTests}
-            disabled={isRunning}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              isRunning
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-violet-600 text-white hover:bg-violet-700'
-            }`}
-          >
-            {isRunning ? 'Running Tests...' : 'Run Tests'}
-          </button>
-
-          {isCorrect !== null && (
-            <div
-              className={`mt-4 p-3 rounded-lg ${
-                isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+        {/* Actions */}
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-4">
+            <button
+              onClick={runTests}
+              disabled={isRunning}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                isRunning
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-violet-600 text-white hover:bg-violet-700'
               }`}
             >
-              {isCorrect
-                ? 'All tests passed! Great job!'
-                : 'Some tests failed. Check the output and try again.'}
+              {isRunning ? 'Running Tests...' : 'Run Tests'}
+            </button>
+
+            <button
+              onClick={getHint}
+              disabled={isCorrect || hintsUsed >= 3}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                isCorrect || hintsUsed >= 3
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'border border-violet-300 text-violet-700 hover:bg-violet-50'
+              }`}
+            >
+              {hintsUsed >= 3 ? 'No More Hints' : 'Get Hint'}
+              {hintsUsed > 0 && hintsUsed < 3 && ` (${3 - hintsUsed} left)`}
+            </button>
+          </div>
+
+          {feedback && (
+            <div
+              className={`p-3 rounded-lg ${
+                isCorrect ? 'bg-green-100 text-green-700' : 'bg-amber-50 text-amber-700'
+              }`}
+            >
+              {feedback}
+            </div>
+          )}
+
+          {hintsUsed > 0 && (
+            <div className="text-sm text-gray-500">
+              Note: Using hints reduces the points earned for this exercise.
             </div>
           )}
         </div>

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "./providers"; // <-- import our client wrapper
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import DndProviderWrapper from "./components/DndProviderWrapper";
 
 // These font imports are still valid in a server component
 const geistSans = Geist({
@@ -23,11 +24,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
-        {/* Body is still server-rendered, but we wrap the children in our Providers */}
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <Providers>{children}</Providers>
+          <Providers>
+            <DndProviderWrapper>{children}</DndProviderWrapper>
+          </Providers>
         </body>
       </ClerkProvider>
     </html>

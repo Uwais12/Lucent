@@ -5,6 +5,9 @@ import { getAuth } from "@clerk/nextjs/server";
 import mongoose from "mongoose";
 
 export async function POST(req) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const { userId } = getAuth(req);
     if (!userId) {
@@ -24,29 +27,38 @@ export async function POST(req) {
 
     await connectToDatabase();
 
-    // Get the course
-    const course = await Course.findById(courseId);
+    // Get the course and user within the transaction
+    const [course, user] = await Promise.all([
+      Course.findById(courseId).session(session),
+      User.findOne({ clerkId: userId }).session(session)
+    ]);
+
     if (!course) {
+      await session.abortTransaction();
       return new Response(JSON.stringify({ error: "Course not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    // Get or create the user
-    let user = await User.findOne({ clerkId: userId });
     if (!user) {
-      user = new User({
+      // Create new user if doesn't exist
+      const newUser = new User({
         clerkId: userId,
         role: "USER",
       });
+      await newUser.save({ session });
+      user = newUser;
     }
 
-    // Check if user is already enrolled
-    const existingEnrollment = user.progress.courses.find(
-      (c) => c.courseId.toString() === courseId
-    );
+    // Check if user is already enrolled - using atomic operation
+    const existingEnrollment = await User.findOne({
+      clerkId: userId,
+      'progress.courses.courseId': courseId
+    }).session(session);
+
     if (existingEnrollment) {
+      await session.abortTransaction();
       return new Response(
         JSON.stringify({ error: "Already enrolled in this course" }),
         {
@@ -56,7 +68,7 @@ export async function POST(req) {
       );
     }
 
-    // Create course progress structure
+    // Create course progress structure with proper validation
     const courseProgress = {
       courseId,
       enrolledDate: new Date(),
@@ -75,6 +87,8 @@ export async function POST(req) {
               completed: false,
               pointsEarned: 0,
               maxPoints: part.exercise.points || 10,
+              attempts: 0,
+              maxAttempts: part.exercise.maxAttempts || 3
             })),
           quizProgress: {
             quizId: new mongoose.Types.ObjectId().toString(),
@@ -84,6 +98,8 @@ export async function POST(req) {
               (total, q) => total + (q.points || 10),
               0
             ),
+            attempts: 0,
+            maxAttempts: lesson.endOfLessonQuiz.maxAttempts || 3
           },
         })),
         endOfChapterQuiz: {
@@ -94,6 +110,8 @@ export async function POST(req) {
             (total, q) => total + (q.points || 10),
             0
           ),
+          attempts: 0,
+          maxAttempts: chapter.endOfChapterQuiz.maxAttempts || 2
         },
       })),
       endOfCourseExam: {
@@ -104,16 +122,32 @@ export async function POST(req) {
           (total, q) => total + (q.points || 10),
           0
         ),
+        attempts: 0,
+        maxAttempts: course.endOfCourseExam.maxAttempts || 1
       },
+      settings: {
+        emailNotifications: true,
+        dailyReminders: true,
+        timezone: "UTC"
+      }
     };
 
-    // Update user with new course progress
-    user.progress.courses.push(courseProgress);
-    await user.save();
+    // Update user and course atomically
+    await Promise.all([
+      User.findOneAndUpdate(
+        { clerkId: userId },
+        { $push: { 'progress.courses': courseProgress } },
+        { session }
+      ),
+      Course.findByIdAndUpdate(
+        courseId,
+        { $inc: { enrolledCount: 1 } },
+        { session }
+      )
+    ]);
 
-    // Increment course enrolled count
-    course.enrolledCount += 1;
-    await course.save();
+    // Commit the transaction
+    await session.commitTransaction();
 
     return new Response(
       JSON.stringify({
@@ -126,10 +160,13 @@ export async function POST(req) {
       }
     );
   } catch (error) {
+    await session.abortTransaction();
     console.error("Error enrolling in course:", error);
     return new Response(JSON.stringify({ error: "Failed to enroll in course" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
+  } finally {
+    session.endSession();
   }
 } 

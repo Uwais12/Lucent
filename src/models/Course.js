@@ -189,20 +189,63 @@ const LessonSchema = new mongoose.Schema({
     completed: { type: Boolean, default: false },
     lastAccessed: { type: Date },
     score: { type: Number, default: 0 },
-    exercisesCompleted: [Number] // Array of completed exercise indices
+    exercisesCompleted: [Number], // Array of completed exercise indices
+    maxAttempts: { type: Number, default: 3 }, // Maximum number of attempts for quizzes
+    currentAttempt: { type: Number, default: 0 }, // Current attempt number
+    isLocked: { type: Boolean, default: false }, // Whether the lesson is locked
+    prerequisiteLessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }] // Required lessons to unlock this one
   }
 });
 
-// Pre-save hook to generate slug from title if it's missing
-LessonSchema.pre("save", function (next) {
+// Add validation for lesson order
+LessonSchema.pre('save', function(next) {
   if (!this.slug) {
     this.slug = this.title
       .toLowerCase()
-      .replace(/[\s]/g, "-") // Replace spaces with hyphens
-      .replace(/[^\w-]/g, ""); // Remove non-alphanumeric characters
+      .replace(/[\s]/g, "-")
+      .replace(/[^\w-]/g, "");
   }
+  
+  // Ensure exercises and quizzes have proper attempt limits
+  if (this.parts) {
+    this.parts.forEach(part => {
+      if (part.exercise && !part.exercise.maxAttempts) {
+        part.exercise.maxAttempts = 3;
+      }
+    });
+  }
+  
   next();
 });
+
+// Add method to check if lesson can be accessed
+LessonSchema.methods.canAccess = async function(userId) {
+  // If it's the first lesson, always allow access
+  if (this.order === 1) return true;
+  
+  // Check if prerequisites are completed
+  if (this.progress.prerequisiteLessons && this.progress.prerequisiteLessons.length > 0) {
+    const User = mongoose.model('User');
+    const user = await User.findOne({ clerkId: userId });
+    
+    if (!user) return false;
+    
+    // Check if all prerequisite lessons are completed
+    const prereqCompleted = this.progress.prerequisiteLessons.every(lessonId => {
+      const lessonProgress = user.progress.courses
+        .find(c => c.courseId.toString() === this.courseId.toString())
+        ?.chapters
+        .flatMap(ch => ch.lessons)
+        .find(l => l.lessonId.toString() === lessonId.toString());
+      
+      return lessonProgress?.completed;
+    });
+    
+    return prereqCompleted;
+  }
+  
+  return true;
+};
 
 const ChapterSchema = new mongoose.Schema({
   title: { type: String, required: true },

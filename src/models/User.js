@@ -8,7 +8,13 @@ const QuizProgressSchema = new mongoose.Schema({
   maxScore: { type: Number, default: 0 },
   dateCompleted: { type: Date, default: null },
   attempts: { type: Number, default: 0 },
-  lastAttemptDate: { type: Date, default: null }
+  lastAttemptDate: { type: Date, default: null },
+  answers: [{
+    questionId: String,
+    answer: mongoose.Schema.Types.Mixed,
+    correct: Boolean,
+    pointsEarned: Number
+  }]
 });
 
 // Schema to track exercise progress within lesson parts
@@ -19,7 +25,14 @@ const ExerciseProgressSchema = new mongoose.Schema({
   maxPoints: { type: Number, default: 0 },
   dateCompleted: { type: Date, default: null },
   attempts: { type: Number, default: 0 },
-  lastAttemptDate: { type: Date, default: null }
+  lastAttemptDate: { type: Date, default: null },
+  submissions: [{
+    date: { type: Date, default: Date.now },
+    answer: mongoose.Schema.Types.Mixed,
+    correct: Boolean,
+    pointsEarned: Number,
+    timeSpent: Number // in seconds
+  }]
 });
 
 // Schema to track lesson progress, including exercises
@@ -31,8 +44,21 @@ const LessonProgressSchema = new mongoose.Schema({
   score: { type: Number, default: 0 },
   exercises: [ExerciseProgressSchema],
   quizProgress: QuizProgressSchema,
-  timeSpent: { type: Number, default: 0 } // in minutes
+  timeSpent: { type: Number, default: 0 }, // in minutes
+  completionPercentage: { 
+    type: Number, 
+    default: 0,
+    min: 0,
+    max: 100
+  },
+  nextAvailableDate: { type: Date, default: null } // For daily lesson limit
 });
+
+// Add method to check if lesson can be accessed
+LessonProgressSchema.methods.canAccess = function() {
+  if (!this.nextAvailableDate) return true;
+  return new Date() >= this.nextAvailableDate;
+};
 
 // Schema to track chapter progress, including lessons
 const ChapterProgressSchema = new mongoose.Schema({
@@ -42,7 +68,13 @@ const ChapterProgressSchema = new mongoose.Schema({
   lastAccessDate: { type: Date, default: null },
   lessons: [LessonProgressSchema],
   endOfChapterQuiz: QuizProgressSchema,
-  timeSpent: { type: Number, default: 0 } // in minutes
+  timeSpent: { type: Number, default: 0 }, // in minutes
+  completionPercentage: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100
+  }
 });
 
 // Schema to track overall course progress
@@ -59,27 +91,52 @@ const CourseProgressSchema = new mongoose.Schema({
   currentChapter: { type: Number, default: 0 },
   currentLesson: { type: Number, default: 0 },
   lastCompletedDate: { type: Date, default: null }, // For daily lesson tracking
+  completionPercentage: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100
+  },
   badges: [{
     type: { type: String, required: true },
     name: { type: String, required: true },
     description: { type: String },
     dateEarned: { type: Date, default: Date.now },
-    courseId: { type: String }, // Optional, for course-specific badges
-    progress: { type: Number, default: 100 } // For badges that track progress
+    courseId: { type: String },
+    progress: { type: Number, default: 100 }
   }],
   achievements: [{
     type: { type: String, required: true },
     name: { type: String, required: true },
     description: { type: String },
     dateEarned: { type: Date, default: Date.now },
-    value: { type: Number } // For achievements with numerical values
+    value: { type: Number }
   }],
   settings: {
     emailNotifications: { type: Boolean, default: true },
     dailyReminders: { type: Boolean, default: true },
-    timezone: { type: String, default: "UTC" }
+    timezone: { type: String, default: "UTC" },
+    dailyGoal: { type: Number, default: 1 }, // Number of lessons per day
+    studyReminders: [{
+      day: { type: String, enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] },
+      time: String // HH:mm format
+    }]
   }
 });
+
+// Add methods for progress calculation
+CourseProgressSchema.methods.calculateProgress = function() {
+  if (!this.chapters.length) return 0;
+  
+  const totalLessons = this.chapters.reduce((sum, chapter) => 
+    sum + chapter.lessons.length, 0);
+  
+  const completedLessons = this.chapters.reduce((sum, chapter) => 
+    sum + chapter.lessons.filter(lesson => lesson.completed).length, 0);
+  
+  this.completionPercentage = (completedLessons / totalLessons) * 100;
+  return this.completionPercentage;
+};
 
 // Main user schema with detailed progress tracking
 const UserSchema = new mongoose.Schema(
@@ -128,29 +185,9 @@ const UserSchema = new mongoose.Schema(
       type: Date,
       default: null
     },
-    badges: [{
-      type: { type: String, required: true },
-      name: { type: String, required: true },
-      description: { type: String },
-      dateEarned: { type: Date, default: Date.now },
-      courseId: { type: String }, // Optional, for course-specific badges
-      progress: { type: Number, default: 100 } // For badges that track progress
-    }],
-    achievements: [{
-      type: { type: String, required: true },
-      name: { type: String, required: true },
-      description: { type: String },
-      dateEarned: { type: Date, default: Date.now },
-      value: { type: Number } // For achievements with numerical values
-    }],
-    settings: {
-      emailNotifications: { type: Boolean, default: true },
-      dailyReminders: { type: Boolean, default: true },
-      timezone: { type: String, default: "UTC" }
-    },
     progress: {
       courses: [CourseProgressSchema],
-      totalTimeSpent: { type: Number, default: 0 }, // in minutes
+      totalTimeSpent: { type: Number, default: 0 },
       completedCourses: { type: Number, default: 0 },
       completedLessons: { type: Number, default: 0 },
       completedExercises: { type: Number, default: 0 },
@@ -158,7 +195,9 @@ const UserSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
   }
 );
 
@@ -168,31 +207,35 @@ UserSchema.pre('save', function(next) {
   next();
 });
 
-// Method to update daily streak
+// Method to update daily streak with timezone support
 UserSchema.methods.updateDailyStreak = function() {
   const now = new Date();
-  const lastActivity = this.lastDailyActivity;
+  const userTz = this.settings?.timezone || 'UTC';
+  const lastActivity = this.lastDailyActivity ? 
+    new Date(this.lastDailyActivity).toLocaleString('en-US', { timeZone: userTz }) :
+    null;
   
   if (!lastActivity) {
     this.dailyStreak = 1;
   } else {
-    const diffDays = Math.floor((now - lastActivity) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.floor((now - new Date(lastActivity)) / (1000 * 60 * 60 * 24));
     
     if (diffDays === 1) {
-      // Consecutive day
       this.dailyStreak += 1;
     } else if (diffDays > 1) {
-      // Streak broken
       this.dailyStreak = 1;
     }
-    // If diffDays === 0, same day, don't update streak
   }
   
   this.lastDailyActivity = now;
 };
 
-// Method to award badge
+// Method to award badge with validation
 UserSchema.methods.awardBadge = function(badgeData) {
+  if (!badgeData.type || !badgeData.name) {
+    throw new Error('Badge type and name are required');
+  }
+  
   const existingBadge = this.badges.find(b => b.type === badgeData.type);
   if (!existingBadge) {
     this.badges.push({
@@ -204,33 +247,43 @@ UserSchema.methods.awardBadge = function(badgeData) {
   return false;
 };
 
-// Method to update XP and level
+// Method to update XP and level with rewards
 UserSchema.methods.addXP = function(amount) {
+  if (amount <= 0) return false;
+  
+  const oldLevel = this.level;
   this.xp += amount;
   
   // Level calculation (example: each level requires 1000 XP)
   const newLevel = Math.floor(this.xp / 1000) + 1;
-  if (newLevel > this.level) {
+  if (newLevel > oldLevel) {
     this.level = newLevel;
-    return true; // Indicates level up
+    // Award level-up bonus
+    this.gems += (newLevel - oldLevel) * 50;
+    return true;
   }
   return false;
 };
 
-// Virtual for calculating completion percentage
+// Virtual for calculating overall completion percentage
 UserSchema.virtual('completionPercentage').get(function() {
   if (!this.progress.courses.length) return 0;
   
-  const completed = this.progress.courses.filter(c => c.completed).length;
-  return (completed / this.progress.courses.length) * 100;
+  const totalPercentage = this.progress.courses.reduce(
+    (sum, course) => sum + (course.completionPercentage || 0),
+    0
+  );
+  
+  return totalPercentage / this.progress.courses.length;
 });
 
-// Indexes
+// Indexes for efficient querying
 UserSchema.index({ clerkId: 1 });
 UserSchema.index({ 'progress.courses.courseId': 1 });
 UserSchema.index({ lastActivity: -1 });
 UserSchema.index({ level: -1 });
 UserSchema.index({ dailyStreak: -1 });
+UserSchema.index({ 'progress.courses.completed': 1 });
 
 const User = mongoose.models?.User || mongoose.model("User", UserSchema);
 

@@ -69,6 +69,20 @@ const ExerciseSchema = new mongoose.Schema({
     min: 1,
     max: 100
   },
+  difficulty: {
+    type: String,
+    enum: ['beginner', 'intermediate', 'advanced'],
+    required: true
+  },
+  tags: {
+    type: [String],
+    validate: {
+      validator: function(tags) {
+        return tags.every(tag => typeof tag === 'string' && tag.trim().length > 0);
+      },
+      message: 'Tags must be non-empty strings'
+    }
+  },
   content: {
     type: mongoose.Schema.Types.Mixed,
     required: true,
@@ -88,6 +102,11 @@ const ExerciseSchema = new mongoose.Schema({
                 Array.isArray(pair) && 
                 pair.length === 2 &&
                 pair.every(num => typeof num === 'number')
+              ) &&
+              // Validate that all pairs reference valid items and targets
+              content.correctPairs.every(([itemId, targetId]) =>
+                content.items.some(item => item.id === itemId) &&
+                content.targets.some(target => target.id === targetId)
               )
             );
           case 'fill-in-blanks':
@@ -97,7 +116,12 @@ const ExerciseSchema = new mongoose.Schema({
               content.blanks.length > 0 &&
               content.blanks.every(blank => 
                 blank.id && 
-                typeof blank.answer === 'string'
+                typeof blank.answer === 'string' &&
+                blank.answer.trim().length > 0
+              ) &&
+              // Validate that all blank IDs are referenced in the text
+              content.blanks.every(blank => 
+                content.text.includes(`[${blank.id}]`)
               )
             );
           case 'multiple-choice':
@@ -105,41 +129,29 @@ const ExerciseSchema = new mongoose.Schema({
               typeof content.question === 'string' &&
               Array.isArray(content.options) &&
               content.options.length >= 2 &&
-              content.options.every(opt => typeof opt === 'string') &&
-              content.options.includes(content.correctAnswer)
+              content.options.every(opt => typeof opt === 'string' && opt.trim().length > 0) &&
+              typeof content.correctAnswer === 'string' &&
+              content.options.includes(content.correctAnswer) &&
+              (!content.explanation || typeof content.explanation === 'string')
             );
           case 'code-challenge':
             return (
               typeof content.instructions === 'string' &&
               Array.isArray(content.testCases) &&
               content.testCases.length > 0 &&
+              content.testCases.every(testCase => 
+                Array.isArray(testCase.input) &&
+                testCase.expectedOutput !== undefined &&
+                typeof testCase.description === 'string'
+              ) &&
               typeof content.solution === 'string' &&
-              content.testCases.every(test => 
-                Array.isArray(test.input) &&
-                test.expectedOutput !== undefined &&
-                typeof test.description === 'string'
-              )
+              (!content.hints || Array.isArray(content.hints))
             );
           default:
             return false;
         }
       },
-      message: props => `Invalid content structure for exercise type: ${props.value.type}`
-    }
-  },
-  difficulty: {
-    type: String,
-    enum: ['beginner', 'intermediate', 'advanced'],
-    default: 'beginner'
-  },
-  tags: {
-    type: [String],
-    default: [],
-    validate: {
-      validator: function(tags) {
-        return tags.every(tag => typeof tag === 'string' && tag.length > 0);
-      },
-      message: 'Tags must be non-empty strings'
+      message: 'Invalid exercise content structure'
     }
   },
   timeLimit: {
@@ -147,6 +159,11 @@ const ExerciseSchema = new mongoose.Schema({
     default: 5,
     min: 1,
     max: 60
+  },
+  maxAttempts: {
+    type: Number,
+    default: 3,
+    min: 1
   },
   attempts: {
     type: Number,
@@ -158,21 +175,65 @@ const ExerciseSchema = new mongoose.Schema({
     default: 0,
     min: 0,
     max: 100
-  }
+  },
+  prerequisites: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Exercise'
+  }]
 }, {
   timestamps: true,
   toJSON: { virtuals: true },
   toObject: { virtuals: true }
 });
 
-// Add index for type and difficulty
+// Add indexes for efficient querying
 ExerciseSchema.index({ type: 1, difficulty: 1 });
 ExerciseSchema.index({ tags: 1 });
+ExerciseSchema.index({ 'content.question': 'text' }, { 
+  weights: {
+    'content.question': 10,
+    title: 5,
+    description: 3
+  }
+});
 
 // Virtual for calculating success rate
 ExerciseSchema.virtual('calculatedSuccessRate').get(function() {
   return this.attempts > 0 ? (this.successRate / this.attempts) * 100 : 0;
 });
+
+// Method to check if exercise can be attempted
+ExerciseSchema.methods.canAttempt = async function(userId) {
+  if (this.attempts >= this.maxAttempts) return false;
+  
+  // Check prerequisites if any
+  if (this.prerequisites && this.prerequisites.length > 0) {
+    const User = mongoose.model('User');
+    const user = await User.findOne({ clerkId: userId });
+    
+    if (!user) return false;
+    
+    // Check if all prerequisites are completed
+    const prereqCompleted = await Promise.all(
+      this.prerequisites.map(async (exerciseId) => {
+        const exercise = await this.model('Exercise').findById(exerciseId);
+        if (!exercise) return false;
+        
+        const exerciseProgress = user.progress.courses
+          .flatMap(c => c.chapters)
+          .flatMap(ch => ch.lessons)
+          .flatMap(l => l.exercises)
+          .find(e => e.exerciseId.toString() === exerciseId.toString());
+        
+        return exerciseProgress?.completed;
+      })
+    );
+    
+    return prereqCompleted.every(Boolean);
+  }
+  
+  return true;
+};
 
 // Example exercises for each type
 const examples = {
