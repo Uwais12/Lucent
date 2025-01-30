@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 import {
   BarChart,
@@ -65,6 +66,20 @@ export default function Home() {
         });
     }
   }, [isLoaded, isSignedIn]);
+
+  useEffect(() => {
+    const seedDatabase = async () => {
+      try {
+        const response = await fetch('/api/seed', { method: 'POST' });
+        const data = await response.json();
+        console.log(data.message);
+      } catch (error) {
+        console.error('Error seeding database:', error);
+      }
+    };
+
+    seedDatabase();
+  }, []); // Run once on component mount
 
   // --- 5) Loading + Error Handling
   if (!isLoaded || isLoading) {
@@ -350,9 +365,12 @@ export default function Home() {
                       <div className="h-px bg-gray-100"></div>
 
                       <div className="flex items-center justify-between">
-                        <button className="text-violet-600 hover:text-violet-700 text-sm font-medium flex items-center gap-1">
+                        <Link 
+                          href={`/courses/${course.slug}`}
+                          className="text-violet-600 hover:text-violet-700 text-sm font-medium flex items-center gap-1"
+                        >
                           View Details
-                        </button>
+                        </Link>
                         <button className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors">
                           Start Learning
                         </button>

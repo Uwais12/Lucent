@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function LandingPage() {
   return (
@@ -289,9 +290,12 @@ export default function LandingPage() {
               <div className="aspect-[4/5] bg-gradient-to-br from-violet-100 to-fuchsia-50 rounded-lg flex items-center justify-center mb-6 relative">
                 <BookOpen className="w-16 h-16 text-violet-500" />
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="px-4 py-2 bg-white text-violet-600 rounded-lg font-medium">
+                  <Link 
+                    href="/courses/data-models-query-languages"
+                    className="px-4 py-2 bg-white text-violet-600 rounded-lg font-medium"
+                  >
                     View Course
-                  </button>
+                  </Link>
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -316,9 +320,12 @@ export default function LandingPage() {
               <div className="aspect-[4/5] bg-gradient-to-br from-emerald-100 to-teal-50 rounded-lg flex items-center justify-center mb-6 relative">
                 <BookOpen className="w-16 h-16 text-emerald-500" />
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="px-4 py-2 bg-white text-emerald-600 rounded-lg font-medium">
+                  <Link 
+                    href="/courses/clean-code"
+                    className="px-4 py-2 bg-white text-emerald-600 rounded-lg font-medium"
+                  >
                     View Course
-                  </button>
+                  </Link>
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -343,9 +350,12 @@ export default function LandingPage() {
               <div className="aspect-[4/5] bg-gradient-to-br from-amber-100 to-orange-50 rounded-lg flex items-center justify-center mb-6 relative">
                 <BookOpen className="w-16 h-16 text-amber-500" />
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="px-4 py-2 bg-white text-amber-600 rounded-lg font-medium">
-                    Coming Soon
-                  </button>
+                  <Link 
+                    href="/courses/design-patterns"
+                    className="px-4 py-2 bg-white text-amber-600 rounded-lg font-medium"
+                  >
+                    View Course
+                  </Link>
                 </div>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-2">

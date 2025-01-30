@@ -6,19 +6,42 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
+  useUser,
 } from "@clerk/nextjs";
-import { Diamond, User, BookOpen, Layout, Lightbulb, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Diamond, User, BookOpen, Layout, Lightbulb, Menu, X, Settings } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { user } = useUser();
   const xp = 2450;
   const gems = 5;
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (user?.id) {
+        try {
+          const response = await fetch('/api/profile');
+          const data = await response.json();
+          setIsAdmin(data.role === 'ADMIN');
+        } catch (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [user?.id]);
 
   const navLinks = [
     { name: "Learn", href: "/learn", icon: BookOpen },
     { name: "Dashboard", href: "/dashboard", icon: Layout },
     { name: "About", href: "/about", icon: Lightbulb },
+    ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
   ];
 
   return (
