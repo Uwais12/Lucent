@@ -41,21 +41,24 @@ export const ddiaCourse = {
               order: 1,
               duration: 10,
               exercise: {
-                type: "multiple-choice",
-                title: "Introduction Quiz",
-                description:
-                  "Test your understanding of the roles of analytical and operational systems.",
+                type: "drag-and-drop",
+                title: "Match System Characteristics",
+                description: "Match each system type with its characteristics",
                 content: {
-                  question:
-                    "Which of the following best describes an operational system?",
-                  options: [
-                    "It scans large datasets to generate reports.",
-                    "It handles real-time user interactions and updates data.",
-                    "It only stores read-only historical data.",
+                  items: [
+                    { id: 1, text: "Real-time Processing" },
+                    { id: 2, text: "Historical Analysis" },
+                    { id: 3, text: "Point Queries" },
+                    { id: 4, text: "Bulk Data Processing" }
                   ],
-                  correctAnswer:
-                    "It handles real-time user interactions and updates data.",
-                },
+                  targets: [
+                    { id: 1, text: "Operational System" },
+                    { id: 2, text: "Analytical System" },
+                    { id: 3, text: "OLTP" },
+                    { id: 4, text: "OLAP" }
+                  ],
+                  correctPairs: [[1, 1], [2, 2], [3, 3], [4, 4]]
+                }
               },
             },
             {
@@ -79,26 +82,18 @@ export const ddiaCourse = {
               order: 2,
               duration: 20,
               exercise: {
-                type: "multiple-choice",
-                title: "OLTP vs OLAP Scenarios",
-                description:
-                  "Decide which system type is appropriate for each scenario.",
+                type: "fill-in-blanks",
+                title: "Complete the System Characteristics",
+                description: "Fill in the blanks to complete the statements about OLTP and OLAP systems",
                 content: {
-                  questions: [
-                    {
-                      question:
-                        "A customer makes a purchase on an online store. Which type of system processes this transaction?",
-                      options: ["Operational system", "Analytical system"],
-                      answer: "Operational system",
-                    },
-                    {
-                      question:
-                        "A business analyst queries sales data to identify trends over the past year. Which type of system handles this query?",
-                      options: ["Operational system", "Analytical system"],
-                      answer: "Analytical system",
-                    },
-                  ],
-                },
+                  text: "In [1] systems, data is typically accessed through [2] queries, while [3] systems process [4] amounts of data through aggregation.",
+                  blanks: [
+                    { id: "1", answer: "OLTP", hint: "Type of system for transactional processing" },
+                    { id: "2", answer: "point", hint: "Type of query that accesses specific records" },
+                    { id: "3", answer: "OLAP", hint: "Type of system for analytical processing" },
+                    { id: "4", answer: "large", hint: "Volume of data processed in analytical systems" }
+                  ]
+                }
               },
             },
             {
@@ -117,15 +112,19 @@ export const ddiaCourse = {
               duration: 20,
               exercise: {
                 type: "multiple-choice",
-                title: "Data Warehousing Knowledge Check",
-                description: "Fill in the blanks with the correct terms.",
+                title: "Data Warehouse Concepts",
+                description: "Test your understanding of data warehousing concepts",
                 content: {
-                  question:
-                    "A data warehouse stores large volumes of ______ data and supports ______ queries.",
-                  template:
-                    "A data warehouse stores large volumes of ______ data and supports ______ queries.",
-                  answers: ["historical", "complex"],
-                },
+                  question: "Which of the following is NOT a typical characteristic of a data warehouse?",
+                  options: [
+                    "Real-time transaction processing",
+                    "Historical data storage",
+                    "Complex aggregation queries",
+                    "Columnar storage format"
+                  ],
+                  correctAnswer: "Real-time transaction processing",
+                  explanation: "Data warehouses are designed for analytical processing and typically don't handle real-time transactions, which is a characteristic of OLTP systems."
+                }
               },
             },
             {
@@ -143,20 +142,41 @@ export const ddiaCourse = {
               order: 4,
               duration: 25,
               exercise: {
-                type: "multiple-choice",
-                title: "Derived Data Understanding",
-                description:
-                  "Answer questions related to systems of record and derived data.",
+                type: "code-challenge",
+                title: "Implement a Data Transformation",
+                description: "Write a function to transform operational data into an analytical format",
                 content: {
-                  question:
-                    "What is one potential downside of using derived data?",
-                  options: [
-                    "Derived data is always up-to-date.",
-                    "Derived data can become stale over time.",
-                    "Derived data is slower to query than raw data.",
+                  instructions: "Create a function that takes an array of transaction records and returns aggregated daily totals",
+                  initialCode: `function aggregateTransactions(transactions) {
+  // Your code here
+  // transactions is an array of objects with { date, amount } properties
+  // Return an object with dates as keys and total amounts as values
+}`,
+                  testCases: [
+                    {
+                      input: [[
+                        { date: "2024-03-01", amount: 100 },
+                        { date: "2024-03-01", amount: 200 },
+                        { date: "2024-03-02", amount: 150 }
+                      ]],
+                      expectedOutput: {
+                        "2024-03-01": 300,
+                        "2024-03-02": 150
+                      },
+                      description: "Should correctly aggregate transactions by date"
+                    }
                   ],
-                  correctAnswer: "Derived data can become stale over time.",
-                },
+                  hints: [
+                    "Use reduce() to group transactions by date",
+                    "Remember to initialize accumulator values for new dates"
+                  ],
+                  solution: `function aggregateTransactions(transactions) {
+  return transactions.reduce((acc, {date, amount}) => {
+    acc[date] = (acc[date] || 0) + amount;
+    return acc;
+  }, {});
+}`
+                }
               },
             },
           ],

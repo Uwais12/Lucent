@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Exercise from "./Exercise";
 
 // Schema for interactive exercises within lesson parts
 const ExerciseSchema = new mongoose.Schema({
@@ -42,23 +43,74 @@ const QuizSchema = new mongoose.Schema({
   duration: { type: Number, required: true }, // in minutes
 });
 
-// Add default empty array to ensure parts are not missing
+// Schema for lesson parts
 const LessonPartSchema = new mongoose.Schema({
   title: { type: String, required: true },
   content: { type: String, required: true },
   order: { type: Number, required: true },
   duration: { type: Number, required: true }, // in minutes
-  exercise: { type: ExerciseSchema, default: null },
+  exercise: { type: mongoose.Schema.Types.Mixed }, // Using the Exercise schema structure
+  completed: { type: Boolean, default: false },
+  lastAttempt: { type: Date },
+  attempts: { type: Number, default: 0 }
 });
+
+// Add validation for exercise structure
+LessonPartSchema.path('exercise').validate(function(exercise) {
+  if (!exercise) return true; // Exercise is optional
+
+  const requiredFields = ['type', 'title', 'description', 'content'];
+  const validTypes = ['drag-and-drop', 'fill-in-blanks', 'multiple-choice', 'code-challenge'];
+  
+  // Check required fields
+  if (!requiredFields.every(field => exercise[field])) return false;
+  
+  // Check valid type
+  if (!validTypes.includes(exercise.type)) return false;
+  
+  // Validate content structure based on type
+  switch (exercise.type) {
+    case 'drag-and-drop':
+      return (
+        Array.isArray(exercise.content.items) &&
+        Array.isArray(exercise.content.targets) &&
+        Array.isArray(exercise.content.correctPairs)
+      );
+    case 'fill-in-blanks':
+      return (
+        typeof exercise.content.text === 'string' &&
+        Array.isArray(exercise.content.blanks)
+      );
+    case 'multiple-choice':
+      return (
+        typeof exercise.content.question === 'string' &&
+        Array.isArray(exercise.content.options) &&
+        typeof exercise.content.correctAnswer === 'string'
+      );
+    case 'code-challenge':
+      return (
+        typeof exercise.content.instructions === 'string' &&
+        Array.isArray(exercise.content.testCases)
+      );
+    default:
+      return false;
+  }
+}, 'Invalid exercise structure');
 
 const LessonSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  slug: { type: String, required: true, unique: true }, // Slug is required
+  slug: { type: String, required: true, unique: true },
   description: { type: String, required: true },
   order: { type: Number, required: true },
-  duration: { type: Number, required: true }, // Total duration in minutes
+  duration: { type: Number, required: true },
   parts: { type: [LessonPartSchema], default: [] },
   endOfLessonQuiz: { type: QuizSchema, required: true },
+  progress: {
+    completed: { type: Boolean, default: false },
+    lastAccessed: { type: Date },
+    score: { type: Number, default: 0 },
+    exercisesCompleted: [Number] // Array of completed exercise indices
+  }
 });
 
 // Pre-save hook to generate slug from title if it's missing
@@ -78,6 +130,11 @@ const ChapterSchema = new mongoose.Schema({
   order: { type: Number, required: true },
   lessons: { type: [LessonSchema], default: [] },
   endOfChapterQuiz: { type: QuizSchema, required: true },
+  progress: {
+    completed: { type: Boolean, default: false },
+    lastAccessed: { type: Date },
+    score: { type: Number, default: 0 }
+  }
 });
 
 const CourseSchema = new mongoose.Schema(
@@ -108,9 +165,16 @@ const CourseSchema = new mongoose.Schema(
       average: { type: Number, default: 0 },
       count: { type: Number, default: 0 },
     },
+    progress: {
+      completed: { type: Boolean, default: false },
+      lastAccessed: { type: Date },
+      score: { type: Number, default: 0 },
+      chaptersCompleted: [Number]
+    }
   },
   { timestamps: true }
 );
+
 // Indexes
 CourseSchema.index({ slug: 1 });
 CourseSchema.index({ tags: 1 });

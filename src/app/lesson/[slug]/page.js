@@ -1,7 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { ChevronLeft, ChevronRight, BookOpen, Clock, Trophy } from "lucide-react";
 import Navbar from "@/app/components/Navbar";
+import ExerciseWrapper from "@/app/components/exercises/ExerciseWrapper";
+import { marked } from "marked";
 
 // Import React DnD hooks
 import { useDrag, useDrop } from "react-dnd";
@@ -61,10 +64,17 @@ function DefinitionDropZone({ definition, onDropTerm, matchedTerm }) {
   );
 }
 
-export default function Lesson() {
+export default function LessonPage() {
   const params = useParams();
+  const router = useRouter();
   const [lesson, setLesson] = useState(null);
-  const [currentPart, setCurrentPart] = useState(0);
+  const [currentPartIndex, setCurrentPartIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [progress, setProgress] = useState({
+    xp: 0,
+    completedExercises: new Set(),
+  });
 
   // DnD matching state
   const [matches, setMatches] = useState({});
@@ -78,22 +88,59 @@ export default function Lesson() {
   const [feedback, setFeedback] = useState("");
 
   useEffect(() => {
-    if (params.slug) {
-      fetch(`/api/lessons/${params.slug}`)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Fetched lesson data:", data);
+    const fetchLesson = async () => {
+      try {
+        const response = await fetch(`/api/lessons/${params.slug}`);
+        const data = await response.json();
+
+        if (response.ok) {
           setLesson(data);
-        })
-        .catch((error) => console.error("Error fetching lesson:", error));
-    }
+        } else {
+          setError(data.error || 'Failed to load lesson');
+        }
+      } catch (err) {
+        setError('Failed to load lesson');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLesson();
   }, [params.slug]);
 
-  if (!lesson || !lesson.parts) {
-    return <p className="text-center mt-6">Loading lesson...</p>;
+  const handleExerciseComplete = (points) => {
+    setProgress(prev => ({
+      xp: prev.xp + points,
+      completedExercises: new Set([...prev.completedExercises, currentPartIndex]),
+    }));
+  };
+
+  const navigateToPart = (index) => {
+    if (index >= 0 && index < lesson.parts.length) {
+      setCurrentPartIndex(index);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-secondary">Loading lesson...</p>
+        </div>
+      </div>
+    );
   }
 
-  const part = lesson.parts[currentPart];
+  if (error) {
+    return <div className="text-center mt-6 text-red-500">{error}</div>;
+  }
+
+  if (!lesson) {
+    return <div className="text-center mt-6">Lesson not found</div>;
+  }
+
+  const currentPart = lesson.parts[currentPartIndex];
 
   /* -------------------------------------------
    * Interaction Handlers
@@ -166,70 +213,87 @@ export default function Lesson() {
       <div className="color-bar w-full fixed top-16 left-0"></div>
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Page Header */}
-          <div className="mb-12">
-            <h1 className="text-4xl font-bold mb-2 text-foreground">
-              {lesson.title}
-            </h1>
-            <div className="accent-bar"></div>
-            <p className="text-xl text-secondary">
-              Part {currentPart + 1}: {part.title}
-            </p>
-          </div>
-
-          {/* Card with Part Content & Interactions */}
-          <div className="card p-8 mb-8">
-            <p className="text-secondary whitespace-pre-line mb-4">
-              {part.content}
-            </p>
-
-            {/* Display exercise if available */}
-            {part.exercise && (
-              <div className="mt-6 p-4 bg-card-background rounded colorful-border">
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {part.exercise.title}
-                </h3>
-                <p className="text-secondary mb-4">
-                  {part.exercise.description}
-                </p>
-                {/* Add more logic to handle different exercise types here */}
-              </div>
-            )}
-          </div>
-
-          {/* FEEDBACK MESSAGE */}
-          {feedback && (
-            <div className="p-4 mb-4 rounded bg-green-100 border border-green-300 text-green-700">
-              <p>{feedback}</p>
+        <div className="max-w-4xl mx-auto">
+          {/* Lesson Header */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 text-sm text-violet-600 mb-4">
+              <span>{lesson.chapterTitle}</span>
+              <ChevronRight className="w-4 h-4" />
+              <span>{lesson.title}</span>
             </div>
-          )}
 
-          {/* PART NAVIGATION */}
-          <div className="flex items-center justify-between">
-            <div>
-              {currentPart > 0 && (
-                <button
-                  onClick={() => {
-                    setFeedback("");
-                    setCurrentPart(currentPart - 1);
-                  }}
-                  className="px-6 py-2 bg-white text-blue-600 border border-blue-600 rounded hover:bg-blue-50 mr-2"
-                >
-                  Previous
-                </button>
-              )}
-              {currentPart < lesson.parts.length - 1 && (
-                <button
-                  onClick={() => {
-                    setFeedback("");
-                    setCurrentPart(currentPart + 1);
-                  }}
-                  className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Next
-                </button>
-              )}
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-gray-900">{currentPart.title}</h1>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Clock className="w-4 h-4" />
+                  <span>{currentPart.duration} min</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-violet-600">
+                  <Trophy className="w-4 h-4" />
+                  <span>{progress.xp} XP</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+              <span>Progress</span>
+              <span>{currentPartIndex + 1} of {lesson.parts.length}</span>
+            </div>
+            <div className="h-2 bg-gray-100 rounded-full">
+              <div
+                className="h-full bg-violet-600 rounded-full transition-all"
+                style={{ width: `${((currentPartIndex + 1) / lesson.parts.length) * 100}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="card p-8">
+            {/* Lesson Content */}
+            <div
+              className="prose prose-violet max-w-none mb-8"
+              dangerouslySetInnerHTML={{ __html: marked(currentPart.content) }}
+            />
+
+            {/* Exercise (if present) */}
+            {currentPart.exercise && (
+              <ExerciseWrapper
+                exercise={currentPart.exercise}
+                onComplete={handleExerciseComplete}
+              />
+            )}
+
+            {/* Navigation */}
+            <div className="flex items-center justify-between mt-8 pt-8 border-t">
+              <button
+                onClick={() => navigateToPart(currentPartIndex - 1)}
+                disabled={currentPartIndex === 0}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  currentPartIndex === 0
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-violet-600 hover:bg-violet-50'
+                }`}
+              >
+                <ChevronLeft className="w-5 h-5" />
+                Previous
+              </button>
+
+              <button
+                onClick={() => navigateToPart(currentPartIndex + 1)}
+                disabled={currentPartIndex === lesson.parts.length - 1}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                  currentPartIndex === lesson.parts.length - 1
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-violet-600 hover:bg-violet-50'
+                }`}
+              >
+                Next
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
           </div>
         </div>
