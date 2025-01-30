@@ -1,3 +1,4 @@
+// src/app/api/lessons/[slug]/route.js
 import { connectToDatabase } from "@/lib/mongodb";
 import Course from "@/models/Course";
 

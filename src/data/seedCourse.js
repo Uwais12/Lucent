@@ -19,25 +19,169 @@ export const ddiaCourse = {
       order: 1,
       lessons: [
         {
-          title: "What Makes an Application Data-Intensive?",
-          slug: "what-makes-an-application-data-intensive",
-          description: "Placeholder for Chapter 1 content",
-          order: 1,
-          duration: 30,
-          parts: [],
+          title: "Analytical vs Operational Systems",
+          slug: "analytical-vs-operational-systems",
+          description:
+            "Explore the differences between analytical and operational systems, including their data models, workloads, and query patterns. Learn how these systems are used in modern enterprises to support both transactional and analytical operations.",
+          order: 2,
+          duration: 90,
+          parts: [
+            {
+              title: "Introduction to Analytical and Operational Systems",
+              content: `
+                In a data-intensive application, systems can be categorized as either **operational** or **analytical**. These two system types have distinct roles:
+        
+                - **Operational systems** handle real-time business operations, such as processing transactions, updating records, and supporting user-facing applications.
+                - **Analytical systems** focus on extracting insights from data, often through complex queries that aggregate large amounts of historical data.
+        
+                Examples:
+                - An e-commerce website's backend service that manages user orders is an operational system.
+                - A business intelligence dashboard that generates sales performance reports is an analytical system.
+              `,
+              order: 1,
+              duration: 10,
+              exercise: {
+                type: "multiple-choice",
+                title: "Introduction Quiz",
+                description:
+                  "Test your understanding of the roles of analytical and operational systems.",
+                content: {
+                  question:
+                    "Which of the following best describes an operational system?",
+                  options: [
+                    "It scans large datasets to generate reports.",
+                    "It handles real-time user interactions and updates data.",
+                    "It only stores read-only historical data.",
+                  ],
+                  correctAnswer:
+                    "It handles real-time user interactions and updates data.",
+                },
+              },
+            },
+            {
+              title: "Characterizing Transaction Processing and Analytics",
+              content: `
+                Transaction processing and analytics have very different access patterns:
+        
+                - **Transaction processing** (often referred to as Online Transaction Processing or OLTP) involves fast, low-latency operations on small amounts of data. Examples include retrieving or updating a user's account balance.
+                - **Analytical processing** (or Online Analytical Processing, OLAP) involves querying large datasets to produce summary statistics or reports. This includes queries like "What was the total revenue last month?"
+        
+                The following table summarizes key differences:
+        
+                | Property            | Operational (OLTP)         | Analytical (OLAP)              |
+                |---------------------|-----------------------------|----------------------------------|
+                | Read pattern        | Point queries (by key)       | Scans over large data sets       |
+                | Write pattern       | Individual updates           | Bulk imports or event streams    |
+                | Human user example  | End-user application         | Business analyst dashboard       |
+                | Data type           | Current state                | Historical events                |
+                | Dataset size        | Gigabytes to terabytes       | Terabytes to petabytes           |
+              `,
+              order: 2,
+              duration: 20,
+              exercise: {
+                type: "multiple-choice",
+                title: "OLTP vs OLAP Scenarios",
+                description:
+                  "Decide which system type is appropriate for each scenario.",
+                content: {
+                  questions: [
+                    {
+                      question:
+                        "A customer makes a purchase on an online store. Which type of system processes this transaction?",
+                      options: ["Operational system", "Analytical system"],
+                      answer: "Operational system",
+                    },
+                    {
+                      question:
+                        "A business analyst queries sales data to identify trends over the past year. Which type of system handles this query?",
+                      options: ["Operational system", "Analytical system"],
+                      answer: "Analytical system",
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              title: "Data Warehousing",
+              content: `
+                **Data warehouses** are designed to handle analytical queries efficiently. They often store data that has been extracted from operational systems and transformed to be more suitable for analysis.
+        
+                Key features of data warehouses:
+                - They store large volumes of historical data.
+                - They support complex queries that aggregate or summarize data.
+                - They often use columnar storage formats to optimize query performance.
+        
+                Examples of data warehousing technologies include Amazon Redshift, Google BigQuery, and Snowflake.
+              `,
+              order: 3,
+              duration: 20,
+              exercise: {
+                type: "multiple-choice",
+                title: "Data Warehousing Knowledge Check",
+                description: "Fill in the blanks with the correct terms.",
+                content: {
+                  question:
+                    "A data warehouse stores large volumes of ______ data and supports ______ queries.",
+                  template:
+                    "A data warehouse stores large volumes of ______ data and supports ______ queries.",
+                  answers: ["historical", "complex"],
+                },
+              },
+            },
+            {
+              title: "Systems of Record and Derived Data",
+              content: `
+                Operational systems often act as **systems of record**, meaning they hold the source of truth for an organization's data. However, this data is frequently transformed to create **derived data** that serves specific analytical purposes.
+        
+                Derived data may include:
+                - Aggregated data, such as monthly sales totals.
+                - Materialized views that precompute expensive query results.
+                - Machine learning models trained on historical data.
+        
+                While derived data can improve query performance and support advanced analytics, it comes with trade-offs, such as the need for data synchronization and potential staleness.
+              `,
+              order: 4,
+              duration: 25,
+              exercise: {
+                type: "multiple-choice",
+                title: "Derived Data Understanding",
+                description:
+                  "Answer questions related to systems of record and derived data.",
+                content: {
+                  question:
+                    "What is one potential downside of using derived data?",
+                  options: [
+                    "Derived data is always up-to-date.",
+                    "Derived data can become stale over time.",
+                    "Derived data is slower to query than raw data.",
+                  ],
+                  correctAnswer: "Derived data can become stale over time.",
+                },
+              },
+            },
+          ],
           endOfLessonQuiz: {
-            title: "Chapter 1 Quiz",
+            title: "Analytical vs Operational Systems Quiz",
             description:
-              "Test your understanding of data-intensive applications",
-            duration: 15,
+              "Test your knowledge of analytical and operational systems.",
+            duration: 20,
             passingScore: 70,
             questions: [
               {
                 type: "multiple-choice",
-                question: "What is a data-intensive application?",
-                options: ["Processes a lot of data", "Option 2", "Option 3"],
-                correctAnswer: "Processes a lot of data",
+                question:
+                  "Which system is optimized for point queries on individual records?",
+                options: ["Operational system", "Analytical system"],
+                correctAnswer: "Operational system",
                 points: 10,
+              },
+              {
+                type: "short-answer",
+                question:
+                  "Name two key differences between OLTP and OLAP systems.",
+                correctAnswer:
+                  "OLTP focuses on point queries and real-time updates, while OLAP performs large-scale scans and aggregates over historical data.",
+                points: 15,
               },
             ],
           },

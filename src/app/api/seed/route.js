@@ -23,8 +23,6 @@ export async function POST() {
       return Response.json({ message: "DDIA course already exists" });
     }
   } catch (error) {
-    console.log("SEDEDDDD Fauked");
-
     console.error("Error seeding database:", error);
     return Response.json({ error: "Failed to seed database" }, { status: 500 });
   }
