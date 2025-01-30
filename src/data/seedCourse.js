@@ -102,30 +102,63 @@ export const ddiaCourse = {
             }
           ],
           endOfLessonQuiz: {
-            title: "Analytical vs Operational Systems Quiz",
-            description: "Test your knowledge of analytical and operational systems",
-            duration: 20,
+            title: "Transaction Processing and Analytics Quiz",
+            description: "Test your understanding of OLTP and OLAP systems",
+            duration: 15,
             passingScore: 70,
             questions: [
               {
                 type: "multiple-choice",
-                question: "Which system is optimized for point queries on individual records?",
+                question: "Which type of system is optimized for processing large datasets and generating reports?",
                 options: [
-                  "Operational system",
-                  "Analytical system",
-                  "Hybrid system",
-                  "None of the above"
+                  "OLTP (Online Transaction Processing)",
+                  "OLAP (Online Analytical Processing)",
+                  "Both OLTP and OLAP",
+                  "Neither OLTP nor OLAP"
                 ],
-                correctAnswer: "Operational system",
-                points: 10,
-                explanation: "Operational systems (OLTP) are optimized for point queries that access individual records quickly."
+                correctAnswer: "OLAP (Online Analytical Processing)",
+                points: 20,
+                explanation: "OLAP systems are specifically designed to handle large datasets and complex queries for reporting and analysis purposes."
               },
               {
                 type: "true-false",
-                question: "Analytical systems typically process larger datasets than operational systems.",
-                correctAnswer: "true",
-                points: 10,
-                explanation: "Analytical systems (OLAP) are designed to process large datasets for analysis and reporting."
+                question: "OLTP systems typically handle larger datasets than OLAP systems.",
+                correctAnswer: "false",
+                points: 20,
+                explanation: "OLAP systems typically handle much larger datasets (terabytes to petabytes) compared to OLTP systems (gigabytes to terabytes)."
+              },
+              {
+                type: "multiple-choice",
+                question: "What is the primary read pattern in OLTP systems?",
+                options: [
+                  "Bulk data scans",
+                  "Point queries by key",
+                  "Complex aggregations",
+                  "Random access patterns"
+                ],
+                correctAnswer: "Point queries by key",
+                points: 20,
+                explanation: "OLTP systems are optimized for point queries that retrieve specific records by their key, supporting fast transaction processing."
+              },
+              {
+                type: "multiple-choice",
+                question: "Which system would be most appropriate for a business analyst creating monthly sales reports?",
+                options: [
+                  "OLTP system",
+                  "OLAP system",
+                  "Message queue system",
+                  "Cache system"
+                ],
+                correctAnswer: "OLAP system",
+                points: 20,
+                explanation: "OLAP systems are designed for complex queries and analysis of historical data, making them ideal for generating business reports."
+              },
+              {
+                type: "true-false",
+                question: "Write operations in OLTP systems typically involve bulk updates of multiple records.",
+                correctAnswer: "false",
+                points: 20,
+                explanation: "OLTP systems typically handle individual updates to records, while bulk updates are more common in OLAP systems."
               }
             ]
           }

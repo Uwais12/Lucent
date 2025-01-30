@@ -28,10 +28,8 @@ export async function POST(req) {
     await connectToDatabase();
 
     // Get the course and user within the transaction
-    const [course, user] = await Promise.all([
-      Course.findById(courseId).session(session),
-      User.findOne({ clerkId: userId }).session(session)
-    ]);
+    const course = await Course.findById(courseId).session(session);
+    let user = await User.findOne({ clerkId: userId }).session(session);
 
     if (!course) {
       await session.abortTransaction();

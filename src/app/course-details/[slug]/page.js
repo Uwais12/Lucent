@@ -146,7 +146,14 @@ export default function CourseDetails() {
               </div>
               <div>
                 <button
-                  onClick={isEnrolled ? () => router.push(`/course/${course._id}/lessons/${course.currentLesson || 1}`) : handleEnrollClick}
+                  onClick={isEnrolled ? () => {
+                    // Find the current lesson using the progress indices
+                    const currentChapter = course.chapters[course.userProgress?.currentChapter];
+                    const currentLesson = currentChapter?.lessons[course.userProgress?.currentLesson];
+                    if (currentLesson) {
+                      router.push(`/lesson/${currentLesson.slug}`);
+                    }
+                  } : handleEnrollClick}
                   className={`px-6 py-3 bg-gradient-to-r ${
                     isEnrolled
                       ? "from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
@@ -250,141 +257,170 @@ export default function CourseDetails() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
                   Course Curriculum
                 </h2>
-                <div className="space-y-6">
-                  {course.chapters.map((chapter, chapterIndex) => (
-                    <div key={chapterIndex} className="card">
-                      <div className="p-6 border-b border-gray-100">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          Chapter {chapterIndex + 1}: {chapter.title}
-                        </h3>
-                      </div>
-                      <div className="divide-y divide-gray-100">
-                        {chapter.lessons.map((lesson, lessonIndex) => (
-                          <Link
-                            key={lessonIndex}
-                            href={isEnrolled ? `/lesson/${lesson.slug}` : '#'}
-                            onClick={!isEnrolled ? handleEnrollClick : undefined}
-                            className="block"
-                          >
-                            <div className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors cursor-pointer">
-                              <div className="flex items-center gap-3">
-                                {isEnrolled ? (
-                                  lesson.completed ? (
-                                    <CheckCircle className="w-5 h-5 text-emerald-500" />
-                                  ) : (
-                                    <PlayCircle className="w-5 h-5 text-violet-600" />
-                                  )
-                                ) : (
-                                  <Lock className="w-5 h-5 text-gray-400" />
-                                )}
-                                <div>
-                                  <span className="text-gray-900">
-                                    {lesson.title}
-                                  </span>
-                                  <div className="text-sm text-gray-500">
-                                    {lesson.description}
+                <div className="space-y-4">
+                  {course.chapters.map((chapter, chapterIndex) => {
+                    const chapterProgress = course.userProgress?.chapters?.[chapterIndex];
+                    return (
+                      <div key={chapter._id} className="card">
+                        <div className="p-6">
+                          <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              Chapter {chapterIndex + 1}: {chapter.title}
+                            </h3>
+                            {chapterProgress?.completed && (
+                              <div className="flex items-center gap-2 text-emerald-600">
+                                <CheckCircle className="w-5 h-5" />
+                                <span className="text-sm font-medium">Completed</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="space-y-3">
+                            {chapter.lessons.map((lesson, lessonIndex) => {
+                              const lessonProgress = chapterProgress?.lessons?.[lessonIndex];
+                              const isCurrentLesson = 
+                                course.userProgress?.currentChapter === chapterIndex &&
+                                course.userProgress?.currentLesson === lessonIndex;
+                              return (
+                                <Link
+                                  key={lesson._id}
+                                  href={`/lesson/${lesson.slug}`}
+                                  className={`block cursor-pointer`}
+                                >
+                                  <div
+                                    className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                                      isCurrentLesson
+                                        ? "bg-violet-50 border-violet-100"
+                                        : "hover:bg-gray-50"
+                                    } ${lessonProgress?.completed ? "border-emerald-100" : "border-gray-100"
+                                    } border`}
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <div
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                          lessonProgress?.completed
+                                            ? "bg-emerald-100"
+                                            : isCurrentLesson
+                                            ? "bg-violet-100"
+                                            : "bg-gray-100"
+                                        }`}
+                                      >
+                                        {lessonProgress?.completed ? (
+                                          <CheckCircle className="w-4 h-4 text-emerald-600" />
+                                        ) : isCurrentLesson ? (
+                                          <PlayCircle className="w-4 h-4 text-violet-600" />
+                                        ) : (
+                                          <Lock className="w-4 h-4 text-gray-400" />
+                                        )}
+                                      </div>
+                                      <div>
+                                        <h4 className="font-medium text-gray-900">
+                                          {lesson.title}
+                                        </h4>
+                                        <div className="flex items-center gap-4 mt-1">
+                                          <span className="text-sm text-gray-500 flex items-center gap-1">
+                                            <Clock className="w-4 h-4" />
+                                            {lesson.duration} min
+                                          </span>
+                                          {lesson.parts.some(part => part.exercise) && (
+                                            <span className="text-sm text-gray-500 flex items-center gap-1">
+                                              <Code className="w-4 h-4" />
+                                              Practice
+                                            </span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    {isCurrentLesson && (
+                                      <span className="text-sm font-medium text-violet-600">
+                                        Current Lesson
+                                      </span>
+                                    )}
                                   </div>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-4">
-                                <span className="text-sm text-gray-500">
-                                  {lesson.duration} min
-                                </span>
-                                {isEnrolled && (
-                                  <PlayCircle className="w-5 h-5 text-violet-600" />
-                                )}
-                              </div>
-                            </div>
-                          </Link>
-                        ))}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
-            {/* Right Column - Stats & Progress */}
+            {/* Right Column - Course Info */}
             <div className="space-y-6">
               {/* Course Stats */}
-              <div className="grid grid-cols-1 gap-4">
-                <div className="card p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
-                      <Users className="w-5 h-5 text-violet-600" />
-                    </div>
-                    <div>
-                      <div className="text-2xl font-semibold text-gray-900">
-                        {course.enrolledCount.toLocaleString()}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Students Enrolled
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="card p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                      <GraduationCap className="w-5 h-5 text-emerald-600" />
-                    </div>
-                    <div>
-                      <div className="text-2xl font-semibold text-gray-900">
-                        {course.chapters.reduce(
-                          (total, chapter) => total + chapter.lessons.length,
-                          0
-                        )}
-                      </div>
-                      <div className="text-sm text-gray-500">Total Lessons</div>
+              <div className="card p-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-violet-50 rounded-lg">
+                    <Clock className="w-6 h-6 text-violet-600 mx-auto mb-2" />
+                    <div className="text-sm text-gray-600">Duration</div>
+                    <div className="font-semibold text-gray-900">
+                      {course.chapters.reduce(
+                        (total, chapter) =>
+                          total +
+                          chapter.lessons.reduce((sum, lesson) => sum + lesson.duration, 0),
+                        0
+                      )}{" "}
+                      mins
                     </div>
                   </div>
-                </div>
-
-                <div className="card p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
-                      <Star className="w-5 h-5 text-amber-500" />
-                    </div>
-                    <div>
-                      <div className="text-2xl font-semibold text-gray-900">
-                        {course.rating.average}
-                      </div>
-                      <div className="text-sm text-gray-500">Course Rating</div>
+                  <div className="text-center p-4 bg-emerald-50 rounded-lg">
+                    <Users className="w-6 h-6 text-emerald-600 mx-auto mb-2" />
+                    <div className="text-sm text-gray-600">Enrolled</div>
+                    <div className="font-semibold text-gray-900">
+                      {course.enrolledCount || 0}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Progress Card */}
+              {/* Course Progress */}
+              {course.userProgress?.isEnrolled && (
+                <div className="card p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Your Progress
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-gray-600">Course Completion</span>
+                        <span className="text-violet-600 font-medium">
+                          {course.userProgress.completionPercentage}%
+                        </span>
+                      </div>
+                      <div className="h-2 bg-violet-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full transition-all duration-300"
+                          style={{
+                            width: `${course.userProgress.completionPercentage}%`,
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Completion Badge */}
               <div className="card p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Course Overview
+                  Completion Badge
                 </h3>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center">
-                      <Clock className="w-4 h-4 text-violet-600" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        {course.estimatedDuration} minutes
-                      </div>
-                      <div className="text-gray-500">Total Duration</div>
+                <div className="text-center">
+                  <div className="w-24 h-24 mx-auto mb-4 relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-xl transform rotate-6"></div>
+                    <div className="absolute inset-0 bg-white rounded-xl flex items-center justify-center">
+                      <Trophy className="w-12 h-12 text-violet-500" />
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-3 text-sm">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
-                      <BookOpen className="w-4 h-4 text-emerald-600" />
-                    </div>
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        {course.chapters.length} Chapters
-                      </div>
-                      <div className="text-gray-500">Course Structure</div>
-                    </div>
-                  </div>
+                  <h4 className="font-medium text-gray-900 mb-1">
+                    {course.completionBadge.name}
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    {course.completionBadge.description}
+                  </p>
                 </div>
               </div>
             </div>

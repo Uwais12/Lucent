@@ -14,27 +14,31 @@ import { useState, useEffect } from "react";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userStats, setUserStats] = useState({ xp: 0, gems: 0 });
   const { user } = useUser();
-  const xp = 2450;
-  const gems = 5;
 
   useEffect(() => {
-    const checkAdminStatus = async () => {
+    const fetchUserProfile = async () => {
       if (user?.id) {
         try {
           const response = await fetch('/api/profile');
           const data = await response.json();
           setIsAdmin(data.role === 'ADMIN');
+          setUserStats({
+            xp: data.xp || 0,
+            gems: data.gems || 0
+          });
         } catch (error) {
-          console.error('Error checking admin status:', error);
+          console.error('Error fetching user profile:', error);
           setIsAdmin(false);
         }
       } else {
         setIsAdmin(false);
+        setUserStats({ xp: 0, gems: 0 });
       }
     };
 
-    checkAdminStatus();
+    fetchUserProfile();
   }, [user?.id]);
 
   const navLinks = [
@@ -76,37 +80,39 @@ const Navbar = () => {
           {/* Right: Stats & Profile */}
           <div className="flex items-center gap-2 md:gap-6">
             {/* Stats Display */}
-            <div className="hidden md:flex items-center gap-3">
-              {/* XP Display */}
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-violet-50 rounded-lg">
-                <div className="w-6 h-6 rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-                  <Diamond className="w-3.5 h-3.5 text-white" />
+            <SignedIn>
+              <div className="hidden md:flex items-center gap-3">
+                {/* XP Display */}
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-violet-50 rounded-lg">
+                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+                    <Diamond className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <span className="text-sm font-semibold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
+                    {userStats.xp.toLocaleString()} XP
+                  </span>
                 </div>
-                <span className="text-sm font-semibold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                  {xp.toLocaleString()} XP
-                </span>
-              </div>
 
-              {/* Gems Display */}
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg">
-                <div className="w-6 h-6 rounded-md bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                  <svg 
-                    viewBox="0 0 24 24" 
-                    className="w-3.5 h-3.5 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M6 3h12l4 6-10 13L2 9z" />
-                  </svg>
+                {/* Gems Display */}
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 rounded-lg">
+                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+                    <svg 
+                      viewBox="0 0 24 24" 
+                      className="w-3.5 h-3.5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M6 3h12l4 6-10 13L2 9z" />
+                    </svg>
+                  </div>
+                  <span className="text-sm font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    {userStats.gems} Gems
+                  </span>
                 </div>
-                <span className="text-sm font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                  {gems} Gems
-                </span>
               </div>
-            </div>
+            </SignedIn>
 
             <SignedOut>
               <button className="hidden md:flex px-4 py-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg text-sm font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-200">
@@ -157,6 +163,34 @@ const Navbar = () => {
                 </Link>
               );
             })}
+            
+            {/* Mobile Stats Display */}
+            <SignedIn>
+              <div className="flex items-center gap-3 px-4 py-2.5">
+                <div className="flex items-center gap-2">
+                  <Diamond className="w-4 h-4 text-violet-600" />
+                  <span className="text-sm font-medium text-gray-700">
+                    {userStats.xp.toLocaleString()} XP
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg 
+                    viewBox="0 0 24 24" 
+                    className="w-4 h-4 text-emerald-600"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M6 3h12l4 6-10 13L2 9z" />
+                  </svg>
+                  <span className="text-sm font-medium text-gray-700">
+                    {userStats.gems} Gems
+                  </span>
+                </div>
+              </div>
+            </SignedIn>
             
             <div className="pt-2 border-t border-slate-200">
               <SignedOut>

@@ -108,17 +108,92 @@ export default function LessonPage() {
     fetchLesson();
   }, [params.slug]);
 
-  const handleExerciseComplete = (points) => {
-    setProgress(prev => ({
-      xp: prev.xp + points,
-      completedExercises: new Set([...prev.completedExercises, currentPartIndex]),
-    }));
+  const handleExerciseComplete = async (points) => {
+    try {
+      // Award XP for exercise completion
+      const response = await fetch('/api/user/xp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          xpAmount: points,
+          reason: 'Exercise completed'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProgress(prev => ({
+          xp: data.newXp,
+          completedExercises: new Set([...prev.completedExercises, currentPartIndex]),
+        }));
+      }
+    } catch (error) {
+      console.error('Error updating XP:', error);
+    }
   };
 
-  const navigateToPart = (index) => {
+  const handlePartComplete = async () => {
+    try {
+      // Award XP for completing a lesson part (50 XP per part)
+      const response = await fetch('/api/user/xp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          xpAmount: 50,
+          reason: 'Lesson part completed'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProgress(prev => ({
+          ...prev,
+          xp: data.newXp
+        }));
+      }
+    } catch (error) {
+      console.error('Error updating XP:', error);
+    }
+  };
+
+  const handleLessonComplete = async () => {
+    try {
+      // Award XP for completing the entire lesson (100 XP bonus)
+      const response = await fetch('/api/user/xp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          xpAmount: 100,
+          reason: 'Lesson completed'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProgress(prev => ({
+          ...prev,
+          xp: data.newXp
+        }));
+      }
+    } catch (error) {
+      console.error('Error updating XP:', error);
+    }
+  };
+
+  const navigateToPart = async (index) => {
     if (index >= 0 && index < lesson.parts.length) {
+      // If moving to next part, award XP for completing current part
+      if (index > currentPartIndex) {
+        await handlePartComplete();
+      }
+      
       setCurrentPartIndex(index);
     }
+  };
+
+  const startQuiz = () => {
+    // Navigate to the quiz page with the lesson slug
+    router.push(`/quiz/${lesson.slug}`);
   };
 
   if (loading) {
@@ -282,18 +357,24 @@ export default function LessonPage() {
                 Previous
               </button>
 
-              <button
-                onClick={() => navigateToPart(currentPartIndex + 1)}
-                disabled={currentPartIndex === lesson.parts.length - 1}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                  currentPartIndex === lesson.parts.length - 1
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : 'text-violet-600 hover:bg-violet-50'
-                }`}
-              >
-                Next
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              {currentPartIndex === lesson.parts.length - 1 ? (
+                <button
+                  onClick={startQuiz}
+                  className="flex items-center gap-2 px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+                >
+                  Take Quiz
+                  <Trophy className="w-5 h-5" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigateToPart(currentPartIndex + 1)}
+                  disabled={currentPartIndex === lesson.parts.length - 1}
+                  className="flex items-center gap-2 px-4 py-2 text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
+                >
+                  Next
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              )}
             </div>
           </div>
         </div>
