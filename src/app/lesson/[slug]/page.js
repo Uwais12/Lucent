@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, BookOpen, Clock, Trophy } from "lucide-react";
 import Navbar from "@/app/components/Navbar";
 import ExerciseWrapper from "@/app/components/exercises/ExerciseWrapper";
 import { marked } from "marked";
+import XPNotification from "@/app/components/XPNotification";
 
 // Import React DnD hooks
 import { useDrag, useDrop } from "react-dnd";
@@ -67,6 +68,7 @@ function DefinitionDropZone({ definition, onDropTerm, matchedTerm }) {
 export default function LessonPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [lesson, setLesson] = useState(null);
   const [currentPartIndex, setCurrentPartIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -75,6 +77,10 @@ export default function LessonPage() {
     xp: 0,
     completedExercises: new Set(),
   });
+
+  // XP Notification state
+  const [showXPNotification, setShowXPNotification] = useState(false);
+  const [xpNotificationData, setXPNotificationData] = useState(null);
 
   // DnD matching state
   const [matches, setMatches] = useState({});
@@ -86,6 +92,29 @@ export default function LessonPage() {
 
   // Feedback message
   const [feedback, setFeedback] = useState("");
+  
+  // Check for XP gain parameters
+  useEffect(() => {
+    if (searchParams.get('xpGained') || searchParams.get('quizCompleted') === 'true') {
+      const notificationData = {
+        message: searchParams.get('quizCompleted') === 'true' ? 'Quiz Completed!' : 'Experience Earned!',
+        courseId: searchParams.get('courseId'),
+        score: parseInt(searchParams.get('score') || '0'),
+        xpGained: parseInt(searchParams.get('xpGained') || '0'),
+        gemsGained: parseInt(searchParams.get('gemsGained') || '0'),
+        levelUp: searchParams.get('levelUp') === 'true',
+        completionPercentage: parseInt(searchParams.get('completionPercentage') || '0')
+      };
+      
+      setXPNotificationData(notificationData);
+      setShowXPNotification(true);
+      
+      // Clear the URL parameters after a delay
+      setTimeout(() => {
+        router.replace(`/lesson/${params.slug}`);
+      }, 500);
+    }
+  }, [searchParams, router, params.slug]);
 
   useEffect(() => {
     const fetchLesson = async () => {
@@ -315,6 +344,18 @@ export default function LessonPage() {
     <div className="min-h-screen bg-background pattern-bg">
       <Navbar />
       <div className="color-bar w-full fixed top-16 left-0"></div>
+
+      {/* XP Notification with Confetti */}
+      <XPNotification 
+        isVisible={showXPNotification}
+        onClose={() => setShowXPNotification(false)}
+        xpGained={xpNotificationData?.xpGained}
+        gemsGained={xpNotificationData?.gemsGained}
+        levelUp={xpNotificationData?.levelUp}
+        message={xpNotificationData?.message}
+        completionPercentage={xpNotificationData?.completionPercentage}
+        courseId={xpNotificationData?.courseId}
+      />
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">

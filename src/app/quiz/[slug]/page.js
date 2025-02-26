@@ -1,13 +1,15 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Trophy, ChevronLeft, Star } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
+import XPNotification from "@/app/components/XPNotification";
 
 export default function LessonQuizPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [quiz, setQuiz] = useState(null);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
@@ -16,6 +18,49 @@ export default function LessonQuizPage() {
   const [submitted, setSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
   const [isMarkingComplete, setIsMarkingComplete] = useState(false);
+  
+  // XP Notification state
+  const [showXPNotification, setShowXPNotification] = useState(false);
+  const [xpNotificationData, setXPNotificationData] = useState(null);
+  
+  // Check for XP gain parameters in URL
+  useEffect(() => {
+    if (searchParams.get('xpGained') || searchParams.get('quizCompleted') === 'true') {
+      const notificationData = {
+        message: searchParams.get('quizCompleted') === 'true' ? 'Quiz Completed!' : 'Experience Earned!',
+        courseId: searchParams.get('courseId'),
+        score: parseInt(searchParams.get('score') || '0'),
+        xpGained: parseInt(searchParams.get('xpGained') || '0'),
+        gemsGained: parseInt(searchParams.get('gemsGained') || '0'),
+        levelUp: searchParams.get('levelUp') === 'true',
+        completionPercentage: parseInt(searchParams.get('completionPercentage') || '0')
+      };
+      
+      setXPNotificationData(notificationData);
+      setShowXPNotification(true);
+      
+      // Clear the URL parameters after a delay
+      setTimeout(() => {
+        router.replace(`/quiz/${params.slug}`);
+      }, 500);
+    }
+  }, [searchParams, router, params.slug]);
+
+  // Also show XP notification when quiz is completed successfully
+  useEffect(() => {
+    if (quizResult && quizResult.xpGained > 0) {
+      setXPNotificationData({
+        message: 'Quiz Completed!',
+        courseId: quizResult.courseId,
+        score: quizResult.score,
+        xpGained: quizResult.xpGained,
+        gemsGained: quizResult.gemsGained,
+        levelUp: quizResult.levelUp,
+        completionPercentage: quizResult.completionPercentage
+      });
+      setShowXPNotification(true);
+    }
+  }, [quizResult]);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -174,6 +219,19 @@ export default function LessonQuizPage() {
     <div className="min-h-screen bg-background pattern-bg">
       <Navbar />
       <div className="color-bar w-full fixed top-16 left-0"></div>
+      
+      {/* XP Notification with Confetti */}
+      <XPNotification 
+        isVisible={showXPNotification}
+        onClose={() => setShowXPNotification(false)}
+        xpGained={xpNotificationData?.xpGained}
+        gemsGained={xpNotificationData?.gemsGained}
+        levelUp={xpNotificationData?.levelUp}
+        message={xpNotificationData?.message}
+        completionPercentage={xpNotificationData?.completionPercentage}
+        score={xpNotificationData?.score}
+        courseId={xpNotificationData?.courseId}
+      />
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">

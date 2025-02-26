@@ -17,9 +17,11 @@ import {
   CheckCircle,
   Award,
   Star,
+  Bookmark,
 } from "lucide-react";
 
 import Navbar from "./components/Navbar";
+import XPNotification from "./components/XPNotification";
 
 export default function Home() {
   const { isLoaded, isSignedIn } = useUser();
@@ -33,8 +35,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [enrollingCourseId, setEnrollingCourseId] = useState(null);
-  const [showQuizCompletionNotification, setShowQuizCompletionNotification] = useState(false);
-  const [quizCompletionData, setQuizCompletionData] = useState(null);
+  const [showXPNotification, setShowXPNotification] = useState(false);
+  const [xpNotificationData, setXPNotificationData] = useState(null);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -43,19 +45,21 @@ export default function Home() {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  // Check for quiz completion parameters
+  // Check for quiz completion or XP gain parameters
   useEffect(() => {
-    if (searchParams.get('quizCompleted') === 'true') {
-      const completionData = {
+    if (searchParams.get('quizCompleted') === 'true' || searchParams.get('xpGained')) {
+      const notificationData = {
+        message: searchParams.get('quizCompleted') === 'true' ? 'Quiz Completed!' : 'Experience Earned!',
         courseId: searchParams.get('courseId'),
         score: parseInt(searchParams.get('score') || '0'),
         xpGained: parseInt(searchParams.get('xpGained') || '0'),
+        gemsGained: parseInt(searchParams.get('gemsGained') || '0'),
         levelUp: searchParams.get('levelUp') === 'true',
         completionPercentage: parseInt(searchParams.get('completionPercentage') || '0')
       };
       
-      setQuizCompletionData(completionData);
-      setShowQuizCompletionNotification(true);
+      setXPNotificationData(notificationData);
+      setShowXPNotification(true);
       
       // Clear the URL parameters after a delay
       setTimeout(() => {
@@ -63,17 +67,6 @@ export default function Home() {
       }, 500);
     }
   }, [searchParams, router]);
-
-  // Auto-hide notification after delay
-  useEffect(() => {
-    if (showQuizCompletionNotification) {
-      const timer = setTimeout(() => {
-        setShowQuizCompletionNotification(false);
-      }, 8000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [showQuizCompletionNotification]);
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
@@ -221,7 +214,7 @@ export default function Home() {
           // }
         } else {
           // Fallback to course page if indices are invalid
-          router.push(`/course/${course._id}`);
+          router.push(`/course-details/${course.slug || course._id}`);
         }
       }
     }
@@ -262,67 +255,25 @@ export default function Home() {
     ? `${timeSpentHours}h ${timeSpentMinutes}m` 
     : `${timeSpentMinutes}m`;
 
+  // Filter enrolled courses
+  const enrolledCourses = dbCourses.filter(course => course.isEnrolled);
+
   return (
     <div className="min-h-screen bg-background pattern-bg">
       <Navbar />
       <div className="color-bar w-full fixed top-16 left-0"></div>
 
-      {/* Quiz Completion Notification */}
-      {showQuizCompletionNotification && quizCompletionData && (
-        <div className="fixed top-24 right-4 z-50 w-96 bg-white rounded-lg shadow-xl border-l-4 border-green-500 overflow-hidden animate-slide-in">
-          <div className="p-5">
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                <CheckCircle className="h-6 w-6 text-green-500" />
-              </div>
-              <div className="ml-3 w-0 flex-1">
-                <p className="text-sm font-medium text-gray-900">Quiz Completed!</p>
-                <p className="mt-1 text-sm text-gray-500">
-                  You scored {quizCompletionData.score}% on the quiz.
-                </p>
-                
-                {quizCompletionData.xpGained > 0 && (
-                  <div className="mt-2 flex items-center text-sm text-indigo-600">
-                    <Zap className="mr-1.5 h-4 w-4" />
-                    <span>+{quizCompletionData.xpGained} XP gained</span>
-                  </div>
-                )}
-                
-                {quizCompletionData.levelUp && (
-                  <div className="mt-2 flex items-center text-sm text-amber-600">
-                    <Award className="mr-1.5 h-4 w-4" />
-                    <span>Level Up! Congratulations!</span>
-                  </div>
-                )}
-                
-                <div className="mt-2">
-                  <div className="flex justify-between text-xs text-gray-600">
-                    <span>Course Progress</span>
-                    <span>{quizCompletionData.completionPercentage}%</span>
-                  </div>
-                  <div className="mt-1 h-2 bg-gray-200 rounded-full">
-                    <div 
-                      className="h-full bg-gradient-to-r from-green-400 to-blue-500 rounded-full"
-                      style={{ width: `${quizCompletionData.completionPercentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-              <div className="ml-4 flex-shrink-0 flex">
-                <button
-                  className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500"
-                  onClick={() => setShowQuizCompletionNotification(false)}
-                >
-                  <span className="sr-only">Close</span>
-                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* XP Notification with Confetti */}
+      <XPNotification 
+        isVisible={showXPNotification}
+        onClose={() => setShowXPNotification(false)}
+        xpGained={xpNotificationData?.xpGained}
+        gemsGained={xpNotificationData?.gemsGained}
+        levelUp={xpNotificationData?.levelUp}
+        message={xpNotificationData?.message}
+        completionPercentage={xpNotificationData?.completionPercentage}
+        courseId={xpNotificationData?.courseId}
+      />
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -375,8 +326,138 @@ export default function Home() {
             </div>
           </div>
 
-          {/* All Courses from DB */}
+          {/* My Courses Section */}
           <div className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="section-title">
+                <div className="flex items-center gap-2">
+                  <Bookmark className="w-5 h-5 text-violet-600" />
+                  <span>My Courses</span>
+                </div>
+              </h2>
+            </div>
+            
+            {enrolledCourses.length > 0 ? (
+              <div className="content-grid">
+                {enrolledCourses.map((course) => {
+                  const statusInfo = getCourseStatusInfo(course);
+                  
+                  return (
+                    <div
+                      key={course._id}
+                      className="card hover-lift overflow-hidden group h-full border-l-4 border-violet-500"
+                    >
+                      <div className="p-4 bg-gradient-to-br from-violet-50 to-fuchsia-50 h-full flex flex-col">
+                        <div className="mb-6 flex items-center gap-3 text-sm">
+                          <span className="px-3 py-1 bg-violet-100 text-violet-600 rounded-full">
+                            {course.chapters?.length || 0} Chapters
+                          </span>
+                          <span className="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full">
+                            {course.difficulty || "Beginner"}
+                          </span>
+                          {course.completed && (
+                            <span className="px-3 py-1 bg-green-100 text-green-600 rounded-full">
+                              Completed
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-start gap-5">
+                          <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center transform -rotate-6 shadow-sm transition-transform group-hover:rotate-0">
+                            <BookOpen
+                              className="w-7 h-7"
+                              style={{ color: "#8B5CF6" }}
+                            />
+                          </div>
+
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2 truncate">
+                              {course.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 line-clamp-2">
+                              {course.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Book Section */}
+                        <div className="mt-6 flex items-start gap-3 p-3 bg-white/60 rounded-lg border border-violet-100">
+                          <div className="w-10 h-12 bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded flex items-center justify-center">
+                            <svg
+                              className="w-6 h-6 text-violet-500"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                            </svg>
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-medium text-violet-600 mb-0.5">
+                              Based on the book
+                            </div>
+                            <div className="text-sm font-medium text-gray-900 truncate">
+                              {course.book?.title || "Course Book Title"}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-0.5">
+                              by {course.book?.author || "Author Name"}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4 flex-1 flex flex-col justify-end space-y-3">
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Progress</span>
+                              <span className="text-violet-600 font-medium">{course.progress || 0}%</span>
+                            </div>
+                            <div className="h-2 bg-violet-100 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"
+                                style={{ width: `${course.progress || 0}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <Link
+                              href={`/course-details/${course.slug || course._id}`}
+                              className="text-violet-600 hover:text-violet-700 text-sm font-medium flex items-center gap-1"
+                            >
+                              View Details
+                            </Link>
+                            <button
+                              onClick={() => handleCourseAction(course)}
+                              className={`px-4 py-2 ${statusInfo.bgColor} text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2`}
+                            >
+                              {statusInfo.icon}
+                              {statusInfo.text}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="card p-8 text-center">
+                <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Bookmark className="w-8 h-8 text-violet-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">No courses enrolled yet</h3>
+                <p className="text-gray-600 mb-6">Explore our courses below and enroll to start your learning journey</p>
+                <div className="flex justify-center">
+                  <a href="#all-courses" className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium transition-colors hover:bg-violet-700 flex items-center gap-2">
+                    <ArrowRight className="w-4 h-4" />
+                    Browse Courses
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* All Courses from DB */}
+          <div className="mb-12" id="all-courses">
             <div className="flex items-center justify-between mb-6">
               <h2 className="section-title">All Courses</h2>
             </div>

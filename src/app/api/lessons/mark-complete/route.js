@@ -78,6 +78,7 @@ export async function POST(req) {
     // Initialize variables for tracking progress
     let xpGained = 0;
     let levelUp = false;
+    let gemsGained = 0;
 
     // Mark lesson as complete if not already completed
     if (!lessonProgress.completed) {
@@ -85,6 +86,7 @@ export async function POST(req) {
       lessonProgress.completionDate = new Date();
       
       // Track time spent (assuming average time based on lesson duration)
+      const lesson = chapter.lessons[lessonIndex];
       const timeSpent = lesson.duration || 10; // Default to 10 minutes if duration not specified
       user.progress.totalTimeSpent = (user.progress.totalTimeSpent || 0) + timeSpent;
       courseProgress.timeSpent = (courseProgress.timeSpent || 0) + timeSpent;
@@ -94,12 +96,21 @@ export async function POST(req) {
       xpGained = baseXP;
       user.xp += xpGained;
 
+      // Award gems for completing the lesson
+      const baseGems = 5; // Base gems for completing a lesson
+      gemsGained = baseGems;
+      user.gems += gemsGained;
+
       // Calculate and update level (every 1000 XP = 1 level)
       const oldLevel = user.level;
       const newLevel = Math.floor(user.xp / 1000) + 1;
       if (newLevel > oldLevel) {
         user.level = newLevel;
         levelUp = true;
+        // Award bonus gems for leveling up
+        const levelUpGems = 25;
+        gemsGained += levelUpGems;
+        user.gems += levelUpGems;
       }
 
       // Update completion counts
@@ -166,15 +177,24 @@ export async function POST(req) {
 
     await user.save();
 
+    // Create redirect URL with XP notification parameters
+    const redirectUrl = nextLessonSlug ? 
+      `/lesson/${nextLessonSlug}?xpGained=${xpGained}&gemsGained=${gemsGained}&levelUp=${levelUp}&completionPercentage=${courseProgress.completionPercentage}&courseId=${course._id}` : 
+      `/course-details/${course.slug || course._id}?xpGained=${xpGained}&gemsGained=${gemsGained}&levelUp=${levelUp}&completionPercentage=${courseProgress.completionPercentage}&courseId=${course._id}`;
+
     return new Response(JSON.stringify({
       success: true,
       xp: user.xp,
       xpGained,
+      gems: user.gems,
+      gemsGained,
       level: user.level,
       levelUp,
       completionPercentage: courseProgress.completionPercentage,
       isCompleted: courseProgress.completed,
-      courseId: course._id
+      courseId: course._id,
+      nextLessonSlug,
+      redirectUrl
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },

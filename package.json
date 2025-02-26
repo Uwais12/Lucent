@@ -10,17 +10,18 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.10.3",
+    "@monaco-editor/react": "^4.6.0",
     "lucide-react": "^0.474.0",
+    "marked": "^9.0.0",
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.5",
     "next": "15.1.6",
     "react": "^18.2.0",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-confetti": "^6.2.3",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^18.2.0",
-    "@monaco-editor/react": "^4.6.0",
-    "react-beautiful-dnd": "^13.1.1",
-    "marked": "^9.0.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

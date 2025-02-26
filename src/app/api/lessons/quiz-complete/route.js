@@ -84,6 +84,7 @@ export async function POST(req) {
     let nextLessonSlug = null;
     let xpGained = 0;
     let levelUp = false;
+    let gemsGained = 0;
 
     // Only mark lesson as complete and award XP if score is >= 70%
     if (score >= 70) {
@@ -97,12 +98,22 @@ export async function POST(req) {
         xpGained = baseXP + bonusXP;
         user.xp += xpGained;
 
+        // Award gems based on score brackets
+        const baseGems = 10; // Base gems for passing
+        const bonusGems = Math.floor(score / 10); // 1 gem per 10% score (up to 10 gems)
+        gemsGained = baseGems + bonusGems;
+        user.gems += gemsGained;
+
         // Calculate and update level (every 1000 XP = 1 level)
         const oldLevel = user.level;
         const newLevel = Math.floor(user.xp / 1000) + 1;
         if (newLevel > oldLevel) {
           user.level = newLevel;
           levelUp = true;
+          // Award bonus gems for leveling up
+          const levelUpGems = 25;
+          gemsGained += levelUpGems;
+          user.gems += levelUpGems;
         }
 
         // Update completion counts
@@ -170,18 +181,25 @@ export async function POST(req) {
 
     await user.save();
 
+    const redirectUrl = passed ? 
+      `/lesson/${nextLessonSlug || ''}?quizCompleted=true&score=${score}&xpGained=${xpGained}&gemsGained=${gemsGained}&levelUp=${levelUp}&completionPercentage=${courseProgress.completionPercentage}&courseId=${course._id}` : 
+      '';
+
     return new Response(JSON.stringify({
       success: true,
       passed,
       score,
       xp: user.xp,
       xpGained,
+      gems: user.gems,
+      gemsGained,
       level: user.level,
       levelUp,
       nextLessonSlug: passed ? nextLessonSlug : null,
       completionPercentage: courseProgress.completionPercentage,
       isCompleted: courseProgress.completed,
-      courseId: course._id
+      courseId: course._id,
+      redirectUrl
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
