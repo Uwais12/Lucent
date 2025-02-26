@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import {
@@ -23,35 +23,27 @@ import {
 import Navbar from "./components/Navbar";
 import XPNotification from "./components/XPNotification";
 
-export default function Home() {
-  const { isLoaded, isSignedIn } = useUser();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const [userProfile, setUserProfile] = useState(null);
-  const [courses, setCourses] = useState([]);
-  const [quizzes, setQuizzes] = useState([]);
-  const [dbCourses, setDbCourses] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [enrollingCourseId, setEnrollingCourseId] = useState(null);
+// Separate client component to handle search params
+function XPNotificationHandler() {
   const [showXPNotification, setShowXPNotification] = useState(false);
   const [xpNotificationData, setXPNotificationData] = useState(null);
+  const router = useRouter();
+  
+  // Use URL search params safely for client-side only
+  let searchParams;
+  try {
+    searchParams = new URLSearchParams(window.location.search);
+  } catch (e) {
+    // Handle case where window is not available during SSR
+    searchParams = { get: () => null };
+  }
 
+  // Check for XP gain parameters in URL
   useEffect(() => {
-    if (!isLoaded) return;
-    if (!isSignedIn) {
-      router.push("/sign-in");
-    }
-  }, [isLoaded, isSignedIn, router]);
-
-  // Check for quiz completion or XP gain parameters
-  useEffect(() => {
-    if (searchParams.get('quizCompleted') === 'true' || searchParams.get('xpGained')) {
+    if (searchParams.get('xpGained')) {
       const notificationData = {
-        message: searchParams.get('quizCompleted') === 'true' ? 'Quiz Completed!' : 'Experience Earned!',
+        message: 'Experience Earned!',
         courseId: searchParams.get('courseId'),
-        score: parseInt(searchParams.get('score') || '0'),
         xpGained: parseInt(searchParams.get('xpGained') || '0'),
         gemsGained: parseInt(searchParams.get('gemsGained') || '0'),
         levelUp: searchParams.get('levelUp') === 'true',
@@ -67,6 +59,39 @@ export default function Home() {
       }, 500);
     }
   }, [searchParams, router]);
+
+  return (
+    <XPNotification 
+      isVisible={showXPNotification}
+      onClose={() => setShowXPNotification(false)}
+      xpGained={xpNotificationData?.xpGained}
+      gemsGained={xpNotificationData?.gemsGained}
+      levelUp={xpNotificationData?.levelUp}
+      message={xpNotificationData?.message}
+      completionPercentage={xpNotificationData?.completionPercentage}
+      courseId={xpNotificationData?.courseId}
+    />
+  );
+}
+
+export default function Home() {
+  const { isLoaded, isSignedIn } = useUser();
+  const router = useRouter();
+
+  const [userProfile, setUserProfile] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [quizzes, setQuizzes] = useState([]);
+  const [dbCourses, setDbCourses] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [enrollingCourseId, setEnrollingCourseId] = useState(null);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    if (!isSignedIn) {
+      router.push("/sign-in");
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
@@ -264,16 +289,9 @@ export default function Home() {
       <div className="color-bar w-full fixed top-16 left-0"></div>
 
       {/* XP Notification with Confetti */}
-      <XPNotification 
-        isVisible={showXPNotification}
-        onClose={() => setShowXPNotification(false)}
-        xpGained={xpNotificationData?.xpGained}
-        gemsGained={xpNotificationData?.gemsGained}
-        levelUp={xpNotificationData?.levelUp}
-        message={xpNotificationData?.message}
-        completionPercentage={xpNotificationData?.completionPercentage}
-        courseId={xpNotificationData?.courseId}
-      />
+      <Suspense fallback={null}>
+        <XPNotificationHandler />
+      </Suspense>
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

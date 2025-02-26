@@ -1,31 +1,30 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Trophy, ChevronLeft, Star } from "lucide-react";
 import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import XPNotification from "@/app/components/XPNotification";
+import { useUser } from "@clerk/nextjs";
 
-export default function LessonQuizPage() {
-  const params = useParams();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [quiz, setQuiz] = useState(null);
-  const [answers, setAnswers] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [feedback, setFeedback] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [quizResult, setQuizResult] = useState(null);
-  const [isMarkingComplete, setIsMarkingComplete] = useState(false);
-  
-  // XP Notification state
+// Separate client component for handling XP notifications
+function XPNotificationHandler({ params }) {
   const [showXPNotification, setShowXPNotification] = useState(false);
   const [xpNotificationData, setXPNotificationData] = useState(null);
+  const router = useRouter();
+  
+  // Use URL search params safely for client-side only
+  let searchParams;
+  try {
+    searchParams = new URLSearchParams(window.location.search);
+  } catch (e) {
+    // Handle case where window is not available during SSR
+    searchParams = { get: () => null };
+  }
   
   // Check for XP gain parameters in URL
   useEffect(() => {
-    if (searchParams.get('xpGained') || searchParams.get('quizCompleted') === 'true') {
+    if (searchParams.get('xpGained')) {
       const notificationData = {
         message: searchParams.get('quizCompleted') === 'true' ? 'Quiz Completed!' : 'Experience Earned!',
         courseId: searchParams.get('courseId'),
@@ -46,21 +45,33 @@ export default function LessonQuizPage() {
     }
   }, [searchParams, router, params.slug]);
 
-  // Also show XP notification when quiz is completed successfully
-  useEffect(() => {
-    if (quizResult && quizResult.xpGained > 0) {
-      setXPNotificationData({
-        message: 'Quiz Completed!',
-        courseId: quizResult.courseId,
-        score: quizResult.score,
-        xpGained: quizResult.xpGained,
-        gemsGained: quizResult.gemsGained,
-        levelUp: quizResult.levelUp,
-        completionPercentage: quizResult.completionPercentage
-      });
-      setShowXPNotification(true);
-    }
-  }, [quizResult]);
+  return (
+    <XPNotification 
+      isVisible={showXPNotification}
+      onClose={() => setShowXPNotification(false)}
+      xpGained={xpNotificationData?.xpGained}
+      gemsGained={xpNotificationData?.gemsGained}
+      levelUp={xpNotificationData?.levelUp}
+      message={xpNotificationData?.message}
+      completionPercentage={xpNotificationData?.completionPercentage}
+      courseId={xpNotificationData?.courseId}
+      score={xpNotificationData?.score}
+    />
+  );
+}
+
+export default function LessonQuizPage() {
+  const params = useParams();
+  const router = useRouter();
+  const { user, isSignedIn, isLoaded } = useUser();
+  const [quiz, setQuiz] = useState(null);
+  const [answers, setAnswers] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [feedback, setFeedback] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [quizResult, setQuizResult] = useState(null);
+  const [isMarkingComplete, setIsMarkingComplete] = useState(false);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -221,17 +232,9 @@ export default function LessonQuizPage() {
       <div className="color-bar w-full fixed top-16 left-0"></div>
       
       {/* XP Notification with Confetti */}
-      <XPNotification 
-        isVisible={showXPNotification}
-        onClose={() => setShowXPNotification(false)}
-        xpGained={xpNotificationData?.xpGained}
-        gemsGained={xpNotificationData?.gemsGained}
-        levelUp={xpNotificationData?.levelUp}
-        message={xpNotificationData?.message}
-        completionPercentage={xpNotificationData?.completionPercentage}
-        score={xpNotificationData?.score}
-        courseId={xpNotificationData?.courseId}
-      />
+      <Suspense fallback={null}>
+        <XPNotificationHandler params={params} />
+      </Suspense>
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">

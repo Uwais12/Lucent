@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import {
@@ -22,10 +22,60 @@ import Navbar from "@/app/components/Navbar";
 import Dialog from "@/components/Dialog";
 import XPNotification from "../../components/XPNotification";
 
+// Separate client component for handling XP notifications
+function XPNotificationHandler({ params }) {
+  const [showXPNotification, setShowXPNotification] = useState(false);
+  const [xpNotificationData, setXPNotificationData] = useState(null);
+  const router = useRouter();
+  
+  // Use URL search params safely for client-side only
+  let searchParams;
+  try {
+    searchParams = new URLSearchParams(window.location.search);
+  } catch (e) {
+    // Handle case where window is not available during SSR
+    searchParams = { get: () => null };
+  }
+  
+  // Check for XP gain parameters in URL
+  useEffect(() => {
+    if (searchParams.get('xpGained')) {
+      const notificationData = {
+        message: 'Experience Earned!',
+        courseId: searchParams.get('courseId'),
+        xpGained: parseInt(searchParams.get('xpGained') || '0'),
+        gemsGained: parseInt(searchParams.get('gemsGained') || '0'),
+        levelUp: searchParams.get('levelUp') === 'true',
+        completionPercentage: parseInt(searchParams.get('completionPercentage') || '0')
+      };
+      
+      setXPNotificationData(notificationData);
+      setShowXPNotification(true);
+      
+      // Clear the URL parameters after a delay
+      setTimeout(() => {
+        router.replace(`/course-details/${params.slug}`);
+      }, 500);
+    }
+  }, [searchParams, router, params.slug]);
+
+  return (
+    <XPNotification 
+      isVisible={showXPNotification}
+      onClose={() => setShowXPNotification(false)}
+      xpGained={xpNotificationData?.xpGained}
+      gemsGained={xpNotificationData?.gemsGained}
+      levelUp={xpNotificationData?.levelUp}
+      message={xpNotificationData?.message}
+      completionPercentage={xpNotificationData?.completionPercentage}
+      courseId={xpNotificationData?.courseId}
+    />
+  );
+}
+
 export default function CourseDetails() {
   const params = useParams();
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user, isLoaded, isSignedIn } = useUser();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -33,8 +83,6 @@ export default function CourseDetails() {
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
-  const [showXPNotification, setShowXPNotification] = useState(false);
-  const [xpNotificationData, setXPNotificationData] = useState(null);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -85,28 +133,6 @@ export default function CourseDetails() {
       fetchCourse();
     }
   }, [params.slug, isLoaded, user]);
-
-  // Check for XP gain parameters
-  useEffect(() => {
-    if (searchParams.get('xpGained')) {
-      const notificationData = {
-        message: 'Experience Earned!',
-        courseId: searchParams.get('courseId'),
-        xpGained: parseInt(searchParams.get('xpGained') || '0'),
-        gemsGained: parseInt(searchParams.get('gemsGained') || '0'),
-        levelUp: searchParams.get('levelUp') === 'true',
-        completionPercentage: parseInt(searchParams.get('completionPercentage') || '0')
-      };
-      
-      setXPNotificationData(notificationData);
-      setShowXPNotification(true);
-      
-      // Clear the URL parameters after a delay
-      setTimeout(() => {
-        router.replace(`/course-details/${params.slug}`);
-      }, 500);
-    }
-  }, [searchParams, router, params.slug]);
 
   const handleEnrollClick = () => {
     if (!isLoaded || !user) {
@@ -170,16 +196,9 @@ export default function CourseDetails() {
       <div className="color-bar w-full fixed top-16 left-0"></div>
 
       {/* XP Notification with Confetti */}
-      <XPNotification 
-        isVisible={showXPNotification}
-        onClose={() => setShowXPNotification(false)}
-        xpGained={xpNotificationData?.xpGained}
-        gemsGained={xpNotificationData?.gemsGained}
-        levelUp={xpNotificationData?.levelUp}
-        message={xpNotificationData?.message}
-        completionPercentage={xpNotificationData?.completionPercentage}
-        courseId={xpNotificationData?.courseId}
-      />
+      <Suspense fallback={null}>
+        <XPNotificationHandler params={params} />
+      </Suspense>
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
