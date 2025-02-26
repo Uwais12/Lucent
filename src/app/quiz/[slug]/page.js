@@ -15,6 +15,7 @@ export default function LessonQuizPage() {
   const [feedback, setFeedback] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
+  const [isMarkingComplete, setIsMarkingComplete] = useState(false);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -42,6 +43,39 @@ export default function LessonQuizPage() {
       ...prev,
       [questionIndex]: answer
     }));
+  };
+
+  // Function to mark lesson as complete and redirect to dashboard
+  const markLessonCompleteAndRedirect = async () => {
+    if (!quiz || !quizResult || isMarkingComplete) return;
+    
+    try {
+      setIsMarkingComplete(true);
+      
+      // Call the API to mark the lesson as complete
+      const response = await fetch('/api/lessons/mark-complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          courseId: quiz.courseId,
+          chapterId: quiz.chapterId,
+          lessonId: quiz.lessonId
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Redirect to dashboard with completion information
+        router.push(`/?quizCompleted=true&courseId=${data.courseId}&score=${quizResult.score}&xpGained=${data.xpGained || 0}&levelUp=${data.levelUp || false}&completionPercentage=${data.completionPercentage || 0}`);
+      } else {
+        // If there's an error, still redirect to dashboard but without completion info
+        router.push('/');
+      }
+    } catch (error) {
+      console.error('Error marking lesson as complete:', error);
+      router.push('/');
+    }
   };
 
   const submitQuiz = async () => {
@@ -103,8 +137,10 @@ export default function LessonQuizPage() {
           setTimeout(() => {
             if (data.nextLessonSlug) {
               router.push(`/lesson/${data.nextLessonSlug}`);
-            } else if (data.isCompleted) {
-              router.push(`/course/${data.courseId}`);
+            } else {
+              // If this is the last lesson, we'll let the user decide when to go to the dashboard
+              // The "Home" button will handle marking the lesson as complete
+              // No automatic redirect needed
             }
           }, 5000); // Give more time to see results and achievements
         }
@@ -325,12 +361,13 @@ export default function LessonQuizPage() {
                   Back to Lesson
                 </Link>
                 {quizResult.score >= 70 ? (
-                  <Link
-                    href="/"
-                    className="text-violet-600 hover:text-violet-700"
+                  <button
+                    onClick={markLessonCompleteAndRedirect}
+                    disabled={isMarkingComplete}
+                    className="text-violet-600 hover:text-violet-700 disabled:opacity-50"
                   >
-                    Home
-                  </Link>
+                    {isMarkingComplete ? 'Redirecting...' : 'Home'}
+                  </button>
                 ) : (
                   <button
                     onClick={() => {

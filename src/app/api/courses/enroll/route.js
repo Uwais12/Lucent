@@ -2,12 +2,8 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Course from "@/models/Course";
 import User from "@/models/User";
 import { getAuth } from "@clerk/nextjs/server";
-import mongoose from "mongoose";
 
 export async function POST(req) {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     const { userId } = getAuth(req);
     if (!userId) {
@@ -27,144 +23,92 @@ export async function POST(req) {
 
     await connectToDatabase();
 
-    // Get the course and user within the transaction
-    const course = await Course.findById(courseId).session(session);
-    let user = await User.findOne({ clerkId: userId }).session(session);
-
+    // Find the course
+    const course = await Course.findById(courseId);
     if (!course) {
-      await session.abortTransaction();
       return new Response(JSON.stringify({ error: "Course not found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
     }
 
+    // Find user
+    const user = await User.findOne({ clerkId: userId });
     if (!user) {
-      // Create new user if doesn't exist
-      const newUser = new User({
-        clerkId: userId,
-        role: "USER",
+      return new Response(JSON.stringify({ error: "User not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
       });
-      await newUser.save({ session });
-      user = newUser;
     }
 
-    // Check if user is already enrolled - using atomic operation
-    const existingEnrollment = await User.findOne({
-      clerkId: userId,
-      'progress.courses.courseId': courseId
-    }).session(session);
+    // Check if already enrolled
+    const isEnrolled = user.progress.courses.some(
+      c => c.courseId.toString() === courseId
+    );
 
-    if (existingEnrollment) {
-      await session.abortTransaction();
-      return new Response(
-        JSON.stringify({ error: "Already enrolled in this course" }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+    if (isEnrolled) {
+      return new Response(JSON.stringify({ error: "Already enrolled in this course" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    // Create course progress structure with proper validation
+    // Create course progress structure
     const courseProgress = {
-      courseId,
-      enrolledDate: new Date(),
+      courseId: course._id,
+      enrolled: true,
+      enrollmentDate: new Date(),
+      completionPercentage: 0,
       completed: false,
-      score: 0,
-      chapters: course.chapters.map((chapter) => ({
+      currentChapter: 0,
+      currentLesson: 0,
+      lastAccessDate: new Date(),
+      chapters: course.chapters.map(chapter => ({
         chapterId: chapter._id,
         completed: false,
-        lessons: chapter.lessons.map((lesson) => ({
+        lessons: chapter.lessons.map(lesson => ({
           lessonId: lesson._id,
           completed: false,
-          exercises: lesson.parts
-            .filter((part) => part.exercise)
-            .map((part) => ({
-              exerciseId: new mongoose.Types.ObjectId().toString(),
-              completed: false,
-              pointsEarned: 0,
-              maxPoints: part.exercise.points || 10,
-              attempts: 0,
-              maxAttempts: part.exercise.maxAttempts || 3
-            })),
           quizProgress: {
-            quizId: new mongoose.Types.ObjectId().toString(),
+            quizId: lesson.endOfLessonQuiz?._id?.toString() || `${lesson._id}_quiz`,
             completed: false,
             score: 0,
-            maxScore: lesson.endOfLessonQuiz.questions.reduce(
-              (total, q) => total + (q.points || 10),
-              0
-            ),
-            attempts: 0,
-            maxAttempts: lesson.endOfLessonQuiz.maxAttempts || 3
-          },
+            attempts: 0
+          }
         })),
         endOfChapterQuiz: {
-          quizId: new mongoose.Types.ObjectId().toString(),
+          quizId: chapter.endOfChapterQuiz?._id?.toString() || `${chapter._id}_chapter_quiz`,
           completed: false,
           score: 0,
-          maxScore: chapter.endOfChapterQuiz.questions.reduce(
-            (total, q) => total + (q.points || 10),
-            0
-          ),
-          attempts: 0,
-          maxAttempts: chapter.endOfChapterQuiz.maxAttempts || 2
-        },
+          attempts: 0
+        }
       })),
       endOfCourseExam: {
-        quizId: new mongoose.Types.ObjectId().toString(),
+        quizId: course.endOfCourseExam?._id?.toString() || `${course._id}_course_exam`,
         completed: false,
         score: 0,
-        maxScore: course.endOfCourseExam.questions.reduce(
-          (total, q) => total + (q.points || 10),
-          0
-        ),
-        attempts: 0,
-        maxAttempts: course.endOfCourseExam.maxAttempts || 1
-      },
-      settings: {
-        emailNotifications: true,
-        dailyReminders: true,
-        timezone: "UTC"
+        attempts: 0
       }
     };
 
-    // Update user and course atomically
-    await Promise.all([
-      User.findOneAndUpdate(
-        { clerkId: userId },
-        { $push: { 'progress.courses': courseProgress } },
-        { session }
-      ),
-      Course.findByIdAndUpdate(
-        courseId,
-        { $inc: { enrolledCount: 1 } },
-        { session }
-      )
-    ]);
+    // Add to user's enrolled courses
+    user.progress.courses.push(courseProgress);
+    await user.save();
 
-    // Commit the transaction
-    await session.commitTransaction();
+    return new Response(JSON.stringify({
+      success: true,
+      message: "Successfully enrolled in course",
+      courseProgress
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
 
-    return new Response(
-      JSON.stringify({
-        message: "Successfully enrolled in course",
-        courseProgress,
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
   } catch (error) {
-    await session.abortTransaction();
     console.error("Error enrolling in course:", error);
     return new Response(JSON.stringify({ error: "Failed to enroll in course" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
-  } finally {
-    session.endSession();
   }
 } 

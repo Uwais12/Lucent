@@ -1,6 +1,9 @@
 // /src/app/api/courses/[id]/route.js
 
 export async function GET(req, { params }) {
+  // Extract the id from params
+  const { id } = params;
+  
   const courseLessons = {
     // Existing:
     "design-patterns": [
@@ -141,7 +144,7 @@ export async function GET(req, { params }) {
   };
 
   return new Response(
-    JSON.stringify(courseLessons[params.id] || []), // Always return an array
+    JSON.stringify(courseLessons[id] || []), // Always return an array
     { headers: { "Content-Type": "application/json" } }
   );
 }

@@ -39,15 +39,33 @@ export default function CourseDetails() {
         const data = await response.json();
 
         if (response.ok) {
+          // Add a direct check for course completion
+          if (data.userProgress && typeof data.userProgress.completionPercentage === 'number') {
+            data.userProgress.completed = data.userProgress.completionPercentage >= 100;
+          }
           setCourse(data);
           // Check if user is enrolled
           if (isLoaded && user) {
             const userResponse = await fetch("/api/profile");
             const userData = await userResponse.json();
-            const enrolled = userData.progress?.courses?.some(
+            const enrolledCourse = userData.progress?.courses?.find(
               (c) => c.courseId === data._id
             );
-            setIsEnrolled(enrolled);
+            
+            setIsEnrolled(!!enrolledCourse);
+            
+            // If we have enrollment data but the course data doesn't have user progress
+            if (enrolledCourse) {
+              // Update the course data with completion status from user profile
+              setCourse(prev => ({
+                ...prev,
+                userProgress: {
+                  ...prev.userProgress,
+                  completed: enrolledCourse.completed || enrolledCourse.completionPercentage >= 100,
+                  completionPercentage: enrolledCourse.completionPercentage || prev.userProgress?.completionPercentage || 0
+                }
+              }));
+            }
           }
         } else {
           setError(data.error || "Failed to load course");
@@ -147,6 +165,16 @@ export default function CourseDetails() {
               <div>
                 <button
                   onClick={isEnrolled ? () => {
+                    // Determine if course is completed
+                    const isCompleted = course.userProgress?.completed || 
+                                       (course.userProgress?.completionPercentage >= 100);
+                                       
+                    // If course is completed, just go to course overview or certificate
+                    if (isCompleted) {
+                      router.push(`/course/${course._id}`);
+                      return;
+                    }
+                    
                     // Find the current lesson using the progress indices
                     const currentChapter = course.chapters[course.userProgress?.currentChapter];
                     const currentLesson = currentChapter?.lessons[course.userProgress?.currentLesson];
@@ -155,9 +183,11 @@ export default function CourseDetails() {
                     }
                   } : handleEnrollClick}
                   className={`px-6 py-3 bg-gradient-to-r ${
-                    isEnrolled
-                      ? "from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
-                      : "from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
+                    !isEnrolled
+                      ? "from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
+                      : (course.userProgress?.completed || course.userProgress?.completionPercentage >= 100)
+                      ? "from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600"
+                      : "from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
                   } text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-md shadow-violet-200`}
                   disabled={enrolling}
                 >
@@ -165,12 +195,18 @@ export default function CourseDetails() {
                     <div className="animate-spin rounded-full h-5 w-5 border-2 border-white" />
                   ) : (
                     <>
-                      {isEnrolled ? (
+                      {!isEnrolled ? (
                         <PlayCircle className="w-5 h-5" />
+                      ) : (course.userProgress?.completed || course.userProgress?.completionPercentage >= 100) ? (
+                        <CheckCircle className="w-5 h-5" />
                       ) : (
                         <PlayCircle className="w-5 h-5" />
                       )}
-                      {isEnrolled ? "Continue Learning" : "Start Learning"}
+                      {!isEnrolled 
+                        ? "Start Learning" 
+                        : (course.userProgress?.completed || course.userProgress?.completionPercentage >= 100)
+                        ? "Completed" 
+                        : "Continue Learning"}
                     </>
                   )}
                 </button>
@@ -280,6 +316,11 @@ export default function CourseDetails() {
                               const isCurrentLesson = 
                                 course.userProgress?.currentChapter === chapterIndex &&
                                 course.userProgress?.currentLesson === lessonIndex;
+                              
+                              // Check if course is completed
+                              const isCourseCompleted = course.userProgress?.completed || 
+                                                       course.userProgress?.completionPercentage >= 100;
+                              
                               return (
                                 <Link
                                   key={lesson._id}
@@ -288,7 +329,7 @@ export default function CourseDetails() {
                                 >
                                   <div
                                     className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
-                                      isCurrentLesson
+                                      isCurrentLesson && !isCourseCompleted
                                         ? "bg-violet-50 border-violet-100"
                                         : "hover:bg-gray-50"
                                     } ${lessonProgress?.completed ? "border-emerald-100" : "border-gray-100"
@@ -299,14 +340,14 @@ export default function CourseDetails() {
                                         className={`w-8 h-8 rounded-full flex items-center justify-center ${
                                           lessonProgress?.completed
                                             ? "bg-emerald-100"
-                                            : isCurrentLesson
+                                            : isCurrentLesson && !isCourseCompleted
                                             ? "bg-violet-100"
                                             : "bg-gray-100"
                                         }`}
                                       >
                                         {lessonProgress?.completed ? (
                                           <CheckCircle className="w-4 h-4 text-emerald-600" />
-                                        ) : isCurrentLesson ? (
+                                        ) : isCurrentLesson && !isCourseCompleted ? (
                                           <PlayCircle className="w-4 h-4 text-violet-600" />
                                         ) : (
                                           <Lock className="w-4 h-4 text-gray-400" />
@@ -330,7 +371,7 @@ export default function CourseDetails() {
                                         </div>
                                       </div>
                                     </div>
-                                    {isCurrentLesson && (
+                                    {isCurrentLesson && !isCourseCompleted && (
                                       <span className="text-sm font-medium text-violet-600">
                                         Current Lesson
                                       </span>

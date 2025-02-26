@@ -101,73 +101,78 @@ export default function Course() {
 
           {/* Chapters and Lessons */}
           <div className="space-y-8">
-            {course.chapters.map((chapter, chapterIndex) => (
-              <div key={chapterIndex} className="card">
-                <div className="p-6 border-b border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-900">
-                      Chapter {chapterIndex + 1}: {chapter.title}
-                    </h2>
-                    <div className="text-sm text-secondary">
-                      {chapter.completedLessons || 0}/{chapter.lessons.length} completed
+            {course && course.chapters ? (
+              // If course has chapters property, render them
+              course.chapters.map((chapter, chapterIndex) => (
+                <div key={chapterIndex} className="card">
+                  <div className="p-6 border-b border-gray-100">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl font-semibold text-gray-900">
+                        Chapter {chapterIndex + 1}: {chapter.title}
+                      </h2>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="space-y-4">
+                      {chapter.lessons.map((lesson, lessonIndex) => (
+                        <div
+                          key={lessonIndex}
+                          className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
+                              {userProgress?.completedLessons?.includes(lesson._id) ? (
+                                <CheckCircle className="w-5 h-5 text-green-600" />
+                              ) : (
+                                <span className="text-violet-600 font-medium">{lessonIndex + 1}</span>
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="font-medium text-gray-900">{lesson.title}</h3>
+                              <p className="text-sm text-gray-500">{lesson.description}</p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => router.push(`/lesson/${lesson.slug}`)}
+                            className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors flex items-center gap-2"
+                          >
+                            <PlayCircle className="w-4 h-4" />
+                            Start Lesson
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
-                <div className="divide-y divide-gray-100">
-                  {chapter.lessons.map((lesson, lessonIndex) => {
-                    const isLocked = !userProgress?.unlockedLessons?.includes(lesson._id);
-                    const isCompleted = userProgress?.completedLessons?.includes(lesson._id);
-                    const isCurrent = userProgress?.currentLesson === lesson._id;
-
-                    return (
-                      <div
-                        key={lessonIndex}
-                        className={`flex items-center justify-between p-4 ${
-                          isLocked ? 'bg-gray-50' : 'hover:bg-gray-50 cursor-pointer'
-                        } transition-colors`}
-                        onClick={() => !isLocked && router.push(`/lesson/${lesson.slug}`)}
-                      >
-                        <div className="flex items-center gap-3">
-                          {isLocked ? (
-                            <Lock className="w-5 h-5 text-gray-400" />
-                          ) : isCompleted ? (
-                            <CheckCircle className="w-5 h-5 text-emerald-500" />
-                          ) : (
-                            <PlayCircle className="w-5 h-5 text-violet-600" />
-                          )}
-                          <div>
-                            <div className="text-gray-900 flex items-center gap-2">
-                              {lesson.title}
-                              {isCurrent && (
-                                <span className="px-2 py-0.5 text-xs bg-violet-100 text-violet-600 rounded-full">
-                                  Current Lesson
-                                </span>
-                              )}
-                            </div>
-                            <div className="text-sm text-gray-500 mt-1">
-                              {lesson.duration} min
-                              {lesson.type === 'quiz' && ' • Quiz'}
-                              {lesson.type === 'exercise' && ' • Exercise'}
-                            </div>
-                          </div>
-                        </div>
-                        {!isLocked && (
-                          <div className="flex items-center gap-4">
-                            {isCompleted ? (
-                              <span className="text-sm text-emerald-600">Completed</span>
-                            ) : isCurrent ? (
-                              <span className="text-sm text-violet-600">Continue</span>
-                            ) : (
-                              <span className="text-sm text-gray-500">Start</span>
-                            )}
-                          </div>
-                        )}
+              ))
+            ) : (
+              // If course is an array of lessons (from the API), render them directly
+              Array.isArray(course) && course.map((lesson, index) => (
+                <div 
+                  key={index}
+                  className="card p-6 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center">
+                        <span className="text-violet-600 font-medium">{index + 1}</span>
                       </div>
-                    );
-                  })}
+                      <div>
+                        <h3 className="font-medium text-gray-900 text-lg">{lesson.title}</h3>
+                        <p className="text-gray-500">{lesson.description}</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => router.push(`/lesson/${lesson.id}`)}
+                      className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors flex items-center gap-2"
+                    >
+                      <PlayCircle className="w-4 h-4" />
+                      Start Lesson
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </main>

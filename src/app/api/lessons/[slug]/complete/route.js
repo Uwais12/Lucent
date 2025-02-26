@@ -69,6 +69,14 @@ export async function POST(req, { params }) {
     const lessonProgress = chapterProgress.lessons[lessonIndex];
     lessonProgress.completed = true;
     lessonProgress.completionDate = new Date();
+    
+    // Track time spent (assuming average time based on lesson duration)
+    const timeSpent = lesson.duration || 10; // Default to 10 minutes if duration not specified
+    user.progress.totalTimeSpent = (user.progress.totalTimeSpent || 0) + timeSpent;
+    courseProgress.timeSpent = (courseProgress.timeSpent || 0) + timeSpent;
+    
+    // Increment completed lessons counter
+    user.progress.completedLessons = (user.progress.completedLessons || 0) + 1;
 
     // Check if chapter is completed
     const allLessonsInChapterCompleted = chapterProgress.lessons.every(l => l.completed);
@@ -97,6 +105,11 @@ export async function POST(req, { params }) {
     if (allChaptersCompleted) {
       courseProgress.completed = true;
       courseProgress.completionDate = new Date();
+      
+      // Increment completedCourses counter if this is first completion
+      if (!courseProgress.completed) {
+        user.progress.completedCourses = (user.progress.completedCourses || 0) + 1;
+      }
     }
 
     // Update current lesson/chapter pointers

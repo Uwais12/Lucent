@@ -278,7 +278,6 @@ UserSchema.virtual('completionPercentage').get(function() {
 });
 
 // Indexes for efficient querying
-UserSchema.index({ clerkId: 1 });
 UserSchema.index({ 'progress.courses.courseId': 1 });
 UserSchema.index({ lastActivity: -1 });
 UserSchema.index({ level: -1 });

@@ -119,12 +119,16 @@ export async function POST(req) {
           user.xp += chapterXP;
         }
 
-        // Check if course is completed
-        const allChaptersCompleted = courseProgress.chapters.every(c => c.completed);
+        // Check if course is now complete
+        const allChaptersCompleted = courseProgress.chapters.every(ch => ch.completed);
         if (allChaptersCompleted && !courseProgress.completed) {
           courseProgress.completed = true;
           courseProgress.completionDate = new Date();
-          // Award course completion XP
+          
+          // Increment completedCourses counter
+          user.progress.completedCourses = (user.progress.completedCourses || 0) + 1;
+          
+          // Award course completion bonus
           const courseXP = 1000;
           xpGained += courseXP;
           user.xp += courseXP;

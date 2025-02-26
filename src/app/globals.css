@@ -24,6 +24,16 @@
   50% { transform: translateY(6px); opacity: 1; }
 }
 
+@keyframes slide-in {
+  0% { transform: translateX(100%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-out {
+  0% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
 :root {
   --background: #fafafa;
   --foreground: #1a1a1a;
@@ -219,4 +229,12 @@ body {
 
 .rotate-y-12 {
   transform: rotateY(12deg);
+}
+
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out forwards;
+}
+
+.animate-slide-out {
+  animation: slide-out 0.5s ease-in forwards;
 }
