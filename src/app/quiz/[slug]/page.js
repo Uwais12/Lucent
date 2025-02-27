@@ -6,9 +6,10 @@ import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import XPNotification from "@/app/components/XPNotification";
 import { useUser } from "@clerk/nextjs";
+import ReactConfetti from "react-confetti";
 
 // Separate client component for handling XP notifications
-function XPNotificationHandler({ params }) {
+function XPNotificationHandler({ params, manualTrigger, onManualClose }) {
   const [showXPNotification, setShowXPNotification] = useState(false);
   const [xpNotificationData, setXPNotificationData] = useState(null);
   const router = useRouter();
@@ -21,6 +22,14 @@ function XPNotificationHandler({ params }) {
     // Handle case where window is not available during SSR
     searchParams = { get: () => null };
   }
+  
+  // Handle the manual trigger from quiz submission
+  useEffect(() => {
+    if (manualTrigger && manualTrigger.show) {
+      setXPNotificationData(manualTrigger.data);
+      setShowXPNotification(true);
+    }
+  }, [manualTrigger]);
   
   // Check for XP gain parameters in URL
   useEffect(() => {
@@ -45,10 +54,18 @@ function XPNotificationHandler({ params }) {
     }
   }, [searchParams, router, params.slug]);
 
+  // Handle notification close
+  const handleClose = () => {
+    setShowXPNotification(false);
+    if (onManualClose) {
+      onManualClose();
+    }
+  };
+
   return (
     <XPNotification 
       isVisible={showXPNotification}
-      onClose={() => setShowXPNotification(false)}
+      onClose={handleClose}
       xpGained={xpNotificationData?.xpGained}
       gemsGained={xpNotificationData?.gemsGained}
       levelUp={xpNotificationData?.levelUp}
@@ -72,6 +89,27 @@ export default function LessonQuizPage() {
   const [submitted, setSubmitted] = useState(false);
   const [quizResult, setQuizResult] = useState(null);
   const [isMarkingComplete, setIsMarkingComplete] = useState(false);
+  const [notificationTrigger, setNotificationTrigger] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 0,
+    height: typeof window !== "undefined" ? window.innerHeight : 0,
+  });
+
+  // Set up window size for confetti
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleResize = () => {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      };
+
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -188,16 +226,36 @@ export default function LessonQuizPage() {
 
         setFeedback(feedbackMsg);
 
-        // Handle navigation after delay
+        // Trigger the XP notification popup and confetti when passing
         if (passed) {
+          // First show confetti
+          setShowConfetti(true);
+          
+          // Then trigger notification
+          setNotificationTrigger({
+            show: true,
+            data: {
+              message: 'Quiz Completed!',
+              courseId: quiz.courseId,
+              score: score,
+              xpGained: data.xpGained || 0,
+              gemsGained: data.gemsGained || 0,
+              levelUp: data.levelUp || false,
+              completionPercentage: data.completionPercentage || 0
+            }
+          });
+
+          // Turn off confetti after some time
+          setTimeout(() => {
+            setShowConfetti(false);
+          }, 6000);
+
+          // Handle navigation after delay
           setTimeout(() => {
             if (data.nextLessonSlug) {
               router.push(`/lesson/${data.nextLessonSlug}`);
-            } else {
-              // If this is the last lesson, we'll let the user decide when to go to the dashboard
-              // The "Home" button will handle marking the lesson as complete
-              // No automatic redirect needed
             }
+            // If this is the last lesson, we'll let the user decide when to go to the dashboard
           }, 5000); // Give more time to see results and achievements
         }
       }
@@ -205,6 +263,10 @@ export default function LessonQuizPage() {
       console.error('Error submitting quiz:', error);
       setError('Failed to submit quiz');
     }
+  };
+
+  const handleNotificationClose = () => {
+    setNotificationTrigger(null);
   };
 
   if (loading) {
@@ -231,9 +293,24 @@ export default function LessonQuizPage() {
       <Navbar />
       <div className="color-bar w-full fixed top-16 left-0"></div>
       
+      {/* Show confetti when user passes the quiz */}
+      {showConfetti && (
+        <ReactConfetti
+          width={windowSize.width}
+          height={windowSize.height}
+          recycle={false}
+          numberOfPieces={300}
+          gravity={0.15}
+        />
+      )}
+      
       {/* XP Notification with Confetti */}
       <Suspense fallback={null}>
-        <XPNotificationHandler params={params} />
+        <XPNotificationHandler 
+          params={params} 
+          manualTrigger={notificationTrigger}
+          onManualClose={handleNotificationClose}
+        />
       </Suspense>
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
@@ -259,6 +336,48 @@ export default function LessonQuizPage() {
               </div>
             </div>
           </div>
+
+          {/* Results popup for successful quiz */}
+          {submitted && quizResult && quizResult.score >= 70 && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 animate-fade-in">
+              <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 animate-pop-in">
+                <div className="text-center mb-4">
+                  <h2 className="text-2xl font-bold text-gray-900">Congratulations!</h2>
+                  <p className="text-lg text-violet-600 font-medium">You passed the quiz!</p>
+                </div>
+                
+                <div className="flex items-center justify-center mb-6">
+                  <div className="text-center bg-violet-100 rounded-full p-6">
+                    <span className="text-4xl font-bold text-violet-700">{quizResult.score}%</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-2 mb-6">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>XP Earned</span>
+                    <span className="font-medium text-violet-600">+{quizResult.xpGained} XP</span>
+                  </div>
+                  {quizResult.levelUp && (
+                    <div className="flex items-center justify-between text-sm">
+                      <span>New Level</span>
+                      <span className="font-medium text-emerald-600">Level {quizResult.level}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between text-sm">
+                    <span>Course Progress</span>
+                    <span className="font-medium text-violet-600">{quizResult.completionPercentage}%</span>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => document.querySelector(".fixed.inset-0.bg-black.bg-opacity-50").classList.add("hidden")}
+                  className="w-full py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Quiz Questions */}
           <div className="space-y-8">
