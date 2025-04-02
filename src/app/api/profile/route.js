@@ -21,6 +21,34 @@ export async function GET(request) {
       user = await User.create({ clerkId: userId });
     }
 
+    // Update daily streak if user has activity today
+    const now = new Date();
+    const lastActivity = user.lastDailyActivity ? new Date(user.lastDailyActivity) : null;
+    
+    if (lastActivity) {
+      // Check if last activity was yesterday or today
+      const diffDays = Math.floor((now - lastActivity) / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 0) {
+        // Already logged today, no streak update needed
+      } else if (diffDays === 1) {
+        // Last activity was yesterday, increment streak
+        user.dailyStreak += 1;
+        user.lastDailyActivity = now;
+        await user.save();
+      } else {
+        // Streak broken
+        user.dailyStreak = 1;
+        user.lastDailyActivity = now;
+        await user.save();
+      }
+    } else {
+      // First activity
+      user.dailyStreak = 1;
+      user.lastDailyActivity = now;
+      await user.save();
+    }
+
     // 4) Return user doc
     return NextResponse.json(user);
   } catch (err) {

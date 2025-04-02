@@ -51,33 +51,6 @@ export async function POST(req, { params }) {
     let levelUp = false;
     let gemsGained = 0;
 
-    // Award XP based on quiz score
-    const baseXP = Math.round(score); // 1 XP per percentage point
-    xpGained = baseXP;
-    user.xp += xpGained;
-
-    // Award gems based on score tiers
-    if (score >= 90) {
-      gemsGained = 10;
-    } else if (score >= 80) {
-      gemsGained = 7;
-    } else if (score >= 70) {
-      gemsGained = 5;
-    }
-    user.gems += gemsGained;
-
-    // Calculate and update level (every 1000 XP = 1 level)
-    const oldLevel = user.level;
-    const newLevel = Math.floor(user.xp / 1000) + 1;
-    if (newLevel > oldLevel) {
-      user.level = newLevel;
-      levelUp = true;
-      // Award bonus gems for leveling up
-      const levelUpGems = 25;
-      gemsGained += levelUpGems;
-      user.gems += levelUpGems;
-    }
-
     // Find or create course progress
     let courseProgress = user.progress.courses.find(
       c => c.courseId.toString() === course._id.toString()
@@ -102,10 +75,45 @@ export async function POST(req, { params }) {
     const chapterProgress = courseProgress.chapters[chapterIndex];
     const lessonProgress = chapterProgress.lessons[lessonIndex];
     
-    if (!lessonProgress.quizCompleted) {
-      lessonProgress.quizCompleted = true;
+    // Track quiz attempts
+    lessonProgress.quizAttempts = (lessonProgress.quizAttempts || 0) + 1;
+    
+    // Update best score if current score is higher
+    if (!lessonProgress.quizScore || score > lessonProgress.quizScore) {
       lessonProgress.quizScore = score;
+    }
+    
+    // Only award XP and gems for first successful completion (score >= 70)
+    if (!lessonProgress.quizCompleted && score >= 70) {
+      lessonProgress.quizCompleted = true;
       lessonProgress.quizCompletionDate = new Date();
+
+      // Award XP based on quiz score
+      const baseXP = Math.round(score); // 1 XP per percentage point
+      xpGained = baseXP;
+      user.xp += xpGained;
+
+      // Award gems based on score tiers
+      if (score >= 90) {
+        gemsGained = 10;
+      } else if (score >= 80) {
+        gemsGained = 7;
+      } else if (score >= 70) {
+        gemsGained = 5;
+      }
+      user.gems += gemsGained;
+
+      // Calculate and update level (every 1000 XP = 1 level)
+      const oldLevel = user.level;
+      const newLevel = Math.floor(user.xp / 1000) + 1;
+      if (newLevel > oldLevel) {
+        user.level = newLevel;
+        levelUp = true;
+        // Award bonus gems for leveling up
+        const levelUpGems = 25;
+        gemsGained += levelUpGems;
+        user.gems += levelUpGems;
+      }
     }
 
     // Calculate completion percentage

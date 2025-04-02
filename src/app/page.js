@@ -306,41 +306,47 @@ export default function Home() {
           </div>
 
           {/* Stats Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="stats-card hover-lift">
-              <div className="flex items-center justify-between mb-4">
-                <Zap className="w-6 h-6" style={{ color: "#F59E0B" }} />
-                <span className="badge badge-primary">Total</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-violet-100 text-violet-600 rounded-lg">
+                  <Award className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {userProfile?.progress?.courses.reduce((total, course) => total + (course.badges?.length || 0), 0) || 0}
+                  </h3>
+                  <p className="text-sm text-gray-600">Badges Earned</p>
+                </div>
               </div>
-              <div className="stats-value">{xp}</div>
-              <div className="stats-label">XP Earned</div>
             </div>
 
-            <div className="stats-card hover-lift">
-              <div className="flex items-center justify-between mb-4">
-                <Target className="w-6 h-6" style={{ color: "#EC4899" }} />
-                <span className="badge badge-accent">Streak</span>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-amber-100 text-amber-600 rounded-lg">
+                  <Zap className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {userProfile?.dailyStreak || 0}
+                  </h3>
+                  <p className="text-sm text-gray-600">Day Streak</p>
+                </div>
               </div>
-              <div className="stats-value">{dailyStreak}</div>
-              <div className="stats-label">Days</div>
             </div>
 
-            <div className="stats-card hover-lift">
-              <div className="flex items-center justify-between mb-4">
-                <BookOpen className="w-6 h-6" style={{ color: "#8B5CF6" }} />
-                <span className="badge badge-primary">Completed</span>
+            <div className="bg-white p-6 rounded-xl shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-emerald-100 text-emerald-600 rounded-lg">
+                  <CheckCircle className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {userProfile?.progress?.completedLessons || 0}
+                  </h3>
+                  <p className="text-sm text-gray-600">Lessons Completed</p>
+                </div>
               </div>
-              <div className="stats-value">{completedLessons}</div>
-              <div className="stats-label">Lessons</div>
-            </div>
-
-            <div className="stats-card hover-lift">
-              <div className="flex items-center justify-between mb-4">
-                <Clock className="w-6 h-6" style={{ color: "#06B6D4" }} />
-                <span className="badge badge-accent">Time</span>
-              </div>
-              <div className="stats-value">{timeDisplay}</div>
-              <div className="stats-label">Learning Time</div>
             </div>
           </div>
 

@@ -73,16 +73,18 @@ export async function POST(req, { params }) {
     const chapterProgress = courseProgress.chapters[chapterIndex];
     const lessonProgress = chapterProgress.lessons[lessonIndex];
     
-    // Only update if lesson is not already completed
-    if (!lessonProgress.completed) {
-      lessonProgress.completed = true;
-      lessonProgress.completionDate = new Date();
-      
-      // Track time spent (assuming average time based on lesson duration)
-      const timeSpent = lesson.duration || 10; // Default to 10 minutes if duration not specified
-      user.progress.totalTimeSpent = (user.progress.totalTimeSpent || 0) + timeSpent;
-      courseProgress.timeSpent = (courseProgress.timeSpent || 0) + timeSpent;
-      
+    // Track completion regardless of previous completion status
+    lessonProgress.completed = true;
+    lessonProgress.completionDate = new Date();
+    lessonProgress.attempts = (lessonProgress.attempts || 0) + 1;
+    
+    // Track time spent (assuming average time based on lesson duration)
+    const timeSpent = lesson.duration || 10; // Default to 10 minutes if duration not specified
+    user.progress.totalTimeSpent = (user.progress.totalTimeSpent || 0) + timeSpent;
+    courseProgress.timeSpent = (courseProgress.timeSpent || 0) + timeSpent;
+    
+    // Only award XP and gems for first completion
+    if (lessonProgress.attempts === 1) {
       // Increment completed lessons counter
       user.progress.completedLessons = (user.progress.completedLessons || 0) + 1;
 
