@@ -5,64 +5,13 @@ import { ChevronLeft, ChevronRight, BookOpen, Clock, Trophy } from "lucide-react
 import Navbar from "@/app/components/Navbar";
 import ExerciseWrapper from "@/app/components/exercises/ExerciseWrapper";
 import { marked } from "marked";
-import XPNotification from "@/app/components/XPNotification";
+import XPNotificationHandler from "@/app/components/XPNotificationHandler";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 
 // Import React DnD hooks
 import { useDrag, useDrop } from "react-dnd";
-
-// Separate client component for handling XP notifications
-function XPNotificationHandler({ params }) {
-  const [showXPNotification, setShowXPNotification] = useState(false);
-  const [xpNotificationData, setXPNotificationData] = useState(null);
-  const router = useRouter();
-  
-  // Use URL search params safely for client-side only
-  let searchParams;
-  try {
-    searchParams = new URLSearchParams(window.location.search);
-  } catch (e) {
-    // Handle case where window is not available during SSR
-    searchParams = { get: () => null };
-  }
-  
-  // Check for XP gain parameters in URL
-  useEffect(() => {
-    if (searchParams.get('xpGained')) {
-      const notificationData = {
-        message: 'Experience Earned!',
-        courseId: searchParams.get('courseId'),
-        xpGained: parseInt(searchParams.get('xpGained') || '0'),
-        gemsGained: parseInt(searchParams.get('gemsGained') || '0'),
-        levelUp: searchParams.get('levelUp') === 'true',
-        completionPercentage: parseInt(searchParams.get('completionPercentage') || '0')
-      };
-      
-      setXPNotificationData(notificationData);
-      setShowXPNotification(true);
-      
-      // Clear the URL parameters after a delay
-      setTimeout(() => {
-        router.replace(`/lesson/${params.slug}`);
-      }, 500);
-    }
-  }, [searchParams, router, params.slug]);
-
-  return (
-    <XPNotification 
-      isVisible={showXPNotification}
-      onClose={() => setShowXPNotification(false)}
-      xpGained={xpNotificationData?.xpGained}
-      gemsGained={xpNotificationData?.gemsGained}
-      levelUp={xpNotificationData?.levelUp}
-      message={xpNotificationData?.message}
-      completionPercentage={xpNotificationData?.completionPercentage}
-      courseId={xpNotificationData?.courseId}
-    />
-  );
-}
 
 function DraggableTerm({ term }) {
   const [{ isDragging }, dragRef] = useDrag(() => ({
@@ -219,6 +168,8 @@ export default function LessonPage() {
 
   const handleLessonComplete = async () => {
     try {
+      setIsCompletingLesson(true);
+      
       // Award XP for completing the entire lesson (100 XP bonus)
       const response = await fetch('/api/user/xp', {
         method: 'POST',
@@ -244,61 +195,75 @@ export default function LessonPage() {
 
         if (updateResponse.ok) {
           const { nextLessonSlug } = await updateResponse.json();
+          setIsCompleted(true);
+          
+          // If there's a next lesson, show a success message and redirect
           if (nextLessonSlug) {
-            router.push(`/lesson/${nextLessonSlug}`);
+            router.push(`/lesson/${nextLessonSlug}?lessonCompleted=true`);
           } else {
             // If no next lesson, go back to course page
-            router.push(`/course/${lesson.courseId}`);
+            router.push(`/course/${lesson.courseId}?lessonCompleted=true`);
           }
         }
       }
     } catch (error) {
-      console.error('Error updating XP:', error);
+      console.error('Error completing lesson:', error);
+      setError('Failed to complete lesson. Please try again.');
+    } finally {
+      setIsCompletingLesson(false);
     }
   };
 
   const navigateToPart = async (index) => {
     if (index >= 0 && index < lesson.parts.length) {
-      // If moving to next part, award XP for completing current part
-      if (index > currentPartIndex) {
-        await handlePartComplete();
-      }
-      
       setCurrentPartIndex(index);
-
-      // If this is the last part and all exercises are completed, show quiz button
-      if (index === lesson.parts.length - 1) {
-        const allExercisesCompleted = lesson.parts.every((part, idx) => 
-          !part.exercise || progress.completedExercises.has(idx)
-        );
-        
-        if (allExercisesCompleted) {
-          await handleLessonComplete();
-        }
-      }
     }
   };
 
   const startQuiz = async () => {
-    // Mark the lesson as complete before starting the quiz
-    await handleLessonComplete();
-    // Navigate to the quiz page with the lesson slug
-    router.push(`/quiz/${lesson.slug}`);
+    try {
+      // First check if quiz exists
+      const response = await fetch(`/api/quizzes/${lesson.slug}`);
+      if (!response.ok) {
+        throw new Error('Quiz not found');
+      }
+      
+      // If quiz exists, navigate to quiz page
+      router.push(`/quiz/${lesson.slug}`);
+    } catch (error) {
+      console.error('Error starting quiz:', error);
+      setError('Failed to start quiz. Please try again.');
+    }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-secondary">Loading lesson...</p>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+            <div className="space-y-4">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-center mt-6 text-red-500">{error}</div>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-700">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!lesson) {
@@ -373,103 +338,149 @@ export default function LessonPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pattern-bg">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="color-bar w-full fixed top-16 left-0"></div>
-
-      {/* XP Notification with Confetti */}
-      <Suspense fallback={null}>
-        <XPNotificationHandler params={params} />
-      </Suspense>
-
-      <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          {/* Lesson Header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-3 text-sm text-violet-600 mb-4">
-              <span>{lesson.chapterTitle}</span>
-              <ChevronRight className="w-4 h-4" />
-              <span>{lesson.title}</span>
+      <XPNotificationHandler params={params} />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Lesson Header */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">{lesson.title}</h1>
+              <p className="text-gray-600 text-sm sm:text-base break-words">{lesson.description}</p>
             </div>
-
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-gray-900">{currentPart.title}</h1>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Clock className="w-4 h-4" />
-                  <span>{currentPart.duration} min</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-violet-600">
-                  <Trophy className="w-4 h-4" />
-                  <span>{progress.xp} XP</span>
-                </div>
+            <div className="flex items-center gap-4 text-sm text-gray-500 flex-shrink-0">
+              <div className="flex items-center gap-1">
+                <Clock className="w-4 h-4 flex-shrink-0" />
+                <span>{lesson.duration} min</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <BookOpen className="w-4 h-4 flex-shrink-0" />
+                <span>Part {currentPartIndex + 1} of {lesson.parts.length}</span>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Progress Bar */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
-              <span>Progress</span>
-              <span>{currentPartIndex + 1} of {lesson.parts.length}</span>
+        {/* Lesson Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 md:p-8">
+              <div className="prose prose-violet max-w-none">
+                {marked(lesson.parts[currentPartIndex].content)}
+              </div>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full">
-              <div
-                className="h-full bg-violet-600 rounded-full transition-all"
-                style={{ width: `${((currentPartIndex + 1) / lesson.parts.length) * 100}%` }}
-              />
-            </div>
-          </div>
 
-          {/* Content */}
-          <div className="card p-8">
-            {/* Lesson Content */}
-            <div
-              className="prose prose-violet max-w-none mb-8"
-              dangerouslySetInnerHTML={{ __html: marked(currentPart.content) }}
-            />
-
-            {/* Exercise (if present) */}
-            {currentPart.exercise && (
-              <ExerciseWrapper
-                exercise={currentPart.exercise}
-                onComplete={handleExerciseComplete}
-              />
+            {/* Exercise */}
+            {lesson.parts[currentPartIndex].exercise && (
+              <div className="mt-8">
+                <ExerciseWrapper
+                  exercise={lesson.parts[currentPartIndex].exercise}
+                  onComplete={handleExerciseComplete}
+                />
+              </div>
             )}
 
-            {/* Navigation */}
-            <div className="flex items-center justify-between mt-8 pt-8 border-t">
-              <button
-                onClick={() => navigateToPart(currentPartIndex - 1)}
-                disabled={currentPartIndex === 0}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                  currentPartIndex === 0
-                    ? 'text-gray-400 cursor-not-allowed'
-                    : 'text-violet-600 hover:bg-violet-50'
-                }`}
-              >
-                <ChevronLeft className="w-5 h-5" />
-                Previous
-              </button>
-
-              {currentPartIndex === lesson.parts.length - 1 ? (
+            {/* Quiz Button */}
+            {currentPartIndex === lesson.parts.length - 1 && (
+              <div className="mt-8">
                 <button
                   onClick={startQuiz}
-                  className="flex items-center gap-2 px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+                  className="w-full sm:w-auto px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2"
                 >
-                  Take Quiz
                   <Trophy className="w-5 h-5" />
+                  <span>Take End of Lesson Quiz</span>
                 </button>
-              ) : (
-                <button
-                  onClick={() => navigateToPart(currentPartIndex + 1)}
-                  disabled={currentPartIndex === lesson.parts.length - 1}
-                  className="flex items-center gap-2 px-4 py-2 text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
-                >
-                  Next
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              )}
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-8">
+              <h2 className="text-lg font-semibold mb-4">Lesson Progress</h2>
+              <div className="space-y-4">
+                {lesson.parts.map((part, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                      index === currentPartIndex
+                        ? 'bg-violet-50 border border-violet-200'
+                        : progress.completedExercises.has(index)
+                        ? 'bg-green-50 border border-green-200'
+                        : 'bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    <div className="flex-shrink-0">
+                      {progress.completedExercises.has(index) ? (
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full border-2 border-gray-300" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {part.title}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {part.duration} min
+                      </p>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Quiz Section - Always visible */}
+                <div className="mt-4 pt-4 border-t">
+                  <div
+                    className="flex items-center gap-3 p-3 rounded-lg bg-violet-50 border border-violet-200 cursor-pointer hover:bg-violet-100 transition-colors"
+                    onClick={startQuiz}
+                  >
+                    <div className="flex-shrink-0">
+                      <Trophy className="w-5 h-5 text-violet-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900">
+                        End of Lesson Quiz
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Test your knowledge
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div className="mt-8 pt-6 border-t">
+                <div className="flex justify-between">
+                  <button
+                    onClick={() => setCurrentPartIndex(prev => Math.max(0, prev - 1))}
+                    disabled={currentPartIndex === 0}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                      currentPartIndex === 0
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-violet-50 text-violet-700 hover:bg-violet-100'
+                    }`}
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span className="text-sm">Previous</span>
+                  </button>
+                  <button
+                    onClick={() => setCurrentPartIndex(prev => Math.min(lesson.parts.length - 1, prev + 1))}
+                    disabled={currentPartIndex === lesson.parts.length - 1}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                      currentPartIndex === lesson.parts.length - 1
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-violet-50 text-violet-700 hover:bg-violet-100'
+                    }`}
+                  >
+                    <span className="text-sm">Next</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

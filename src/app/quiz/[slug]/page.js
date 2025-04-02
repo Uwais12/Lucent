@@ -1,115 +1,22 @@
 "use client";
-import { useState, useEffect, Suspense } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Trophy, ChevronLeft, Star } from "lucide-react";
-import Link from "next/link";
-import Navbar from "@/app/components/Navbar";
-import XPNotification from "@/app/components/XPNotification";
-import { useUser } from "@clerk/nextjs";
-import ReactConfetti from "react-confetti";
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import Navbar from '@/app/components/Navbar';
+import Quiz from '@/app/components/Quiz';
+import { useUser } from '@clerk/nextjs';
+import XPNotification from '@/app/components/XPNotification';
+import { Trophy, ArrowLeft } from 'lucide-react';
 
-// Separate client component for handling XP notifications
-function XPNotificationHandler({ params, manualTrigger, onManualClose }) {
-  const [showXPNotification, setShowXPNotification] = useState(false);
-  const [xpNotificationData, setXPNotificationData] = useState(null);
-  const router = useRouter();
-  
-  // Use URL search params safely for client-side only
-  let searchParams;
-  try {
-    searchParams = new URLSearchParams(window.location.search);
-  } catch (e) {
-    // Handle case where window is not available during SSR
-    searchParams = { get: () => null };
-  }
-  
-  // Handle the manual trigger from quiz submission
-  useEffect(() => {
-    if (manualTrigger && manualTrigger.show) {
-      setXPNotificationData(manualTrigger.data);
-      setShowXPNotification(true);
-    }
-  }, [manualTrigger]);
-  
-  // Check for XP gain parameters in URL
-  useEffect(() => {
-    if (searchParams.get('xpGained')) {
-      const notificationData = {
-        message: searchParams.get('quizCompleted') === 'true' ? 'Quiz Completed!' : 'Experience Earned!',
-        courseId: searchParams.get('courseId'),
-        score: parseInt(searchParams.get('score') || '0'),
-        xpGained: parseInt(searchParams.get('xpGained') || '0'),
-        gemsGained: parseInt(searchParams.get('gemsGained') || '0'),
-        levelUp: searchParams.get('levelUp') === 'true',
-        completionPercentage: parseInt(searchParams.get('completionPercentage') || '0')
-      };
-      
-      setXPNotificationData(notificationData);
-      setShowXPNotification(true);
-      
-      // Clear the URL parameters after a delay
-      setTimeout(() => {
-        router.replace(`/quiz/${params.slug}`);
-      }, 500);
-    }
-  }, [searchParams, router, params.slug]);
-
-  // Handle notification close
-  const handleClose = () => {
-    setShowXPNotification(false);
-    if (onManualClose) {
-      onManualClose();
-    }
-  };
-
-  return (
-    <XPNotification 
-      isVisible={showXPNotification}
-      onClose={handleClose}
-      xpGained={xpNotificationData?.xpGained}
-      gemsGained={xpNotificationData?.gemsGained}
-      levelUp={xpNotificationData?.levelUp}
-      message={xpNotificationData?.message}
-      completionPercentage={xpNotificationData?.completionPercentage}
-      courseId={xpNotificationData?.courseId}
-      score={xpNotificationData?.score}
-    />
-  );
-}
-
-export default function LessonQuizPage() {
+export default function QuizPage() {
   const params = useParams();
   const router = useRouter();
-  const { user, isSignedIn, isLoaded } = useUser();
+  const { user, isLoaded } = useUser();
   const [quiz, setQuiz] = useState(null);
-  const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [feedback, setFeedback] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [quizResult, setQuizResult] = useState(null);
-  const [isMarkingComplete, setIsMarkingComplete] = useState(false);
-  const [notificationTrigger, setNotificationTrigger] = useState(null);
-  const [showConfetti, setShowConfetti] = useState(false);
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
-  });
-
-  // Set up window size for confetti
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const handleResize = () => {
-        setWindowSize({
-          width: window.innerWidth,
-          height: window.innerHeight,
-        });
-      };
-
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }
-  }, []);
+  const [showNotification, setShowNotification] = useState(false);
+  const [completionData, setCompletionData] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -117,7 +24,7 @@ export default function LessonQuizPage() {
         const response = await fetch(`/api/quizzes/${params.slug}`);
         const data = await response.json();
 
-        if (response.ok && !data.error) {
+        if (response.ok) {
           setQuiz(data);
         } else {
           setError(data.error || 'Failed to load quiz');
@@ -129,454 +36,177 @@ export default function LessonQuizPage() {
       }
     };
 
-    fetchQuiz();
-  }, [params.slug]);
-
-  const handleAnswerChange = (questionIndex, answer) => {
-    setAnswers(prev => ({
-      ...prev,
-      [questionIndex]: answer
-    }));
-  };
-
-  // Function to mark lesson as complete and redirect to dashboard
-  const markLessonCompleteAndRedirect = async () => {
-    if (!quiz || !quizResult || isMarkingComplete) return;
-    
-    try {
-      setIsMarkingComplete(true);
-      
-      // Call the API to mark the lesson as complete
-      const response = await fetch('/api/lessons/mark-complete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          courseId: quiz.courseId,
-          chapterId: quiz.chapterId,
-          lessonId: quiz.lessonId
-        })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        
-        // Redirect to dashboard with completion information
-        router.push(`/?quizCompleted=true&courseId=${data.courseId}&score=${quizResult.score}&xpGained=${data.xpGained || 0}&levelUp=${data.levelUp || false}&completionPercentage=${data.completionPercentage || 0}`);
-      } else {
-        // If there's an error, still redirect to dashboard but without completion info
-        router.push('/');
-      }
-    } catch (error) {
-      console.error('Error marking lesson as complete:', error);
-      router.push('/');
+    if (isLoaded && user) {
+      fetchQuiz();
     }
-  };
+  }, [params.slug, isLoaded, user]);
 
-  const submitQuiz = async () => {
+  const handleQuizComplete = async (score) => {
     try {
-      let totalPoints = 0;
-      let earnedPoints = 0;
-
-      quiz.questions.forEach((question, index) => {
-        const userAnswer = answers[index];
-        const isCorrect = userAnswer === question.correctAnswer;
-        if (isCorrect) {
-          earnedPoints += question.points || 10; // Default to 10 points if not specified
-        }
-        totalPoints += question.points || 10;
-      });
-
-      const score = Math.round((earnedPoints / totalPoints) * 100);
-      const passed = score >= quiz.passingScore;
-
-      // Submit quiz results
-      const response = await fetch('/api/lessons/quiz-complete', {
+      setIsSubmitting(true);
+      // First, submit the quiz completion
+      const quizResponse = await fetch(`/api/quizzes/${params.slug}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          lessonSlug: params.slug,
-          score,
-          passed,
-          answers,
-          courseId: quiz.courseId,
-          chapterId: quiz.chapterId,
-          lessonId: quiz.lessonId
-        })
+        body: JSON.stringify({ score })
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setSubmitted(true);
-        setQuizResult(data);
-
-        // Build feedback message
-        let feedbackMsg = passed 
-          ? `Congratulations! You passed with a score of ${score}%` 
-          : `You scored ${score}%. You need ${quiz.passingScore}% to pass. Try again!`;
-
-        // Add XP info
-        if (data.xpGained) {
-          feedbackMsg += `\nYou earned ${data.xpGained} XP!`;
-        }
-
-        // Add level up info
-        if (data.levelUp) {
-          feedbackMsg += `\nLevel Up! You are now level ${data.level}!`;
-        }
-
-        setFeedback(feedbackMsg);
-
-        // Trigger the XP notification popup and confetti when passing
-        if (passed) {
-          // First show confetti
-          setShowConfetti(true);
-          
-          // Then trigger notification
-          setNotificationTrigger({
-            show: true,
-            data: {
-              message: 'Quiz Completed!',
-              courseId: quiz.courseId,
-              score: score,
-              xpGained: data.xpGained || 0,
-              gemsGained: data.gemsGained || 0,
-              levelUp: data.levelUp || false,
-              completionPercentage: data.completionPercentage || 0
-            }
-          });
-
-          // Turn off confetti after some time
-          setTimeout(() => {
-            setShowConfetti(false);
-          }, 6000);
-
-          // Handle navigation after delay
-          setTimeout(() => {
-            if (data.nextLessonSlug) {
-              router.push(`/lesson/${data.nextLessonSlug}`);
-            }
-            // If this is the last lesson, we'll let the user decide when to go to the dashboard
-          }, 5000); // Give more time to see results and achievements
-        }
+      if (!quizResponse.ok) {
+        throw new Error('Failed to submit quiz');
       }
+
+      const quizData = await quizResponse.json();
+      let completionInfo = {
+        score,
+        xpGained: quizData.xpGained,
+        gemsGained: quizData.gemsGained,
+        levelUp: quizData.levelUp,
+        completionPercentage: quizData.completionPercentage
+      };
+      
+      // If quiz is passed (score >= 70), mark lesson as complete
+      if (score >= 70) {
+        const lessonResponse = await fetch(`/api/lessons/${params.slug}/complete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!lessonResponse.ok) {
+          throw new Error('Failed to complete lesson');
+        }
+
+        const lessonData = await lessonResponse.json();
+        completionInfo = {
+          ...completionInfo,
+          xpGained: quizData.xpGained + lessonData.xpGained,
+          gemsGained: quizData.gemsGained + lessonData.gemsGained,
+          levelUp: quizData.levelUp || lessonData.levelUp,
+          nextLessonSlug: lessonData.nextLessonSlug,
+          message: 'Quiz & Lesson Completed! 🎉'
+        };
+      } else {
+        completionInfo.message = 'Quiz Submitted';
+      }
+
+      setCompletionData(completionInfo);
+      setShowNotification(true);
     } catch (error) {
       console.error('Error submitting quiz:', error);
-      setError('Failed to submit quiz');
+      setError('Failed to submit quiz. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
-  };
-
-  const handleNotificationClose = () => {
-    setNotificationTrigger(null);
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-secondary">Loading quiz...</p>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+            <div className="space-y-4">
+              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-center mt-6 text-red-500">{error}</div>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-700">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!quiz) {
-    return <div className="text-center mt-6">Quiz not found</div>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center text-gray-600">Quiz not found</div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-background pattern-bg">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="color-bar w-full fixed top-16 left-0"></div>
-      
-      {/* Show confetti when user passes the quiz */}
-      {showConfetti && (
-        <ReactConfetti
-          width={windowSize.width}
-          height={windowSize.height}
-          recycle={false}
-          numberOfPieces={300}
-          gravity={0.15}
-        />
-      )}
-      
-      {/* XP Notification with Confetti */}
-      <Suspense fallback={null}>
-        <XPNotificationHandler 
-          params={params} 
-          manualTrigger={notificationTrigger}
-          onManualClose={handleNotificationClose}
-        />
-      </Suspense>
-
-      <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">
-          {/* Quiz Header */}
-          <div className="mb-8">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{quiz.title}</h1>
             <button
-              onClick={() => router.back()}
-              className="flex items-center gap-2 text-violet-600 mb-4"
+              onClick={() => router.push(`/lesson/${params.slug}`)}
+              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
-              <ChevronLeft className="w-4 h-4" />
-              Back to Lesson
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Lesson</span>
             </button>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">{quiz.title}</h1>
-                <p className="text-gray-600">{quiz.description}</p>
-              </div>
-              <div className="flex items-center gap-2 text-violet-600">
-                <Trophy className="w-5 h-5" />
-                <span>Pass: {quiz.passingScore}%</span>
-              </div>
-            </div>
           </div>
+          <p className="text-gray-600">{quiz.description}</p>
+        </div>
 
-          {/* Results popup for successful quiz */}
-          {submitted && quizResult && quizResult.score >= 70 && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40 animate-fade-in">
-              <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 animate-pop-in">
-                <div className="text-center mb-4">
-                  <h2 className="text-2xl font-bold text-gray-900">Congratulations!</h2>
-                  <p className="text-lg text-violet-600 font-medium">You passed the quiz!</p>
-                </div>
-                
-                <div className="flex items-center justify-center mb-6">
-                  <div className="text-center bg-violet-100 rounded-full p-6">
-                    <span className="text-4xl font-bold text-violet-700">{quizResult.score}%</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 mb-6">
-                  <div className="flex items-center justify-between text-sm">
-                    <span>XP Earned</span>
-                    <span className="font-medium text-violet-600">+{quizResult.xpGained} XP</span>
-                  </div>
-                  {quizResult.levelUp && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span>New Level</span>
-                      <span className="font-medium text-emerald-600">Level {quizResult.level}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Course Progress</span>
-                    <span className="font-medium text-violet-600">{quizResult.completionPercentage}%</span>
-                  </div>
-                </div>
-                
+        <Quiz
+          questions={quiz.questions}
+          lessonSlug={params.slug}
+          onComplete={handleQuizComplete}
+          isSubmitting={isSubmitting}
+        />
+
+        {/* Completion UI */}
+        {showNotification && (
+          <>
+            <XPNotification 
+              isVisible={showNotification}
+              onClose={() => setShowNotification(false)}
+              xpGained={completionData.xpGained}
+              gemsGained={completionData.gemsGained}
+              levelUp={completionData.levelUp}
+              message={completionData.message}
+              completionPercentage={completionData.completionPercentage}
+              score={completionData.score}
+            />
+            
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+              {completionData.nextLessonSlug ? (
                 <button
-                  onClick={() => document.querySelector(".fixed.inset-0.bg-black.bg-opacity-50").classList.add("hidden")}
-                  className="w-full py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
+                  onClick={() => router.push(`/lesson/${completionData.nextLessonSlug}`)}
+                  className="flex-1 sm:flex-initial px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2"
                 >
-                  Continue
+                  <Trophy className="w-5 h-5" />
+                  <span>Continue to Next Lesson</span>
                 </button>
-              </div>
-            </div>
-          )}
-
-          {/* Quiz Questions */}
-          <div className="space-y-8">
-            {quiz.questions.map((question, index) => (
-              <div key={index} className="card p-6">
-                <p className="font-medium text-lg mb-4">{question.question}</p>
-
-                {question.type === 'multiple-choice' && (
-                  <div className="space-y-3">
-                    {question.options.map((option, optionIndex) => (
-                      <button
-                        key={optionIndex}
-                        onClick={() => !submitted && handleAnswerChange(index, option)}
-                        className={`w-full text-left p-3 rounded-lg border transition-colors ${
-                          answers[index] === option
-                            ? submitted
-                              ? answers[index] === question.correctAnswer
-                                ? 'bg-green-100 border-green-500 text-green-700'
-                                : 'bg-red-100 border-red-500 text-red-700'
-                              : 'bg-violet-100 border-violet-500 text-violet-700'
-                            : 'border-gray-200 hover:border-violet-500'
-                        } ${submitted ? 'cursor-default' : 'cursor-pointer'}`}
-                        disabled={submitted}
-                      >
-                        {option}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {question.type === 'true-false' && (
-                  <div className="flex gap-4">
-                    {['true', 'false'].map((option) => (
-                      <button
-                        key={option}
-                        onClick={() => !submitted && handleAnswerChange(index, option)}
-                        className={`px-6 py-2 rounded-lg border transition-colors ${
-                          answers[index]?.toLowerCase() === option
-                            ? submitted
-                              ? answers[index] === question.correctAnswer
-                                ? 'bg-green-100 border-green-500 text-green-700'
-                                : 'bg-red-100 border-red-500 text-red-700'
-                              : 'bg-violet-100 border-violet-500 text-violet-700'
-                            : 'border-gray-200 hover:border-violet-500'
-                        } ${submitted ? 'cursor-default' : 'cursor-pointer'}`}
-                        disabled={submitted}
-                      >
-                        {option.charAt(0).toUpperCase() + option.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {submitted && (
-                  <div className="mt-4">
-                    <p className={`text-sm ${
-                      answers[index] === question.correctAnswer
-                        ? 'text-green-600'
-                        : 'text-red-600'
-                    }`}>
-                      {answers[index] === question.correctAnswer ? 'Correct!' : 'Incorrect'}
-                    </p>
-                    <p className="text-sm text-gray-600 mt-1">{question.explanation}</p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Submit Button or Results */}
-          {!submitted ? (
-            <div className="mt-8 flex justify-end">
+              ) : (
+                <button
+                  onClick={() => router.push(`/course/${quiz.courseId}`)}
+                  className="flex-1 sm:flex-initial px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Trophy className="w-5 h-5" />
+                  <span>Return to Course</span>
+                </button>
+              )}
+              
               <button
-                onClick={submitQuiz}
-                disabled={Object.keys(answers).length !== quiz.questions.length}
-                className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                  Object.keys(answers).length === quiz.questions.length
-                    ? 'bg-violet-600 text-white hover:bg-violet-700'
-                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                }`}
+                onClick={() => router.push(`/lesson/${params.slug}`)}
+                className="flex-1 sm:flex-initial px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
               >
-                Submit Quiz
+                <ArrowLeft className="w-5 h-5" />
+                <span>Back to Lesson</span>
               </button>
             </div>
-          ) : (
-            <div className="mt-8 space-y-4">
-              {/* Results Card */}
-              <div className="card p-6 bg-gradient-to-br from-violet-50 to-fuchsia-50">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Quiz Results</h3>
-                  <div className="flex items-center gap-2">
-                    <Star className="w-5 h-5 text-yellow-500" />
-                    <span className="text-lg font-semibold">{quizResult.score}%</span>
-                  </div>
-                </div>
-                
-                {quizResult.score >= 70 ? (
-                  <>
-                    {/* XP and Level */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span>XP Earned</span>
-                        <span className="font-medium text-violet-600">+{quizResult.xpGained} XP</span>
-                      </div>
-                      {quizResult.levelUp && (
-                        <div className="flex items-center justify-between text-sm">
-                          <span>New Level</span>
-                          <span className="font-medium text-emerald-600">Level {quizResult.level}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between text-sm">
-                        <span>Course Progress</span>
-                        <span className="font-medium text-violet-600">{quizResult.completionPercentage}%</span>
-                      </div>
-                    </div>
-
-                    {/* Success Message */}
-                    <div className="mt-4 p-4 bg-green-50 text-green-700 rounded-lg">
-                      <p className="text-center font-medium">
-                        {quizResult.nextLessonSlug
-                          ? "Congratulations! Moving to the next lesson in a few seconds..."
-                          : "Congratulations! You've completed the course!"}
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* Failed Message */}
-                    <div className="mt-4 p-4 bg-amber-50 text-amber-700 rounded-lg">
-                      <p className="text-center font-medium">
-                        You need 70% or higher to pass this quiz and complete the lesson.
-                      </p>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="mt-4 flex gap-4 justify-center">
-                      <button
-                        onClick={() => window.location.reload()}
-                        className="px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
-                      >
-                        Retry Quiz
-                      </button>
-                      <Link
-                        href={`/lesson/${params.slug}`}
-                        className="px-6 py-2 border border-violet-600 text-violet-600 rounded-lg hover:bg-violet-50 transition-colors"
-                      >
-                        Review Lesson
-                      </Link>
-                    </div>
-                  </>
-                )}
-              </div>
-
-              {/* Navigation */}
-              <div className="mt-4 flex justify-between">
-                <Link
-                  href={`/lesson/${params.slug}`}
-                  className="flex items-center gap-2 text-violet-600 hover:text-violet-700"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                  Back to Lesson
-                </Link>
-                {quizResult.score >= 70 ? (
-                  <button
-                    onClick={markLessonCompleteAndRedirect}
-                    disabled={isMarkingComplete}
-                    className="text-violet-600 hover:text-violet-700 disabled:opacity-50"
-                  >
-                    {isMarkingComplete ? 'Redirecting...' : 'Home'}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => {
-                      if (confirm("You haven't passed the quiz yet. Going home will not mark this lesson as complete. Continue?")) {
-                        router.push('/');
-                      }
-                    }}
-                    className="text-violet-600 hover:text-violet-700"
-                  >
-                    Home
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Feedback */}
-          {feedback && (
-            <div className={`mt-8 p-4 rounded-lg ${
-              submitted && quizResult?.passed
-                ? 'bg-green-100 text-green-700'
-                : 'bg-red-100 text-red-700'
-            }`}>
-              {feedback.split('\n').map((line, i) => (
-                <p key={i} className="mb-1">{line}</p>
-              ))}
-            </div>
-          )}
-        </div>
+          </>
+        )}
       </main>
     </div>
   );

@@ -81,12 +81,14 @@ export default function MultipleChoice({ exercise, onComplete }) {
   };
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow-sm">
-      <h3 className="text-lg font-semibold mb-4">{exercise.title}</h3>
-      <p className="text-gray-600 mb-6">{exercise.description}</p>
+    <div className="p-4 sm:p-6 bg-white rounded-xl shadow-sm">
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-2">{exercise.title}</h3>
+        <p className="text-gray-600 text-sm sm:text-base">{exercise.description}</p>
+      </div>
 
-      <div className="space-y-4 mb-8">
-        <p className="font-medium text-gray-900">{exercise.content.question}</p>
+      <div className="space-y-4 mb-6 sm:mb-8">
+        <p className="font-medium text-gray-900 text-sm sm:text-base">{exercise.content.question}</p>
 
         <div className="space-y-2">
           {exercise.content.options?.map((option, index) => (
@@ -94,11 +96,11 @@ export default function MultipleChoice({ exercise, onComplete }) {
               key={index}
               onClick={() => !showExplanation && handleAnswerSelect(option)}
               disabled={showExplanation}
-              className={`w-full p-4 text-left rounded-lg border transition-all ${getOptionStyle(option)}`}
+              className={`w-full p-3 sm:p-4 text-left rounded-lg border transition-all ${getOptionStyle(option)}`}
             >
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                  className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                     selectedAnswer === option
                       ? option === exercise.content.correctAnswer && showExplanation
                         ? 'border-green-600'
@@ -108,7 +110,7 @@ export default function MultipleChoice({ exercise, onComplete }) {
                 >
                   {selectedAnswer === option && (
                     <div 
-                      className={`w-2 h-2 rounded-full ${
+                      className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${
                         showExplanation && option === exercise.content.correctAnswer
                           ? 'bg-green-600'
                           : 'bg-violet-600'
@@ -116,17 +118,17 @@ export default function MultipleChoice({ exercise, onComplete }) {
                     />
                   )}
                 </div>
-                <span className={getOptionTextStyle(option)}>
+                <span className={`text-sm sm:text-base ${getOptionTextStyle(option)}`}>
                   {option}
                 </span>
               </div>
               {showExplanation && option === exercise.content.correctAnswer && (
-                <div className="mt-2 text-sm text-green-600 pl-7">
+                <div className="mt-2 text-xs sm:text-sm text-green-600 pl-7">
                   ✓ Correct Answer
                 </div>
               )}
               {showExplanation && selectedAnswer === option && option !== exercise.content.correctAnswer && (
-                <div className="mt-2 text-sm text-red-600 pl-7">
+                <div className="mt-2 text-xs sm:text-sm text-red-600 pl-7">
                   ✗ Your Answer
                 </div>
               )}
@@ -135,13 +137,13 @@ export default function MultipleChoice({ exercise, onComplete }) {
         </div>
       </div>
 
-      <div className="mt-8 space-y-4">
-        <div className="flex flex-wrap gap-4">
+      <div className="mt-6 sm:mt-8 space-y-4">
+        <div className="flex flex-wrap gap-2 sm:gap-4">
           {!showExplanation ? (
             <button
               onClick={checkAnswer}
               disabled={selectedAnswer === null}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`flex-1 sm:flex-none px-4 py-2 rounded-lg transition-colors text-sm sm:text-base ${
                 selectedAnswer === null
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   : 'bg-violet-600 text-white hover:bg-violet-700'
@@ -157,7 +159,7 @@ export default function MultipleChoice({ exercise, onComplete }) {
                 setShowExplanation(false);
                 setFeedback('');
               }}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex-1 sm:flex-none px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base"
               disabled={isCorrect}
             >
               Try Again
@@ -167,7 +169,7 @@ export default function MultipleChoice({ exercise, onComplete }) {
 
         {feedback && (
           <div
-            className={`p-3 rounded-lg ${
+            className={`p-3 rounded-lg text-sm sm:text-base ${
               isCorrect ? 'bg-green-100 text-green-700' : 'bg-amber-50 text-amber-700'
             }`}
           >
@@ -177,13 +179,13 @@ export default function MultipleChoice({ exercise, onComplete }) {
 
         {showExplanation && exercise.content.explanation && (
           <div className="p-4 bg-blue-50 text-blue-700 rounded-lg">
-            <div className="font-medium mb-1">Explanation:</div>
-            <div className="text-sm">{exercise.content.explanation}</div>
+            <div className="font-medium mb-1 text-sm sm:text-base">Explanation:</div>
+            <div className="text-xs sm:text-sm">{exercise.content.explanation}</div>
           </div>
         )}
 
         {attempts > 1 && !isCorrect && (
-          <div className="text-sm text-gray-500">
+          <div className="text-xs sm:text-sm text-gray-500">
             Note: Multiple attempts will reduce the points earned for this exercise.
           </div>
         )}
