@@ -365,7 +365,7 @@ export const ddiaCourse = {
   },
   endOfCourseExam: {
     title: "Data Models and Query Languages Final Exam",
-    description: "Comprehensive final exam covering all chapters",
+    description: "Comprehensive final exam covering all chapters. This exam tests your understanding of data-intensive applications, different data models, and query languages.",
     duration: 60,
     passingScore: 80,
     questions: [
@@ -379,8 +379,107 @@ export const ddiaCourse = {
           "Lower storage requirements"
         ],
         correctAnswer: "Better schema flexibility",
-        points: 20,
+        points: 10,
         explanation: "Document databases offer better schema flexibility as they don't require a predefined schema structure."
+      },
+      {
+        type: "multiple-choice",
+        question: "Which system type is best suited for real-time transaction processing with low latency?",
+        options: [
+          "OLAP systems",
+          "OLTP systems",
+          "ETL systems",
+          "Batch processing systems"
+        ],
+        correctAnswer: "OLTP systems",
+        points: 10,
+        explanation: "OLTP (Online Transaction Processing) systems are designed for real-time transaction processing with low latency, making them ideal for operational workloads."
+      },
+      {
+        type: "true-false",
+        question: "Graph databases are more efficient than relational databases for handling highly interconnected data with complex relationships.",
+        correctAnswer: "true",
+        points: 10,
+        explanation: "Graph databases are specifically designed to handle complex relationships and traversals efficiently, making them superior for highly interconnected data."
+      },
+      {
+        type: "multiple-choice",
+        question: "What is the main characteristic of declarative query languages like SQL?",
+        options: [
+          "They specify exactly how to retrieve the data",
+          "They specify what data you want, not how to get it",
+          "They are always faster than imperative languages",
+          "They require manual optimization"
+        ],
+        correctAnswer: "They specify what data you want, not how to get it",
+        points: 10,
+        explanation: "Declarative query languages allow you to specify what data you want without detailing the exact steps to retrieve it, leaving optimization to the database system."
+      },
+      {
+        type: "multiple-choice",
+        question: "Which pattern is most common for write operations in OLAP systems?",
+        options: [
+          "Individual record updates",
+          "Bulk imports or event streams",
+          "Random access writes",
+          "Point updates by key"
+        ],
+        correctAnswer: "Bulk imports or event streams",
+        points: 10,
+        explanation: "OLAP systems typically handle write operations through bulk imports or event streams rather than individual record updates."
+      },
+      {
+        type: "true-false",
+        question: "The NoSQL movement primarily emerged due to the need for better scalability and more flexible data models than traditional relational databases.",
+        correctAnswer: "true",
+        points: 10,
+        explanation: "The NoSQL movement was driven by the need for databases that could handle larger scale and provide more flexible data models than traditional RDBMS."
+      },
+      {
+        type: "multiple-choice",
+        question: "What is the primary challenge addressed by Object-Relational Mapping (ORM) systems?",
+        options: [
+          "Database performance optimization",
+          "Query language complexity",
+          "The impedance mismatch between object-oriented code and relational databases",
+          "Network latency"
+        ],
+        correctAnswer: "The impedance mismatch between object-oriented code and relational databases",
+        points: 10,
+        explanation: "ORMs address the impedance mismatch that occurs when mapping object-oriented programming concepts to relational database structures."
+      },
+      {
+        type: "multiple-choice",
+        question: "Which type of database would be most appropriate for a social network application's friend relationships?",
+        options: [
+          "Document database",
+          "Key-value store",
+          "Graph database",
+          "Column-family store"
+        ],
+        correctAnswer: "Graph database",
+        points: 10,
+        explanation: "Graph databases excel at managing and querying complex relationships like social connections, making them ideal for social network applications."
+      },
+      {
+        type: "true-false",
+        question: "OLTP systems typically handle larger datasets than OLAP systems.",
+        correctAnswer: "false",
+        points: 10,
+        explanation: "OLAP systems typically handle much larger datasets (terabytes to petabytes) compared to OLTP systems (gigabytes to terabytes)."
+      },
+      {
+        type: "multiple-choice",
+        question: "What is the main benefit of normalized data in relational databases?",
+        options: [
+          "Faster query performance",
+          "Reduced storage space",
+          "Consistency when updating values",
+          "Simpler application code"
+        ],
+        correctAnswer: "Consistency when updating values",
+        points: 10,
+        explanation: "Normalization ensures that data is stored in only one place, making updates consistent and avoiding data anomalies."
       }
     ]
   },

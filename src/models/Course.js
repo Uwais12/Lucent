@@ -299,7 +299,6 @@ const CourseSchema = new mongoose.Schema(
 );
 
 // Indexes
-CourseSchema.index({ slug: 1 });
 CourseSchema.index({ tags: 1 });
 CourseSchema.index({ level: 1 });
 CourseSchema.index({ "rating.average": -1 });

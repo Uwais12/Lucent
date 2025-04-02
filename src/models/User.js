@@ -277,6 +277,30 @@ UserSchema.virtual('completionPercentage').get(function() {
   return totalPercentage / this.progress.courses.length;
 });
 
+// Add method to calculate course completion percentage
+UserSchema.methods.calculateCourseCompletion = async function(courseId) {
+  const courseProgress = this.progress.courses.find(
+    c => c.courseId.toString() === courseId.toString()
+  );
+
+  if (!courseProgress) {
+    return 0;
+  }
+
+  // Calculate total lessons
+  const totalLessons = courseProgress.chapters.reduce((sum, ch) => 
+    sum + ch.lessons.length, 0
+  );
+
+  // Calculate completed lessons
+  const completedLessons = courseProgress.chapters.reduce((sum, ch) => 
+    sum + ch.lessons.filter(l => l.completed).length, 0
+  );
+
+  // Calculate percentage
+  return Math.round((completedLessons / totalLessons) * 100);
+};
+
 // Indexes for efficient querying
 UserSchema.index({ 'progress.courses.courseId': 1 });
 UserSchema.index({ lastActivity: -1 });

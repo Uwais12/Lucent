@@ -1,151 +1,138 @@
+import { NextResponse } from "next/server";
+import { getAuth } from "@clerk/nextjs/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Course from "@/models/Course";
 import User from "@/models/User";
-import { getAuth } from "@clerk/nextjs/server";
 
 export async function POST(req, { params }) {
   try {
     const { userId } = getAuth(req);
     if (!userId) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { score } = await req.json();
+    const { answers } = await req.json();
+
+    // Validate answers array
+    if (!Array.isArray(answers)) {
+      return NextResponse.json(
+        { error: "Answers must be an array" },
+        { status: 400 }
+      );
+    }
 
     await connectToDatabase();
 
-    // Find the course and lesson
+    // Await params before using
+    const { slug } = await params;
+
+    // Find the course that contains this quiz
     const course = await Course.findOne({
-      "chapters.lessons.slug": params.slug
+      "chapters.lessons.slug": slug
+    }).populate({
+      path: "chapters.lessons",
+      select: "title description slug endOfLessonQuiz"
     });
 
     if (!course) {
-      return new Response(JSON.stringify({ error: "Course not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
-    // Find the chapter and lesson
-    const chapterIndex = course.chapters.findIndex(chapter =>
-      chapter.lessons.some(lesson => lesson.slug === params.slug)
+    // Find the chapter and lesson containing this quiz
+    const chapter = course.chapters.find(chapter =>
+      chapter.lessons.some(lesson => lesson.slug === slug)
     );
-    const chapter = course.chapters[chapterIndex];
-    const lessonIndex = chapter.lessons.findIndex(lesson => lesson.slug === params.slug);
-    const lesson = chapter.lessons[lessonIndex];
 
-    // Find user
+    if (!chapter) {
+      return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
+    }
+
+    const lesson = chapter.lessons.find(lesson => lesson.slug === slug);
+
+    if (!lesson) {
+      return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
+    }
+
+    // Get the quiz data
+    const quiz = lesson.endOfLessonQuiz;
+
+    if (!quiz) {
+      return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
+    }
+
+    // Validate quiz questions
+    if (!Array.isArray(quiz.questions) || quiz.questions.length === 0) {
+      return NextResponse.json(
+        { error: "Invalid quiz format" },
+        { status: 400 }
+      );
+    }
+
+    // Find the user
     const user = await User.findOne({ clerkId: userId });
+
     if (!user) {
-      return new Response(JSON.stringify({ error: "User not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Initialize variables for tracking progress
-    let xpGained = 0;
-    let levelUp = false;
-    let gemsGained = 0;
+    // Calculate score
+    let correctAnswers = 0;
+    quiz.questions.forEach((question, index) => {
+      const userAnswer = answers[index];
+      if (!userAnswer) return;
 
-    // Find or create course progress
-    let courseProgress = user.progress.courses.find(
-      c => c.courseId.toString() === course._id.toString()
-    );
-
-    if (!courseProgress) {
-      courseProgress = {
-        courseId: course._id,
-        chapters: course.chapters.map(ch => ({
-          chapterId: ch._id,
-          completed: false,
-          lessons: ch.lessons.map(l => ({
-            lessonId: l._id,
-            completed: false
-          }))
-        }))
-      };
-      user.progress.courses.push(courseProgress);
-    }
-
-    // Update quiz completion in lesson progress
-    const chapterProgress = courseProgress.chapters[chapterIndex];
-    const lessonProgress = chapterProgress.lessons[lessonIndex];
-    
-    // Track quiz attempts
-    lessonProgress.quizAttempts = (lessonProgress.quizAttempts || 0) + 1;
-    
-    // Update best score if current score is higher
-    if (!lessonProgress.quizScore || score > lessonProgress.quizScore) {
-      lessonProgress.quizScore = score;
-    }
-    
-    // Only award XP and gems for first successful completion (score >= 70)
-    if (!lessonProgress.quizCompleted && score >= 70) {
-      lessonProgress.quizCompleted = true;
-      lessonProgress.quizCompletionDate = new Date();
-
-      // Award XP based on quiz score
-      const baseXP = Math.round(score); // 1 XP per percentage point
-      xpGained = baseXP;
-      user.xp += xpGained;
-
-      // Award gems based on score tiers
-      if (score >= 90) {
-        gemsGained = 10;
-      } else if (score >= 80) {
-        gemsGained = 7;
-      } else if (score >= 70) {
-        gemsGained = 5;
+      switch (question.type) {
+        case "true-false":
+          if (userAnswer.toLowerCase() === question.correctAnswer.toLowerCase()) {
+            correctAnswers++;
+          }
+          break;
+        case "multiple-choice":
+          if (userAnswer === question.correctAnswer) {
+            correctAnswers++;
+          }
+          break;
+        case "fill-blank":
+          // For fill-blank questions, userAnswer is an array of answers
+          if (Array.isArray(userAnswer)) {
+            const allBlanksCorrect = question.blanks.every((blank, blankIndex) => {
+              const answer = userAnswer[blankIndex]?.toLowerCase().trim();
+              return answer === blank.correctAnswer.toLowerCase().trim();
+            });
+            if (allBlanksCorrect) {
+              correctAnswers++;
+            }
+          }
+          break;
       }
-      user.gems += gemsGained;
+    });
 
-      // Calculate and update level (every 1000 XP = 1 level)
-      const oldLevel = user.level;
-      const newLevel = Math.floor(user.xp / 1000) + 1;
-      if (newLevel > oldLevel) {
-        user.level = newLevel;
-        levelUp = true;
-        // Award bonus gems for leveling up
-        const levelUpGems = 25;
-        gemsGained += levelUpGems;
-        user.gems += levelUpGems;
-      }
-    } else {
-      // Reset XP and gems gained if not first completion
-      xpGained = 0;
-      gemsGained = 0;
-      levelUp = false;
-    }
+    const score = Math.round((correctAnswers / quiz.questions.length) * 100);
 
-    // Calculate completion percentage
-    const totalLessons = course.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0);
-    const completedLessons = courseProgress.chapters.reduce((sum, ch) => 
-      sum + ch.lessons.filter(l => l.completed).length, 0
-    );
-    courseProgress.completionPercentage = Math.round((completedLessons / totalLessons) * 100);
+    // Calculate rewards
+    const xpGained = Math.round(score * 10); // 10 XP per percentage point
+    const gemsGained = score >= 80 ? 5 : score >= 60 ? 3 : 1;
 
+    // Update user's progress
+    const levelUp = await user.addXP(xpGained);
+    user.gems += gemsGained;
     await user.save();
 
-    return new Response(JSON.stringify({ 
-      success: true,
+    // Calculate completion percentage for the course
+    const completionPercentage = await user.calculateCourseCompletion(course._id);
+
+    return NextResponse.json({
+      score,
       xpGained,
       gemsGained,
       levelUp,
-      completionPercentage: courseProgress.completionPercentage
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
+      completionPercentage,
     });
-
   } catch (error) {
     console.error("Error completing quiz:", error);
-    return new Response(JSON.stringify({ error: "Failed to complete quiz" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json(
+      { error: "Failed to complete quiz" },
+      { status: 500 }
+    );
   }
 } 

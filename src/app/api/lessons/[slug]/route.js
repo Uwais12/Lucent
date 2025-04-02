@@ -22,6 +22,7 @@ export async function GET(req, { params }) {
     const chapter = course.chapters.find(chapter =>
       chapter.lessons.some(lesson => lesson.slug === params.slug)
     );
+    console.log(chapter);
     const lesson = chapter.lessons.find(lesson => lesson.slug === params.slug);
 
     // Format the response

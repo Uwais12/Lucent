@@ -17,6 +17,7 @@ export default function QuizPage() {
   const [showNotification, setShowNotification] = useState(false);
   const [completionData, setCompletionData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -41,23 +42,23 @@ export default function QuizPage() {
     }
   }, [params.slug, isLoaded, user]);
 
-  const handleQuizComplete = async (score) => {
+  const handleQuizComplete = async (answers) => {
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
       // First, submit the quiz completion
       const quizResponse = await fetch(`/api/quizzes/${params.slug}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score })
+        body: JSON.stringify({ answers })
       });
 
       if (!quizResponse.ok) {
-        throw new Error('Failed to submit quiz');
+        const errorData = await quizResponse.json();
+        throw new Error(errorData.error || 'Failed to submit quiz');
       }
 
       const quizData = await quizResponse.json();
       let completionInfo = {
-        score,
         xpGained: quizData.xpGained,
         gemsGained: quizData.gemsGained,
         levelUp: quizData.levelUp,
@@ -65,7 +66,7 @@ export default function QuizPage() {
       };
       
       // If quiz is passed (score >= 70), mark lesson as complete
-      if (score >= 70) {
+      if (quizData.score >= 70) {
         const lessonResponse = await fetch(`/api/lessons/${params.slug}/complete`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
@@ -92,28 +93,24 @@ export default function QuizPage() {
       setShowNotification(true);
 
       // Create redirect URL with XP notification parameters
-      // Safely handle undefined course data
-      const courseSlug = quiz?.course?.slug || quiz?.course?._id || '';
-      const courseId = quiz?.course?._id || '';
+      const courseSlug = quiz.course.slug;
+      const courseId = quiz.course._id;
       
+      if (!courseSlug || !courseId) {
+        throw new Error('Course information not found');
+      }
+
       const redirectUrl = `/course-details/${courseSlug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}&completionPercentage=${completionInfo.completionPercentage}&courseId=${courseId}`;
 
-      return new Response(JSON.stringify({ 
-        success: true,
-        completionPercentage: completionInfo.completionPercentage,
-        isCompleted: completionInfo.levelUp,
-        xpGained: completionInfo.xpGained,
-        gemsGained: completionInfo.gemsGained,
-        levelUp: completionInfo.levelUp,
+      // Store the redirect URL in completion data
+      setCompletionData(prev => ({
+        ...prev,
         redirectUrl
-      }), {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      }));
+
     } catch (error) {
       console.error('Error submitting quiz:', error);
-      setError('Failed to submit quiz. Please try again.');
+      setError(error.message || 'Failed to submit quiz. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -186,47 +183,19 @@ export default function QuizPage() {
         />
 
         {/* Completion UI */}
-        {showNotification && (
-          <>
-            <XPNotification 
-              isVisible={showNotification}
-              onClose={() => setShowNotification(false)}
-              xpGained={completionData.xpGained}
-              gemsGained={completionData.gemsGained}
-              levelUp={completionData.levelUp}
-              message={completionData.message}
-              completionPercentage={completionData.completionPercentage}
-              score={completionData.score}
-            />
-            
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              {completionData.nextLessonSlug ? (
-                <button
-                  onClick={() => router.push(`/lesson/${completionData.nextLessonSlug}`)}
-                  className="flex-1 sm:flex-initial px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2"
-                >
-                  <Trophy className="w-5 h-5" />
-                  <span>Continue to Next Lesson</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => router.push(`/course/${quiz.courseId}`)}
-                  className="flex-1 sm:flex-initial px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2"
-                >
-                  <Trophy className="w-5 h-5" />
-                  <span>Return to Course</span>
-                </button>
-              )}
-              
-              <button
-                onClick={() => router.push(`/lesson/${params.slug}`)}
-                className="flex-1 sm:flex-initial px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span>Back to Lesson</span>
-              </button>
-            </div>
-          </>
+        {showNotification && completionData && (
+          <XPNotification
+            xpGained={completionData.xpGained}
+            gemsGained={completionData.gemsGained}
+            levelUp={completionData.levelUp}
+            message={completionData.message}
+            onClose={() => {
+              setShowNotification(false);
+              if (completionData.redirectUrl) {
+                router.push(completionData.redirectUrl);
+              }
+            }}
+          />
         )}
       </main>
     </div>

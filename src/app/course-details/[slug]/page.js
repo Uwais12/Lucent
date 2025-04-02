@@ -444,6 +444,64 @@ export default function CourseDetails() {
                   })}
                 </div>
               </div>
+
+              {/* End of Course Quiz Section */}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                  Final Assessment
+                </h2>
+                <div className="card p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {course.endOfCourseExam.title}
+                      </h3>
+                      <p className="text-gray-600 mt-1">
+                        {course.endOfCourseExam.description}
+                      </p>
+                    </div>
+                    {course.userProgress?.completed ? (
+                      <div className="flex items-center gap-2 text-emerald-600">
+                        <CheckCircle className="w-5 h-5" />
+                        <span className="text-sm font-medium">Completed</span>
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-6 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4" />
+                        <span>{course.endOfCourseExam.duration} minutes</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <GraduationCap className="w-4 h-4" />
+                        <span>Passing Score: {course.endOfCourseExam.passingScore}%</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Star className="w-4 h-4" />
+                        <span>{course.endOfCourseExam.questions.length} Questions</span>
+                      </div>
+                    </div>
+                    {!course.userProgress?.completed && (
+                      <>
+                        <p className="text-sm text-gray-600 bg-violet-50 p-4 rounded-lg">
+                          Complete all lessons and chapter quizzes to unlock the final assessment.
+                        </p>
+                        {course.userProgress?.completionPercentage >= 100 && (
+                          <button
+                            onClick={() => router.push(`/quiz/${course.endOfCourseExam._id}`)}
+                            className="w-full px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2"
+                          >
+                            <GraduationCap className="w-5 h-5" />
+                            Start Final Assessment
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+
             </div>
 
             {/* Right Column - Course Info */}
