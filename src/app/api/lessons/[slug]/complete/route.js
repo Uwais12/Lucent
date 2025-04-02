@@ -73,7 +73,10 @@ export async function POST(req, { params }) {
     const chapterProgress = courseProgress.chapters[chapterIndex];
     const lessonProgress = chapterProgress.lessons[lessonIndex];
     
-    // Track completion regardless of previous completion status
+    // Check if lesson is already completed
+    const isFirstCompletion = !lessonProgress.completed;
+    
+    // Track completion and attempts
     lessonProgress.completed = true;
     lessonProgress.completionDate = new Date();
     lessonProgress.attempts = (lessonProgress.attempts || 0) + 1;
@@ -84,7 +87,7 @@ export async function POST(req, { params }) {
     courseProgress.timeSpent = (courseProgress.timeSpent || 0) + timeSpent;
     
     // Only award XP and gems for first completion
-    if (lessonProgress.attempts === 1) {
+    if (isFirstCompletion) {
       // Increment completed lessons counter
       user.progress.completedLessons = (user.progress.completedLessons || 0) + 1;
 
@@ -121,6 +124,11 @@ export async function POST(req, { params }) {
         xpGained += chapterXP;
         user.xp += chapterXP;
       }
+    } else {
+      // Reset XP and gems gained if not first completion
+      xpGained = 0;
+      gemsGained = 0;
+      levelUp = false;
     }
 
     // Find next lesson
@@ -144,13 +152,35 @@ export async function POST(req, { params }) {
       courseProgress.completed = true;
       courseProgress.completionDate = new Date();
       
-      // Increment completedCourses counter
-      user.progress.completedCourses = (user.progress.completedCourses || 0) + 1;
-      
-      // Award course completion bonus
-      const courseXP = 1000;
-      xpGained += courseXP;
-      user.xp += courseXP;
+      // Only award course completion rewards on first completion
+      if (isFirstCompletion) {
+        // Increment completedCourses counter
+        user.progress.completedCourses = (user.progress.completedCourses || 0) + 1;
+        
+        // Award course completion bonus
+        const courseXP = 1000;
+        xpGained += courseXP;
+        user.xp += courseXP;
+
+        // Award course completion badge
+        if (!user.progress.badges) {
+          user.progress.badges = [];
+        }
+        
+        // Check if badge already exists
+        const badgeExists = user.progress.badges.some(badge => 
+          badge.type === 'course_completion' && badge.courseId.toString() === course._id.toString()
+        );
+
+        if (!badgeExists) {
+          user.progress.badges.push({
+            type: 'course_completion',
+            courseId: course._id,
+            courseTitle: course.title,
+            dateEarned: new Date()
+          });
+        }
+      }
     }
 
     // Update current lesson/chapter pointers

@@ -114,6 +114,11 @@ export async function POST(req, { params }) {
         gemsGained += levelUpGems;
         user.gems += levelUpGems;
       }
+    } else {
+      // Reset XP and gems gained if not first completion
+      xpGained = 0;
+      gemsGained = 0;
+      levelUp = false;
     }
 
     // Calculate completion percentage

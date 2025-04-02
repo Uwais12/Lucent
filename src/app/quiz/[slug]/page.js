@@ -90,6 +90,27 @@ export default function QuizPage() {
 
       setCompletionData(completionInfo);
       setShowNotification(true);
+
+      // Create redirect URL with XP notification parameters
+      // Safely handle undefined course data
+      const courseSlug = quiz?.course?.slug || quiz?.course?._id || '';
+      const courseId = quiz?.course?._id || '';
+      
+      const redirectUrl = `/course-details/${courseSlug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}&completionPercentage=${completionInfo.completionPercentage}&courseId=${courseId}`;
+
+      return new Response(JSON.stringify({ 
+        success: true,
+        completionPercentage: completionInfo.completionPercentage,
+        isCompleted: completionInfo.levelUp,
+        xpGained: completionInfo.xpGained,
+        gemsGained: completionInfo.gemsGained,
+        levelUp: completionInfo.levelUp,
+        redirectUrl
+      }), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
     } catch (error) {
       console.error('Error submitting quiz:', error);
       setError('Failed to submit quiz. Please try again.');
