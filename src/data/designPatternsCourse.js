@@ -151,6 +151,7 @@ export const designPatternsCourse = {
         description: "Test your understanding of creational design patterns",
         duration: 30,
         passingScore: 75,
+        slug: "design-patterns-chapter-1-quiz",
         questions: [
           {
             type: "multiple-choice",
@@ -241,6 +242,7 @@ export const designPatternsCourse = {
         description: "Test your understanding of structural design patterns",
         duration: 30,
         passingScore: 75,
+        slug: "design-patterns-chapter-2-quiz",
         questions: [
           {
             type: "multiple-choice",
@@ -332,6 +334,7 @@ export const designPatternsCourse = {
         description: "Test your understanding of behavioral design patterns",
         duration: 30,
         passingScore: 75,
+        slug: "design-patterns-chapter-3-quiz",
         questions: [
           {
             type: "multiple-choice",

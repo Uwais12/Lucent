@@ -23,6 +23,7 @@ import {
 
 import Navbar from "./components/Navbar";
 import XPNotification from "./components/XPNotification";
+import { useEnrollmentCheck } from '@/hooks/useEnrollmentCheck';
 
 // Separate client component to handle search params
 function XPNotificationHandler() {
@@ -78,6 +79,7 @@ function XPNotificationHandler() {
 export default function Home() {
   const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
+  const { checkEnrollment, isChecking } = useEnrollmentCheck();
 
   const [userProfile, setUserProfile] = useState(null);
   const [courses, setCourses] = useState([]);
@@ -261,6 +263,28 @@ export default function Home() {
           router.push(`/course-details/${course.slug || course._id}`);
         }
       }
+    }
+  };
+
+  const handleQuizClick = async (e, quiz) => {
+    e.preventDefault();
+    
+    if (isChecking) return;
+
+    if (!quiz?.slug) {
+      console.error("No quiz slug found");
+      return;
+    }
+
+    const isEnrolled = await checkEnrollment(quiz.slug, quiz.type);
+    if (isEnrolled) {
+      router.push(
+        quiz.type === 'course-exam' 
+          ? `/quiz/final/${quiz.slug}`
+          : quiz.type === 'chapter-quiz'
+          ? `/quiz/chapter/${quiz.slug}`
+          : `/quiz/${quiz.slug}`
+      );
     }
   };
 
@@ -679,14 +703,11 @@ export default function Home() {
                           </span>
                         </div>
                         <Link 
-                          href={quiz.type === 'course-exam' 
-                            ? `/quiz/final/${quiz.slug}`
-                            : quiz.type === 'chapter-quiz'
-                            ? `/quiz/chapter/${quiz.slug}`
-                            : `/quiz/${quiz.slug}`}
+                          href="#"
+                          onClick={(e) => handleQuizClick(e, quiz)}
                           className="px-3 sm:px-4 py-1.5 sm:py-2 bg-fuchsia-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-fuchsia-700 transition-colors"
                         >
-                          Take Quiz
+                          {isChecking ? 'Checking...' : 'Take Quiz'}
                         </Link>
                       </div>
                     </div>

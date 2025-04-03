@@ -171,6 +171,7 @@ export const ddiaCourse = {
         description: "Comprehensive test of data-intensive applications concepts",
         duration: 30,
         passingScore: 75,
+        slug: "ddia-chapter-1-quiz",
         questions: [
           {
             type: "multiple-choice",
@@ -334,6 +335,7 @@ export const ddiaCourse = {
         description: "Comprehensive test of Chapter 2",
         duration: 30,
         passingScore: 75,
+        slug: "ddia-chapter-2-quiz",
         questions: [
           {
             type: "multiple-choice",
