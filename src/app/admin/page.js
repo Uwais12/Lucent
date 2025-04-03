@@ -152,26 +152,33 @@ export default function AdminPanel() {
       const updatedCourse = { ...editingCourse };
       updatedCourse.slug = generateSlug(updatedCourse.title);
 
-      updatedCourse.chapters = updatedCourse.chapters.map((chapter) => ({
-        ...chapter,
-        lessons: chapter.lessons.map((lesson) => ({
-          ...lesson,
-          slug: lesson.slug || generateSlug(lesson.title),
-          endOfLessonQuiz: {
-            ...lesson.endOfLessonQuiz,
-            title: lesson.endOfLessonQuiz.title || `${lesson.title} Quiz`, // Add default title
-          },
-        })),
-        endOfChapterQuiz: {
+      // Ensure all chapter quizzes have proper slugs
+      updatedCourse.chapters = updatedCourse.chapters.map((chapter) => {
+        const chapterWithSlug = {
+          ...chapter,
+          lessons: chapter.lessons.map((lesson) => ({
+            ...lesson,
+            slug: lesson.slug || generateSlug(lesson.title),
+            endOfLessonQuiz: {
+              ...lesson.endOfLessonQuiz,
+              title: lesson.endOfLessonQuiz.title || `${lesson.title} Quiz`,
+            },
+          })),
+        };
+
+        // Always generate a new slug for chapter quiz to ensure consistency
+        chapterWithSlug.endOfChapterQuiz = {
           ...chapter.endOfChapterQuiz,
-          title:
-            chapter.endOfChapterQuiz.title || `${chapter.title} Final Quiz`, // Add default title
-        },
-      }));
+          title: chapter.endOfChapterQuiz.title || `${chapter.title} Final Quiz`,
+          slug: `${updatedCourse.slug}-chapter-${chapter.order}-quiz`,
+        };
+
+        return chapterWithSlug;
+      });
 
       updatedCourse.endOfCourseExam = {
         ...updatedCourse.endOfCourseExam,
-        title: updatedCourse.endOfCourseExam.title || "Final Course Exam", // Add default title
+        title: updatedCourse.endOfCourseExam.title || "Final Course Exam",
       };
 
       const response = await fetch("/api/admin/courses", {

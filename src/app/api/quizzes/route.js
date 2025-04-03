@@ -1,60 +1,94 @@
 // /src/app/api/quizzes/route.js
 
-export async function GET() {
-  const quizzes = [
-    {
-      id: "singleton",
-      title: "Singleton Pattern - Comprehensive Quiz",
-      description: "Test your knowledge of the Singleton design pattern.",
-    },
-    {
-      id: "factory",
-      title: "Factory Pattern Quiz",
-      description: "Basic quiz on the Factory design pattern. (TBD)",
-    },
-    {
-      id: "oop-intro-quiz",
-      title: "Advanced OOP Intro Quiz",
-      description: "Check your advanced OOP basics. (TBD)",
-    },
-    {
-      id: "clean-code-quiz",
-      title: "Clean Code Quiz",
-      description: "Quick check on best practices. (TBD)",
-    },
-    {
-      id: "multi-threading-quiz",
-      title: "Multi-threading Quiz",
-      description: "Threads, locks, concurrency scenarios. (TBD)",
-    },
-    {
-      id: "functional-programming-quiz",
-      title: "Functional Programming Quiz",
-      description: "Test your FP concepts and HOF knowledge. (TBD)",
-    },
-    {
-      id: "cloud-devops-quiz",
-      title: "Cloud & DevOps Quiz",
-      description: "Covers AWS, Docker, CI/CD pipelines. (TBD)",
-    },
-    {
-      id: "db-design-quiz",
-      title: "DB Design & Management Quiz",
-      description: "Relational design, NoSQL, optimization. (TBD)",
-    },
-    {
-      id: "gen-ai-quiz",
-      title: "Generative AI Fundamentals Quiz",
-      description: "Intro to LLMs and generative models. (TBD)",
-    },
-    {
-      id: "blockchain-quiz",
-      title: "Blockchain Basics Quiz",
-      description: "Blocks, consensus, and smart contracts. (TBD)",
-    },
-  ];
+import { connectToDatabase } from "@/lib/mongodb";
+import Course from "@/models/Course";
+import { getAuth } from "@clerk/nextjs/server";
 
-  return new Response(JSON.stringify(quizzes), {
-    headers: { "Content-Type": "application/json" },
-  });
+export async function GET(req) {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    await connectToDatabase();
+
+    // Fetch all courses
+    const courses = await Course.find({});
+    
+    const allQuizzes = [];
+
+    // Collect all quizzes from courses
+    courses.forEach(course => {
+      // Add end of course exam
+      if (course.endOfCourseExam) {
+        allQuizzes.push({
+          id: course.endOfCourseExam._id,
+          slug: course.endOfCourseExam.slug || `${course.slug}-final-exam`,
+          title: course.endOfCourseExam.title,
+          description: course.endOfCourseExam.description,
+          type: 'course-exam',
+          courseName: course.title,
+          courseSlug: course.slug,
+          questionCount: course.endOfCourseExam.questions.length,
+          duration: course.endOfCourseExam.duration,
+          passingScore: course.endOfCourseExam.passingScore
+        });
+      }
+
+      // Add chapter and lesson quizzes
+      course.chapters.forEach((chapter, chapterIndex) => {
+        // Add end of chapter quiz if it exists
+        if (chapter.endOfChapterQuiz) {
+          allQuizzes.push({
+            id: chapter.endOfChapterQuiz._id,
+            slug: chapter.endOfChapterQuiz.slug || `${course.slug}-chapter-${chapter.order}-quiz`,
+            title: chapter.endOfChapterQuiz.title,
+            description: chapter.endOfChapterQuiz.description,
+            type: 'chapter-quiz',
+            courseName: course.title,
+            courseSlug: course.slug,
+            chapterName: chapter.title,
+            questionCount: chapter.endOfChapterQuiz.questions.length,
+            duration: chapter.endOfChapterQuiz.duration,
+            passingScore: chapter.endOfChapterQuiz.passingScore
+          });
+        }
+
+        // Add lesson quizzes
+        chapter.lessons.forEach((lesson, lessonIndex) => {
+          if (lesson.endOfLessonQuiz) {
+            allQuizzes.push({
+              id: lesson.endOfLessonQuiz._id,
+              slug: lesson.slug,
+              title: lesson.endOfLessonQuiz.title,
+              description: lesson.endOfLessonQuiz.description,
+              type: 'lesson-quiz',
+              courseName: course.title,
+              courseSlug: course.slug,
+              chapterName: chapter.title,
+              lessonName: lesson.title,
+              questionCount: lesson.endOfLessonQuiz.questions.length,
+              duration: lesson.endOfLessonQuiz.duration,
+              passingScore: lesson.endOfLessonQuiz.passingScore
+            });
+          }
+        });
+      });
+    });
+
+    return new Response(JSON.stringify(allQuizzes), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error fetching quizzes:", error);
+    return new Response(JSON.stringify({ error: "Failed to fetch quizzes" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 }

@@ -1,3 +1,5 @@
+import { designPatternsCourse } from './designPatternsCourse.js';
+
 export const ddiaCourse = {
   title: "Data Models and Query Languages",
   slug: "data-models-query-languages",
@@ -368,6 +370,7 @@ export const ddiaCourse = {
     description: "Comprehensive final exam covering all chapters. This exam tests your understanding of data-intensive applications, different data models, and query languages.",
     duration: 60,
     passingScore: 80,
+    slug: "data-models-query-languages-final",
     questions: [
       {
         type: "multiple-choice",
@@ -484,3 +487,8 @@ export const ddiaCourse = {
     ]
   },
 };
+
+export const courses = [ddiaCourse, designPatternsCourse];
+
+export { designPatternsCourse };
+export default courses;

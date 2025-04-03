@@ -435,6 +435,57 @@ export default function CourseDetails() {
                               );
                             })}
                           </div>
+                          {/* Add Chapter Quiz Section */}
+                          {chapter.endOfChapterQuiz && (
+                            <div className="p-6 border-t border-gray-100">
+                              <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-lg font-semibold text-gray-900">
+                                  Chapter Quiz
+                                </h4>
+                                {chapterProgress?.endOfChapterQuiz?.completed && (
+                                  <div className="flex items-center gap-2 text-emerald-600">
+                                    <CheckCircle className="w-5 h-5" />
+                                    <span className="text-sm font-medium">Completed</span>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="space-y-4">
+                                <div className="flex items-center gap-6 text-sm text-gray-600">
+                                  <div className="flex items-center gap-2">
+                                    <Clock className="w-4 h-4" />
+                                    <span>{chapter.endOfChapterQuiz.duration} minutes</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <GraduationCap className="w-4 h-4" />
+                                    <span>Passing Score: {chapter.endOfChapterQuiz.passingScore}%</span>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Star className="w-4 h-4" />
+                                    <span>{chapter.endOfChapterQuiz.questions.length} Questions</span>
+                                  </div>
+                                </div>
+                                <button
+                                  onClick={() => {
+                                    if (!chapter.endOfChapterQuiz.slug) {
+                                      console.error('No quiz slug found');
+                                      return;
+                                    }
+                                    router.push(`/quiz/chapter/${chapter.endOfChapterQuiz.slug}`);
+                                  }}
+                                  className={`w-full px-4 py-2 ${
+                                    chapterProgress?.endOfChapterQuiz?.completed
+                                      ? 'bg-emerald-600 hover:bg-emerald-700'
+                                      : 'bg-violet-600 hover:bg-violet-700'
+                                  } text-white rounded-lg transition-colors flex items-center justify-center gap-2`}
+                                >
+                                  <GraduationCap className="w-5 h-5" />
+                                  {chapterProgress?.endOfChapterQuiz?.completed
+                                    ? 'Review Chapter Quiz'
+                                    : 'Start Chapter Quiz'}
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -479,22 +530,37 @@ export default function CourseDetails() {
                         <span>{course.endOfCourseExam.questions.length} Questions</span>
                       </div>
                     </div>
-                    {!course.userProgress?.completed && (
-                      <>
-                        <p className="text-sm text-gray-600 bg-violet-50 p-4 rounded-lg">
-                          Complete all lessons and chapter quizzes to unlock the final assessment.
-                        </p>
-                        {course.userProgress?.completionPercentage >= 100 && (
-                          <button
-                            onClick={() => router.push(`/quiz/${course.endOfCourseExam._id}`)}
-                            className="w-full px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors flex items-center justify-center gap-2"
-                          >
-                            <GraduationCap className="w-5 h-5" />
-                            Start Final Assessment
-                          </button>
-                        )}
-                      </>
+                    {course.userProgress?.completionPercentage < 100 && (
+                      <p className="text-sm text-amber-600 bg-amber-50 p-4 rounded-lg">
+                        Note: It's recommended to complete all lessons and chapter quizzes before taking the final exam.
+                        Current progress: {course.userProgress?.completionPercentage || 0}%
+                      </p>
                     )}
+                    <button
+                      onClick={() => {
+                        console.log('Final exam button clicked');
+                        console.log('Exam slug:', course.endOfCourseExam.slug);
+                        if (!course.endOfCourseExam.slug) {
+                          console.error('No exam slug found');
+                          return;
+                        }
+                        router.push(`/quiz/final/${course.endOfCourseExam.slug}`);
+                      }}
+                      className={`w-full px-4 py-2 ${
+                        course.userProgress?.completed 
+                          ? 'bg-emerald-600 hover:bg-emerald-700'
+                          : course.userProgress?.completionPercentage >= 100 
+                            ? 'bg-violet-600 hover:bg-violet-700' 
+                            : 'bg-violet-500 hover:bg-violet-600'
+                      } text-white rounded-lg transition-colors flex items-center justify-center gap-2`}
+                    >
+                      <GraduationCap className="w-5 h-5" />
+                      {course.userProgress?.completed 
+                        ? 'Review Final Assessment'
+                        : course.userProgress?.completionPercentage >= 100 
+                          ? 'Start Final Assessment'
+                          : 'Take Final Assessment Early'}
+                    </button>
                   </div>
                 </div>
               </div>

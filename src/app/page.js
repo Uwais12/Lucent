@@ -18,6 +18,7 @@ import {
   Award,
   Star,
   Bookmark,
+  GraduationCap,
 } from "lucide-react";
 
 import Navbar from "./components/Navbar";
@@ -100,7 +101,7 @@ export default function Home() {
       Promise.all([
         fetch("/api/profile").then((res) => res.json()),
         fetch("/api/courses").then((res) => res.json()),
-        fetch("/api/quizzes").then((res) => res.json()),
+        fetch("/api/quizzes", { cache: 'no-store' }).then((res) => res.json()),
       ])
         .then(([profileData, coursesData, quizzesData]) => {
           if (profileData.error) {
@@ -130,17 +131,35 @@ export default function Home() {
   useEffect(() => {
     const seedDatabase = async () => {
       try {
-        const response = await fetch("/api/seed", { method: "POST" });
+        // First, clean up existing courses
+        const cleanupResponse = await fetch("/api/cleanup", { 
+          method: "POST",
+          cache: 'no-store'
+        });
+        const cleanupData = await cleanupResponse.json();
+        console.log("Cleanup response:", cleanupData);
+
+        // Then seed the courses
+        const response = await fetch("/api/seed", { 
+          method: "POST",
+          cache: 'no-store'
+        });
         const data = await response.json();
-        console.log(data.message);
-        console.log("SEEEEDEDDDD");
+        console.log("Seeding response:", data);
+        
+        // Refresh courses after seeding
+        const coursesRes = await fetch("/api/courses", { cache: 'no-store' });
+        const coursesData = await coursesRes.json();
+        setDbCourses(coursesData);
       } catch (error) {
         console.error("Error seeding database:", error);
       }
     };
 
-    seedDatabase();
-  }, []);
+    if (isLoaded && isSignedIn) {
+      seedDatabase();
+    }
+  }, [isLoaded, isSignedIn]);
 
   // Function to handle course enrollment
   const enrollInCourse = async (courseId) => {
@@ -612,7 +631,7 @@ export default function Home() {
               </button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {quizzes.slice(0, 3).map((quiz) => (
+              {quizzes.map((quiz) => (
                 <div
                   key={quiz.id}
                   className="card hover-lift overflow-hidden group h-full"
@@ -620,10 +639,13 @@ export default function Home() {
                   <div className="p-6 sm:p-8 bg-gradient-to-br from-fuchsia-50 to-pink-50 h-full flex flex-col">
                     <div className="flex items-start gap-3 sm:gap-5">
                       <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white flex items-center justify-center transform rotate-6 shadow-sm transition-transform group-hover:rotate-0">
-                        <BarChart
-                          className="w-6 h-6 sm:w-7 sm:h-7"
-                          style={{ color: "#EC4899" }}
-                        />
+                        {quiz.type === 'course-exam' ? (
+                          <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 text-fuchsia-600" />
+                        ) : quiz.type === 'chapter-quiz' ? (
+                          <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-fuchsia-600" />
+                        ) : (
+                          <BarChart className="w-6 h-6 sm:w-7 sm:h-7 text-fuchsia-600" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
@@ -638,18 +660,12 @@ export default function Home() {
                     <div className="mt-auto pt-6 sm:pt-8 space-y-3 sm:space-y-4">
                       <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-gray-600">
                         <div className="flex items-center gap-1 sm:gap-2">
-                          <Target
-                            className="w-3 h-3 sm:w-4 sm:h-4"
-                            style={{ color: "#6B7280" }}
-                          />
-                          <span>50 XP</span>
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span>{quiz.duration} min</span>
                         </div>
                         <div className="flex items-center gap-1 sm:gap-2">
-                          <Zap
-                            className="w-3 h-3 sm:w-4 sm:h-4"
-                            style={{ color: "#6B7280" }}
-                          />
-                          <span>Streak +2</span>
+                          <Target className="w-3 h-3 sm:w-4 sm:h-4" />
+                          <span>{quiz.questionCount} Questions</span>
                         </div>
                       </div>
 
@@ -659,12 +675,19 @@ export default function Home() {
                         <div className="flex items-center gap-1 sm:gap-2">
                           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></div>
                           <span className="text-xs sm:text-sm text-gray-600">
-                            Available Now
+                            {quiz.type === 'course-exam' ? 'Final Exam' : quiz.type === 'chapter-quiz' ? 'Chapter Quiz' : 'Lesson Quiz'}
                           </span>
                         </div>
-                        <button className="px-3 sm:px-4 py-1.5 sm:py-2 bg-fuchsia-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-fuchsia-700 transition-colors">
+                        <Link 
+                          href={quiz.type === 'course-exam' 
+                            ? `/quiz/final/${quiz.slug}`
+                            : quiz.type === 'chapter-quiz'
+                            ? `/quiz/chapter/${quiz.slug}`
+                            : `/quiz/${quiz.slug}`}
+                          className="px-3 sm:px-4 py-1.5 sm:py-2 bg-fuchsia-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-fuchsia-700 transition-colors"
+                        >
                           Take Quiz
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>

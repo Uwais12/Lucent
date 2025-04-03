@@ -16,6 +16,12 @@ export async function GET(req, { params }) {
       });
     }
 
+    // Ensure the final exam has a slug
+    if (course.endOfCourseExam && !course.endOfCourseExam.slug) {
+      course.endOfCourseExam.slug = `${course.slug}-final-exam`;
+      await course.save();
+    }
+
     // Get user progress if authenticated
     const { userId } = getAuth(req);
     let userProgress = null;

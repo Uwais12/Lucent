@@ -35,6 +35,7 @@ const QuizSchema = new mongoose.Schema({
     trim: true,
     maxlength: 1000
   },
+  slug: { type: String },
   questions: [{
     type: {
       type: String,
@@ -297,6 +298,17 @@ const CourseSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Add pre-save middleware to ensure slug is set
+CourseSchema.pre('save', function(next) {
+  if (!this.slug) {
+    this.slug = this.title
+      .toLowerCase()
+      .replace(/[\s]+/g, '-')
+      .replace(/[^\w-]/g, '');
+  }
+  next();
+});
 
 // Indexes
 CourseSchema.index({ tags: 1 });
