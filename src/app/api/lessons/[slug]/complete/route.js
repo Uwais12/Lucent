@@ -13,6 +13,9 @@ export async function POST(req, { params }) {
       });
     }
 
+    // Check if this completion is after a quiz
+    const { isQuizCompletion } = await req.json();
+
     await connectToDatabase();
 
     // Find the course and lesson
@@ -85,12 +88,11 @@ export async function POST(req, { params }) {
     const timeSpent = lesson.duration || 10; // Default to 10 minutes if duration not specified
     user.progress.totalTimeSpent = (user.progress.totalTimeSpent || 0) + timeSpent;
     courseProgress.timeSpent = (courseProgress.timeSpent || 0) + timeSpent;
-    
-    // Only award XP and gems for first completion
-    if (isFirstCompletion) {
-      // Increment completed lessons counter
-      user.progress.completedLessons = (user.progress.completedLessons || 0) + 1;
 
+    // Only award XP and gems if:
+    // 1. This is first completion AND
+    // 2. This is not a quiz completion (since quiz already awarded XP/gems)
+    if (isFirstCompletion && !isQuizCompletion) {
       // Award XP for completing the lesson
       const baseXP = 100; // Base XP for completing a lesson
       xpGained = baseXP;
@@ -112,26 +114,9 @@ export async function POST(req, { params }) {
         gemsGained += levelUpGems;
         user.gems += levelUpGems;
       }
-
-      // Check if chapter is completed
-      const allLessonsInChapterCompleted = chapterProgress.lessons.every(l => l.completed);
-      if (allLessonsInChapterCompleted && !chapterProgress.completed) {
-        chapterProgress.completed = true;
-        chapterProgress.completionDate = new Date();
-        
-        // Award chapter completion XP
-        const chapterXP = 250;
-        xpGained += chapterXP;
-        user.xp += chapterXP;
-      }
-    } else {
-      // Reset XP and gems gained if not first completion
-      xpGained = 0;
-      gemsGained = 0;
-      levelUp = false;
     }
 
-    // Find next lesson
+    // Find next lesson for future reference
     let nextLessonSlug = null;
     
     // First, check next lesson in current chapter
@@ -146,14 +131,29 @@ export async function POST(req, { params }) {
       }
     }
 
-    // Update course completion status
-    const allChaptersCompleted = courseProgress.chapters.every(ch => ch.completed);
+    // Check if chapter is completed for the first time
+    const allLessonsCompleted = chapterProgress.lessons.every(l => l.completed);
+    if (allLessonsCompleted && !chapterProgress.completed) {
+      chapterProgress.completed = true;
+      chapterProgress.completionDate = new Date();
+      
+      // Only award chapter completion XP if not a quiz completion
+      if (!isQuizCompletion) {
+        // Award chapter completion XP
+        const chapterXP = 250;
+        xpGained += chapterXP;
+        user.xp += chapterXP;
+      }
+    }
+
+    // Check if course is completed for the first time
+    const allChaptersCompleted = courseProgress.chapters.every(c => c.completed);
     if (allChaptersCompleted && !courseProgress.completed) {
       courseProgress.completed = true;
       courseProgress.completionDate = new Date();
       
-      // Only award course completion rewards on first completion
-      if (isFirstCompletion) {
+      // Only award course completion rewards if not a quiz completion
+      if (!isQuizCompletion) {
         // Increment completedCourses counter
         user.progress.completedCourses = (user.progress.completedCourses || 0) + 1;
         

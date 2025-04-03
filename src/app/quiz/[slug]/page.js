@@ -75,14 +75,16 @@ export default function QuizPage() {
         xpGained: quizData.xpGained,
         gemsGained: quizData.gemsGained,
         levelUp: quizData.levelUp,
-        completionPercentage: quizData.completionPercentage
+        completionPercentage: quizData.completionPercentage,
+        message: quizData.score >= 70 ? 'Quiz Completed Successfully! 🎉' : 'Quiz Submitted'
       };
       
       // If quiz is passed (score >= 70), mark lesson as complete
       if (quizData.score >= 70) {
         const lessonResponse = await fetch(`/api/lessons/${params.slug}/complete`, {
-        method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ isQuizCompletion: true })
         });
 
         if (!lessonResponse.ok) {
@@ -90,16 +92,13 @@ export default function QuizPage() {
         }
 
         const lessonData = await lessonResponse.json();
+        
+        // Don't add XP/gems from lesson completion since quiz already awarded them
         completionInfo = {
           ...completionInfo,
-          xpGained: quizData.xpGained + lessonData.xpGained,
-          gemsGained: quizData.gemsGained + lessonData.gemsGained,
-          levelUp: quizData.levelUp || lessonData.levelUp,
           nextLessonSlug: lessonData.nextLessonSlug,
           message: 'Quiz & Lesson Completed! 🎉'
         };
-      } else {
-        completionInfo.message = 'Quiz Submitted';
       }
 
       // Create redirect URL with XP notification parameters
@@ -118,10 +117,8 @@ export default function QuizPage() {
         redirectUrl
       });
 
-      // Show XP notification if passed
-      if (completionInfo.score >= 70) {
-        setShowNotification(true);
-      }
+      // Show XP notification for any score (to show feedback)
+      setShowNotification(true);
 
       return completionInfo;
 

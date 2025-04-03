@@ -109,22 +109,95 @@ export async function POST(req, { params }) {
 
     const score = Math.round((correctAnswers / quiz.questions.length) * 100);
 
-    // Calculate rewards
-    const xpGained = Math.round(score * 10); // 10 XP per percentage point
-    const gemsGained = score >= 80 ? 5 : score >= 60 ? 3 : 1;
+    // Calculate rewards based on score brackets
+    let xpGained = 0;
+    let gemsGained = 0;
+    let levelUp = false;
 
-    // Update user's progress
-    const levelUp = await user.addXP(xpGained);
-    user.gems += gemsGained;
-    await user.save();
+    // Find or create course progress
+    let courseProgress = user.progress.courses.find(
+      c => c.courseId.toString() === course._id.toString()
+    );
+
+    if (!courseProgress) {
+      courseProgress = {
+        courseId: course._id,
+        chapters: course.chapters.map(ch => ({
+          chapterId: ch._id,
+          completed: false,
+          lessons: ch.lessons.map(l => ({
+            lessonId: l._id,
+            completed: false,
+            quizProgress: {
+              score: 0,
+              attempts: 0
+            }
+          }))
+        }))
+      };
+      user.progress.courses.push(courseProgress);
+    }
+
+    // Find the chapter and lesson progress
+    const chapterIndex = course.chapters.findIndex(ch => ch.lessons.some(l => l.slug === slug));
+    const lessonIndex = course.chapters[chapterIndex].lessons.findIndex(l => l.slug === slug);
+    const lessonProgress = courseProgress.chapters[chapterIndex].lessons[lessonIndex];
+
+    // Only award XP and gems if this is a new high score
+    const previousScore = lessonProgress.quizProgress?.score || 0;
+    const isNewHighScore = score > previousScore;
+
+    if (isNewHighScore) {
+      // Base XP calculation (2 XP per percentage point)
+      xpGained = Math.round(score * 2);
+
+      // Gems based on score brackets
+      if (score >= 90) {
+        gemsGained = 5;
+      } else if (score >= 70) {
+        gemsGained = 3;
+      } else if (score >= 50) {
+        gemsGained = 1;
+      }
+
+      // Update user's XP and check for level up
+      const oldLevel = user.level || 1;
+      user.xp = (user.xp || 0) + xpGained;
+      const newLevel = Math.floor(user.xp / 1000) + 1;
+      
+      if (newLevel > oldLevel) {
+        user.level = newLevel;
+        levelUp = true;
+        // Award bonus gems for leveling up
+        const levelUpGems = 25;
+        gemsGained += levelUpGems;
+      }
+
+      // Update user's gems
+      user.gems = (user.gems || 0) + gemsGained;
+
+      // Update quiz progress
+      lessonProgress.quizProgress = {
+        ...(lessonProgress.quizProgress || {}),
+        score,
+        lastAttemptDate: new Date(),
+        attempts: (lessonProgress.quizProgress?.attempts || 0) + 1
+      };
+
+      await user.save();
+    }
 
     // Calculate completion percentage for the course
-    const completionPercentage = await user.calculateCourseCompletion(course._id);
+    const totalLessons = course.chapters.reduce((sum, ch) => sum + ch.lessons.length, 0);
+    const completedLessons = courseProgress.chapters.reduce((sum, ch) => 
+      sum + ch.lessons.filter(l => l.completed).length, 0
+    );
+    const completionPercentage = Math.round((completedLessons / totalLessons) * 100);
 
     return NextResponse.json({
       score,
-      xpGained,
-      gemsGained,
+      xpGained: isNewHighScore ? xpGained : 0,
+      gemsGained: isNewHighScore ? gemsGained : 0,
       levelUp,
       completionPercentage,
     });
