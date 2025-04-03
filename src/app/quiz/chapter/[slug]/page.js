@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Quiz from "@/app/components/Quiz";
 import { toast } from "react-hot-toast";
+import XPNotification from '@/app/components/XPNotification';
+import Navbar from '@/app/components/Navbar';
 
 export default function ChapterQuiz() {
   const params = useParams();
@@ -15,6 +17,8 @@ export default function ChapterQuiz() {
   const [error, setError] = useState(null);
   const [timeLeft, setTimeLeft] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [completionData, setCompletionData] = useState(null);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -98,6 +102,83 @@ export default function ChapterQuiz() {
     }
   };
 
+  const handleQuizComplete = async (answers, isReturnToCourse = false) => {
+    // If this is a return to course action and we have completion data
+    if (isReturnToCourse && completionData?.redirectUrl) {
+      // Remove the notification and completion data before redirecting
+      setShowNotification(false);
+      setCompletionData(null);
+      router.push(completionData.redirectUrl);
+      return;
+    }
+
+    // If no answers provided, return
+    if (!answers) return;
+
+    setIsSubmitting(true);
+    try {
+      // Calculate score from answers
+      const totalQuestions = quiz.questions.length;
+      const correctAnswers = quiz.questions.reduce((count, question, index) => {
+        const userAnswer = answers[index];
+        const correctAnswer = question.correctAnswer;
+        return count + (userAnswer === correctAnswer ? 1 : 0);
+      }, 0);
+      
+      const score = Math.round((correctAnswers / totalQuestions) * 100);
+
+      // Submit the quiz completion with the calculated score
+      const quizResponse = await fetch(`/api/quizzes/chapter/${params.slug}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score })
+      });
+
+      if (!quizResponse.ok) {
+        const errorData = await quizResponse.json();
+        throw new Error(errorData.error || 'Failed to submit quiz');
+      }
+
+      const quizData = await quizResponse.json();
+      let completionInfo = {
+        score: quizData.score,
+        xpGained: quizData.xpEarned,
+        gemsGained: quizData.gemsEarned,
+        levelUp: quizData.levelUp,
+        completionPercentage: quizData.completionPercentage,
+        message: quizData.passed ? 'Chapter Quiz Completed Successfully! 🎉' : 'Quiz Submitted'
+      };
+
+      // Create redirect URL with XP notification parameters
+      const courseSlug = quiz.courseSlug;
+      const courseId = quiz.courseId;
+      
+      if (!courseSlug || !courseId) {
+        throw new Error('Course information not found');
+      }
+
+      const redirectUrl = `/course-details/${courseSlug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}&completionPercentage=${completionInfo.completionPercentage}&courseId=${courseId}`;
+
+      // Store all the completion data
+      setCompletionData({
+        ...completionInfo,
+        redirectUrl
+      });
+
+      // Show XP notification for any score (to show feedback)
+      setShowNotification(true);
+
+      return completionInfo;
+
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      setError(error.message || 'Failed to submit quiz. Please try again.');
+      throw error;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -111,29 +192,42 @@ export default function ChapterQuiz() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center text-red-500">
-          <p>{error}</p>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-600">{error}</p>
+          </div>
+        </main>
       </div>
     );
   }
 
   if (!quiz) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center text-red-500">
-          <p>Quiz not found</p>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="h-20 bg-gray-200 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{quiz.title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{quiz.title}</h1>
           <p className="text-gray-600">{quiz.description}</p>
           <div className="mt-4 flex items-center gap-4">
             <div className="text-sm text-gray-500">
@@ -151,9 +245,29 @@ export default function ChapterQuiz() {
         <Quiz
           questions={quiz.questions}
           duration={quiz.duration}
-          onComplete={handleSubmit}
+          onComplete={handleQuizComplete}
+          isSubmitting={isSubmitting}
         />
-      </div>
+
+        {/* Completion UI */}
+        {showNotification && completionData && (
+          <XPNotification
+            xpGained={completionData.xpGained}
+            gemsGained={completionData.gemsGained}
+            levelUp={completionData.levelUp}
+            message={completionData.message}
+            onClose={() => {
+              // Clear state before redirecting
+              setShowNotification(false);
+              const redirectUrl = completionData.redirectUrl;
+              setCompletionData(null);
+              if (redirectUrl) {
+                router.push(redirectUrl);
+              }
+            }}
+          />
+        )}
+      </main>
     </div>
   );
 } 
