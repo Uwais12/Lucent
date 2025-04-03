@@ -169,42 +169,23 @@ export default function LessonPage() {
   const handleLessonComplete = async () => {
     try {
       setIsCompletingLesson(true);
-      
-      // Award XP for completing the entire lesson (100 XP bonus)
-      const response = await fetch('/api/user/xp', {
+      const response = await fetch(`/api/lessons/${params.slug}/complete`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          xpAmount: 100,
-          reason: 'Lesson completed'
-        })
+        headers: { 'Content-Type': 'application/json' }
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setProgress(prev => ({
-          ...prev,
-          xp: data.newXp
-        }));
+      if (!response.ok) {
+        throw new Error('Failed to complete lesson');
+      }
 
-        // Update lesson completion status
-        const updateResponse = await fetch(`/api/lessons/${lesson.slug}/complete`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (updateResponse.ok) {
-          const { nextLessonSlug } = await updateResponse.json();
-          setIsCompleted(true);
-          
-          // If there's a next lesson, show a success message and redirect
-          if (nextLessonSlug) {
-            router.push(`/lesson/${nextLessonSlug}?lessonCompleted=true`);
-          } else {
-            // If no next lesson, go back to course page
-            router.push(`/course/${lesson.courseId}?lessonCompleted=true`);
-          }
-        }
+      const data = await response.json();
+      
+      // If there's a next lesson, redirect to it
+      if (data.nextLessonSlug) {
+        router.push(`/lesson/${data.nextLessonSlug}?xpGained=${data.xpGained}&gemsGained=${data.gemsGained}&levelUp=${data.levelUp}&completionPercentage=${data.completionPercentage}&courseId=${data.courseId}`);
+      } else {
+        // If no next lesson, redirect to course details
+        router.push(`/course-details/${course.slug}?xpGained=${data.xpGained}&gemsGained=${data.gemsGained}&levelUp=${data.levelUp}&completionPercentage=${data.completionPercentage}&courseId=${data.courseId}`);
       }
     } catch (error) {
       console.error('Error completing lesson:', error);

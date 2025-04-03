@@ -38,11 +38,23 @@ export default function QuizPage() {
     };
 
     if (isLoaded && user) {
-      fetchQuiz();
+    fetchQuiz();
     }
   }, [params.slug, isLoaded, user]);
 
-  const handleQuizComplete = async (answers) => {
+  const handleQuizComplete = async (answers, isReturnToCourse = false) => {
+    // If this is a return to course action and we have completion data
+    if (isReturnToCourse && completionData?.redirectUrl) {
+      // Remove the notification and completion data before redirecting
+      setShowNotification(false);
+      setCompletionData(null);
+      router.push(completionData.redirectUrl);
+      return;
+    }
+
+    // If no answers provided, return
+    if (!answers) return;
+
     setIsSubmitting(true);
     try {
       // First, submit the quiz completion
@@ -59,6 +71,7 @@ export default function QuizPage() {
 
       const quizData = await quizResponse.json();
       let completionInfo = {
+        score: quizData.score,
         xpGained: quizData.xpGained,
         gemsGained: quizData.gemsGained,
         levelUp: quizData.levelUp,
@@ -68,7 +81,7 @@ export default function QuizPage() {
       // If quiz is passed (score >= 70), mark lesson as complete
       if (quizData.score >= 70) {
         const lessonResponse = await fetch(`/api/lessons/${params.slug}/complete`, {
-          method: 'POST',
+        method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         });
 
@@ -89,12 +102,9 @@ export default function QuizPage() {
         completionInfo.message = 'Quiz Submitted';
       }
 
-      setCompletionData(completionInfo);
-      setShowNotification(true);
-
       // Create redirect URL with XP notification parameters
-      const courseSlug = quiz.course.slug;
-      const courseId = quiz.course._id;
+      const courseSlug = quiz.course?.slug;
+      const courseId = quiz.course?._id;
       
       if (!courseSlug || !courseId) {
         throw new Error('Course information not found');
@@ -102,15 +112,23 @@ export default function QuizPage() {
 
       const redirectUrl = `/course-details/${courseSlug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}&completionPercentage=${completionInfo.completionPercentage}&courseId=${courseId}`;
 
-      // Store the redirect URL in completion data
-      setCompletionData(prev => ({
-        ...prev,
+      // Store all the completion data
+      setCompletionData({
+        ...completionInfo,
         redirectUrl
-      }));
+      });
+
+      // Show XP notification if passed
+      if (completionInfo.score >= 70) {
+        setShowNotification(true);
+      }
+
+      return completionInfo;
 
     } catch (error) {
       console.error('Error submitting quiz:', error);
       setError(error.message || 'Failed to submit quiz. Please try again.');
+      throw error;
     } finally {
       setIsSubmitting(false);
     }
@@ -161,7 +179,7 @@ export default function QuizPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
+          <div className="mb-8">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{quiz.title}</h1>
             <button
@@ -173,8 +191,8 @@ export default function QuizPage() {
             </button>
           </div>
           <p className="text-gray-600">{quiz.description}</p>
-        </div>
-
+                </div>
+                
         <Quiz
           questions={quiz.questions}
           lessonSlug={params.slug}
@@ -190,9 +208,12 @@ export default function QuizPage() {
             levelUp={completionData.levelUp}
             message={completionData.message}
             onClose={() => {
+              // Clear state before redirecting
               setShowNotification(false);
-              if (completionData.redirectUrl) {
-                router.push(completionData.redirectUrl);
+              const redirectUrl = completionData.redirectUrl;
+              setCompletionData(null);
+              if (redirectUrl) {
+                router.push(redirectUrl);
               }
             }}
           />

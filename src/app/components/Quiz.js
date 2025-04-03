@@ -11,6 +11,7 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
   const [feedback, setFeedback] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [quizResults, setQuizResults] = useState(null);
 
   // Timer effect
   useEffect(() => {
@@ -71,7 +72,8 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
       });
 
       console.log('Submitting answers array:', answersArray);
-      await onComplete(answersArray);
+      const results = await onComplete(answersArray);
+      setQuizResults(results);
       setIsCompleted(true);
     } catch (error) {
       console.error('Error submitting quiz:', error);
@@ -172,38 +174,81 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
           <div className="text-center">
             <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Quiz Completed!</h3>
-            <p className="text-gray-600 mb-6">
-              {timeLeft <= 0 
-                ? "Time's up! Your answers have been submitted."
-                : "Your answers have been submitted successfully."}
-            </p>
-            <button
-              onClick={() => {
-                if (!isCompleted) {
-                  // Convert answers object to array format before submitting
-                  const answersArray = questions.map((question) => {
-                    const answer = answers[question._id];
-                    if (!answer) {
-                      throw new Error(`No answer provided for question "${question.question}"`);
-                    }
+            
+            {quizResults ? (
+              <div className="mb-6">
+                <div className="text-3xl font-bold text-gray-900 mb-2">
+                  Score: {quizResults.score}%
+                </div>
+                <p className="text-gray-600">
+                  {quizResults.score >= 70 
+                    ? "Congratulations! You've passed the quiz! 🎉" 
+                    : "Keep practicing! You can retake the quiz to improve your score."}
+                </p>
+                {quizResults.score >= 70 && (
+                  <div className="mt-4 p-4 bg-green-50 rounded-lg">
+                    <p className="text-green-700">
+                      You've earned:
+                    </p>
+                    <div className="flex justify-center gap-4 mt-2">
+                      <div className="text-violet-600">
+                        <span className="font-bold">+{quizResults.xpGained}</span> XP
+                      </div>
+                      <div className="text-yellow-600">
+                        <span className="font-bold">+{quizResults.gemsGained}</span> Gems
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <button
+                  onClick={() => onComplete(null, true)}
+                  disabled={isSubmitting}
+                  className="w-full mt-6 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Redirecting...' : 'Return to Course'}
+                </button>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-600 mb-6">
+                  {timeLeft <= 0 
+                    ? "Time's up! Your answers have been submitted."
+                    : "Your answers have been submitted successfully."}
+                </p>
+                <button
+                  onClick={async () => {
+                    try {
+                      // Convert answers object to array format before submitting
+                      const answersArray = questions.map((question) => {
+                        const answer = answers[question._id];
+                        if (!answer) {
+                          throw new Error(`No answer provided for question "${question.question}"`);
+                        }
 
-                    if (question.type === 'fill-blank') {
-                      return Array.isArray(answer) ? answer : [answer];
-                    }
+                        if (question.type === 'fill-blank') {
+                          return Array.isArray(answer) ? answer : [answer];
+                        }
 
-                    return answer;
-                  });
-                  onComplete(answersArray);
-                } else {
-                  // If already completed, just redirect to the course
-                  router.push(`/course-details/${lessonSlug.split('/')[0]}`);
-                }
-              }}
-              disabled={isSubmitting}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? 'Submitting...' : 'Return to Course'}
-            </button>
+                        return answer;
+                      });
+                      const results = await onComplete(answersArray);
+                      setQuizResults(results);
+                      setIsCompleted(true);
+                    } catch (error) {
+                      console.error('Error submitting quiz:', error);
+                      setFeedback({
+                        type: 'error',
+                        message: error.message || 'Failed to submit quiz. Please try again.'
+                      });
+                    }
+                  }}
+                  disabled={isSubmitting}
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? 'Submitting...' : 'Show Results'}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

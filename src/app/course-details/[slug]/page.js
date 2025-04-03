@@ -29,17 +29,11 @@ function XPNotificationHandler({ params }) {
   const router = useRouter();
   
   // Use URL search params safely for client-side only
-  let searchParams;
-  try {
-    searchParams = new URLSearchParams(window.location.search);
-  } catch (e) {
-    // Handle case where window is not available during SSR
-    searchParams = { get: () => null };
-  }
-  
-  // Check for XP gain parameters in URL
   useEffect(() => {
-    if (searchParams.get('xpGained')) {
+    const searchParams = new URLSearchParams(window.location.search);
+    const hasXPGain = searchParams.get('xpGained');
+    
+    if (hasXPGain && !showXPNotification) {
       const notificationData = {
         message: 'Experience Earned!',
         courseId: searchParams.get('courseId'),
@@ -52,17 +46,20 @@ function XPNotificationHandler({ params }) {
       setXPNotificationData(notificationData);
       setShowXPNotification(true);
       
-      // Clear the URL parameters after a delay
-      setTimeout(() => {
-        router.replace(`/course-details/${params.slug}`);
-      }, 500);
+      // Clear the URL parameters immediately
+      router.replace(`/course-details/${params.slug}`, { scroll: false });
     }
-  }, [searchParams, router, params.slug]);
+  }, [params.slug, router, showXPNotification]);
+
+  const handleClose = () => {
+    setShowXPNotification(false);
+    setXPNotificationData(null);
+  };
 
   return (
     <XPNotification 
       isVisible={showXPNotification}
-      onClose={() => setShowXPNotification(false)}
+      onClose={handleClose}
       xpGained={xpNotificationData?.xpGained}
       gemsGained={xpNotificationData?.gemsGained}
       levelUp={xpNotificationData?.levelUp}
@@ -226,9 +223,9 @@ export default function CourseDetails() {
                     const isCompleted = course.userProgress?.completed || 
                                        (course.userProgress?.completionPercentage >= 100);
                                        
-                    // If course is completed, just go to course overview or certificate
+                    // If course is completed, just go to course overview
                     if (isCompleted) {
-                      router.push(`/course/${course._id}`);
+                      router.push(`/course-details/${course.slug}`);
                       return;
                     }
                     

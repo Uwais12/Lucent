@@ -444,7 +444,7 @@ export default function Home() {
                           </div>
                           <div className="flex items-center justify-between">
                             <Link
-                              href={`/course-details/${course.slug || course._id}`}
+                              href={`/course-details/${course.slug}`}
                               className="text-violet-600 hover:text-violet-700 text-xs sm:text-sm font-medium flex items-center gap-1"
                             >
                               View Details
@@ -572,7 +572,7 @@ export default function Home() {
                         )}
                         <div className="flex items-center justify-between">
                           <Link
-                            href={`/course-details/${course.slug || course._id}`}
+                            href={`/course-details/${course.slug}`}
                             className="text-violet-600 hover:text-violet-700 text-xs sm:text-sm font-medium flex items-center gap-1"
                           >
                             View Details
