@@ -82,14 +82,6 @@ Lucent follows a modern full-stack architecture:
 - Authentication: Clerk
 - Deployment: Vercel
 
-## Getting Started
-
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Set up environment variables
-4. Run development server: `npm run dev`
-5. Build for production: `npm run build`
-
 ## Future Roadmap
 
 - Mobile app development
@@ -98,17 +90,3 @@ Lucent follows a modern full-stack architecture:
 - Course creation tools
 - Enhanced analytics
 - Platform integrations
-
-## Contributing
-
-We welcome contributions! Please read our contributing guidelines before submitting pull requests.
-
-## License
-
-MIT License - see LICENSE file for details.
-
-## Acknowledgments
-
-- Inspired by "Designing Data-Intensive Applications"
-- Built with the Next.js community
-- Thanks to all contributors
