@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Lucent
+
+## Transforming Advanced Software Learning
+
+Lucent is an innovative learning platform that breaks down complex software engineering books into engaging, bite-sized daily challenges. Born from the struggle of understanding dense technical literature, Lucent makes mastering advanced concepts both achievable and enjoyable.
+
+## The Problem
+
+As a software engineer or student, you've likely faced these challenges:
+- Struggling through 800-page technical books
+- Feeling overwhelmed by complex concepts
+- Difficulty maintaining consistent learning habits
+- Lack of interactive elements in traditional learning
+- No immediate feedback or reinforcement
+
+## The Solution
+
+Lucent transforms the learning experience through:
+- Daily 15-minute interactive lessons
+- Gamified learning with XP and rewards
+- Progress tracking and streaks
+- Interactive quizzes and exercises
+- Community learning features
+- AI-powered hints and guidance
+
+## Key Features
+
+### Daily Challenges
+- Bite-sized lessons from advanced technical books
+- 15-minute daily commitment
+- Progressive difficulty scaling
+- Interactive exercises and quizzes
+
+### Gamification
+- XP system for lesson completion
+- Gems as virtual currency
+- Level progression
+- Achievement badges
+- Daily streaks
+
+### Progress Tracking
+- Visual progress indicators
+- Course completion metrics
+- Learning analytics
+- Performance tracking
+
+### Interactive Learning
+- Multiple question types
+- Immediate feedback
+- AI-powered hints
+- Community discussions
+
+## Technology Stack
+
+### Frontend
+- Next.js 14 with App Router
+- Tailwind CSS for styling
+- v0.dev for UI components
+- React Confetti for animations
+- Lucide Icons
+
+### Backend
+- Next.js API Routes
+- MongoDB for data storage
+- Mongoose for data modeling
+
+### Authentication
+- Clerk for user management
+- JWT for secure authentication
+
+### Development
+- Cursor IDE
+- ESLint and Prettier
+- Git for version control
+
+## Architecture
+
+Lucent follows a modern full-stack architecture:
+- Frontend: Next.js with React
+- Backend: Next.js API routes
+- Database: MongoDB Atlas
+- Authentication: Clerk
+- Deployment: Vercel
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables
+4. Run development server: `npm run dev`
+5. Build for production: `npm run build`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Future Roadmap
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Mobile app development
+- Advanced AI learning assistance
+- Collaborative features
+- Course creation tools
+- Enhanced analytics
+- Platform integrations
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Contributing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+We welcome contributions! Please read our contributing guidelines before submitting pull requests.
 
-## Learn More
+## License
 
-To learn more about Next.js, take a look at the following resources:
+MIT License - see LICENSE file for details.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Acknowledgments
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Inspired by "Designing Data-Intensive Applications"
+- Built with the Next.js community
+- Thanks to all contributors
