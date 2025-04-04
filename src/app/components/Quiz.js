@@ -132,6 +132,19 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
           </div>
         );
 
+      case 'short-answer':
+        return (
+          <div className="space-y-4">
+            <input
+              type="text"
+              value={answers[question._id] || ''}
+              onChange={(e) => handleAnswerSelect(question._id, e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent outline-none transition-colors"
+              placeholder="Type your answer here..."
+            />
+          </div>
+        );
+
       case 'multiple-choice':
       default:
         return (
