@@ -24,843 +24,775 @@ export const ddiaCourse = {
     {
       title: "Reliable, Scalable, and Maintainable Applications",
       description:
-      "Learn the foundations of data systems, reliability, scalability, and maintainability.",
+        "Learn the foundations of data systems, reliability, scalability, and maintainability.",
       order: 1,
-        // LESSONS IN CHAPTER 1
-        // ----------------------------------
-        lessons: [
-          // ---------------------------
-          // LESSON 1
-          // ---------------------------
-          {
-            title: "Foundations of Data Systems",
-            slug: "foundations-of-data-systems",
-            description:
-              "What makes an application data-intensive, the building blocks of data systems, and the three key design concerns.",
-            order: 1,
-            duration: 45,
-      
-            parts: [
-              // PART 1
-              {
-                title: "What Are Data-Intensive Applications?",
-                content:
-                  "Data-intensive applications are those where data—its volume, complexity, or rate of change—is the primary challenge, rather than raw CPU processing power. As data grows in importance, the systems managing this data become increasingly critical to business operations and user experiences.",
-                order: 1,
-                duration: 15,
-                exercise: {
-                  type: "fill-in-blanks",
-                  title: "Mini Exercise: Data-Intensive Definition",
-                  description:
-                    "Fill in the blank regarding data-intensive applications.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    text: "Applications where the primary challenge is the amount, complexity, or speed of data change are called [1] applications.",
-                    blanks: [
-                      { id: "1", answer: "data-intensive" }
-                    ]
-                  }
-                }
-              },
-              // PART 2
-              {
-                title: "Building Blocks of Data Systems",
-                content:
-                  "Modern data systems combine specialized components such as databases, caches, search indexes, and stream processing. These are glued together by application code to form a single system with a distinct API. Each component is optimized for a specific task, and when integrated properly, they create powerful and flexible data-intensive applications.",
-                order: 2,
-                duration: 15,
-                exercise: {
-                  type: "multiple-choice",
-                  title: "Mini Exercise: Specialized Data Systems",
-                  description:
-                    "Select the correct statement about combining multiple data tools.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    question:
-                      "What happens when you combine multiple data tools to create a specialized system?",
-                    options: [
-                      "A) The system becomes less reliable",
-                      "B) You create a new specialized data system with its own API",
-                      "C) You always need third-party integration software",
-                      "D) Performance always decreases"
-                    ],
-                    correctAnswer:
-                      "B) You create a new specialized data system with its own API",
-                    explanation:
-                      "Combining multiple data tools results in a unified, specialized system with its own interface."
-                  }
-                }
-              },
-              // PART 3
-              {
-                title: "Three Key Concerns for Data Systems",
-                content:
-                  "Reliability, scalability, and maintainability are the three central design concerns. A reliable system keeps working correctly when things go wrong, a scalable system can handle growth, and a maintainable system allows multiple people to work on it effectively. Understanding these concerns is crucial for designing robust data systems. In reliability, we distinguish between faults and failures: a fault is when a component deviates from its specification, while a failure is when the entire system stops providing required service. Good systems are designed to tolerate certain types of faults rather than trying to prevent all possible faults. This approach of fault tolerance is more practical and realistic than attempting to create perfect systems without any faults. Hardware faults, software bugs, and human errors all contribute to system failures, and a well-designed system must have strategies to handle each of these.",
-                order: 3,
-                duration: 15,
-                exercise: {
-                  type: "drag-and-drop",
-                  title: "Mini Exercise: Key Concerns",
-                  description:
-                    "Match each data system concern with its definition.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    items: ["Reliability", "Scalability", "Maintainability"],
-                    targets: [
-                      "[System continues working correctly even when things go wrong]",
-                      "[System handles growth in data, traffic, or complexity]",
-                      "[Different people can work on the system productively]"
-                    ],
-                    correctPairs: [
-                      [
-                        "Reliability",
-                        "[System continues working correctly even when things go wrong]"
-                      ],
-                      [
-                        "Scalability",
-                        "[System handles growth in data, traffic, or complexity]"
-                      ],
-                      [
-                        "Maintainability",
-                        "[Different people can work on the system productively]"
-                      ]
-                    ]
-                  }
-                }
-              }
-            ], // end parts
-      
-            // END-OF-LESSON QUIZ
-            endOfLessonQuiz: {
-              title: "Foundations of Data Systems Quiz",
-              description:
-                "Check your understanding of reliability basics and data-intensive system design.",
-              duration: 15,
-              passingScore: 70,
-              questions: [
-                {
-                  type: "multiple-choice",
-                  question:
-                    "What is the best approach when designing for reliability?",
-                  options: [
-                    "A) Prevent all possible faults",
-                    "B) Design systems to tolerate certain types of faults",
-                    "C) Implement only hardware redundancy",
-                    "D) Focus only on software bugs"
-                  ],
-                  correctAnswer:
-                    "B) Design systems to tolerate certain types of faults",
-                  points: 10,
-                  explanation:
-                    "It's not realistic to prevent every fault, so engineering for fault tolerance is the practical approach."
-                },
-                {
-                  type: "true-false",
-                  question:
-                    "In most large-scale systems, it's better to expect perfect hardware and focus only on software bugs.",
-                  options: ["true", "false"],
-                  correctAnswer: "false",
-                  points: 10,
-                  explanation:
-                    "Hardware failures are common in large-scale systems, so reliability planning must include them."
-                },
-                {
-                  type: "short-answer",
-                  question:
-                    "A _______ is when one component deviates from its specification, while a _______ is when the entire system stops providing required service.",
-                  correctAnswer: "fault, failure",
-                  points: 10,
-                  explanation:
-                    "Faults are local events; a failure is a system-wide inability to meet required behavior."
-                },
-                {
-                  type: "multiple-choice",
-                  question:
-                    "Which of the following is NOT a common approach to making systems reliable against human errors?",
-                  options: [
-                    "A) Detailed monitoring",
-                    "B) Quick and easy recovery options",
-                    "C) Eliminating all potential user mistakes",
-                    "D) Testing at multiple levels"
-                  ],
-                  correctAnswer: "C) Eliminating all potential user mistakes",
-                  points: 10,
-                  explanation:
-                    "You cannot realistically eliminate all human mistakes, but you can mitigate them."
-                }
-              ]
-            }
-          },
-      
-          // ---------------------------
-          // LESSON 2
-          // ---------------------------
-          {
-            title: "Reliability in Data Systems",
-            slug: "reliability-in-data-systems",
-            description:
-              "Dive deeper into reliability, including faults, failures, and dealing with human errors.",
-            order: 2,
-            duration: 45,
-      
-            parts: [
-              // PART 1
-              {
-                title: "Understanding Reliability",
-                content:
-                  "Reliability means a system works correctly under adversity, including hardware faults, unexpected inputs, and unauthorized access attempts. A reliable system should continue functioning correctly even when faced with unexpected conditions. The system should meet functional requirements, perform as expected with acceptable performance, and prevent unauthorized access or abuse. Reliability is not just about avoiding outages but ensuring correct functionality throughout.",
-                order: 1,
-                duration: 15,
-                exercise: {
-                  type: "multiple-choice",
-                  title: "Mini Exercise: Fault vs. Failure",
-                  description:
-                    "Determine whether a fault and a failure are the same thing.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    question:
-                      "A fault and a failure are essentially the same thing in a data system.",
-                    options: ["true", "false"],
-                    correctAnswer: "false",
-                    explanation:
-                      "A fault is a localized deviation from specification; a failure is when the system can't provide required service."
-                  }
-                }
-              },
-              // PART 2
-              {
-                title: "Types of Faults",
-                content:
-                  "Systems face hardware and software faults. Hardware faults include disk failures, RAM errors, power outages, and network issues. Software faults involve bugs, resource exhaustion, and dependency failures. Large-scale systems increasingly rely on software strategies to tolerate hardware failures through redundancy and replication rather than focusing solely on preventing hardware faults. This approach is more cost-effective and provides greater flexibility. Redundancy allows for graceful degradation rather than catastrophic failure.",
-                order: 2,
-                duration: 15,
-                exercise: {
-                  type: "multiple-choice",
-                  title: "Mini Exercise: Handling Hardware Faults",
-                  description: "Choose the correct approach to large-scale faults.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    question:
-                      "Which approach is increasingly being used to handle hardware faults as systems grow larger?",
-                    options: [
-                      "A) More expensive hardware",
-                      "B) Software fault-tolerance techniques",
-                      "C) Reducing system functionality",
-                      "D) Limiting user access"
-                    ],
-                    correctAnswer: "B) Software fault-tolerance techniques",
-                    explanation:
-                      "As systems scale, software-based redundancy and failover are more cost-effective than purely hardware solutions."
-                  }
-                }
-              },
-              // PART 3
-              {
-                title: "Human Errors",
-                content:
-                  "Operator and user mistakes are a major source of outages. Studies consistently show that configuration errors by operators are the leading cause of service downtime, more so than hardware or software issues. Strategies to mitigate human errors include thorough testing (unit, integration, manual), quick and easy recovery from human errors (fast rollbacks, gradual rollouts), detailed and clear monitoring with metrics and alerts, implementing good management practices and training, and designing interfaces that make it easy to do the right thing and hard to make mistakes. Even with these safeguards, it's impossible to eliminate all human errors, so systems must be designed to minimize their impact.",
-                order: 3,
-                duration: 15,
-                exercise: {
-                  type: "multiple-choice",
-                  title: "Mini Exercise: Leading Cause of Outages",
-                  description: "Select the biggest factor in service outages.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    question:
-                      "According to studies of internet services, what is the leading cause of outages?",
-                    options: [
-                      "A) Hardware faults",
-                      "B) Software bugs",
-                      "C) Network issues",
-                      "D) Configuration errors by operators"
-                    ],
-                    correctAnswer: "D) Configuration errors by operators",
-                    explanation:
-                      "Human mistakes, particularly misconfiguration, frequently top the list of root causes for service downtime."
-                  }
-                }
-              }
-            ], // end parts
-      
-            // END-OF-LESSON QUIZ
-            endOfLessonQuiz: {
-              title: "Reliability in Data Systems Quiz",
-              description: "Confirm your grasp on reliability, faults, and errors.",
-              duration: 15,
-              passingScore: 70,
-              questions: [
-                {
-                  type: "multiple-choice",
-                  question:
-                    "What is the best approach when designing for reliability?",
-                  options: [
-                    "A) Prevent all possible faults",
-                    "B) Design systems to tolerate certain types of faults",
-                    "C) Implement only hardware redundancy",
-                    "D) Focus only on software bugs"
-                  ],
-                  correctAnswer:
-                    "B) Design systems to tolerate certain types of faults",
-                  points: 10,
-                  explanation:
-                    "You cannot avoid every possible fault; building in fault-tolerance is key."
-                },
-                {
-                  type: "true-false",
-                  question:
-                    "In most large-scale systems, it's better to expect perfect hardware and focus only on software bugs.",
-                  options: ["true", "false"],
-                  correctAnswer: "false",
-                  points: 10,
-                  explanation:
-                    "Real-world hardware failures are common and must be addressed in system design."
-                },
-                {
-                  type: "short-answer",
-                  question:
-                    "A _______ is when one component deviates from its specification, while a _______ is when the entire system stops providing required service.",
-                  correctAnswer: "fault, failure",
-                  points: 10,
-                  explanation:
-                    "Clarifying the difference helps isolate problems before they escalate into full system failures."
-                },
-                {
-                  type: "multiple-choice",
-                  question:
-                    "Which of the following is NOT a common approach to making systems reliable against human errors?",
-                  options: [
-                    "A) Detailed monitoring",
-                    "B) Quick and easy recovery options",
-                    "C) Eliminating all potential user mistakes",
-                    "D) Testing at multiple levels"
-                  ],
-                  correctAnswer: "C) Eliminating all potential user mistakes",
-                  points: 10,
-                  explanation:
-                    "Realistically, you can't remove human mistakes entirely, but you can mitigate their impact."
-                }
-              ]
-            }
-          },
-      
-          // ---------------------------
-          // LESSON 3
-          // ---------------------------
-          {
-            title: "Scalability Fundamentals",
-            slug: "scalability-fundamentals",
-            description:
-              "Define scalability, load parameters, performance metrics, and how to measure response times.",
-            order: 3,
-            duration: 45,
-      
-            parts: [
-              // PART 1
-              {
-                title: "What is Scalability?",
-                content:
-                  "Scalability is about a system's ability to cope with increased load. It's not a yes/no property but a question of how the system adapts as load grows. A scalable system can handle increased load through adding resources, often in a cost-effective way. Questions about scalability should be framed as: 'If the system grows in a particular way, what are the options for coping with the growth?' and 'How can we add resources to handle the additional load?'",
-                order: 1,
-                duration: 10,
-                exercise: {
-                  type: "multiple-choice",
-                  title: "Mini Exercise: Scalability as a Property",
-                  description: "Check if scalability is simply yes/no.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    question:
-                      "Scalability is a yes/no attribute of a data system—either it's scalable or it's not.",
-                    options: ["true", "false"],
-                    correctAnswer: "false",
-                    explanation:
-                      "Scalability is about the system's ability to handle growth, not just a binary state."
-                  }
-                }
-              },
-              // PART 2
-              {
-                title: "Describing Load",
-                content:
-                  "Load is measured by parameters such as requests/second, read/write ratio, or the number of active users. The appropriate load parameters depend on the system architecture. For example, a social media platform might focus on fan-out patterns, where one action (like a new post) generates many downstream activities (notifications to followers). Twitter's key challenge is fan-out for distributing tweets to followers. Different systems face different bottlenecks as they scale, so understanding the specific load patterns is essential for effective scaling.",
-                order: 2,
-                duration: 10,
-                exercise: {
-                  type: "fill-in-blanks",
-                  title: "Mini Exercise: Twitter's Fan-Out",
-                  description:
-                    "Fill in the blank about Twitter's key scaling challenge.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    text: "In Twitter's architecture, the main scaling challenge is not the tweet volume but the [1] pattern where each tweet might need to be delivered to many followers.",
-                    blanks: [
-                      { id: "1", answer: "fan-out" }
-                    ]
-                  }
-                }
-              },
-              // PART 3
-              {
-                title: "Measuring Performance",
-                content:
-                  "Online systems focus on response time, while batch systems focus on throughput. Response time includes service time, network delay, and queueing delays. It's important to understand the difference between response time (what the client sees) and latency (the duration a request is waiting to be handled). In batch processing systems, we typically care about throughput—the number of records processed per second or the total time to complete a job with a dataset of a certain size. Different systems prioritize different performance metrics based on their use cases and requirements.",
-                order: 3,
-                duration: 10,
-                exercise: {
-                  type: "multiple-choice",
-                  title: "Mini Exercise: Key Metric for Online Systems",
-                  description: "Identify the most important online performance metric.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    question:
-                      "Which metric is most important for measuring performance in online systems?",
-                    options: [
-                      "A) CPU utilization",
-                      "B) Memory usage",
-                      "C) Response time",
-                      "D) Storage capacity"
-                    ],
-                    correctAnswer: "C) Response time",
-                    explanation:
-                      "For user-facing services, response time is the critical measure of performance."
-                  }
-                }
-              },
-              // PART 4
-              {
-                title: "Percentiles in Practice",
-                content:
-                  "Percentiles (p50, p95, p99) are more helpful than averages for tracking user experience. The median (50th percentile or p50) shows what a typical user experiences. High percentiles (p95, p99, p99.9) measure tail latencies, which degrade user satisfaction. For example, if the 99th percentile response time is 1.5 seconds, that means 99% of requests return in less than 1.5 seconds, and 1% take longer. Tail latencies are important because they directly affect user experience, especially for systems that make multiple backend calls. This phenomenon is called 'tail latency amplification'—when a service requires multiple backend calls, the slowest call determines the overall response time. For instance, if a user request requires 100 backend calls, and just 1% of those backend services are slow, the chance of getting a slow overall response increases dramatically to nearly 63%. This is why monitoring and optimizing high percentiles is crucial for maintaining good user experience, especially in complex distributed systems.",
-                order: 4,
-                duration: 15,
-                exercise: {
-                  type: "multiple-choice",
-                  title: "Mini Exercise: Median vs. Mean",
-                  description: "Evaluate which measure better represents users.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    question:
-                      "Why is the median (p50) response time often more useful than the mean?",
-                    options: [
-                      "A) It's always a smaller number",
-                      "B) It accurately shows what a typical user experiences",
-                      "C) It's easier to calculate",
-                      "D) It ignores all slow responses"
-                    ],
-                    correctAnswer:
-                      "B) It accurately shows what a typical user experiences",
-                    explanation:
-                      "The median better reflects the 'middle' user's experience, unlike the average which can be skewed by extremes."
-                  }
-                }
-              }
-            ], // end parts
-      
-            // END-OF-LESSON QUIZ
-            endOfLessonQuiz: {
-              title: "Scalability Fundamentals Quiz",
-              description:
-                "Review the core concepts of scalability, load parameters, performance, and latency percentiles.",
-              duration: 15,
-              passingScore: 70,
-              questions: [
-                {
-                  type: "multiple-choice",
-                  question: "Which of the following best describes scalability?",
-                  options: [
-                    "A) A yes/no property of a system",
-                    "B) The maximum number of users a system can handle",
-                    "C) A system's ability to maintain performance as load increases",
-                    "D) The ability to add unlimited resources"
-                  ],
-                  correctAnswer:
-                    "C) A system's ability to maintain performance as load increases",
-                  points: 10,
-                  explanation:
-                    "Scalability is about how performance holds up under growing load."
-                },
-                {
-                  type: "short-answer",
-                  question:
-                    "When measuring performance in online systems, we typically care about _______, while in batch processing systems we care about _______.",
-                  correctAnswer: "response time, throughput",
-                  points: 10,
-                  explanation:
-                    "Online systems focus on latency; batch systems focus on how many records can be processed in a given time."
-                },
-                {
-                  type: "true-false",
-                  question:
-                    "The average (mean) response time is usually the best way to understand what users typically experience.",
-                  options: ["true", "false"],
-                  correctAnswer: "false",
-                  points: 10,
-                  explanation:
-                    "Mean can be skewed by outliers; percentiles (like median) are more representative."
-                },
-                {
-                  type: "multiple-choice",
-                  question:
-                    "What does p99 (99th percentile) response time tell us?",
-                  options: [
-                    "A) The fastest 1% of all requests",
-                    "B) The average of all request times",
-                    "C) The response time that 99% of requests are faster than",
-                    "D) 99% of the maximum possible response time"
-                  ],
-                  correctAnswer:
-                    "C) The response time that 99% of requests are faster than",
-                  points: 10,
-                  explanation:
-                    "p99 is a tail-latency measure showing how slow the slowest 1% of requests are."
-                },
-                {
-                  type: "multiple-choice",
-                  question:
-                    "What does 'tail latency amplification' refer to?",
-                  options: [
-                    "A) The slowing of all requests over time",
-                    "B) How a small percentage of slow operations can cause a higher percentage of slow responses when multiple backend calls are needed",
-                    "C) The exponential increase in latency as system load approaches 100%",
-                    "D) The delay caused by network transmission across long distances"
-                  ],
-                  correctAnswer:
-                    "B) How a small percentage of slow operations can cause a higher percentage of slow responses when multiple backend calls are needed",
-                  points: 10,
-                  explanation:
-                    "When many dependent calls are needed, even a small fraction of slow calls can significantly impact overall response times."
-                }
-              ]
-            }
-          },
-      
-          // ---------------------------
-          // LESSON 4
-          // ---------------------------
-          {
-            title: "Approaches to Scaling",
-            slug: "approaches-to-scaling",
-            description:
-              "Examine vertical vs. horizontal scaling, elastic vs. manual scaling, and the challenges of stateful data in distributed systems.",
-            order: 4,
-            duration: 45,
-      
-            parts: [
-              // PART 1
-              {
-                title: "Scaling Up vs. Scaling Out",
-                content:
-                  "Vertical scaling (scaling up) means moving to a more powerful machine, while horizontal scaling (scaling out) distributes load across multiple machines. Vertical scaling is simpler but has limits to how much a single machine can be upgraded. Horizontal scaling can theoretically scale infinitely but introduces complexity in distributing work and handling failures. Modern systems often combine both approaches, using appropriately powerful individual machines within a distributed architecture. The right balance depends on workloads, cost constraints, and reliability requirements.",
-                order: 1,
-                duration: 15,
-                exercise: {
-                  type: "fill-in-blanks",
-                  title: "Mini Exercise: Scaling Approaches",
-                  description:
-                    "Fill in the blank regarding horizontal and vertical scaling.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    text: "[1] scaling refers to distributing your workload across multiple machines, while [2] scaling means moving to a more powerful machine.",
-                    blanks: [
-                      { id: "1", answer: "Horizontal" },
-                      { id: "2", answer: "vertical" }
-                    ]
-                  }
-                }
-              },
-              // PART 2
-              {
-                title: "Elastic vs. Manual Scaling",
-                content:
-                  "Elastic systems automatically add resources under high load, while manual scaling requires human intervention. Elastic scaling works well for highly variable and unpredictable workloads, particularly in cloud environments. It can quickly respond to sudden traffic spikes without human involvement. Manual scaling is simpler to implement and may be more cost-effective for predictable workloads. Each approach has trade-offs in complexity, predictability, and cost. Cloud providers typically offer both options, allowing teams to choose based on their specific requirements.",
-                order: 2,
-                duration: 15,
-                exercise: {
-                  type: "multiple-choice",
-                  title: "Mini Exercise: Elastic Scaling",
-                  description:
-                    "Check if elastic scaling always outperforms manual scaling.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    question:
-                      "Elastic scaling is always better than manual scaling for all types of applications.",
-                    options: ["true", "false"],
-                    correctAnswer: "false",
-                    explanation:
-                      "Elastic scaling is useful for unpredictable loads, but manual scaling can be simpler and more stable in certain scenarios."
-                  }
-                }
-              },
-              // PART 3
-              {
-                title: "Stateful Data in Distributed Systems",
-                content:
-                  "Stateless services are easy to scale out because requests can be routed to any available node. Databases and other stateful systems require replicated data and consistency management, making distribution more complex. The main challenges include keeping data synchronized across nodes, handling conflicts when multiple writes occur simultaneously, and maintaining consistency even during network partitions. Different types of stateful systems adopt different strategies, from strong consistency models to eventual consistency approaches. Systematic software errors are another challenge in distributed systems—bugs that occur under specific conditions and can affect multiple nodes simultaneously. Unlike random independent hardware failures, these systematic errors can cause correlated failures across many nodes. Examples include software bugs triggered by certain inputs, resource leaks that build up over time, cascading failures where one component's failure overloads others, and improper handling of unexpected dependencies. Mitigating these requires thorough testing, isolation between components, carefully managed dependencies, and detailed monitoring.",
-                order: 3,
-                duration: 15,
-                exercise: {
-                  type: "multiple-choice",
-                  title: "Mini Exercise: Distributing Stateful Systems",
-                  description:
-                    "Select the primary challenge in distributing stateful services.",
-                  points: 10,
-                  difficulty: "beginner",
-                  content: {
-                    question:
-                      "Why is distributing stateful systems like databases more challenging than distributing stateless services?",
-                  options: [
-                      "A) Stateful systems use more CPU",
-                      "B) Stateful systems require data replication and consistency management",
-                      "C) Stateful systems are always slower",
-                      "D) Stateful systems use older technology"
-                    ],
-                    correctAnswer:
-                      "B) Stateful systems require data replication and consistency management",
-                    explanation:
-                      "Maintaining consistent state across multiple nodes adds complexity not seen in purely stateless environments."
-                  }
-                }
-              }
-            ], // end parts
-      
-            // END-OF-LESSON QUIZ? (The text places an End-of-Chapter Quiz after Lesson 4)
-            endOfLessonQuiz: {
-              title: "Approaches to Scaling Quiz",
-              description:
-                "Quick review of scaling up/out, elastic/manual scaling, and data distribution challenges.",
-              duration: 15,
-              passingScore: 70,
-              questions: [
-                {
-                  type: "multiple-choice",
-                  question:
-                    "Which of the following is NOT one of the three key concerns in data-intensive applications?",
-                  options: [
-                    "A) Reliability",
-                    "B) Scalability",
-                    "C) Portability",
-                    "D) Maintainability"
-                  ],
-                  correctAnswer: "C) Portability",
-                  points: 10,
-                  explanation:
-                    "Reliability, scalability, and maintainability are the three key concerns. Portability is not one of the primary three."
-                },
-                {
-                  type: "short-answer",
-                  question:
-                    "A system that continues working correctly even when things go wrong demonstrates the property of _______.",
-                  correctAnswer: "reliability",
-                  points: 10,
-                  explanation:
-                    "Reliability is about keeping the system functioning under adverse conditions."
-                },
-                {
-                  type: "true-false",
-                  question:
-                    "High percentiles of response times (e.g., p99) are often more important than averages because they directly impact user experience.",
-                  options: ["true", "false"],
-                  correctAnswer: "true",
-                  points: 10,
-                  explanation:
-                    "Slow outliers affect many users, especially in multi-request operations."
-                },
-                {
-                  type: "multiple-choice",
-                  question:
-                    "What does 'tail latency amplification' refer to?",
-                  options: [
-                    "A) The slowing of all requests over time",
-                    "B) How a small percentage of slow operations can cause a higher percentage of slow responses when multiple backend calls are needed",
-                    "C) The exponential increase in latency as system load approaches 100%",
-                    "D) The delay caused by network transmission across long distances"
-                  ],
-                  correctAnswer:
-                    "B) How a small percentage of slow operations can cause a higher percentage of slow responses when multiple backend calls are needed",
-                  points: 10,
-                  explanation:
-                    "When many dependent calls are needed, even a small fraction of slow calls can significantly impact overall response times."
-                },
-                {
-                  type: "multiple-choice",
-                  question:
-                    "Which approach to scaling automatically adds resources when detecting higher load?",
-                  options: [
-                    "A) Vertical scaling",
-                    "B) Horizontal scaling",
-                    "C) Elastic scaling",
-                    "D) Manual scaling"
-                  ],
-                  correctAnswer: "C) Elastic scaling",
-                  points: 10,
-                  explanation:
-                    "Elastic scaling is often implemented in cloud environments for on-demand resource allocation."
-                },
-                {
-                  type: "multiple-choice",
-                  question:
-                    "According to the content, which type of fault is particularly difficult to handle in distributed systems?",
-                  options: [
-                    "A) Random hardware faults",
-                    "B) Power outages",
-                    "C) Systematic software errors",
-                    "D) Network failures"
-                  ],
-                  correctAnswer: "C) Systematic software errors",
-                  points: 10,
-                  explanation:
-                    "Systematic software errors can affect multiple nodes simultaneously and are harder to isolate than independent hardware failures."
-                },
-                {
-                  type: "true-false",
-                  question:
-                    "There is a 'one-size-fits-all' architecture that works well for all scalable systems.",
-                  options: ["true", "false"],
-                  correctAnswer: "false",
-                  points: 10,
-                  explanation:
-                    "Each system has unique requirements; no single architecture suits all needs."
-                }
-              ]
-            }
-          }
-        ], // end lessons in Chapter 1
-      
-        // END-OF-CHAPTER QUIZ for CHAPTER 1
-        endOfChapterQuiz: {
-          title: "Chapter 1 Quiz",
+
+      // ----------------------------------
+      // LESSONS IN CHAPTER 1
+      // ----------------------------------
+      lessons: [
+        // ---------------------------
+        // LESSON 1
+        // ---------------------------
+        {
+          title: "Foundations of Data Systems",
+          slug: "foundations-of-data-systems",
           description:
-            "Comprehensive quiz for Chapter 1: reliability, scalability, and maintainability fundamentals.",
-          duration: 30,
-          passingScore: 75,
-          slug: "chapter-1-quiz",
-          questions: [
+            "What makes an application data-intensive, the building blocks of data systems, and the three key design concerns.",
+          order: 1,
+          duration: 45,
+
+          parts: [
+            // PART 1
             {
-              type: "multiple-choice",
-              question:
-                "Which of the following is NOT one of the three key concerns in data-intensive applications?",
-              options: [
-                "A) Reliability",
-                "B) Scalability",
-                "C) Portability",
-                "D) Maintainability"
-              ],
-              correctAnswer: "C) Portability",
-              points: 10,
-              explanation:
-                "The three key concerns introduced are reliability, scalability, and maintainability."
+              title: "What Are Data-Intensive Applications?",
+              content:
+                "Data-intensive applications are those where data—its volume, complexity, or rate of change—is the primary challenge, rather than raw CPU processing power.",
+              order: 1,
+              duration: 15,
+              exercise: {
+                type: "fill-in-blanks",
+                title: "Mini Exercise: Data-Intensive Definition",
+                description:
+                  "Fill in the blank regarding data-intensive applications.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  text: "Applications where the primary challenge is the amount, complexity, or speed of data change are called [1] applications.",
+                  blanks: [
+                    { id: "1", answer: "data-intensive" }
+                  ]
+                }
+              }
             },
+            // PART 2
             {
-              type: "true-false",
-              question:
-                "In the context of reliability, it's better to focus on preventing all possible faults rather than designing for fault tolerance.",
-              options: ["true", "false"],
-              correctAnswer: "false",
-              points: 10,
-              explanation:
-                "Preventing all faults is unrealistic; designing systems to tolerate faults is the practical approach."
+              title: "Building Blocks of Data Systems",
+              content:
+                "Modern data systems combine specialized components such as databases, caches, search indexes, and stream processing. These are glued together by application code to form a single system with a distinct API.",
+              order: 2,
+              duration: 15,
+              exercise: {
+                type: "multiple-choice",
+                title: "Mini Exercise: Specialized Data Systems",
+                description:
+                  "Select the correct statement about combining multiple data tools.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question:
+                    "What happens when you combine multiple data tools to create a specialized system?",
+                  options: [
+                    "A) The system becomes less reliable",
+                    "B) You create a new specialized data system with its own API",
+                    "C) You always need third-party integration software",
+                    "D) Performance always decreases"
+                  ],
+                  correctAnswer:
+                    "B) You create a new specialized data system with its own API",
+                  explanation:
+                    "Combining multiple data tools results in a unified, specialized system with its own interface."
+                }
+              }
             },
+            // PART 3
             {
-              type: "multiple-choice",
-              question: "What does the term 'fan-out' refer to in distributed systems?",
-              options: [
-                "A) The process of scaling a system vertically",
-                "B) A pattern where one operation leads to many downstream operations",
-                "C) The distribution of hardware resources across data centers",
-                "D) The process of shutting down services during maintenance"
-              ],
-              correctAnswer: "B) A pattern where one operation leads to many downstream operations",
-              points: 10,
-              explanation:
-                "Fan-out describes scenarios like social media where one action (like a post) creates multiple notifications or operations."
-            },
-            {
-              type: "multiple-choice",
-              question: "Which type of scaling involves distributing workloads across multiple machines?",
-              options: [
-                "A) Vertical scaling",
-                "B) Horizontal scaling",
-                "C) Elastic scaling",
-                "D) Manual scaling"
-              ],
-              correctAnswer: "B) Horizontal scaling",
-              points: 10,
-              explanation:
-                "Horizontal scaling (scaling out) distributes workloads across multiple machines, whereas vertical scaling means using more powerful individual machines."
-            },
-            {
-              type: "multiple-choice",
-              question: "What is the main challenge when distributing stateful systems like databases?",
-              options: [
-                "A) Processing power limitations",
-                "B) Data replication and consistency management",
-                "C) Network bandwidth constraints",
-                "D) User interface complexity"
-              ],
-              correctAnswer: "B) Data replication and consistency management",
-              points: 10,
-              explanation:
-                "Keeping data consistent across distributed nodes is a major challenge for stateful systems."
-            },
-            {
-              type: "short-answer",
-              question:
-                "Percentiles like p99 are used to measure _______ latencies, which have a significant impact on user experience.",
-              correctAnswer: "tail",
-              points: 10,
-              explanation:
-                "Tail latencies represent the slowest requests, which disproportionately impact user perception of system performance."
-            },
-            {
-              type: "multiple-choice",
-              question: "Which of the following is a primary cause of outages in modern data systems?",
-              options: [
-                "A) Hardware failures",
-                "B) Software bugs",
-                "C) Configuration errors by operators",
-                "D) Natural disasters"
-              ],
-              correctAnswer: "C) Configuration errors by operators",
-              points: 10,
-              explanation:
-                "Human errors, particularly misconfigurations, are consistently found to be the leading cause of system outages."
-            },
-            {
-              type: "true-false",
-              question:
-                "Systematic software errors are easier to handle than random hardware failures in distributed systems.",
-              options: ["true", "false"],
-              correctAnswer: "false",
-              points: 10,
-              explanation:
-                "Systematic errors can affect multiple nodes simultaneously and are often harder to isolate and resolve than independent hardware failures."
+              title: "Three Key Concerns for Data Systems",
+              content:
+                "Reliability, scalability, and maintainability are the three central design concerns. A reliable system keeps working correctly when things go wrong, a scalable system can handle growth, and a maintainable system allows multiple people to work on it effectively.",
+              order: 3,
+              duration: 15,
+              exercise: {
+                type: "drag-and-drop",
+                title: "Mini Exercise: Key Concerns",
+                description:
+                  "Match each data system concern with its definition.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  items: ["Reliability", "Scalability", "Maintainability"],
+                  targets: [
+                    "[System continues working correctly even when things go wrong]",
+                    "[System handles growth in data, traffic, or complexity]",
+                    "[Different people can work on the system productively]"
+                  ],
+                  correctPairs: [
+                    [
+                      "Reliability",
+                      "[System continues working correctly even when things go wrong]"
+                    ],
+                    [
+                      "Scalability",
+                      "[System handles growth in data, traffic, or complexity]"
+                    ],
+                    [
+                      "Maintainability",
+                      "[Different people can work on the system productively]"
+                    ]
+                  ]
+                }
+              }
             }
-          ]
+          ], // end parts
+
+          // END-OF-LESSON QUIZ
+          endOfLessonQuiz: {
+            title: "Foundations of Data Systems Quiz",
+            description:
+              "Check your understanding of reliability basics and data-intensive system design.",
+            duration: 15,
+            passingScore: 70,
+            questions: [
+              {
+                type: "multiple-choice",
+                question:
+                  "What is the best approach when designing for reliability?",
+                options: [
+                  "A) Prevent all possible faults",
+                  "B) Design systems to tolerate certain types of faults",
+                  "C) Implement only hardware redundancy",
+                  "D) Focus only on software bugs"
+                ],
+                correctAnswer:
+                  "B) Design systems to tolerate certain types of faults",
+                points: 10,
+                explanation:
+                  "It's not realistic to prevent every fault, so engineering for fault tolerance is the practical approach."
+              },
+              {
+                type: "true-false",
+                question:
+                  "In most large-scale systems, it's better to expect perfect hardware and focus only on software bugs.",
+                options: ["true", "false"],
+                correctAnswer: "false",
+                points: 10,
+                explanation:
+                  "Hardware failures are common in large-scale systems, so reliability planning must include them."
+              },
+              {
+                type: "short-answer",
+                question:
+                  "A _______ is when one component deviates from its specification, while a _______ is when the entire system stops providing required service.",
+                correctAnswer: "fault, failure",
+                points: 10,
+                explanation:
+                  "Faults are local events; a failure is a system-wide inability to meet required behavior."
+              },
+              {
+                type: "multiple-choice",
+                question:
+                  "Which of the following is NOT a common approach to making systems reliable against human errors?",
+                options: [
+                  "A) Detailed monitoring",
+                  "B) Quick and easy recovery options",
+                  "C) Eliminating all potential user mistakes",
+                  "D) Testing at multiple levels"
+                ],
+                correctAnswer: "C) Eliminating all potential user mistakes",
+                points: 10,
+                explanation:
+                  "You cannot realistically eliminate all human mistakes, but you can mitigate them."
+              }
+            ]
+          }
+        },
+
+        // ---------------------------
+        // LESSON 2
+        // ---------------------------
+        {
+          title: "Reliability in Data Systems",
+          slug: "reliability-in-data-systems",
+          description:
+            "Dive deeper into reliability, including faults, failures, and dealing with human errors.",
+          order: 2,
+          duration: 45,
+
+          parts: [
+            // PART 1
+            {
+              title: "Understanding Reliability",
+              content:
+                "Reliability means a system works correctly under adversity, including hardware faults, unexpected inputs, and unauthorized access attempts.",
+              order: 1,
+              duration: 15,
+              exercise: {
+                type: "multiple-choice",
+                title: "Mini Exercise: Fault vs. Failure",
+                description:
+                  "Determine whether a fault and a failure are the same thing.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question:
+                    "A fault and a failure are essentially the same thing in a data system.",
+                  options: ["true", "false"],
+                  correctAnswer: "false",
+                  explanation:
+                    "A fault is a localized deviation from specification; a failure is when the system can't provide required service."
+                }
+              }
+            },
+            // PART 2
+            {
+              title: "Types of Faults",
+              content:
+                "Systems face hardware and software faults. Large-scale systems increasingly rely on software strategies to tolerate hardware failures (redundancy, replication).",
+              order: 2,
+              duration: 15,
+              exercise: {
+                type: "multiple-choice",
+                title: "Mini Exercise: Handling Hardware Faults",
+                description: "Choose the correct approach to large-scale faults.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question:
+                    "Which approach is increasingly being used to handle hardware faults as systems grow larger?",
+                  options: [
+                    "A) More expensive hardware",
+                    "B) Software fault-tolerance techniques",
+                    "C) Reducing system functionality",
+                    "D) Limiting user access"
+                  ],
+                  correctAnswer: "B) Software fault-tolerance techniques",
+                  explanation:
+                    "As systems scale, software-based redundancy and failover are more cost-effective than purely hardware solutions."
+                }
+              }
+            },
+            // PART 3
+            {
+              title: "Human Errors",
+              content:
+                "Operator and user mistakes are a major source of outages. Strategies include thorough testing, quick recovery, monitoring, and robust training.",
+              order: 3,
+              duration: 15,
+              exercise: {
+                type: "multiple-choice",
+                title: "Mini Exercise: Leading Cause of Outages",
+                description: "Select the biggest factor in service outages.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question:
+                    "According to studies of internet services, what is the leading cause of outages?",
+                  options: [
+                    "A) Hardware faults",
+                    "B) Software bugs",
+                    "C) Network issues",
+                    "D) Configuration errors by operators"
+                  ],
+                  correctAnswer: "D) Configuration errors by operators",
+                  explanation:
+                    "Human mistakes, particularly misconfiguration, frequently top the list of root causes for service downtime."
+                }
+              }
+            }
+          ], // end parts
+
+          // END-OF-LESSON QUIZ
+          endOfLessonQuiz: {
+            title: "Reliability in Data Systems Quiz",
+            description: "Confirm your grasp on reliability, faults, and errors.",
+            duration: 15,
+            passingScore: 70,
+            questions: [
+              {
+                type: "multiple-choice",
+                question:
+                  "What is the best approach when designing for reliability?",
+                options: [
+                  "A) Prevent all possible faults",
+                  "B) Design systems to tolerate certain types of faults",
+                  "C) Implement only hardware redundancy",
+                  "D) Focus only on software bugs"
+                ],
+                correctAnswer:
+                  "B) Design systems to tolerate certain types of faults",
+                points: 10,
+                explanation:
+                  "You cannot avoid every possible fault; building in fault-tolerance is key."
+              },
+              {
+                type: "true-false",
+                question:
+                  "In most large-scale systems, it's better to expect perfect hardware and focus only on software bugs.",
+                options: ["true", "false"],
+                correctAnswer: "false",
+                points: 10,
+                explanation:
+                  "Real-world hardware failures are common and must be addressed in system design."
+              },
+              {
+                type: "short-answer",
+                question:
+                  "A _______ is when one component deviates from its specification, while a _______ is when the entire system stops providing required service.",
+                correctAnswer: "fault, failure",
+                points: 10,
+                explanation:
+                  "Clarifying the difference helps isolate problems before they escalate into full system failures."
+              },
+              {
+                type: "multiple-choice",
+                question:
+                  "Which of the following is NOT a common approach to making systems reliable against human errors?",
+                options: [
+                  "A) Detailed monitoring",
+                  "B) Quick and easy recovery options",
+                  "C) Eliminating all potential user mistakes",
+                  "D) Testing at multiple levels"
+                ],
+                correctAnswer: "C) Eliminating all potential user mistakes",
+                points: 10,
+                explanation:
+                  "Realistically, you can't remove human mistakes entirely, but you can mitigate their impact."
+              }
+            ]
+          }
+        },
+
+        // ---------------------------
+        // LESSON 3
+        // ---------------------------
+        {
+          title: "Scalability Fundamentals",
+          slug: "scalability-fundamentals",
+          description:
+            "Define scalability, load parameters, performance metrics, and how to measure response times.",
+          order: 3,
+          duration: 45,
+
+          parts: [
+            // PART 1
+            {
+              title: "What is Scalability?",
+              content:
+                "Scalability is about a system's ability to cope with increased load. It's not a yes/no property but a question of how the system adapts as load grows.",
+              order: 1,
+              duration: 10,
+              exercise: {
+                // type: "multiple-choice",
+                // title: "Mini Exercise: Key Metric for Online Systems",
+                // description: "Identify the most important online performance metric.",
+                // points: 10,
+                // difficulty: "beginner",
+                // content: {
+                //   question:
+                //     "Which metric is most important for measuring performance in online systems?",
+                //   options: [
+                //     "A) CPU utilization",
+                //     "B) Memory usage",
+                //     "C) Response time",
+                //     "D) Storage capacity"
+                //   ],
+                //   correctAnswer: "C) Response time",
+                //   explanation:
+                //     "For user-facing services, response time is the critical measure of performance."
+                // }
+                type: "multiple-choice",
+                title: "Mini Exercise: Scalability as a Property",
+                description: "Check if scalability is simply yes/no.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question:
+                    "Scalability is a yes/no attribute of a data system—either it's scalable or it's not.",
+                  options: ["true", "false"],
+                  correctAnswer: "false",
+                  explanation:
+                    "Scalability is about the system's ability to handle growth, not just a binary state."
+                }
+              }
+            },
+            // PART 2
+            {
+              title: "Describing Load",
+              content:
+                "Load is measured by parameters such as requests/second, read/write ratio, or the number of active users. Twitter's challenge is fan-out for distributing tweets to followers.",
+              order: 2,
+              duration: 10,
+              exercise: {
+                type: "fill-in-blanks",
+                title: "Mini Exercise: Twitter's Fan-Out",
+                description:
+                  "Fill in the blank about Twitter's key scaling challenge.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  text: "In Twitter's architecture, the main scaling challenge is not the tweet volume but the [1] pattern where each tweet might need to be delivered to many followers.",
+                  blanks: [
+                    { id: "1", answer: "fan-out" }
+                  ]
+                }
+              }
+            },
+            // PART 3
+            {
+              title: "Measuring Performance",
+              content:
+                "Online systems focus on response time, while batch systems focus on throughput. Response time includes service time, network delay, and queueing delays.",
+              order: 3,
+              duration: 10,
+              exercise: {
+                type: "multiple-choice",
+                title: "Mini Exercise: Key Metric for Online Systems",
+                description: "Identify the most important online performance metric.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question:
+                    "Which metric is most important for measuring performance in online systems?",
+                  options: [
+                    "A) CPU utilization",
+                    "B) Memory usage",
+                    "C) Response time",
+                    "D) Storage capacity"
+                  ],
+                  correctAnswer: "C) Response time",
+                  explanation:
+                    "For user-facing services, response time is the critical measure of performance."
+                }
+              }
+            },
+            // PART 4
+            {
+              title: "Percentiles in Practice",
+              content:
+                "Percentiles (p50, p95, p99) are more helpful than averages for tracking user experience. High percentiles measure tail latencies, which degrade user satisfaction.",
+              order: 4,
+              duration: 15,
+              exercise: {
+                type: "multiple-choice",
+                title: "Mini Exercise: Median vs. Mean",
+                description: "Evaluate which measure better represents users.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question:
+                    "Why is the median (p50) response time often more useful than the mean?",
+                  options: [
+                    "A) It's always a smaller number",
+                    "B) It accurately shows what a typical user experiences",
+                    "C) It's easier to calculate",
+                    "D) It ignores all slow responses"
+                  ],
+                  correctAnswer:
+                    "B) It accurately shows what a typical user experiences",
+                  explanation:
+                    "The median better reflects the 'middle' user's experience, unlike the average which can be skewed by extremes."
+                }
+              }
+            }
+          ], // end parts
+
+          // END-OF-LESSON QUIZ
+          endOfLessonQuiz: {
+            title: "Scalability Fundamentals Quiz",
+            description:
+              "Review the core concepts of scalability, load parameters, performance, and latency percentiles.",
+            duration: 15,
+            passingScore: 70,
+            questions: [
+              {
+                type: "multiple-choice",
+                question: "Which of the following best describes scalability?",
+                options: [
+                  "A) A yes/no property of a system",
+                  "B) The maximum number of users a system can handle",
+                  "C) A system's ability to maintain performance as load increases",
+                  "D) The ability to add unlimited resources"
+                ],
+                correctAnswer:
+                  "C) A system's ability to maintain performance as load increases",
+                points: 10,
+                explanation:
+                  "Scalability is about how performance holds up under growing load."
+              },
+              {
+                type: "short-answer",
+                question:
+                  "When measuring performance in online systems, we typically care about _______, while in batch processing systems we care about _______.",
+                correctAnswer: "response time, throughput",
+                points: 10,
+                explanation:
+                  "Online systems focus on latency; batch systems focus on how many records can be processed in a given time."
+              },
+              {
+                type: "true-false",
+                question:
+                  "The average (mean) response time is usually the best way to understand what users typically experience.",
+                options: ["true", "false"],
+                correctAnswer: "false",
+                points: 10,
+                explanation:
+                  "Mean can be skewed by outliers; percentiles (like median) are more representative."
+              },
+              {
+                type: "multiple-choice",
+                question:
+                  "What does p99 (99th percentile) response time tell us?",
+                options: [
+                  "A) The fastest 1% of all requests",
+                  "B) The average of all request times",
+                  "C) The response time that 99% of requests are faster than",
+                  "D) 99% of the maximum possible response time"
+                ],
+                correctAnswer:
+                  "C) The response time that 99% of requests are faster than",
+                points: 10,
+                explanation:
+                  "p99 is a tail-latency measure showing how slow the slowest 1% of requests are."
+              }
+            ]
+          }
+        },
+
+        // ---------------------------
+        // LESSON 4
+        // ---------------------------
+        {
+          title: "Approaches to Scaling",
+          slug: "approaches-to-scaling",
+          description:
+            "Examine vertical vs. horizontal scaling, elastic vs. manual scaling, and the challenges of stateful data in distributed systems.",
+          order: 4,
+          duration: 45,
+
+          parts: [
+            // PART 1
+            {
+              title: "Scaling Up vs. Scaling Out",
+              content:
+                "Vertical scaling means moving to a more powerful machine. Horizontal scaling distributes load across multiple machines. Modern systems often combine both.",
+              order: 1,
+              duration: 15,
+              exercise: {
+                type: "fill-in-blanks",
+                title: "Mini Exercise: Scaling Approaches",
+                description:
+                  "Fill in the blank regarding horizontal and vertical scaling.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  text: "[1] scaling refers to distributing your workload across multiple machines, while [2] scaling means moving to a more powerful machine.",
+                  blanks: [
+                    { id: "1", answer: "Horizontal" },
+                    { id: "2", answer: "vertical" }
+                  ]
+                }
+              }
+            },
+            // PART 2
+            {
+              title: "Elastic vs. Manual Scaling",
+              content:
+                "Elastic systems automatically add resources under high load. Manual scaling requires human intervention. Each approach has trade-offs in complexity and predictability.",
+              order: 2,
+              duration: 15,
+              exercise: {
+                type: "multiple-choice",
+                title: "Mini Exercise: Elastic Scaling",
+                description:
+                  "Check if elastic scaling always outperforms manual scaling.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question:
+                    "Elastic scaling is always better than manual scaling for all types of applications.",
+                  options: ["true", "false"],
+                  correctAnswer: "false",
+                  explanation:
+                    "Elastic scaling is useful for unpredictable loads, but manual scaling can be simpler and more stable in certain scenarios."
+                }
+              }
+            },
+            // PART 3
+            {
+              title: "Stateful Data in Distributed Systems",
+              content:
+                "Stateless services are easy to scale out. Databases require replicated data and consistency management, making distribution more complex.",
+              order: 3,
+              duration: 15,
+              exercise: {
+                type: "multiple-choice",
+                title: "Mini Exercise: Distributing Stateful Systems",
+                description:
+                  "Select the primary challenge in distributing stateful services.",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question:
+                    "Why is distributing stateful systems like databases more challenging than distributing stateless services?",
+                options: [
+                    "A) Stateful systems use more CPU",
+                    "B) Stateful systems require data replication and consistency management",
+                    "C) Stateful systems are always slower",
+                    "D) Stateful systems use older technology"
+                  ],
+                  correctAnswer:
+                    "B) Stateful systems require data replication and consistency management",
+                  explanation:
+                    "Maintaining consistent state across multiple nodes adds complexity not seen in purely stateless environments."
+                }
+              }
+            }
+          ], // end parts
+
+          // END-OF-LESSON QUIZ? (The text places an End-of-Chapter Quiz after Lesson 4)
+          endOfLessonQuiz: {
+            title: "Approaches to Scaling Quiz",
+            description:
+              "Quick review of scaling up/out, elastic/manual scaling, and data distribution challenges.",
+            duration: 15,
+            passingScore: 70,
+            questions: [
+              {
+                type: "multiple-choice",
+                question:
+                  "Which of the following is NOT one of the three key concerns in data-intensive applications?",
+                options: [
+                  "A) Reliability",
+                  "B) Scalability",
+                  "C) Portability",
+                  "D) Maintainability"
+                ],
+                correctAnswer: "C) Portability",
+                points: 10,
+                explanation:
+                  "Reliability, scalability, and maintainability are the three key concerns. Portability is not one of the primary three."
+              },
+              {
+                type: "short-answer",
+                question:
+                  "A system that continues working correctly even when things go wrong demonstrates the property of _______.",
+                correctAnswer: "reliability",
+                points: 10,
+                explanation:
+                  "Reliability is about keeping the system functioning under adverse conditions."
+              },
+              {
+                type: "true-false",
+                question:
+                  "High percentiles of response times (e.g., p99) are often more important than averages because they directly impact user experience.",
+                options: ["true", "false"],
+                correctAnswer: "true",
+                points: 10,
+                explanation:
+                  "Slow outliers affect many users, especially in multi-request operations."
+              },
+              {
+                type: "multiple-choice",
+                question:
+                  "What does 'tail latency amplification' refer to?",
+                options: [
+                  "A) The slowing of all requests over time",
+                  "B) How a small percentage of slow operations can cause a higher percentage of slow responses when multiple backend calls are needed",
+                  "C) The exponential increase in latency as system load approaches 100%",
+                  "D) The delay caused by network transmission across long distances"
+                ],
+                correctAnswer:
+                  "B) How a small percentage of slow operations can cause a higher percentage of slow responses when multiple backend calls are needed",
+                points: 10,
+                explanation:
+                  "When many dependent calls are needed, even a small fraction of slow calls can significantly impact overall response times."
+              },
+              {
+                type: "multiple-choice",
+                question:
+                  "Which approach to scaling automatically adds resources when detecting higher load?",
+                options: [
+                  "A) Vertical scaling",
+                  "B) Horizontal scaling",
+                  "C) Elastic scaling",
+                  "D) Manual scaling"
+                ],
+                correctAnswer: "C) Elastic scaling",
+                points: 10,
+                explanation:
+                  "Elastic scaling is often implemented in cloud environments for on-demand resource allocation."
+              },
+              {
+                type: "drag-and-drop",
+                question:
+                  "Match each term with its description (fault, failure, load parameter, response time).",
+                // We'll store these items in the explanation or a structure,
+                // but for quizzes, only multiple-choice, true-false, short-answer are allowed.
+                // We'll convert drag-and-drop to multiple-choice or short-answer for quiz compatibility.
+                type: "short-answer",
+                correctAnswer:
+                  "Fault: Deviation of a component from spec; Failure: Entire system not providing service; Load parameter: A metric describing demand (e.g. requests/sec); Response time: The time between a client request and server response.",
+                points: 10,
+                explanation:
+                  "This question originally required a drag-and-drop matching but is provided here as a short-answer solution."
+              },
+              {
+                type: "true-false",
+                question:
+                  "There is a 'one-size-fits-all' architecture that works well for all scalable systems.",
+                options: ["true", "false"],
+                correctAnswer: "false",
+                points: 10,
+                explanation:
+                  "Each system has unique requirements; no single architecture suits all needs."
+              },
+              {
+                type: "multiple-choice",
+                question:
+                  "According to the text, which type of fault is particularly difficult to handle?",
+                options: [
+                  "A) Hardware faults",
+                  "B) Power outages",
+                  "C) Systematic software errors",
+                  "D) Network failures"
+                ],
+                correctAnswer: "C) Systematic software errors",
+                points: 10,
+                explanation:
+                  "Software bugs can be pervasive and are not always predictable, making them especially challenging."
+              }
+            ]
+          }
         }
-      },
+      ], // end lessons in Chapter 1
+
+      // END-OF-CHAPTER QUIZ for CHAPTER 1
+      endOfChapterQuiz: {
+        title: "Chapter 1 Quiz",
+        description:
+          "Comprehensive quiz for Chapter 1: reliability, scalability, and maintainability fundamentals.",
+        duration: 30,
+        passingScore: 75,
+        slug: "chapter-1-quiz",
+        questions: [
+          {
+            type: "multiple-choice",
+            question:
+              "Which of the following is NOT one of the three key concerns in data-intensive applications?",
+            options: [
+              "A) Reliability",
+              "B) Scalability",
+              "C) Portability",
+              "D) Maintainability"
+            ],
+            correctAnswer: "C) Portability",
+            points: 10,
+            explanation:
+              "The three key concerns introduced are reliability, scalability, and maintainability."
+          }
+        ]
+      }
+    },
 
     // =========================
     // CHAPTER 2
     // =========================
     {
-      title: "Data Models and Query Languages",
-      description:
-        "Explore relational, document, and graph data models, plus the evolution of query languages.",
-      order: 2,
-
-      lessons: [
+    title: "Data Models and Query Languages",
+    description:
+    "Explore relational, document, and graph data models, plus the evolution of query languages.",
+    order: 2,
+    lessons: [
         // LESSON 1
         {
           title: "Understanding Data Models",
@@ -873,7 +805,7 @@ export const ddiaCourse = {
             {
               title: "The Importance of Data Models",
               content:
-                "Data models shape how we write software, how we think about the domain, and what is easy or difficult in an implementation.",
+                "Data models shape how we write software, how we think about the domain, and what is easy or difficult in an implementation. A good data model helps abstract away complexity by hiding implementation details behind cleaner interfaces, allowing developers to focus on the business domain rather than database mechanics. The right data model can greatly simplify your code and make it more maintainable, while a poorly chosen model can lead to unnecessary complexity.",
               order: 1,
               duration: 15,
               exercise: {
@@ -895,7 +827,7 @@ export const ddiaCourse = {
             {
               title: "Relational vs. Document Models",
               content:
-                "Relational databases store data in tables (relations) with rows (tuples). Document models nest related data inside a parent record, enabling more flexible schemas.",
+                "Relational databases store data in tables (relations) with rows (tuples). Document models nest related data inside a parent record, enabling more flexible schemas. Relational models often require normalization—splitting data across multiple tables to minimize redundancy. Document models, on the other hand, denormalize data by keeping related information together in hierarchical structures, often represented using formats like JSON or XML.",
               order: 2,
               duration: 15,
               exercise: {
@@ -923,7 +855,7 @@ export const ddiaCourse = {
             {
               title: "The Rise of NoSQL",
               content:
-                "NoSQL databases emerged for scalability, open-source preferences, specialized queries, and flexible schemas. 'NoSQL' is sometimes reinterpreted as 'Not Only SQL'.",
+                "NoSQL databases emerged for scalability, open-source preferences, specialized queries, and flexible schemas. 'NoSQL' is sometimes reinterpreted as 'Not Only SQL'. NoSQL encompasses several categories of databases: document databases like MongoDB, key-value stores like Redis that excel at simple high-speed lookups, column-family stores like Cassandra optimized for specific access patterns, and graph databases like Neo4j for relationship-rich data. Each NoSQL category addresses specific use cases that traditional relational databases struggled with at scale.",
               order: 3,
               duration: 15,
               exercise: {
@@ -1001,7 +933,7 @@ export const ddiaCourse = {
             ]
           }
         },
-
+    
         // LESSON 2
         {
           title: "Document vs. Relational: Practical Considerations",
@@ -1014,7 +946,7 @@ export const ddiaCourse = {
             {
               title: "Document Model Advantages",
               content:
-                "Documents can store hierarchical data together, providing flexible schemas and locality benefits.",
+                "Documents can store hierarchical data together, providing flexible schemas and locality benefits. Locality means related data is stored physically close together, reducing the need for joins and often resulting in better performance for read operations. Document databases particularly excel when your data has a natural one-to-many relationship structure, like a blog post and its comments, or an order and its line items. This data organization matches how object-oriented applications represent data, potentially reducing the impedance mismatch between application code and storage.",
               order: 1,
               duration: 15,
               exercise: {
@@ -1042,7 +974,7 @@ export const ddiaCourse = {
             {
               title: "Relational Model Advantages",
               content:
-                "Relational databases are still superior for many-to-many relationships, joins, and complex queries across multiple entity types.",
+                "Relational databases are still superior for many-to-many relationships, joins, and complex queries across multiple entity types. When document-like structures need to be stored in relational databases, the process of breaking them into multiple tables is sometimes called 'shredding'. Modern relational databases have evolved to support document-like data too, with JSON data type support in PostgreSQL, MySQL, and SQL Server, allowing for a hybrid approach. This means JSON structures can be stored directly in relational database columns while still maintaining relational properties when needed. Relational databases also typically offer stronger consistency guarantees and better support for transactions.",
               order: 2,
               duration: 15,
               exercise: {
@@ -1065,7 +997,7 @@ export const ddiaCourse = {
             {
               title: "Schema Flexibility",
               content:
-                "Document stores use 'schema-on-read'—the application interprets data shape when reading. Relational stores enforce 'schema-on-write'.",
+                "Document stores use 'schema-on-read'—the application interprets data shape when reading. Relational stores enforce 'schema-on-write'. This distinction means document databases are more flexible when data structures change frequently, as they don't require migration of existing data when adding new fields. Relational databases, with their schema-on-write approach, validate data against a predefined schema at write time, catching data inconsistencies earlier but requiring more upfront schema design and careful migration planning when schemas evolve.",
               order: 3,
               duration: 15,
               exercise: {
@@ -1149,7 +1081,7 @@ export const ddiaCourse = {
             ]
           }
         },
-
+    
         // LESSON 3
         {
           title: "Query Languages and Their Evolution",
@@ -1157,12 +1089,12 @@ export const ddiaCourse = {
           description:
             "Explore declarative vs. imperative queries, MapReduce, and graph data models.",
           order: 3,
-          duration: 45,
+          duration: 60,
           parts: [
             {
               title: "Declarative vs. Imperative Queries",
               content:
-                "SQL introduced a declarative style—describe what data you want, not how to get it. This hides complexity and allows the database to optimize.",
+                "SQL introduced a declarative style—describe what data you want, not how to get it. This hides complexity and allows the database to optimize. Declarative languages like SQL express the logic of a computation without describing its control flow or algorithm steps. The database engine determines the most efficient execution plan, which can be updated without changing application code as the database evolves. This contrasts with imperative approaches where the developer must specify exactly how to retrieve the data, often resulting in less optimizable and more verbose code.",
               order: 1,
               duration: 15,
               exercise: {
@@ -1183,7 +1115,7 @@ export const ddiaCourse = {
             {
               title: "MapReduce Querying",
               content:
-                "MapReduce runs across many machines, applying a map function to each record and then a reduce function to aggregate results. It's a hybrid approach.",
+                "MapReduce runs across many machines, applying a map function to each record and then a reduce function to aggregate results. It's a hybrid approach. This programming model was popularized by Google for processing large datasets across distributed systems. The map phase transforms and filters data in parallel, while the reduce phase combines and summarizes these intermediate results. MapReduce bridges declarative and imperative styles by embedding custom code (often JavaScript or other languages) within a structured framework, allowing for powerful distributed computation.",
               order: 2,
               duration: 15,
               exercise: {
@@ -1211,9 +1143,9 @@ export const ddiaCourse = {
             {
               title: "Graph-Like Data Models",
               content:
-                "Graph databases are suited for highly connected data, representing entities as vertices/nodes and relationships as edges.",
+                "Graph databases are suited for highly connected data, representing entities as vertices/nodes and relationships as edges. The property graph model is the most common implementation, where both nodes and edges can have properties (key-value pairs). Graph databases shine in use cases like social networks, recommendation engines, fraud detection, and network analysis. Special-purpose query languages like Cypher (for Neo4j) and SPARQL (for RDF data) are designed specifically for graph traversal, making complex relationship queries much simpler than in SQL. Unlike relational or document models, graph databases prioritize relationships as first-class citizens.",
               order: 3,
-            duration: 15,
+              duration: 15,
               exercise: {
                 type: "multiple-choice",
                 title: "Mini Exercise: Graph Use Cases",
@@ -1227,6 +1159,31 @@ export const ddiaCourse = {
                   correctAnswer: "true",
                   explanation:
                     "Social networks are a classic example of highly connected data."
+                }
+              }
+            },
+            {
+              title: "Polyglot Persistence",
+              content:
+                "Polyglot persistence is the practice of using different database technologies for different parts of an application based on data access patterns and requirements. Rather than forcing all data into a single database type, organizations choose the right tool for each job. For example, a social media application might use a document database for user profiles, a graph database for the social network, and a relational database for financial transactions. This approach recognizes that different data models excel at different tasks and allows teams to optimize for specific data access patterns.",
+              order: 4,
+              duration: 15,
+              exercise: {
+                type: "multiple-choice",
+                title: "Mini Exercise: Database Selection",
+                description: "Understanding polyglot persistence strategy",
+                points: 10,
+                difficulty: "beginner",
+                content: {
+                  question: "What is the main principle behind polyglot persistence?",
+                  options: [
+                    "A) Always use NoSQL databases instead of relational databases",
+                    "B) Use different database types based on data access patterns",
+                    "C) Store all data in multiple database types simultaneously",
+                    "D) Convert all databases to use the same query language"
+                  ],
+                  correctAnswer: "B) Use different database types based on data access patterns",
+                  explanation: "Polyglot persistence means selecting the most appropriate database type for each specific data storage and access requirement."
                 }
               }
             }
@@ -1292,7 +1249,7 @@ export const ddiaCourse = {
           }
         }
       ], // end lessons in Chapter 2
-
+    
       endOfChapterQuiz: {
         title: "Chapter 2 Quiz",
         description:
@@ -1407,12 +1364,11 @@ export const ddiaCourse = {
     // CHAPTER 3
     // =========================
     {
-      title: "Storage and Retrieval",
-      description:
-        "Learn how data is stored on disk, different indexing structures (B-trees, LSM-trees), OLTP vs. OLAP, column-oriented storage, and more.",
-      order: 3,
-
-      lessons: [
+    title: "Storage and Retrieval",
+    description:
+    "Learn how data is stored on disk, different indexing structures (B-trees, LSM-trees), OLTP vs. OLAP, column-oriented storage, and more.",
+    order: 3,
+    lessons: [
         // LESSON 1
         {
           title: "How Databases Store Data",
@@ -1425,7 +1381,7 @@ export const ddiaCourse = {
             {
               title: "Storage Engine Fundamentals",
               content:
-                "Databases must store data and retrieve it later. Different engines target different workloads (OLTP vs. OLAP).",
+                "Databases must store data and retrieve it later. Different engines target different workloads. OLTP (Online Transaction Processing) systems handle many small transactions from users, while OLAP (Online Analytical Processing) systems process large batches of data for reporting and business intelligence. Understanding these differences helps choose the right engine for your application.",
               order: 1,
               duration: 15,
               exercise: {
@@ -1453,7 +1409,7 @@ export const ddiaCourse = {
             {
               title: "The Simplest Database",
               content:
-                "A simple key-value store can just append to a file. Reads require scanning. This design is easy to implement but not efficient at scale.",
+                "A simple key-value store can just append to a file. For example, using bash commands, we could create a basic database: 'echo key=value >> database.txt' to write data, and 'grep key database.txt' to read it. Reads require scanning the entire file line by line. This design is easy to implement but not efficient at scale as scanning time grows linearly with data size.",
               order: 2,
               duration: 15,
               exercise: {
@@ -1540,23 +1496,23 @@ export const ddiaCourse = {
               {
                 type: "multiple-choice",
                 question:
-                  "In the simple key-value database example using bash, why does read performance degrade as the database grows?",
+                  "In the simple key-value database example using file appends, why does read performance degrade as the database grows?",
                 options: [
-                  "A) Bash commands get slower with larger files",
+                  "A) File system limitations for large files",
                   "B) The system must scan the entire file for each lookup",
-                  "C) Keys become corrupted over time",
+                  "C) Keys become harder to compress with more data",
                   "D) The operating system limits file operations"
                 ],
                 correctAnswer:
                   "B) The system must scan the entire file for each lookup",
                 points: 10,
                 explanation:
-                  "Without an index, each read is O(n) in the size of the data file."
+                  "Without an index, each read requires scanning from the beginning to find matching keys."
               }
             ]
           }
         },
-
+    
         // LESSON 2
         {
           title: "Log-Structured Storage Engines",
@@ -1598,7 +1554,7 @@ export const ddiaCourse = {
             {
               title: "SSTables and LSM-Trees",
               content:
-                "SSTables store key-value pairs sorted by key. LSM-trees periodically write in-memory structures (memtables) to disk as SSTables and merge them in the background.",
+                "SSTables store key-value pairs sorted by key. LSM-trees periodically write in-memory structures (memtables) to disk as SSTables and merge them in the background. To ensure durability, LSM-trees typically use write-ahead logs (WAL) that record all writes before they're applied to the memtable, allowing recovery after crashes.",
               order: 2,
               duration: 15,
               exercise: {
@@ -1667,10 +1623,10 @@ export const ddiaCourse = {
                 type: "short-answer",
                 question:
                   "In LSM-trees, to avoid data loss when the memtable is lost, writes are also recorded in a _______.",
-                correctAnswer: "log",
+                correctAnswer: "write-ahead log",
                 points: 10,
                 explanation:
-                  "A write-ahead log ensures durability if the in-memory structure is lost."
+                  "A write-ahead log (WAL) ensures durability if the in-memory structure is lost due to crashes."
               },
               {
                 type: "true-false",
@@ -1700,7 +1656,7 @@ export const ddiaCourse = {
             ]
           }
         },
-
+    
         // LESSON 3
         {
           title: "Comparing Storage Engine Approaches",
@@ -1713,7 +1669,7 @@ export const ddiaCourse = {
             {
               title: "B-trees vs. LSM-Trees",
               content:
-                "LSM-trees often have better write performance but require background compaction. B-trees offer more predictable performance and are widely used.",
+                "LSM-trees often have better write performance but require background compaction. This is because LSM-trees minimize disk seeks by using sequential writes. However, they suffer from write amplification—the same data may be written multiple times during compaction, increasing the ratio of physical disk writes to logical writes. B-trees offer more predictable performance and are widely used but may require multiple disk seeks for each write operation.",
               order: 1,
               duration: 15,
               exercise: {
@@ -1836,7 +1792,7 @@ export const ddiaCourse = {
             ]
           }
         },
-
+    
         // LESSON 4
         {
           title: "OLTP vs. OLAP Systems",
@@ -1871,7 +1827,7 @@ export const ddiaCourse = {
             {
               title: "Data Warehousing",
               content:
-                "Organizations often replicate data from OLTP systems into a separate data warehouse for analytics (ETL process).",
+                "Organizations often replicate data from OLTP systems into a separate data warehouse for analytics. This Extract-Transform-Load (ETL) process extracts data from source systems, transforms it into a consistent format suitable for analysis, and loads it into the warehouse. ETL jobs typically run at regular intervals (nightly, weekly) rather than continuously.",
               order: 2,
               duration: 15,
               exercise: {
@@ -1900,7 +1856,7 @@ export const ddiaCourse = {
             {
               title: "Star Schema for Analytics",
               content:
-                "Warehouses often use a star schema with a large fact table referencing dimension tables. Fact rows represent individual events or transactions.",
+                "Warehouses often use a star schema with a large fact table referencing dimension tables. Fact tables contain business events (like sales transactions) with foreign keys to dimension tables, which contain descriptive attributes (like customer details or product information). Dimension tables are usually smaller and change less frequently. Fact rows represent individual events or transactions and typically include measurable metrics like quantities or amounts.",
               order: 3,
               duration: 15,
               exercise: {
@@ -1962,11 +1918,9 @@ export const ddiaCourse = {
                   "Most data warehouses are updated in periodic batches, not continuously."
               },
               {
-                type: "drag-and-drop",
-                // Converting to short-answer for quiz compatibility
-                question:
-                  "Match each term with its description (OLTP, OLAP, Fact table, Dimension table).",
                 type: "short-answer",
+                question:
+                  "Match each term with its description: OLTP: ________; OLAP: ________; Fact table: ________; Dimension table: ________.",
                 correctAnswer:
                   "OLTP: Processes user interactions and small writes; OLAP: Analyzes large datasets for decision support; Fact table: Contains events with foreign keys to dimensions; Dimension table: Contains entities like people, products, or dates.",
                 points: 10,
@@ -1976,7 +1930,7 @@ export const ddiaCourse = {
             ]
           }
         },
-
+    
         // LESSON 5
         {
           title: "Column-Oriented Storage",
@@ -2041,7 +1995,7 @@ export const ddiaCourse = {
             {
               title: "Optimizing Column Storage",
               content:
-                "Sort orders, materialized views, and vectorized processing further speed analytics. Writes often go to an in-memory store before merging.",
+                "Sort orders, materialized views, and vectorized processing further speed analytics. Data cubes are pre-computed aggregations across multiple dimensions (like time, geography, product) that enable fast OLAP queries without scanning raw data. Writes in column stores often go to an in-memory store organized by row before being sorted, compressed, and merged into the column-oriented storage.",
               order: 3,
               duration: 15,
               exercise: {
@@ -2107,23 +2061,21 @@ export const ddiaCourse = {
                 question:
                   "What is a data cube in analytics?",
                 options: [
-                  "A) A 3D visualization of data",
-                  "B) Specialized hardware for data processing",
+                  "A) A 3D visualization technique for exploring data",
+                  "B) Specialized storage hardware for data processing",
                   "C) A pre-computed grid of aggregates across dimensions",
-                  "D) A type of column compression"
+                  "D) A type of column-level compression algorithm"
                 ],
                 correctAnswer:
                   "C) A pre-computed grid of aggregates across dimensions",
                 points: 10,
                 explanation:
-                  "Data cubes allow fast aggregate queries along multiple dimensions."
+                  "Data cubes are pre-aggregated summaries that allow fast, multi-dimensional analytical queries."
               },
               {
-                type: "drag-and-drop",
-                // Converting to short-answer
-                question:
-                  "Match each storage structure with its best use case (B-tree, LSM-tree, Column store, Hash index).",
                 type: "short-answer",
+                question:
+                  "Match each storage structure with its best use case: B-tree: _______; LSM-tree: _______; Column store: _______; Hash index: _______.",
                 correctAnswer:
                   "B-tree: OLTP with balanced reads/writes; LSM-tree: Write-heavy workloads; Column store: Analytical queries on few columns; Hash index: Fast key-value lookups (all in memory).",
                 points: 10,
@@ -2176,7 +2128,7 @@ export const ddiaCourse = {
           }
         }
       ], // end lessons
-
+    
       endOfChapterQuiz: {
         title: "Chapter 3 Quiz",
         description:
@@ -2237,16 +2189,15 @@ export const ddiaCourse = {
         ]
       }
     },
-      // ========================================
-      // CHAPTER 4
-      // ========================================
+    // ========================================
+    // CHAPTER 4
+    // ========================================
     {
-        title: "Encoding and Evolution",
-      description:
-          "Explore how data is serialized, how to maintain backward and forward compatibility, and how data flows between systems even as schemas evolve.",
-        order: 4,
-
-        lessons: [
+    title: "Encoding and Evolution",
+    description:
+    "Explore how data is serialized, how to maintain backward and forward compatibility, and how data flows between systems even as schemas evolve.",
+    order: 4,
+    lessons: [
           // ---------------------------
           // LESSON 1
           // ---------------------------
@@ -2257,12 +2208,12 @@ export const ddiaCourse = {
               "Learn why encoding matters, the importance of backward/forward compatibility, and issues with language-specific formats.",
             order: 1,
             duration: 45,
-
+    
             parts: [
               {
                 title: "Why Encoding Matters",
                 content:
-                  "Applications change over time and must store or transmit data in a portable format. Encoding translates in-memory data structures to a byte format.",
+                  "Applications change over time and must store or transmit data in a portable format. Encoding (also called serialization) translates in-memory data structures to a byte format that can be written to a file, sent over a network, or stored in a database. This allows data to move between different parts of a system, between different systems, or persist over time. Encoding is necessary whenever data crosses a boundary between applications, services, or processes.",
                 order: 1,
                 duration: 15,
                 exercise: {
@@ -2290,7 +2241,7 @@ export const ddiaCourse = {
               {
                 title: "Backward and Forward Compatibility",
                 content:
-                  "Systems must handle data from older code (backward compatibility) and also let older code read data from newer systems (forward compatibility).",
+                  "Systems must handle data from older code (backward compatibility) and also let older code read data from newer systems (forward compatibility). Backward compatibility means newer code can read data that was written by older code. This is generally easier to achieve because the newer code knows about the old data format. Forward compatibility means older code can read data that was written by newer code. This is more challenging because the older code doesn't know about the newer data format—it wasn't written with future formats in mind. Forward compatibility requires careful planning: older code must gracefully ignore any parts of the data it doesn't understand. This often means fields must be optional and new features must be added in a way that preserves compatibility. In systems with heterogeneous components, both forms of compatibility are essential during rolling upgrades and service evolution.",
       order: 2,
                 duration: 15,
                 exercise: {
@@ -2319,7 +2270,7 @@ export const ddiaCourse = {
               {
                 title: "Problems with Language-Specific Formats",
                 content:
-                  "Language-native serialization (e.g., Java Serializable, Python pickle) can lock you into one language, create security issues, and complicate versioning.",
+                  "Language-native serialization (e.g., Java Serializable, Python pickle, Ruby Marshal) can lock you into one language, create security issues, and complicate versioning. These formats tightly couple your data to the language's internal object representation. For example, Java Serializable directly serializes Java-specific constructs like class structure and references. This makes it nearly impossible to read the data from other languages. Security issues arise because deserializing these formats often allows arbitrary code execution—a pickle or Serializable stream can potentially execute malicious code when deserialized. Versioning is difficult because these formats often include class implementation details that change even with minor code updates. Additionally, language-specific formats are typically inefficient and lack explicit schema definitions, making it difficult to evolve the data format over time. For these reasons, cross-platform, language-neutral formats are strongly preferred for any data that might be read by different systems.",
                 order: 3,
                 duration: 15,
                 exercise: {
@@ -2346,7 +2297,7 @@ export const ddiaCourse = {
                 }
               }
             ],
-
+    
             endOfLessonQuiz: {
               title: "Encoding Basics Quiz",
               description:
@@ -2420,7 +2371,7 @@ export const ddiaCourse = {
               ]
             }
           },
-
+    
           // ---------------------------
           // LESSON 2
           // ---------------------------
@@ -2431,12 +2382,12 @@ export const ddiaCourse = {
               "Compare text-based formats (JSON, XML, CSV) and binary formats (Protocol Buffers, Thrift, Avro), including schema evolution strategies.",
             order: 2,
             duration: 45,
-
+    
             parts: [
               {
                 title: "Text-Based Formats (JSON, XML, CSV)",
                 content:
-                  "Text-based formats are human-readable and widely supported, but can be verbose and lack efficient handling of large integers or binary data.",
+                  "Text-based formats are human-readable and widely supported, but can be verbose and lack efficient handling of large integers or binary data. JSON has become the dominant format for web APIs due to its simplicity and native browser support, but it has limitations: numbers have no distinction between integers and floating-point, precision is lost for integers larger than 2^53, and it doesn't natively support binary data (requiring base64 encoding, which increases size by 33%). XML adds more verbosity and complexity but offers more powerful features like namespaces and schemas (XSD). However, it's even more verbose than JSON. CSV is simple and compact for tabular data but lacks standardization for escaping and lacks any schema, making it brittle when formats change. All text formats suffer from parsing overhead and encoding ambiguities, especially for Unicode. Despite these drawbacks, their ubiquity, human-readability, and broad tooling support make them practical choices for many systems.",
                 order: 1,
                 duration: 15,
                 exercise: {
@@ -2465,7 +2416,7 @@ export const ddiaCourse = {
               {
                 title: "Binary Encoding Formats",
                 content:
-                  "Binary formats like Protocol Buffers, Thrift, and Avro offer compact, efficient serialization with explicit schemas for better versioning.",
+                  "Binary formats like Protocol Buffers, Thrift, and Avro offer compact, efficient serialization with explicit schemas for better versioning. These formats encode data more efficiently by using binary encoding instead of text characters, reducing storage and transmission size. Protocol Buffers (developed by Google) and Thrift (from Facebook/Apache) use interface definition languages (IDLs) to define schemas, which generate code for multiple programming languages, ensuring cross-language compatibility. They both use numeric field tags in the encoded data to identify fields, allowing schema evolution while maintaining compatibility. Avro (another Apache project) takes a different approach: it uses schema resolution by comparing the writer's schema with the reader's schema at decode time, without requiring tag numbers in the data itself. This makes Avro more suitable for dynamically generated schemas. All three formats support nested data structures, optional and required fields, and arrays. Compared to text formats, binary formats typically encode the same data in 30-70% less space and parse significantly faster due to more efficient type handling.",
                 order: 2,
                 duration: 15,
                 exercise: {
@@ -2494,7 +2445,7 @@ export const ddiaCourse = {
               {
                 title: "Schema Evolution in Binary Formats",
                 content:
-                  "Binary formats use field tags or schema resolution to handle changes. Protocol Buffers and Thrift rely on numeric tags. Avro compares writer and reader schemas at decode time.",
+                  "Binary formats use field tags or schema resolution to handle changes, enabling reliable forward and backward compatibility. Protocol Buffers and Thrift rely on numeric tags (field IDs) that remain stable even as schemas evolve. When fields are added with new tag numbers and marked as optional, old code ignores unknown fields and new code provides default values for missing fields. This approach enables both backward and forward compatibility. However, you must never reuse tag numbers or change field types, as this breaks compatibility. Avro takes a fundamentally different approach: it doesn't use field tags in the encoded data at all. Instead, it relies on the writer and reader providing their schemas. Avro's schema resolution process compares these schemas at decode time, matching fields by name and handling missing or additional fields according to resolution rules. This makes Avro particularly well-suited for scenarios where schemas are generated dynamically, such as from database tables, or when schemas evolve frequently. Avro is also very space-efficient since it doesn't encode field names or tags. To maintain compatibility in Avro, you can only add or remove fields that have default values, ensuring they'll be properly resolved when missing.",
                 order: 3,
                 duration: 15,
                 exercise: {
@@ -2521,7 +2472,7 @@ export const ddiaCourse = {
                 }
               }
             ],
-
+    
             endOfLessonQuiz: {
               title: "Encoding Formats Quiz",
               description:
@@ -2593,7 +2544,7 @@ export const ddiaCourse = {
               ]
             }
           },
-
+    
           // ---------------------------
           // LESSON 3
           // ---------------------------
@@ -2604,12 +2555,12 @@ export const ddiaCourse = {
               "Discover how data encoding impacts databases, service APIs, and message brokers, and why compatibility matters for long-lived data.",
             order: 3,
             duration: 45,
-
+    
             parts: [
               {
                 title: "Database Storage and Retrieval",
                 content:
-                  "Data in databases often outlives the code that created it. Schema changes must ensure older data remains readable.",
+                  "Data in databases often outlives the code that created it. Schema changes must ensure older data remains readable. When data is stored in a database, it must be encoded in some format that can be efficiently written to disk and read back, often using format-specific encodings different from those used for network communication. Most relational databases allow schema migrations that can add, remove, or modify columns without requiring all data to be rewritten. This makes backward compatibility essential—new code must read records written by old code. NoSQL databases have more varied approaches: document databases like MongoDB store self-contained documents with their own structures, key-value stores might treat values as opaque blobs, and wide-column stores like Cassandra allow more dynamic schema evolution. When evolving database schemas, making fields optional is safer than required ones, and explicit version numbers for records can help manage transitions. Techniques like dual writes (writing to both old and new schemas during transition) or schema migration tools help ensure compatibility during changes.",
                 order: 1,
                 duration: 15,
                 exercise: {
@@ -2638,7 +2589,7 @@ export const ddiaCourse = {
               {
                 title: "Service Communication (REST and RPC)",
                 content:
-                  "REST uses HTTP verbs and resources, often with JSON, while RPC frameworks like gRPC or Thrift use binary encodings for function-call-like APIs.",
+                  "REST uses HTTP verbs and resources, often with JSON, while RPC frameworks like gRPC or Thrift use binary encodings for function-call-like APIs. REST (Representational State Transfer) is an architectural style built around HTTP methods (GET, POST, PUT, DELETE) operating on resources identified by URLs. It typically uses JSON for data exchange, emphasizing statelessness and cacheability. REST APIs are versioned explicitly through URL paths (like /api/v1/users) or HTTP headers to manage compatibility. RPC (Remote Procedure Call) approaches create the illusion that a function in another service is called like a local function. Modern RPC frameworks like gRPC (using Protocol Buffers) or Thrift define service interfaces in IDL files, generating client and server code in multiple languages. They typically use binary encodings for better efficiency. When evolving service APIs, versioning is crucial for managing compatibility. Common approaches include explicit versioning (v1, v2), using feature flags to enable new capabilities, and maintaining compatibility guarantees with clear deprecation policies. For REST APIs, adding optional fields to JSON payloads maintains backward compatibility, while RPC systems rely on the schema evolution capabilities of their underlying encoding format.",
                 order: 2,
                 duration: 15,
                 exercise: {
@@ -2667,7 +2618,7 @@ export const ddiaCourse = {
               {
                 title: "Message-Passing Systems",
                 content:
-                  "Brokers like RabbitMQ or Kafka allow asynchronous messaging, decoupling senders from recipients. Encoding remains relevant for cross-service compatibility.",
+                  "Brokers like RabbitMQ or Kafka allow asynchronous messaging, decoupling senders from recipients. Encoding remains relevant for cross-service compatibility. Message brokers serve as intermediaries in distributed systems, handling message routing, buffering, and delivery guarantees. They support multiple messaging patterns: point-to-point queues (one sender, one receiver), publish/subscribe (one sender, multiple receivers), and more complex routing topologies. RabbitMQ implements the AMQP protocol and excels at complex routing patterns. Kafka is designed for high-throughput event streaming with strong durability. Message brokers decouple producers and consumers both in time (asynchronous processing) and space (services don't need direct connections). This decoupling helps with fault tolerance—if a service is down, messages wait in the queue. With message passing, encoding formats remain critical since different services may use different languages. Binary formats like Protocol Buffers work well when strict schemas are needed. Alternatively, a schema registry (like the one for Kafka) can store and validate schemas at runtime. For compatibility, the same principles apply: make new fields optional, provide reasonable defaults, and evolve schemas carefully to maintain backward and forward compatibility between producers and consumers.",
                 order: 3,
                 duration: 15,
                 exercise: {
@@ -2694,7 +2645,7 @@ export const ddiaCourse = {
                 }
               }
             ],
-
+    
             endOfLessonQuiz: {
               title: "Data Flow Quiz",
               description:
@@ -2710,7 +2661,7 @@ export const ddiaCourse = {
                     "A) Databases don't support schema changes",
                     "B) Existing data typically needs to remain readable, even after schema changes",
                     "C) Most databases require all stored data to use the same schema",
-                    "D) Databases only support forward compatibility"
+                    "D) Databases only support backward compatibility"
                   ],
                   correctAnswer:
                     "B) Existing data typically needs to remain readable, even after schema changes",
@@ -2769,7 +2720,7 @@ export const ddiaCourse = {
             }
           }
         ],
-
+    
         endOfChapterQuiz: {
           title: "Chapter 4 Quiz",
           description:
