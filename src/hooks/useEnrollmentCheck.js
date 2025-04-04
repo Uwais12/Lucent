@@ -6,13 +6,13 @@ export function useEnrollmentCheck() {
   const [isChecking, setIsChecking] = useState(false);
   const router = useRouter();
 
-  const checkEnrollment = async (quizSlug, quizType) => {
+  const checkEnrollment = async (contentSlug, contentType) => {
     try {
       setIsChecking(true);
-      const response = await fetch('/api/quizzes/check-enrollment', {
+      const response = await fetch('/api/courses/check-enrollment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quizSlug, quizType })
+        body: JSON.stringify({ contentSlug, contentType })
       });
 
       const data = await response.json();
@@ -22,7 +22,7 @@ export function useEnrollmentCheck() {
       }
 
       if (!data.isEnrolled) {
-        toast.error(`You need to enroll in "${data.courseTitle}" before taking this quiz`);
+        toast.error(`You need to enroll in "${data.courseTitle}" before accessing this content`);
         router.push(`/course-details/${data.courseSlug}`);
         return false;
       }

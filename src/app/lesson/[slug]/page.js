@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, BookOpen, Clock, Trophy } from "lucide-react";
 import Navbar from "@/app/components/Navbar";
@@ -9,6 +9,7 @@ import XPNotificationHandler from "@/app/components/XPNotificationHandler";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
+import { useEnrollmentCheck } from "@/app/contexts/EnrollmentCheckContext";
 
 // Import React DnD hooks
 import { useDrag, useDrop } from "react-dnd";
@@ -72,6 +73,7 @@ export default function LessonPage() {
   const params = useParams();
   const router = useRouter();
   const { user, isLoaded } = useUser();
+  const { checkEnrollment, isChecking } = useEnrollmentCheck();
   const [lesson, setLesson] = useState(null);
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -85,6 +87,7 @@ export default function LessonPage() {
     xp: 0,
     completedExercises: new Set(),
   });
+  const hasCheckedEnrollment = useRef(false);
 
   // DnD matching state
   const [matches, setMatches] = useState({});
@@ -100,6 +103,15 @@ export default function LessonPage() {
   useEffect(() => {
     const fetchLesson = async () => {
       try {
+        // Only check enrollment once
+        if (!hasCheckedEnrollment.current) {
+          hasCheckedEnrollment.current = true;
+          const isEnrolled = await checkEnrollment(params.slug, 'lesson');
+          if (!isEnrolled) {
+            return;
+          }
+        }
+
         const response = await fetch(`/api/lessons/${params.slug}`);
         const data = await response.json();
 
@@ -115,8 +127,10 @@ export default function LessonPage() {
       }
     };
 
-    fetchLesson();
-  }, [params.slug]);
+    if (isLoaded && user) {
+      fetchLesson();
+    }
+  }, [params.slug, isLoaded, user]);
 
   const handleExerciseComplete = async (points) => {
     try {
@@ -217,7 +231,7 @@ export default function LessonPage() {
     }
   };
 
-  if (loading) {
+  if (loading || isChecking) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />

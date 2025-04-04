@@ -4,6 +4,8 @@ import Providers from "./providers"; // <-- import our client wrapper
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import DndProviderWrapper from "./components/DndProviderWrapper";
+import { Toaster } from 'react-hot-toast';
+import { EnrollmentCheckProvider } from './contexts/EnrollmentCheckContext';
 
 // These font imports are still valid in a server component
 const geistSans = Geist({
@@ -27,9 +29,12 @@ export default function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <Providers>
-            <DndProviderWrapper>{children}</DndProviderWrapper>
-          </Providers>
+          <EnrollmentCheckProvider>
+            <Providers>
+              <DndProviderWrapper>{children}</DndProviderWrapper>
+            </Providers>
+            <Toaster />
+          </EnrollmentCheckProvider>
         </body>
       </ClerkProvider>
     </html>

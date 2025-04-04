@@ -6,11 +6,13 @@ import Quiz from '@/app/components/Quiz';
 import { useUser } from '@clerk/nextjs';
 import XPNotification from '@/app/components/XPNotification';
 import { Trophy, ArrowLeft } from 'lucide-react';
+import { useEnrollmentCheck } from '@/app/contexts/EnrollmentCheckContext';
 
 export default function QuizPage() {
   const params = useParams();
   const router = useRouter();
   const { user, isLoaded } = useUser();
+  const { checkEnrollment, isChecking } = useEnrollmentCheck();
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,6 +24,12 @@ export default function QuizPage() {
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
+        // First check enrollment
+        const isEnrolled = await checkEnrollment(params.slug, 'quiz');
+        if (!isEnrolled) {
+          return;
+        }
+
         const response = await fetch(`/api/quizzes/${params.slug}`);
         const data = await response.json();
 
@@ -40,7 +48,7 @@ export default function QuizPage() {
     if (isLoaded && user) {
     fetchQuiz();
     }
-  }, [params.slug, isLoaded, user]);
+  }, [params.slug, isLoaded, user, checkEnrollment]);
 
   const handleQuizComplete = async (answers, isReturnToCourse = false) => {
     // If this is a return to course action and we have completion data
@@ -82,8 +90,8 @@ export default function QuizPage() {
       // If quiz is passed (score >= 70), mark lesson as complete
       if (quizData.score >= 70) {
         const lessonResponse = await fetch(`/api/lessons/${params.slug}/complete`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ isQuizCompletion: true })
         });
 
@@ -131,7 +139,7 @@ export default function QuizPage() {
     }
   };
 
-  if (loading) {
+  if (loading || isChecking) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />

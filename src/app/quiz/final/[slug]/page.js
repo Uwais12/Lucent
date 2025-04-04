@@ -6,11 +6,13 @@ import Quiz from '@/app/components/Quiz';
 import { useUser } from '@clerk/nextjs';
 import XPNotification from '@/app/components/XPNotification';
 import { Trophy, ArrowLeft, Clock, GraduationCap } from 'lucide-react';
+import { useEnrollmentCheck } from '@/app/contexts/EnrollmentCheckContext';
 
 export default function FinalExam() {
   const params = useParams();
   const router = useRouter();
   const { user, isLoaded } = useUser();
+  const { checkEnrollment, isChecking } = useEnrollmentCheck();
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,6 +23,12 @@ export default function FinalExam() {
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
+        // First check enrollment
+        const isEnrolled = await checkEnrollment(params.slug, 'final-exam');
+        if (!isEnrolled) {
+          return;
+        }
+
         const response = await fetch(`/api/quizzes/final/${params.slug}`);
         const data = await response.json();
 
@@ -39,7 +47,7 @@ export default function FinalExam() {
     if (isLoaded && user) {
       fetchQuiz();
     }
-  }, [params.slug, isLoaded, user]);
+  }, [params.slug, isLoaded, user, checkEnrollment]);
 
   const handleQuizComplete = async (answers, isReturnToCourse = false) => {
     // If this is a return to course action and we have completion data
@@ -99,7 +107,7 @@ export default function FinalExam() {
     }
   };
 
-  if (loading) {
+  if (loading || isChecking) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />

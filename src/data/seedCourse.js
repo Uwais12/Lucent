@@ -4691,7 +4691,2684 @@ export const ddiaCourse = {
             }
           ]
         }
+      },
+        // ========================================
+  // CHAPTER 7
+  // ========================================
+  {
+    title: "Transactions",
+    description:
+      "Explore how transactions maintain data integrity, the ACID properties, isolation levels, and handling concurrency anomalies in modern databases.",
+    order: 7,
+
+    lessons: [
+      // =======================
+      // LESSON 1
+      // =======================
+      {
+        title: "Introduction to Transactions",
+        slug: "introduction-to-transactions",
+        description:
+          "Learn the purpose of transactions, the ACID properties, and how atomicity ensures all-or-nothing operations.",
+        order: 1,
+        duration: 45,
+
+        parts: [
+          {
+            title: "The Purpose of Transactions",
+            content:
+              "Transactions group multiple operations into a logical unit of work, ensuring all succeed or none do. This simplifies error handling when failures occur.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Transaction Purpose",
+              description:
+                "Select the primary reason for using transactions in databases.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is the primary purpose of database transactions?",
+                options: [
+                  "A) To speed up database performance",
+                  "B) To ensure data is processed in the correct order",
+                  "C) To allow multiple users to access the database simultaneously",
+                  "D) To group operations into an all-or-nothing unit of work that simplifies error handling"
+                ],
+                correctAnswer:
+                  "D) To group operations into an all-or-nothing unit of work that simplifies error handling",
+                explanation:
+                  "Transactions ensure a set of operations is treated atomically, easing the developer’s burden during failures."
+              }
+            }
+          },
+          {
+            title: "The ACID Properties",
+            content:
+              "ACID stands for Atomicity, Consistency, Isolation, and Durability. It describes the safety guarantees that transactions provide to applications.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: ACID Durability",
+              description:
+                "Identify the ACID property that prevents data loss after a transaction commits.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "In the context of ACID, which property ensures that once a transaction is committed, its changes will not be lost even if there's a hardware failure?",
+                options: [
+                  "A) Atomicity",
+                  "B) Consistency",
+                  "C) Isolation",
+                  "D) Durability"
+                ],
+                correctAnswer: "D) Durability",
+                explanation:
+                  "Durability means committed data persists despite crashes or power loss."
+              }
+            }
+          },
+          {
+            title: "Understanding Atomicity",
+            content:
+              "Atomicity means all operations in a transaction are applied or none are, preventing partial data modifications that break integrity.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Atomicity in Action",
+              description:
+                "Choose the scenario illustrating atomic rollback upon failure.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which scenario demonstrates the atomicity property in action?",
+                options: [
+                  "A) A transaction reading data consistently despite other concurrent transactions",
+                  "B) A transaction's changes persisting after a system restart",
+                  "C) A transaction being completely rolled back after a network failure during processing",
+                  "D) Multiple transactions executing in a specific sequential order"
+                ],
+                correctAnswer:
+                  "C) A transaction being completely rolled back after a network failure during processing",
+                explanation:
+                  "Atomicity ensures the database reverts to a pre-transaction state if any part of the transaction fails."
+              }
+            }
+          }
+        ],
+
+        endOfLessonQuiz: {
+          title: "Introduction to Transactions Quiz",
+          description:
+            "Check your knowledge of transaction basics, ACID properties, and the benefits of atomic operations.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question: "What does the 'I' in ACID stand for?",
+              options: ["A) Integrity", "B) Isolation", "C) Immutability", "D) Identity"],
+              correctAnswer: "B) Isolation",
+              points: 10,
+              explanation:
+                "ACID stands for Atomicity, Consistency, Isolation, and Durability."
+            },
+            {
+              type: "multiple-choice",
+              question:
+                "What is the main advantage of using transactions in a database system?",
+              options: [
+                "A) They make all operations execute faster",
+                "B) They reduce the storage space needed for data",
+                "C) They simplify error handling by providing all-or-nothing semantics",
+                "D) They eliminate the need for database backups"
+              ],
+              correctAnswer:
+                "C) They simplify error handling by providing all-or-nothing semantics",
+              points: 10,
+              explanation:
+                "Transactions allow partial failures to roll back safely, simplifying logic for the application."
+            },
+            {
+              type: "multiple-choice",
+              question: "Which statement about consistency in ACID is correct?",
+              options: [
+                "A) It's entirely the database's responsibility",
+                "B) It refers to how recent the data is",
+                "C) It means all replicas have the same data",
+                "D) It means the database follows application-defined rules about valid states"
+              ],
+              correctAnswer:
+                "D) It means the database follows application-defined rules about valid states",
+              points: 10,
+              explanation:
+                "Consistency typically means the state after a transaction is valid according to defined constraints."
+            },
+            {
+              type: "multiple-choice",
+              question: "What happens if a transaction is aborted?",
+              options: [
+                "A) Only a subset of operations are rolled back",
+                "B) All operations in the transaction are undone",
+                "C) The database administrator must manually fix the data",
+                "D) The entire database is restored from backup"
+              ],
+              correctAnswer: "B) All operations in the transaction are undone",
+              points: 10,
+              explanation:
+                "A rollback reverts all changes made by the transaction, leaving the database unchanged by that transaction."
+            },
+            {
+              type: "multiple-choice",
+              question: "Why are multi-object transactions important?",
+              options: [
+                "A) They always provide better performance",
+                "B) They're required by database standards",
+                "C) They ensure related data remains consistent",
+                "D) They compress data more efficiently"
+              ],
+              correctAnswer: "C) They ensure related data remains consistent",
+              points: 10,
+              explanation:
+                "Transactions covering multiple objects/tables keep them in sync when changes must happen together."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 2
+      // =======================
+      {
+        title: "Isolation and Consistency",
+        slug: "isolation-and-consistency",
+        description:
+          "Examine how isolation prevents concurrent transaction conflicts, how consistency is enforced, and why durability matters post-commit.",
+        order: 2,
+        duration: 45,
+
+        parts: [
+          {
+            title: "The Meaning of Consistency in ACID",
+            content:
+              "ACID consistency means the database remains in a valid state according to rules or constraints, enforced largely by the application logic.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Who Ensures Consistency?",
+              description:
+                "Identify who/what is primarily responsible for ensuring consistency in ACID.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "In ACID, who/what is primarily responsible for ensuring consistency?",
+                options: [
+                  "A) The database administrator",
+                  "B) The application code",
+                  "C) The database engine",
+                  "D) The network infrastructure"
+                ],
+                correctAnswer: "B) The application code",
+                explanation:
+                  "Applications define the constraints/rules that the database must maintain."
+              }
+            }
+          },
+          {
+            title: "Isolation and Concurrency",
+            content:
+              "Isolation prevents transactions from interfering. Weaker isolation can speed performance but risks anomalies if concurrency isn’t carefully handled.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Lack of Isolation",
+              description:
+                "Select what occurs if transactions are not properly isolated.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What happens without proper transaction isolation?",
+                options: [
+                  "A) Database operations become slower",
+                  "B) Data cannot be properly backed up",
+                  "C) One transaction might see incomplete changes from another transaction",
+                  "D) Transactions can no longer be rolled back"
+                ],
+                correctAnswer:
+                  "C) One transaction might see incomplete changes from another transaction",
+                explanation:
+                  "Unisolated concurrency can expose partially applied writes or cause inconsistent reads."
+              }
+            }
+          },
+          {
+            title: "Durability Guarantees",
+            content:
+              "Durability preserves committed data despite crashes via techniques like write-ahead logging, replication, or battery-backed hardware.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Non-Durable Technique",
+              description:
+                "Pick which method is NOT typically used to ensure durability.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which technique is NOT typically used to ensure transaction durability?",
+                options: [
+                  "A) Writing changes to a write-ahead log",
+                  "B) Storing data on multiple nodes",
+                  "C) Running transactions in isolated memory spaces",
+                  "D) Committing data to non-volatile storage"
+                ],
+                correctAnswer:
+                  "C) Running transactions in isolated memory spaces",
+                explanation:
+                  "Keeping data only in memory doesn’t preserve it if power is lost."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder end-of-lesson quiz
+        endOfLessonQuiz: {
+          title: "Isolation and Consistency Quiz",
+          description:
+            "Short review covering consistency enforcement, concurrency isolation, and durability basics.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question: "Why is isolation important in a multi-transaction environment?",
+              options: [
+                "A) It speeds up writes",
+                "B) It prevents partial or conflicting updates among transactions",
+                "C) It automatically optimizes queries",
+                "D) It blocks all reads until the database is idle"
+              ],
+              correctAnswer:
+                "B) It prevents partial or conflicting updates among transactions",
+              points: 10,
+              explanation:
+                "Isolation ensures transactions don't see each other's intermediate states, avoiding many concurrency anomalies."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 3
+      // =======================
+      {
+        title: "Single-Object and Multi-Object Operations",
+        slug: "single-and-multi-object-operations",
+        description:
+          "Compare atomic single-object updates with multi-object transactions, and learn how to handle errors or retries.",
+        order: 3,
+        duration: 45,
+
+        parts: [
+          {
+            title: "Single-Object Operations",
+            content:
+              "Even single-object writes are atomic in many databases. Atomic increments and compare-and-set avoid lost updates on a single record.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Single-Object Atomicity",
+              description:
+                "Pick an example of an atomic single-object operation.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which operation is an example of an atomic single-object operation?",
+                options: [
+                  "A) Updating two different rows in a database table",
+                  "B) Incrementing a counter value",
+                  "C) Reading data from multiple tables",
+                  "D) Backing up an entire database"
+                ],
+                correctAnswer: "B) Incrementing a counter value",
+                explanation:
+                  "Atomic increments are typically performed on a single record or key, guaranteeing no lost updates."
+              }
+            }
+          },
+          {
+            title: "Multi-Object Transactions",
+            content:
+              "Updating multiple records or tables in a single transaction ensures consistency across related data. Without this, logic to handle partial failures is complex.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Multi-Object Need",
+              description:
+                "Choose when multi-object transactions are most critical.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "When are multi-object transactions especially important?",
+                options: [
+                  "A) When optimizing query performance",
+                  "B) When backing up databases",
+                  "C) When updating related pieces of data that must stay consistent with each other",
+                  "D) When monitoring database performance"
+                ],
+                correctAnswer:
+                  "C) When updating related pieces of data that must stay consistent with each other",
+                explanation:
+                  "Multiple writes spanning related data often need atomic commits to preserve relationships."
+              }
+            }
+          },
+          {
+            title: "Handling Transaction Errors",
+            content:
+              "Transaction failures can be retried, but caution is needed to avoid double effects or hidden conflicts. External side effects are not automatically rolled back.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Retrying Transactions",
+              description:
+                "Identify a major challenge when retrying aborted transactions.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What challenge must be addressed when retrying failed transactions?",
+                options: [
+                  "A) Transactions might take longer to complete",
+                  "B) The same operation might be performed twice if the original transaction actually succeeded",
+                  "C) Database locks might prevent the retry from executing",
+                  "D) Retries always require administrator approval"
+                ],
+                correctAnswer:
+                  "B) The same operation might be performed twice if the original transaction actually succeeded",
+                explanation:
+                  "Applications must handle uncertainty about partial commits, e.g., if the client never received the success response."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder end-of-lesson quiz
+        endOfLessonQuiz: {
+          title: "Operations Quiz",
+          description:
+            "Quick check on single vs. multi-object operations, atomic writes, and transaction retries.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Why might you need multi-object transactions?",
+              options: [
+                "A) For single-row updates to go faster",
+                "B) To manage changes that span multiple records or tables and maintain consistency",
+                "C) To bypass concurrency control entirely",
+                "D) To reduce network traffic"
+              ],
+              correctAnswer:
+                "B) To manage changes that span multiple records or tables and maintain consistency",
+              points: 10,
+              explanation:
+                "Multi-object transactions help ensure all or none of the changes for related data are applied."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 4
+      // =======================
+      {
+        title: "Weak Isolation Levels",
+        slug: "weak-isolation-levels",
+        description:
+          "Learn why many databases don’t default to full serializability, how read committed and snapshot isolation work, and the trade-offs involved.",
+        order: 4,
+        duration: 45,
+
+        parts: [
+          {
+            title: "Understanding Isolation Levels",
+            content:
+              "Strong serializable isolation is expensive. Many databases default to weaker levels (e.g., read committed) to improve performance at the cost of occasional anomalies.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Why Not Serializability?",
+              description:
+                "Select why most databases avoid the strongest isolation by default.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why don't most databases use the strongest isolation level (serializability) by default?",
+                options: [
+                  "A) It's too complex to implement",
+                  "B) It requires too much storage space",
+                  "C) It significantly reduces performance",
+                  "D) It's not compatible with standard SQL"
+                ],
+                correctAnswer: "C) It significantly reduces performance",
+                explanation:
+                  "Full serializability can greatly impact throughput, so many systems default to weaker isolation for better speed."
+              }
+            }
+          },
+          {
+            title: "Read Committed Isolation",
+            content:
+              "Read committed disallows dirty reads and writes, but doesn’t protect against non-repeatable reads or phantom rows. It's a common default in many systems.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Read Committed Gaps",
+              description:
+                "Identify what concurrency problem read committed does NOT prevent.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What concurrency problem does Read Committed isolation NOT prevent?",
+                options: [
+                  "A) Dirty reads",
+                  "B) Dirty writes",
+                  "C) Non-repeatable reads",
+                  "D) Both A and B"
+                ],
+                correctAnswer: "C) Non-repeatable reads",
+                explanation:
+                  "Read committed ensures each read sees only committed data, but repeated reads of the same row can differ if another transaction commits changes in between."
+              }
+            }
+          },
+          {
+            title: "Snapshot Isolation",
+            content:
+              "Snapshot isolation provides a consistent snapshot for each transaction using MVCC. It prevents many anomalies but still isn’t fully serializable.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Benefit of Snapshot Isolation",
+              description:
+                "Choose a key advantage snapshot isolation has over read committed.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is a key benefit of snapshot isolation over read committed isolation?",
+                options: [
+                  "A) It consumes less memory",
+                  "B) It prevents the read skew anomaly where a transaction sees an inconsistent view of the database",
+                  "C) It allows for faster write operations",
+                  "D) It requires no additional database configuration"
+                ],
+                correctAnswer:
+                  "B) It prevents the read skew anomaly where a transaction sees an inconsistent view of the database",
+                explanation:
+                  "Snapshot isolation ensures each transaction sees the database state as of a consistent snapshot."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder end-of-lesson quiz
+        endOfLessonQuiz: {
+          title: "Weak Isolation Levels Quiz",
+          description:
+            "Confirm your knowledge of read committed, snapshot isolation, and why full serializability is often avoided.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question: "Which isolation level disallows dirty reads but may allow non-repeatable reads?",
+              options: [
+                "A) Read uncommitted",
+                "B) Read committed",
+                "C) Serializable",
+                "D) Snapshot isolation"
+              ],
+              correctAnswer: "B) Read committed",
+              points: 10,
+              explanation:
+                "Read committed ensures you see only committed data, but repeated reads can differ if another transaction commits in between."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 5
+      // =======================
+      {
+        title: "Preventing Lost Updates",
+        slug: "preventing-lost-updates",
+        description:
+          "Investigate how lost updates happen in concurrent writes and how atomic operations, locking, or detection can solve them.",
+        order: 5,
+        duration: 45,
+
+        parts: [
+          {
+            title: "The Lost Update Problem",
+            content:
+              "Lost updates occur when two transactions read the same value, modify it separately, then overwrite each other’s changes.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Lost Update Scenario",
+              description:
+                "Determine how lost updates occur in concurrent transactions.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "When does a lost update occur?",
+                options: [
+                  "A) When a database crashes during a write operation",
+                  "B) When two transactions concurrently read and modify the same object, with the second write overwriting the first one",
+                  "C) When data is accidentally deleted by a user",
+                  "D) When database backups are incomplete"
+                ],
+                correctAnswer:
+                  "B) When two transactions concurrently read and modify the same object, with the second write overwriting the first one",
+                explanation:
+                  "The second transaction effectively discards the first transaction’s update."
+              }
+            }
+          },
+          {
+            title: "Atomic Write Operations",
+            content:
+              "Databases provide atomic increments, compare-and-set, or SELECT FOR UPDATE to avoid lost updates by performing the read-modify-write in one go.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Single Operation Updates",
+              description:
+                "Identify which approach merges the read and write phases to prevent lost updates.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which approach prevents lost updates by performing the read-modify-write cycle as a single operation?",
+                options: [
+                  "A) Database backups",
+                  "B) Transaction logging",
+                  "C) Atomic operations provided by the database",
+                  "D) Increasing the isolation level"
+                ],
+                correctAnswer:
+                  "C) Atomic operations provided by the database",
+                explanation:
+                  "Atomic instructions (increment, CAS) apply changes safely, avoiding concurrency overwrites."
+              }
+            }
+          },
+          {
+            title: "Conflict Resolution Strategies",
+            content:
+              "Concurrent updates can be handled by last write wins, explicit locking, or detection-based methods. Each has performance and correctness trade-offs.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Last Write Wins Drawback",
+              description:
+                "Explain a key downside of resolving conflicts using last write wins.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is a drawback of using the 'last write wins' approach to handle concurrent updates?",
+                options: [
+                  "A) It's extremely slow",
+                  "B) It requires special database hardware",
+                  "C) It can silently discard user modifications",
+                  "D) It only works with NoSQL databases"
+                ],
+                correctAnswer:
+                  "C) It can silently discard user modifications",
+                explanation:
+                  "Overwriting changes by timestamp can lose important data if clocks are out of sync or updates happen concurrently."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder end-of-lesson quiz
+        endOfLessonQuiz: {
+          title: "Preventing Lost Updates Quiz",
+          description:
+            "Check your understanding of how lost updates occur and the ways to mitigate them in concurrent environments.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which solution can avoid lost updates without requiring a full transaction?",
+              options: [
+                "A) Using read committed isolation",
+                "B) Periodically backing up the database",
+                "C) Atomic compare-and-set or increment operations",
+                "D) Reducing the number of rows in a table"
+              ],
+              correctAnswer:
+                "C) Atomic compare-and-set or increment operations",
+              points: 10,
+              explanation:
+                "Atomic operations combine read and write, ensuring no concurrent transaction overwrites the interim state."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 6
+      // =======================
+      {
+        title: "Write Skew and Phantoms",
+        slug: "write-skew-and-phantoms",
+        description:
+          "Study advanced anomalies such as write skew, phantom reads, and how serializable isolation or concurrency control can prevent them.",
+        order: 6,
+        duration: 45,
+
+        parts: [
+          {
+            title: "Understanding Write Skew",
+            content:
+              "Write skew arises when two transactions read overlapping data and make disjoint updates. E.g., two doctors simultaneously going off-call due to out-of-date reads.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Doctors On-Call Example",
+              description:
+                "Identify the root cause of the classic doctors on-call write skew scenario.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "In the doctors on-call example of write skew, what is the root cause of the problem?",
+                options: [
+                  "A) The database crashed during the transaction",
+                  "B) Each transaction made a decision based on data that was changed by the other transaction",
+                  "C) The data was corrupt before the transactions started",
+                  "D) The database lacked proper security controls"
+                ],
+                correctAnswer:
+                  "B) Each transaction made a decision based on data that was changed by the other transaction",
+                explanation:
+                  "Both see stale data and assume the other doctor remains on call, leading to no one on call."
+              }
+            }
+          },
+          {
+            title: "Phantoms and Their Effects",
+            content:
+              "Phantom reads happen when new rows appear in a transaction’s query result set due to concurrent inserts or updates that match the search criteria.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Phantom Reads",
+              description:
+                "Select what defines a phantom read in concurrency scenarios.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is a phantom read?",
+                options: [
+                  "A) When a transaction reads data that doesn't exist",
+                  "B) When a transaction re-reads the same data and gets different results due to other transactions modifying matching data",
+                  "C) When a database returns corrupt data",
+                  "D) When a transaction reads backup data instead of current data"
+                ],
+                correctAnswer:
+                  "B) When a transaction re-reads the same data and gets different results due to other transactions modifying matching data",
+                explanation:
+                  "Phantoms are newly inserted/updated rows that match the original query's condition."
+              }
+            }
+          },
+          {
+            title: "Serializable Isolation",
+            content:
+              "Serializable isolation prevents write skew and phantoms by ensuring the final outcome matches some serial ordering of transactions. Implementations include 2PL and SSI.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Actual Serial Execution",
+              description:
+                "Pick the approach that literally processes one transaction at a time in a single thread.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which approach to serializable isolation literally executes one transaction at a time?",
+                options: [
+                  "A) Two-phase locking",
+                  "B) Serializable snapshot isolation",
+                  "C) Actual serial execution",
+                  "D) Optimistic concurrency control"
+                ],
+                correctAnswer: "C) Actual serial execution",
+                explanation:
+                  "The simplest but slowest method is to run transactions strictly one after another in sequence."
+              }
+            }
+          }
+        ],
+
+        endOfLessonQuiz: {
+          title: "Write Skew and Phantoms Quiz",
+          description:
+            "Review the advanced anomalies of write skew, phantom reads, and how serializable isolation addresses them.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which isolation level allows a transaction to see only committed data from other transactions but permits non-repeatable reads?",
+              options: [
+                "A) Read uncommitted",
+                "B) Read committed",
+                "C) Repeatable read",
+                "D) Serializable"
+              ],
+              correctAnswer: "B) Read committed",
+              points: 10,
+              explanation:
+                "Read committed ensures no dirty reads but doesn't prevent repeated reads from yielding different values."
+            },
+            {
+              type: "multiple-choice",
+              question: "What is write skew?",
+              options: [
+                "A) When two transactions write to the same object concurrently",
+                "B) When a transaction writes data in the wrong format",
+                "C) When two transactions read overlapping data, then make disjoint updates based on what they read",
+                "D) When a transaction's writes are delayed due to network issues"
+              ],
+              correctAnswer:
+                "C) When two transactions read overlapping data, then make disjoint updates based on what they read",
+              points: 10,
+              explanation:
+                "Write skew arises if each transaction's logic depends on data that the other changes, causing an incorrect outcome."
+            },
+            {
+              type: "multiple-choice",
+              question:
+                "Which technique prevents lost updates by allowing changes only if the value hasn't been modified since it was last read?",
+              options: [
+                "A) Two-phase locking",
+                "B) Compare-and-set",
+                "C) Snapshot isolation",
+                "D) Serial execution"
+              ],
+              correctAnswer: "B) Compare-and-set",
+              points: 10,
+              explanation:
+                "CAS ensures an update succeeds only if the record is unchanged, preventing overwriting another concurrent update."
+            },
+            {
+              type: "multiple-choice",
+              question: "What is a phantom read?",
+              options: [
+                "A) Reading data that has been partially updated by another transaction",
+                "B) Reading data that doesn't exist",
+                "C) Re-running a query and finding new rows that match a search condition because another transaction added them",
+                "D) Reading the same row twice and getting different results"
+              ],
+              correctAnswer:
+                "C) Re-running a query and finding new rows that match a search condition because another transaction added them",
+              points: 10,
+              explanation:
+                "Phantom rows are newly inserted or updated rows that appear mid-transaction in repeated queries."
+            },
+            {
+              type: "multiple-choice",
+              question:
+                "Which approach to serializable isolation is typically the most efficient for high-contention workloads with many writes?",
+              options: [
+                "A) Actual serial execution",
+                "B) Two-phase locking",
+                "C) Serializable snapshot isolation",
+                "D) Read committed isolation"
+              ],
+              correctAnswer: "C) Serializable snapshot isolation",
+              points: 10,
+              explanation:
+                "SSI typically handles concurrency well by detecting conflicts at commit time, compared to full blocking in 2PL."
+            },
+            {
+              type: "multiple-choice",
+              question:
+                "What happens when using a pessimistic concurrency control approach like two-phase locking?",
+              options: [
+                "A) Transactions proceed optimistically and are aborted if conflicts are detected",
+                "B) Transactions must wait to acquire locks before accessing data",
+                "C) All transactions are executed in a single thread",
+                "D) Transactions are limited to read-only operations"
+              ],
+              correctAnswer:
+                "B) Transactions must wait to acquire locks before accessing data",
+              points: 10,
+              explanation:
+                "2PL can block concurrency while locks are held, ensuring no conflicting writes happen simultaneously."
+            },
+            {
+              type: "multiple-choice",
+              question:
+                "In which scenario would you NOT need multi-object transactions?",
+              options: [
+                "A) Updating a user profile that spans multiple tables",
+                "B) Modifying a single counter value atomically",
+                "C) Updating a document and its associated index",
+                "D) Transferring money between accounts"
+              ],
+              correctAnswer: "B) Modifying a single counter value atomically",
+              points: 10,
+              explanation:
+                "Single-object atomic increments typically don't require a multi-object transaction."
+            },
+            {
+              type: "multiple-choice",
+              question:
+                "What is the key limitation of actual serial execution for transactions?",
+              options: [
+                "A) It doesn't work with SQL databases",
+                "B) It's limited by the performance of a single CPU core",
+                "C) It can't provide durability guarantees",
+                "D) It requires specialized hardware"
+              ],
+              correctAnswer:
+                "B) It's limited by the performance of a single CPU core",
+              points: 10,
+              explanation:
+                "Serial execution processes transactions one by one, preventing concurrency and limiting throughput."
+            }
+          ]
+        }
       }
+    ], // end lessons in Chapter 7
+
+    endOfChapterQuiz: {
+      title: "Chapter 7 Quiz",
+      description:
+        "A comprehensive review of transaction concepts, isolation levels, concurrency anomalies, and atomic commit approaches.",
+      duration: 30,
+      passingScore: 75,
+      slug: "chapter-7-quiz",
+      questions: [
+        {
+          type: "multiple-choice",
+          question:
+            "Which isolation level allows a transaction to see only committed data from other transactions but permits non-repeatable reads?",
+          options: [
+            "A) Read uncommitted",
+            "B) Read committed",
+            "C) Repeatable read",
+            "D) Serializable"
+          ],
+          correctAnswer: "B) Read committed",
+          points: 10,
+          explanation:
+            "Read committed disallows dirty reads but does not prevent repeated reads from seeing different committed versions."
+        },
+        {
+          type: "multiple-choice",
+          question: "What is write skew?",
+          options: [
+            "A) When two transactions write to the same object concurrently",
+            "B) When a transaction writes data in the wrong format",
+            "C) When two transactions read overlapping data, then make disjoint updates based on what they read",
+            "D) When a transaction's writes are delayed due to network issues"
+          ],
+          correctAnswer:
+            "C) When two transactions read overlapping data, then make disjoint updates based on what they read",
+          points: 10,
+          explanation:
+            "Write skew arises if two concurrent transactions each rely on out-of-date information from each other’s changes."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Which technique prevents lost updates by allowing changes only if the value hasn't been modified since it was last read?",
+          options: [
+            "A) Two-phase locking",
+            "B) Compare-and-set",
+            "C) Snapshot isolation",
+            "D) Serial execution"
+          ],
+          correctAnswer: "B) Compare-and-set",
+          points: 10,
+          explanation:
+            "CAS or version checks detect if another write has occurred in the meantime, preventing silent overwrites."
+        },
+        {
+          type: "multiple-choice",
+          question: "What is a phantom read?",
+          options: [
+            "A) Reading data that has been partially updated by another transaction",
+            "B) Reading data that doesn't exist",
+            "C) Re-running a query and finding new rows that match a search condition because another transaction added them",
+            "D) Reading the same row twice and getting different results"
+          ],
+          correctAnswer:
+            "C) Re-running a query and finding new rows that match a search condition because another transaction added them",
+          points: 10,
+          explanation:
+            "Phantoms are newly inserted or updated records that appear mid-transaction in the query results."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Which approach to serializable isolation is typically the most efficient for high-contention workloads with many writes?",
+          options: [
+            "A) Actual serial execution",
+            "B) Two-phase locking",
+            "C) Serializable snapshot isolation",
+            "D) Read committed isolation"
+          ],
+          correctAnswer: "C) Serializable snapshot isolation",
+          points: 10,
+          explanation:
+            "SSI often scales better than pure 2PL by detecting conflicts after the fact rather than blocking them in real-time."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What happens when using a pessimistic concurrency control approach like two-phase locking?",
+          options: [
+            "A) Transactions proceed optimistically and are aborted if conflicts are detected",
+            "B) Transactions must wait to acquire locks before accessing data",
+            "C) All transactions are executed in a single thread",
+            "D) Transactions are limited to read-only operations"
+          ],
+          correctAnswer:
+            "B) Transactions must wait to acquire locks before accessing data",
+          points: 10,
+          explanation:
+            "2PL uses locks to prevent conflicts, causing waiting if a needed lock is held by another transaction."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "In which scenario would you NOT need multi-object transactions?",
+          options: [
+            "A) Updating a user profile that spans multiple tables",
+            "B) Modifying a single counter value atomically",
+            "C) Updating a document and its associated index",
+            "D) Transferring money between accounts"
+          ],
+          correctAnswer: "B) Modifying a single counter value atomically",
+          points: 10,
+          explanation:
+            "Single-record atomic increments rarely require multi-object transaction overhead."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What is the key limitation of actual serial execution for transactions?",
+          options: [
+            "A) It doesn't work with SQL databases",
+            "B) It's limited by the performance of a single CPU core",
+            "C) It can't provide durability guarantees",
+            "D) It requires specialized hardware"
+          ],
+          correctAnswer:
+            "B) It's limited by the performance of a single CPU core",
+          points: 10,
+          explanation:
+            "Running transactions strictly in sequence is safe but can’t utilize concurrency effectively."
+        }
+      ]
+    }
+  },
+
+  // ========================================
+  // CHAPTER 8
+  // ========================================
+  {
+    title: "The Trouble with Distributed Systems",
+    description:
+      "Learn the unique challenges of partial failures, unreliable networks, clock skew, and how distributed systems cope with uncertain knowledge.",
+    order: 8,
+
+    lessons: [
+      // =======================
+      // LESSON 1
+      // =======================
+      {
+        title: "Distributed Systems Fundamentals",
+        slug: "distributed-systems-fundamentals",
+        description:
+          "Discover how partial failures and non-deterministic behavior define distributed systems, and how reliability can be built atop unreliable components.",
+        order: 1,
+        duration: 45,
+
+        parts: [
+          {
+            title: "The Nature of Distributed Systems",
+            content:
+              "Unlike single-computer systems, distributed systems can fail partially, with some nodes up while others are down, causing unpredictable outcomes.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Defining Characteristic",
+              description:
+                "Identify what makes distributed systems unique compared to single-node systems.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is the defining characteristic of distributed systems compared to single-computer systems?",
+                options: [
+                  "A) Distributed systems are always faster",
+                  "B) Distributed systems can experience partial failures where some components fail while others continue working",
+                  "C) Distributed systems always require more storage",
+                  "D) Distributed systems can only be built using specialized hardware"
+                ],
+                correctAnswer:
+                  "B) Distributed systems can experience partial failures where some components fail while others continue working",
+                explanation:
+                  "Partial failures are the core reason distributed systems are more complex to manage than single nodes."
+              }
+            }
+          },
+          {
+            title: "Building Reliable Systems from Unreliable Components",
+            content:
+              "Techniques like error correction, replication, and redundancy enable distributed systems to deliver reliable services atop inherently unreliable components.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Reliability from Unreliability",
+              description:
+                "Pick the correct statement about building reliable distributed systems.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which statement about reliable distributed systems is correct?",
+                options: [
+                  "A) They require perfect hardware to function",
+                  "B) They must avoid all network communication",
+                  "C) They can be built using unreliable components by adding fault-tolerance mechanisms",
+                  "D) They can never fail under any circumstances"
+                ],
+                correctAnswer:
+                  "C) They can be built using unreliable components by adding fault-tolerance mechanisms",
+                explanation:
+                  "Redundancy and error-tolerant protocols can mask component failures, improving system reliability."
+              }
+            }
+          },
+          {
+            title: "Cloud Computing vs. Supercomputing",
+            content:
+              "Cloud computing uses commodity hardware and expects failures; supercomputers rely on specialized hardware and often restart if any node fails.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Handling Failures in the Cloud",
+              description:
+                "Contrast how cloud systems handle component failures vs. supercomputers.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "How do cloud computing systems typically handle component failures compared to supercomputers?",
+                options: [
+                  "A) Cloud systems typically shut down entirely when a component fails, while supercomputers try to work around failures",
+                  "B) Cloud systems are designed to continue operating despite component failures, while supercomputers often need to be restarted",
+                  "C) Both handle failures identically",
+                  "D) Neither cloud systems nor supercomputers can handle component failures"
+                ],
+                correctAnswer:
+                  "B) Cloud systems are designed to continue operating despite component failures, while supercomputers often need to be restarted",
+                explanation:
+                  "Cloud architectures prioritize availability, continuing service even if some nodes fail."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder quiz
+        endOfLessonQuiz: {
+          title: "Distributed Fundamentals Quiz",
+          description:
+            "Quick check on partial failures, building reliability from unreliable parts, and comparing cloud vs. supercomputers.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Why are distributed systems fundamentally more complex than single-computer systems?",
+              options: [
+                "A) They always involve high-performance hardware",
+                "B) They face partial failures, where some components fail but others continue",
+                "C) They use specialized programming languages",
+                "D) They cannot store large amounts of data"
+              ],
+              correctAnswer:
+                "B) They face partial failures, where some components fail but others continue",
+              points: 10,
+              explanation:
+                "These partial failures introduce nondeterministic conditions that complicate design and recovery."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 2
+      // =======================
+      {
+        title: "Unreliable Networks",
+        slug: "unreliable-networks",
+        description:
+          "Examine how network packets can be lost, delayed, or reordered, and why detecting node failures is inherently ambiguous in an asynchronous environment.",
+        order: 2,
+        duration: 45,
+
+        parts: [
+          {
+            title: "Network Faults",
+            content:
+              "Packets may be dropped, reordered, or experience high latency. Network partitions isolate subgroups of nodes. Switch or router failures can cause large outages.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Real-World Network Issues",
+              description:
+                "Choose which problem is NOT typical in real-world distributed networks.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which network problem is NOT commonly experienced in real-world distributed systems?",
+                options: [
+                  "A) Packets being delivered out of order",
+                  "B) Network partitions isolating groups of nodes",
+                  "C) Packets being delivered with perfect, predictable timing",
+                  "D) Packets being lost entirely"
+                ],
+                correctAnswer:
+                  "C) Packets being delivered with perfect, predictable timing",
+                explanation:
+                  "Networks are rarely perfectly predictable, so precise timing is unrealistic in real environments."
+              }
+            }
+          },
+          {
+            title: "Detecting Node Failures",
+            content:
+              "Timeouts can’t distinguish between a crashed node, a slow node, or a partitioned network. Failure detection is thus never certain.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Timeout Ambiguity",
+              description:
+                "Decide what can be conclusively determined if a request times out.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "When a request to another node times out, what can you definitively conclude?",
+                options: [
+                  "A) The remote node has crashed",
+                  "B) The network is partitioned",
+                  "C) The remote node is overloaded",
+                  "D) You cannot definitely determine what caused the timeout"
+                ],
+                correctAnswer:
+                  "D) You cannot definitely determine what caused the timeout",
+                explanation:
+                  "A timeout could be due to multiple factors; the system can’t know for sure which one."
+              }
+            }
+          },
+          {
+            title: "Timeouts and Unbounded Delays",
+            content:
+              "Choosing a timeout is difficult: shorter timeouts detect failures quickly but risk false positives; longer timeouts reduce false positives but slow response to real failures.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Perfect Timeout?",
+              description:
+                "Explain why there's no single best timeout value in a distributed system.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why is it difficult to set the 'perfect' timeout value in a distributed system?",
+                options: [
+                  "A) Software bugs in the network stack prevent accurate timing",
+                  "B) Network delays are highly variable and unpredictable",
+                  "C) Different nodes have different clock speeds",
+                  "D) Timeout values must always be set manually for each connection"
+                ],
+                correctAnswer:
+                  "B) Network delays are highly variable and unpredictable",
+                explanation:
+                  "No single timeout can accommodate all possible latencies and anomalies."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder quiz
+        endOfLessonQuiz: {
+          title: "Unreliable Networks Quiz",
+          description:
+            "Quick check on node failure ambiguity, network partitions, and the difficulty of timeouts.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which factor does NOT commonly contribute to network unreliability?",
+              options: [
+                "A) Packet loss",
+                "B) Finite queue sizes in routers",
+                "C) Perfect synchronization across all nodes",
+                "D) Network congestion leading to unpredictable delays"
+              ],
+              correctAnswer:
+                "C) Perfect synchronization across all nodes",
+              points: 10,
+              explanation:
+                "In reality, synchronization is rarely perfect, and network issues cause packet drops, reorderings, or delays."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 3
+      // =======================
+      {
+        title: "Unreliable Clocks",
+        slug: "unreliable-clocks",
+        description:
+          "Explore how physical clocks drift, why NTP synchronization is imperfect, and the difference between monotonic and time-of-day clocks in distributed operations.",
+        order: 3,
+        duration: 45,
+
+        parts: [
+          {
+            title: "Clock Problems",
+            content:
+              "Computer clocks drift due to quartz inaccuracies. NTP helps but is not foolproof. Leap seconds and VM pauses add further complications.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Clock Drift Cause",
+              description:
+                "Identify why computer clocks deviate from real time even if the software is correct.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What causes computer clocks to drift away from the correct time even without any software problems?",
+                options: [
+                  "A) The operating system intentionally adjusts the time",
+                  "B) Network delays affect time synchronization",
+                  "C) Physical limitations of quartz crystal oscillators",
+                  "D) Database transactions cause clock adjustments"
+                ],
+                correctAnswer:
+                  "C) Physical limitations of quartz crystal oscillators",
+                explanation:
+                  "All hardware clocks drift over time unless regularly synchronized externally."
+              }
+            }
+          },
+          {
+            title: "Monotonic vs. Time-of-Day Clocks",
+            content:
+              "Time-of-day clocks can jump forward or backward when synchronized. Monotonic clocks move forward only, but don’t track actual date/time.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Timeout Mechanisms",
+              description:
+                "Select which clock is best for implementing timeouts.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which type of clock should you use to implement a timeout mechanism?",
+                options: [
+                  "A) Time-of-day clock",
+                  "B) Monotonic clock",
+                  "C) Either one works equally well",
+                  "D) Network time protocol (NTP)"
+                ],
+                correctAnswer: "B) Monotonic clock",
+                explanation:
+                  "Monotonic clocks won’t jump backward or forward, so they’re better for measuring durations."
+              }
+            }
+          },
+          {
+            title: "Relying on Synchronized Clocks",
+            content:
+              "Timestamp-based coordination is risky if clocks drift. Systems like Google Spanner incorporate bounded uncertainty but require specialized hardware or close sync.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Last Write Wins with Timestamps",
+              description:
+                "Choose why last write wins using timestamps can be problematic.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why is 'last write wins' conflict resolution based on timestamps problematic?",
+                options: [
+                  "A) It's too complicated to implement",
+                  "B) It's too slow for most applications",
+                  "C) Clock skew can cause newer writes to be discarded in favor of older ones",
+                  "D) It requires special hardware that most organizations don't have"
+                ],
+                correctAnswer:
+                  "C) Clock skew can cause newer writes to be discarded in favor of older ones",
+                explanation:
+                  "If clocks are out of sync, a truly newer update might appear older and be overwritten."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder quiz
+        endOfLessonQuiz: {
+          title: "Unreliable Clocks Quiz",
+          description:
+            "Check your grasp of clock drift, monotonic vs. real-time clocks, and timestamp-based challenges.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question: "Which type of clock is best for measuring time intervals?",
+              options: [
+                "A) Time-of-day clock",
+                "B) Monotonic clock",
+                "C) Distributed logical clock",
+                "D) None of the above"
+              ],
+              correctAnswer: "B) Monotonic clock",
+              points: 10,
+              explanation:
+                "Monotonic clocks only move forward, making them suitable for measuring durations or timeouts."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 4
+      // =======================
+      {
+        title: "Process Pauses",
+        slug: "process-pauses",
+        description:
+          "Learn how garbage collection, VM suspensions, and other factors can freeze a process, causing distributed system complications like false leader failover.",
+        order: 4,
+        duration: 45,
+
+        parts: [
+          {
+            title: "The Reality of Process Pauses",
+            content:
+              "Garbage collection, context switches, or swapping can freeze a process for milliseconds or minutes, during which the node appears unresponsive.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Long GC Pauses",
+              description:
+                "Choose one cause of significant process pause times.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which of the following can cause a process to pause for a significant period?",
+                options: [
+                  "A) Having too many CPU cores",
+                  "B) Using too little memory",
+                  "C) A 'stop-the-world' garbage collection pause",
+                  "D) Having too many network interfaces"
+                ],
+                correctAnswer:
+                  "C) A 'stop-the-world' garbage collection pause",
+                explanation:
+                  "Certain GC algorithms halt the entire process while collecting, causing noticeable unresponsiveness."
+              }
+            }
+          },
+          {
+            title: "Impact on Distributed Systems",
+            content:
+              "A paused leader node might appear dead, prompting failover and a possible 'split brain' scenario. Time-based locks or leases can expire if the holder is paused too long.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Leader Pause Consequence",
+              description:
+                "Explain the danger if a leader node experiences a long GC pause.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What problem can occur if a leader node in a distributed system experiences a long garbage collection pause?",
+                options: [
+                  "A) The system becomes faster due to optimized memory",
+                  "B) Other nodes might elect a new leader, creating a 'split brain' with two leaders",
+                  "C) The garbage collection will automatically repair any inconsistencies",
+                  "D) The system will always crash entirely"
+                ],
+                correctAnswer:
+                  "B) Other nodes might elect a new leader, creating a 'split brain' with two leaders",
+                explanation:
+                  "From the cluster’s perspective, the old leader is unresponsive, so they replace it. The old leader, upon resuming, may still think it’s in charge."
+              }
+            }
+          },
+          {
+            title: "Response Time Guarantees",
+            content:
+              "Real-time OS or specialized configurations can reduce pause times, but they’re expensive and rarely used outside safety-critical systems.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Real-Time Approaches",
+              description:
+                "Identify why real-time OS/hardware are uncommon in typical distributed data systems.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why aren't real-time guarantees commonly used in most distributed data systems?",
+                options: [
+                  "A) They're illegal in most countries",
+                  "B) They require specialized hardware that doesn't exist",
+                  "C) They're expensive to implement and restrict the choice of programming languages and tools",
+                  "D) They make systems slower in all cases"
+                ],
+                correctAnswer:
+                  "C) They're expensive to implement and restrict the choice of programming languages and tools",
+                explanation:
+                  "Most distributed data systems accept some risk of pauses instead of incurring the cost and complexity of real-time constraints."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder quiz
+        endOfLessonQuiz: {
+          title: "Process Pauses Quiz",
+          description:
+            "Quick check on how GC and other pauses can disrupt leader-based coordination and real-time constraints.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which reason best explains why a 'stop-the-world' GC pause can be problematic for a distributed system?",
+              options: [
+                "A) It speeds up writes too much",
+                "B) It can make a healthy node appear offline, triggering failover",
+                "C) It automatically reboots the operating system",
+                "D) It never lasts longer than 1ms"
+              ],
+              correctAnswer:
+                "B) It can make a healthy node appear offline, triggering failover",
+              points: 10,
+              explanation:
+                "During a long pause, the node doesn’t respond to heartbeats or requests, so other nodes might assume it's dead."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 5
+      // =======================
+      {
+        title: "Knowledge and Truth",
+        slug: "knowledge-and-truth",
+        description:
+          "Understand the inherent uncertainty in distributed systems, the need for majority consensus, and how fencing tokens or Byzantine fault tolerance add extra safeguards.",
+        order: 5,
+        duration: 45,
+
+        parts: [
+          {
+            title: "The Problem of Truth in Distributed Systems",
+            content:
+              "Nodes can’t definitively know if others are alive or have the latest data. Limited local views and possible network failures create fundamental uncertainty.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Node Failure Certainty",
+              description:
+                "Identify why a node cannot be sure another node has failed.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why can't a node in a distributed system know for certain whether another node has failed?",
+                options: [
+                  "A) Encryption prevents nodes from sharing their status",
+                  "B) Operating systems don't provide this information",
+                  "C) Network delays and failures make it impossible to distinguish between node failures and network problems",
+                  "D) Nodes intentionally hide their status from each other"
+                ],
+                correctAnswer:
+                  "C) Network delays and failures make it impossible to distinguish between node failures and network problems",
+                explanation:
+                  "A nonresponsive node could be down or simply unreachable or slow, so the observer can’t be sure."
+              }
+            }
+          },
+          {
+            title: "Majority Decisions",
+            content:
+              "Requiring a majority of nodes to agree ensures no two distinct groups can both form a majority with conflicting decisions, supporting consensus protocols.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Quorum Rationale",
+              description:
+                "Choose why consensus algorithms often require a majority vote.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why do many distributed algorithms require a majority (more than half) of nodes to agree on a decision?",
+                options: [
+                  "A) To improve performance",
+                  "B) To reduce network traffic",
+                  "C) To ensure that no two groups can make conflicting decisions simultaneously",
+                  "D) Because it's required by the TCP/IP protocol"
+                ],
+                correctAnswer:
+                  "C) To ensure that no two groups can make conflicting decisions simultaneously",
+                explanation:
+                  "Majorities overlap, so only one set of nodes can have a valid quorum at a time."
+              }
+            }
+          },
+          {
+            title: "Fencing and Byzantine Faults",
+            content:
+              "Fencing tokens prevent old 'zombie' nodes from reactivating and causing corruption. Byzantine tolerance handles malicious or arbitrarily faulty nodes, needed in specialized domains.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Fencing Token Usage",
+              description:
+                "Identify the purpose of fencing tokens in distributed systems.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is the purpose of a fencing token in a distributed system?",
+                options: [
+                  "A) To encrypt sensitive data",
+                  "B) To prevent a node that incorrectly believes it's the leader from corrupting data",
+                  "C) To measure network latency",
+                  "D) To synchronize clocks between nodes"
+                ],
+                correctAnswer:
+                  "B) To prevent a node that incorrectly believes it's the leader from corrupting data",
+                explanation:
+                  "Monotonically increasing tokens ensure an older 'lease holder' can’t override changes from the new valid leader."
+              }
+            }
+          }
+        ],
+
+        endOfLessonQuiz: {
+          title: "Knowledge and Truth Quiz",
+          description:
+            "Test your understanding of node failure uncertainty, quorum-based decisions, and fencing tokens for safer leadership changes.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "What is a quorum in distributed systems?",
+              options: [
+                "A) A specialized type of database",
+                "B) A minimum number of nodes that must agree on a decision",
+                "C) A security protocol",
+                "D) A type of network topology"
+              ],
+              correctAnswer:
+                "B) A minimum number of nodes that must agree on a decision",
+              points: 10,
+              explanation:
+                "Many algorithms use majority quorums to ensure consistent decisions across partially connected clusters."
+            }
+          ]
+        }
+      }
+    ], // end lessons in Chapter 8
+
+    endOfChapterQuiz: {
+      title: "Chapter 8 Quiz",
+      description:
+        "Assess your knowledge of partial failures, unreliable networks, clock skew, process pauses, and distributed uncertainty.",
+      duration: 30,
+      passingScore: 75,
+      slug: "chapter-8-quiz",
+      questions: [
+        {
+          type: "multiple-choice",
+          question:
+            "What makes distributed systems fundamentally different from single-node systems?",
+          options: [
+            "A) Distributed systems always use different programming languages",
+            "B) Distributed systems always store more data",
+            "C) Distributed systems experience partial failures where some components fail while others work",
+            "D) Distributed systems always use relational databases"
+          ],
+          correctAnswer:
+            "C) Distributed systems experience partial failures where some components fail while others work",
+          points: 10,
+          explanation:
+            "Partial failure is the hallmark complexity factor in distributed systems."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "When a request to another node times out, what might be the cause?",
+          options: [
+            "A) The request was lost in the network",
+            "B) The other node has crashed",
+            "C) The other node is experiencing a GC pause",
+            "D) Any of the above"
+          ],
+          correctAnswer: "D) Any of the above",
+          points: 10,
+          explanation:
+            "Timeouts alone can’t distinguish between crash, slow node, network partition, or other issues."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Which clock should be used for measuring the time elapsed during an operation?",
+          options: [
+            "A) Time-of-day clock",
+            "B) Monotonic clock",
+            "C) Network Time Protocol (NTP)",
+            "D) Logical clock"
+          ],
+          correctAnswer: "B) Monotonic clock",
+          points: 10,
+          explanation:
+            "Monotonic clocks aren’t adjusted backward or forward, so they provide stable durations."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What is a common cause of extended process pauses?",
+          options: [
+            "A) Having too many CPU cores",
+            "B) Using too much network bandwidth",
+            "C) Stop-the-world garbage collection",
+            "D) Having multiple hard drives"
+          ],
+          correctAnswer: "C) Stop-the-world garbage collection",
+          points: 10,
+          explanation:
+            "GC can block a process for a time, making it unresponsive in distributed environment checks."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Why is 'last write wins' based on timestamps problematic for conflict resolution?",
+          options: [
+            "A) It requires too much storage space",
+            "B) Clock skew can cause newer writes to be incorrectly discarded",
+            "C) It's too slow for modern applications",
+            "D) Timestamps are too large to store efficiently"
+          ],
+          correctAnswer:
+            "B) Clock skew can cause newer writes to be incorrectly discarded",
+          points: 10,
+          explanation:
+            "If the newer update’s timestamp is behind the older one due to skew, it’s overwritten incorrectly."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What is the purpose of fencing tokens?",
+          options: [
+            "A) To secure network communication",
+            "B) To prevent nodes that believe they are leaders from causing damage",
+            "C) To synchronize clocks between nodes",
+            "D) To encrypt sensitive data"
+          ],
+          correctAnswer:
+            "B) To prevent nodes that believe they are leaders from causing damage",
+          points: 10,
+          explanation:
+            "Monotonically increasing tokens ensure an old leader can’t override the new one’s changes."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Which is NOT a common cause of network problems in distributed systems?",
+          options: [
+            "A) Hardware failures",
+            "B) Network congestion",
+            "C) Excessive CPU usage",
+            "D) Packet loss"
+          ],
+          correctAnswer: "C) Excessive CPU usage",
+          points: 10,
+          explanation:
+            "While high CPU usage can degrade performance, it’s not primarily a network issue like packet loss or congestion."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What is a quorum in distributed systems?",
+          options: [
+            "A) A specialized type of database",
+            "B) A minimum number of nodes that must agree on a decision",
+            "C) A security protocol",
+            "D) A type of network topology"
+          ],
+          correctAnswer:
+            "B) A minimum number of nodes that must agree on a decision",
+          points: 10,
+          explanation:
+            "Quorums are used in replication and consensus to ensure consistent decisions across partial failures."
+        }
+      ]
+    }
+  },
+
+  // ========================================
+  // CHAPTER 9
+  // ========================================
+  {
+    title: "Consistency and Consensus",
+    description:
+      "Investigate consistency models like eventual consistency and linearizability, how ordering/causality is tracked, and how consensus algorithms solve total order broadcast or distributed commits.",
+    order: 9,
+
+    lessons: [
+      // =======================
+      // LESSON 1
+      // =======================
+      {
+        title: "Consistency Models",
+        slug: "consistency-models",
+        description:
+          "Learn about eventual consistency, strong consistency, and the performance/availability trade-offs behind each approach.",
+        order: 1,
+        duration: 45,
+
+        parts: [
+          {
+            title: "Consistency Guarantees",
+            content:
+              "Some systems only guarantee eventual consistency, while others offer stronger, more immediate consistency. Each choice affects performance and complexity.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Eventual Consistency Definition",
+              description:
+                "Identify the meaning of eventual consistency in distributed data systems.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is eventual consistency?",
+                options: [
+                  "A) A guarantee that data will eventually be deleted",
+                  "B) A guarantee that all replicas will eventually contain the same values if updates stop",
+                  "C) A guarantee that writes will eventually succeed",
+                  "D) A guarantee that the system will eventually crash"
+                ],
+                correctAnswer:
+                  "B) A guarantee that all replicas will eventually contain the same values if updates stop",
+                explanation:
+                  "If no new writes come in, replicas converge to a consistent state after some finite time."
+              }
+            }
+          },
+          {
+            title: "Linearizability",
+            content:
+              "Linearizability is a strong model making the system behave like a single copy. Each read sees the latest successful write, simplifying application logic but reducing availability under partition.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Linearizability Characteristic",
+              description:
+                "Explain the central property of a linearizable system.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is the key characteristic of a linearizable system?",
+                options: [
+                  "A) It's always the fastest option",
+                  "B) It makes a distributed system behave as if there were only a single copy of the data",
+                  "C) It eliminates the need for transactions",
+                  "D) It requires less storage than other consistency models"
+                ],
+                correctAnswer:
+                  "B) It makes a distributed system behave as if there were only a single copy of the data",
+                explanation:
+                  "All reads and writes appear in a single global order, simplifying application logic but at a cost."
+              }
+            }
+          },
+          {
+            title: "The Cost of Linearizability",
+            content:
+              "Under network partitions, a linearizable system must sacrifice availability or risk stale reads. Related to the CAP theorem, strong consistency often reduces availability and adds latency.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: CAP Trade-off",
+              description:
+                "Pick what a system forfeits if it maintains strong consistency during a network partition.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "According to the CAP theorem, what must a system sacrifice during a network partition if it wants to remain available?",
+                options: [
+                  "A) Security",
+                  "B) Strong consistency",
+                  "C) Scalability",
+                  "D) Data storage capacity"
+                ],
+                correctAnswer: "B) Strong consistency",
+                explanation:
+                  "If the system chooses to keep serving requests in each partition, it can’t guarantee consistent data across them."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder quiz
+        endOfLessonQuiz: {
+          title: "Consistency Models Quiz",
+          description:
+            "Check your knowledge of eventual consistency, linearizability, and the trade-offs mandated by CAP.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which consistency model makes a distributed system behave as if there were only a single copy of the data?",
+              options: [
+                "A) Eventual consistency",
+                "B) Causal consistency",
+                "C) Linearizability",
+                "D) Session consistency"
+              ],
+              correctAnswer: "C) Linearizability",
+              points: 10,
+              explanation:
+                "Linearizability ensures reads and writes appear in a single global order consistent with real time."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 2
+      // =======================
+      {
+        title: "Ordering and Causality",
+        slug: "ordering-and-causality",
+        description:
+          "Recognize why ordering operations is vital, how causality forms partial orders, and how systems track 'happens-before' relationships with logical clocks.",
+        order: 2,
+        duration: 45,
+
+        parts: [
+          {
+            title: "The Importance of Ordering",
+            content:
+              "Operation ordering underpins replication, serializability, and linearizability. Without consistent ordering, a system can produce contradictory states.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Why Operation Ordering?",
+              description:
+                "Select the main reason ordering is essential in distributed systems.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why is operation ordering important in distributed systems?",
+                options: [
+                  "A) It makes systems faster",
+                  "B) It reduces storage requirements",
+                  "C) It helps maintain causality and consistency between operations",
+                  "D) It's required by network protocols"
+                ],
+                correctAnswer:
+                  "C) It helps maintain causality and consistency between operations",
+                explanation:
+                  "Order ensures that dependent operations see the correct updated states."
+              }
+            }
+          },
+          {
+            title: "Causality and Happens-Before Relationship",
+            content:
+              "If A happens before B, we say A may have influenced B. Concurrent events lack a causal ordering. Tracking these relationships avoids anomalies like reading a reply before the question is posted.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Concurrent Events",
+              description:
+                "Define concurrency in distributed systems context.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What does it mean when we say two events are concurrent in a distributed system?",
+                options: [
+                  "A) They happened at exactly the same physical time",
+                  "B) They were executed by the same process",
+                  "C) Neither event could have influenced the other",
+                  "D) They accessed the same data"
+                ],
+                correctAnswer:
+                  "C) Neither event could have influenced the other",
+                explanation:
+                  "If there's no causal path from one to the other, they are concurrent."
+              }
+            }
+          },
+          {
+            title: "Sequence Numbers and Timestamps",
+            content:
+              "Mechanisms like Lamport timestamps or version vectors track a partial or total order of operations that respects causality without relying on real clocks.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Lamport Timestamps",
+              description:
+                "Choose the key property of Lamport timestamps in distributed systems.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is the key property of Lamport timestamps?",
+                options: [
+                  "A) They provide a total ordering of events that is consistent with causality",
+                  "B) They synchronize physical clocks across nodes",
+                  "C) They eliminate the need for network communication",
+                  "D) They prevent all concurrent operations"
+                ],
+                correctAnswer:
+                  "A) They provide a total ordering of events that is consistent with causality",
+                explanation:
+                  "Lamport timestamps impose an order that respects the 'happens-before' relationship among events."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder quiz
+        endOfLessonQuiz: {
+          title: "Ordering and Causality Quiz",
+          description:
+            "Verify your knowledge of causal ordering, concurrency, and logical timestamp mechanisms.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which statement about causality is correct?",
+              options: [
+                "A) Causality requires synchronized clocks",
+                "B) Causality forms a total ordering of all events",
+                "C) Causality means if event A influenced event B, then A happened before B",
+                "D) Causality guarantees can only be provided by relational databases"
+              ],
+              correctAnswer:
+                "C) Causality means if event A influenced event B, then A happened before B",
+              points: 10,
+              explanation:
+                "The 'happens-before' relationship ensures any effect must come after its cause."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 3
+      // =======================
+      {
+        title: "Total Order Broadcast",
+        slug: "total-order-broadcast",
+        description:
+          "Discover how atomic broadcast ensures all nodes see messages in the same order, enabling linearizable storage and bridging into consensus problems.",
+        order: 3,
+        duration: 45,
+
+        parts: [
+          {
+            title: "Understanding Total Order Broadcast",
+            content:
+              "Total order broadcast/atomic broadcast delivers messages to all nodes in a uniform, identical sequence, preventing ordering discrepancies across replicas.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: TOB Guarantees",
+              description:
+                "Identify the two main guarantees of total order broadcast.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What guarantees does total order broadcast provide?",
+                options: [
+                  "A) Messages are encrypted and secure",
+                  "B) Messages are delivered instantaneously",
+                  "C) Messages are delivered reliably and in the same order to all nodes",
+                  "D) Messages are compressed to save bandwidth"
+                ],
+                correctAnswer:
+                  "C) Messages are delivered reliably and in the same order to all nodes",
+                explanation:
+                  "Atomic broadcast ensures consistent, total ordering of delivered messages across all correct nodes."
+              }
+            }
+          },
+          {
+            title: "Implementing Linearizable Storage",
+            content:
+              "By applying operations to a replicated log in the same total order, each replica can maintain linearizable state, ignoring partial concurrency or reordering issues.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Using TOB for Storage",
+              description:
+                "Explain how total order broadcast can produce linearizable state machines.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "How can total order broadcast be used to implement linearizable storage?",
+                options: [
+                  "A) By encrypting all storage operations",
+                  "B) By processing operations in the order they appear in the broadcast log",
+                  "C) By eliminating network communication",
+                  "D) By using specialized hardware for storage"
+                ],
+                correctAnswer:
+                  "B) By processing operations in the order they appear in the broadcast log",
+                explanation:
+                  "All replicas see the same sequence of operations and apply them identically, achieving linearizability."
+              }
+            }
+          },
+          {
+            title: "The Connection to Consensus",
+            content:
+              "Total order broadcast and consensus are equivalent in expressive power. Solving one allows implementing the other, forming the basis of robust distributed systems.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: TOB vs. Consensus",
+              description:
+                "Choose the relationship between total order broadcast and consensus algorithms.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is the relationship between total order broadcast and consensus?",
+                options: [
+                  "A) Total order broadcast is much easier to solve than consensus",
+                  "B) They are equivalent problems - a solution to one can be converted into a solution for the other",
+                  "C) Consensus is a special case of total order broadcast",
+                  "D) They have completely different use cases with no relationship"
+                ],
+                correctAnswer:
+                  "B) They are equivalent problems - a solution to one can be converted into a solution for the other",
+                explanation:
+                  "Atomic broadcast can implement consensus, and consensus can implement atomic broadcast."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder quiz
+        endOfLessonQuiz: {
+          title: "Total Order Broadcast Quiz",
+          description:
+            "Check your grasp of atomic broadcast guarantees, linearizable storage, and the link to consensus.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "What is the key weakness of two-phase commit (2PC)?",
+              options: [
+                "A) It requires too much network bandwidth",
+                "B) It can block indefinitely if the coordinator fails",
+                "C) It cannot handle more than two nodes",
+                "D) It requires specialized hardware"
+              ],
+              correctAnswer:
+                "B) It can block indefinitely if the coordinator fails",
+              points: 10,
+              explanation:
+                "2PC leaves participants in a state of uncertainty if the coordinator fails after collecting votes but before sending the final decision."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 4
+      // =======================
+      {
+        title: "Distributed Transactions and Consensus",
+        slug: "distributed-transactions-and-consensus",
+        description:
+          "See how two-phase commit handles atomic cross-node operations, why it can block, and how stronger consensus algorithms like Paxos or Raft improve fault tolerance.",
+        order: 4,
+        duration: 45,
+
+        parts: [
+          {
+            title: "The Consensus Problem",
+            content:
+              "Consensus ensures nodes agree on a value even with failures. Requirements: agreement, integrity, validity, and termination. It's pivotal for atomic commits, leader election, etc.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Consensus Requirements",
+              description:
+                "Pick which requirement is NOT part of formal consensus definitions.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which of the following is NOT a requirement of the consensus problem?",
+                options: [
+                  "A) Agreement (no two nodes decide differently)",
+                  "B) Speed (decisions must be made within 1 second)",
+                  "C) Validity (the decided value must have been proposed by a node)",
+                  "D) Termination (every non-crashed node eventually decides)"
+                ],
+                correctAnswer:
+                  "B) Speed (decisions must be made within 1 second)",
+                explanation:
+                  "Consensus does not mandate a fixed time limit; it only requires that correct nodes eventually reach a decision."
+              }
+            }
+          },
+          {
+            title: "Two-Phase Commit",
+            content:
+              "2PC is widely used for distributed atomic commits but can block if the coordinator fails. Participants remain 'in doubt' until the coordinator recovers.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: 2PC Failure Scenario",
+              description:
+                "Determine what happens if a participant says yes but then loses contact with the coordinator in 2PC.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What happens in two-phase commit if a participant votes 'yes' in phase 1 but then loses contact with the coordinator?",
+                options: [
+                  "A) It can safely abort the transaction",
+                  "B) It can safely commit the transaction",
+                  "C) It must wait for the coordinator to recover because it's 'in doubt'",
+                  "D) It can ask another participant what to do"
+                ],
+                correctAnswer:
+                  "C) It must wait for the coordinator to recover because it's 'in doubt'",
+                explanation:
+                  "Without hearing the coordinator’s final decision, the participant cannot unilaterally commit or abort."
+              }
+            }
+          },
+          {
+            title: "Fault-Tolerant Consensus Algorithms",
+            content:
+              "Paxos, Raft, and Zab handle coordinator failures more gracefully than 2PC, allowing progress with a majority of nodes. They power robust systems like ZooKeeper.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Paxos Advantage",
+              description:
+                "Select the key improvement Paxos/Raft have over two-phase commit.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is a key improvement of algorithms like Paxos and Raft over two-phase commit?",
+                options: [
+                  "A) They are much faster in all scenarios",
+                  "B) They can make progress even if some nodes fail",
+                  "C) They require less network communication",
+                  "D) They don't need to store any data on disk"
+                ],
+                correctAnswer:
+                  "B) They can make progress even if some nodes fail",
+                explanation:
+                  "Majority-based consensus can elect a new leader if the old one fails, unlike 2PC’s indefinite block."
+              }
+            }
+          }
+        ],
+
+        // Minimal or placeholder quiz
+        endOfLessonQuiz: {
+          title: "Distributed Transactions and Consensus Quiz",
+          description:
+            "Check your grasp of 2PC’s limitations, consensus basics, and how Paxos/Raft handle coordinator failures.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which problem can be solved using a consensus algorithm?",
+              options: [
+                "A) Compressing data efficiently",
+                "B) Ensuring only one node acts as a leader",
+                "C) Making networks more reliable",
+                "D) Improving CPU performance"
+              ],
+              correctAnswer:
+                "B) Ensuring only one node acts as a leader",
+              points: 10,
+              explanation:
+                "Leader election is a prime example of a problem requiring consensus."
+            }
+          ]
+        }
+      },
+
+      // =======================
+      // LESSON 5
+      // =======================
+      {
+        title: "Membership and Coordination Services",
+        slug: "membership-and-coordination-services",
+        description:
+          "Explore how ZooKeeper and etcd provide linearizable operations, total ordering, session tracking, and watch notifications for configuration or leader election tasks.",
+        order: 5,
+        duration: 45,
+
+        parts: [
+          {
+            title: "ZooKeeper and etcd",
+            content:
+              "These systems act as outsourced consensus providers, offering a high-level API for distributed locks, leader election, and configuration management.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: ZooKeeper's Role",
+              description:
+                "Identify the common usage of ZooKeeper in distributed apps.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What role does ZooKeeper commonly play in distributed systems?",
+                options: [
+                  "A) It provides high-performance database storage",
+                  "B) It handles coordination tasks like leader election and distributed locks",
+                  "C) It provides offline backup services",
+                  "D) It manages virtual machines in a cluster"
+                ],
+                correctAnswer:
+                  "B) It handles coordination tasks like leader election and distributed locks",
+                explanation:
+                  "ZooKeeper’s linearizable writes and watch notifications make it ideal for coordination data."
+              }
+            }
+          },
+          {
+            title: "Allocating Work in Distributed Systems",
+            content:
+              "Leader election, service discovery, and membership tracking are typical patterns. They help dynamically assign tasks to nodes and handle node join/leave events.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Leader Election via ZooKeeper",
+              description:
+                "Explain how ZooKeeper helps pick a single leader among competing nodes.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "How might a distributed system use ZooKeeper for leader election?",
+                options: [
+                  "A) By storing all data in ZooKeeper",
+                  "B) By having nodes compete to create an ephemeral node, with the successful creator becoming leader",
+                  "C) By manually configuring ZooKeeper with the leader's identity",
+                  "D) By measuring which node has the fastest response time"
+                ],
+                correctAnswer:
+                  "B) By having nodes compete to create an ephemeral node, with the successful creator becoming leader",
+                explanation:
+                  "The ephemeral node gets automatically removed if the node session fails, allowing quick re-election if the leader dies."
+              }
+            }
+          },
+          {
+            title: "Limitations of Consensus",
+            content:
+              "Consensus requires a majority of healthy, communicating nodes. Performance degrades under frequent partitions or large latencies. It’s best used sparingly for critical control decisions.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Consensus Limitations",
+              description:
+                "Choose which scenario is a key limitation of consensus-based systems.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is a key limitation of consensus systems?",
+                options: [
+                  "A) They can only store small amounts of data",
+                  "B) They require all nodes to be functioning to make progress",
+                  "C) They require a majority of nodes to be functioning and able to communicate",
+                  "D) They only work with specific programming languages"
+                ],
+                correctAnswer:
+                  "C) They require a majority of nodes to be functioning and able to communicate",
+                explanation:
+                  "If half or more of the nodes are offline or partitioned, consensus can’t reach a decision safely."
+              }
+            }
+          }
+        ],
+
+        // End-of-lesson quiz with 9 questions indicated in user text? We see "End of Lesson Quiz: Consistency and Consensus"? We'll do a minimal one and move the rest to the end-of-chapter quiz.
+        endOfLessonQuiz: {
+          title: "Consistency and Consensus Quiz",
+          description:
+            "Short check on membership services like ZooKeeper, leader election, and limitations of consensus systems.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "What is required for a consensus algorithm to make progress?",
+              options: [
+                "A) All nodes must be functioning",
+                "B) At least one node must be functioning",
+                "C) A majority of nodes must be functioning and able to communicate",
+                "D) Exactly half the nodes must be functioning"
+              ],
+              correctAnswer:
+                "C) A majority of nodes must be functioning and able to communicate",
+              points: 10,
+              explanation:
+                "Consensus systems rely on majority quorums to guarantee correctness amid failures."
+            }
+          ]
+        }
+      }
+    ], // end lessons in Chapter 9
+
+    endOfChapterQuiz: {
+      title: "Chapter 9 Quiz",
+      description:
+        "Review consistency models, operation ordering, total order broadcast, consensus algorithms, and their use in membership/coordination services.",
+      duration: 30,
+      passingScore: 75,
+      slug: "chapter-9-quiz",
+      questions: [
+        {
+          type: "multiple-choice",
+          question:
+            "Which consistency model makes a distributed system behave as if there were only a single copy of the data?",
+          options: [
+            "A) Eventual consistency",
+            "B) Causal consistency",
+            "C) Linearizability",
+            "D) Session consistency"
+          ],
+          correctAnswer: "C) Linearizability",
+          points: 10,
+          explanation:
+            "Linearizability ensures each operation sees the latest state, like a single up-to-date replica."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "In the context of distributed systems, what does a 'happens-before' relationship indicate?",
+          options: [
+            "A) One event could potentially have influenced another",
+            "B) Events occurred at specific times",
+            "C) Events are processed in FIFO order",
+            "D) Events occurred on the same physical machine"
+          ],
+          correctAnswer:
+            "A) One event could potentially have influenced another",
+          points: 10,
+          explanation:
+            "Happens-before implies a causal link from one event to the next."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "How does total order broadcast relate to consensus?",
+          options: [
+            "A) They solve completely different problems",
+            "B) Total order broadcast is much simpler than consensus",
+            "C) They are equivalent problems - a solution for one can be converted to a solution for the other",
+            "D) Consensus is a specialized application of total order broadcast"
+          ],
+          correctAnswer:
+            "C) They are equivalent problems - a solution for one can be converted to a solution for the other",
+          points: 10,
+          explanation:
+            "Atomic broadcast ↔ consensus are proven to be reducible to each other in distributed systems theory."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What is the key weakness of two-phase commit (2PC)?",
+          options: [
+            "A) It requires too much network bandwidth",
+            "B) It can block indefinitely if the coordinator fails",
+            "C) It cannot handle more than two nodes",
+            "D) It requires specialized hardware"
+          ],
+          correctAnswer:
+            "B) It can block indefinitely if the coordinator fails",
+          points: 10,
+          explanation:
+            "If the coordinator never returns, participants remain stuck in the 'in-doubt' state."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Which statement about Lamport timestamps is correct?",
+          options: [
+            "A) They provide a perfect real-time ordering of events",
+            "B) They ensure that causally related events are ordered correctly",
+            "C) They require synchronized physical clocks",
+            "D) They cannot be used in systems with more than 10 nodes"
+          ],
+          correctAnswer:
+            "B) They ensure that causally related events are ordered correctly",
+          points: 10,
+          explanation:
+            "Lamport timestamps define a logical ordering consistent with 'happens-before' relationships."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What distinguishes algorithms like Paxos and Raft from two-phase commit?",
+          options: [
+            "A) They don't require any disk writes",
+            "B) They can tolerate node failures and still make progress",
+            "C) They always complete in exactly two message rounds",
+            "D) They guarantee much higher performance"
+          ],
+          correctAnswer:
+            "B) They can tolerate node failures and still make progress",
+          points: 10,
+          explanation:
+            "Majority-based consensus can survive coordinator failures, unlike 2PC’s indefinite blocking."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What is a common use case for services like ZooKeeper?",
+          options: [
+            "A) High-volume data storage",
+            "B) Video streaming",
+            "C) Distributed coordination and leader election",
+            "D) User authentication"
+          ],
+          correctAnswer:
+            "C) Distributed coordination and leader election",
+          points: 10,
+          explanation:
+            "ZooKeeper provides a linearizable store and ephemeral nodes for leadership or configuration locks."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "According to the CAP theorem, when a network partition occurs, what choice must be made?",
+          options: [
+            "A) Between consistency and availability",
+            "B) Between performance and reliability",
+            "C) Between scalability and security",
+            "D) Between simplicity and functionality"
+          ],
+          correctAnswer: "A) Between consistency and availability",
+          points: 10,
+          explanation:
+            "During partition, you must choose to either reject writes in one partition (C) or allow them (A) and risk inconsistent data."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What makes implementing linearizability challenging in geographically distributed systems?",
+          options: [
+            "A) The cost of hardware",
+            "B) Security concerns",
+            "C) Network delays",
+            "D) The size of data being stored"
+          ],
+          correctAnswer: "C) Network delays",
+          points: 10,
+          explanation:
+            "Coordinating a single global order across distant data centers significantly increases latency."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Which problem can be solved using a consensus algorithm?",
+          options: [
+            "A) Compressing data efficiently",
+            "B) Ensuring only one node acts as a leader",
+            "C) Making networks more reliable",
+            "D) Improving CPU performance"
+          ],
+          correctAnswer:
+            "B) Ensuring only one node acts as a leader",
+          points: 10,
+          explanation:
+            "Leader election is a classic example of consensus usage."
+        }
+      ]
+    }
+  }
+
   ],
 
   // ----------------------------------
