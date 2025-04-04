@@ -7367,7 +7367,1504 @@ export const ddiaCourse = {
         }
       ]
     }
+  },
+    // ========================================
+  // CHAPTER 10
+  // ========================================
+  {
+    title: "Batch Processing",
+    description: "Learn about processing large, finite datasets in bulk, MapReduce, and more modern dataflow engines, plus how batch jobs manage big data tasks over minutes or hours.",
+    order: 10,
+    lessons: [
+      // ---------------------------
+      // LESSON 1
+      // ---------------------------
+      {
+        title: "Introduction to Batch Processing",
+        slug: "introduction-to-batch-processing",
+        description:
+          "Explore what batch processing is, why it's suitable for large-scale analytics, and how simple Unix tools can help analyze logs and transform data.",
+        order: 1,
+        duration: 45,
+        parts: [
+          // PART 1
+          {
+            title: "Batch Processing Fundamentals",
+            content:
+              "Batch processing focuses on processing bounded datasets of known size, often in minutes or hours, rather than responding immediately to user requests.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Large-Scale Data Analytics",
+              description:
+                "Select the primary reason batch processing suits big data analysis tasks.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why is batch processing well-suited for large-scale data analytics?",
+                options: [
+                  "A) It provides instant responses to user queries",
+                  "B) It can process vast amounts of data efficiently without time pressure",
+                  "C) It only works with small datasets",
+                  "D) It requires constant user supervision"
+                ],
+                correctAnswer:
+                  "B) It can process vast amounts of data efficiently without time pressure",
+                explanation:
+                  "Batch jobs aren’t bound by interactive latencies, allowing them to handle enormous datasets in a single run."
+              }
+            }
+          },
+          // PART 2
+          {
+            title: "The Unix Philosophy",
+            content:
+              "The Unix approach to data processing uses small, composable tools that work together via standard interfaces (files, pipes). This philosophy underpins many batch-oriented workflows.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "drag-and-drop",
+              title: "Mini Exercise: Unix Philosophy Principles",
+              description:
+                "Match each principle to its description (drag-and-drop style).",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                items: [
+                  "Make each program do one thing well",
+                  "Expect the output of a program to become input to another",
+                  "Design for simplicity and clarity",
+                  "Use tools in preference to unskilled help"
+                ],
+                targets: [
+                  "[Focused functionality]",
+                  "[Composability]",
+                  "[Maintainability]",
+                  "[Automation]"
+                ],
+                correctPairs: [
+                  [
+                    "Make each program do one thing well",
+                    "[Focused functionality]"
+                  ],
+                  [
+                    "Expect the output of a program to become input to another",
+                    "[Composability]"
+                  ],
+                  [
+                    "Design for simplicity and clarity",
+                    "[Maintainability]"
+                  ],
+                  [
+                    "Use tools in preference to unskilled help",
+                    "[Automation]"
+                  ]
+                ]
+              }
+            }
+          },
+          // PART 3
+          {
+            title: "Simple Log Analysis with Unix Tools",
+            content:
+              "Unix pipelines like grep, sort, and uniq can analyze large log files efficiently. By chaining commands, you can produce powerful data transformations with minimal code.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "fill-in-blanks",
+              title: "Mini Exercise: Common IP Addresses",
+              description:
+                "Complete the command pipeline to find top IP addresses in a log file.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                text: "cat access.log | awk '{print ___}' | sort | ____ -c | sort -r -n | head -n 10",
+                blanks: ["$1", "uniq"]
+              }
+            }
+          }
+        ],
+        endOfLessonQuiz: {
+          title: "Introduction to Batch Processing Quiz",
+          description:
+            "Quick review on the fundamentals of batch processing, Unix philosophy, and simple pipeline data analysis.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which statement about batch processing is true?",
+              options: [
+                "A) It processes unbounded data streams in real-time",
+                "B) It processes bounded datasets with a known size",
+                "C) It requires immediate response to user requests",
+                "D) It only works with small datasets"
+              ],
+              correctAnswer:
+                "B) It processes bounded datasets with a known size",
+              points: 10,
+              explanation:
+                "Batch jobs typically handle finite data, finishing after a certain time rather than running indefinitely."
+            }
+          ]
+        }
+      },
+
+      // ---------------------------
+      // LESSON 2
+      // ---------------------------
+      {
+        title: "MapReduce and Distributed Processing",
+        slug: "mapreduce-and-distributed-processing",
+        description:
+          "Learn how MapReduce organizes distributed batch jobs, deals with data locality, and chains multiple steps in large workflows.",
+        order: 2,
+        duration: 45,
+        parts: [
+          // PART 1
+          {
+            title: "Introduction to MapReduce",
+            content:
+              "MapReduce revolutionized big data by providing a simple abstraction (Map and Reduce) for writing parallel, fault-tolerant processing jobs across large clusters.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: MapReduce Operations",
+              description:
+                "Identify the two core operations in the MapReduce model.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What are the two main operations in the MapReduce programming model?",
+                options: [
+                  "A) Sort and Filter",
+                  "B) Map and Reduce",
+                  "C) Extract and Load",
+                  "D) Transform and Merge"
+                ],
+                correctAnswer: "B) Map and Reduce",
+                explanation:
+                  "The map step processes records into key-value pairs; the reduce step aggregates by key."
+              }
+            }
+          },
+          // PART 2
+          {
+            title: "Distributed Filesystems and MapReduce",
+            content:
+              "MapReduce typically pairs with a distributed filesystem like HDFS to store large datasets. Data locality reduces network IO by moving code to data rather than data to code.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Data Locality Benefit",
+              description:
+                "Select why data locality is valuable in MapReduce.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What advantage does data locality provide in MapReduce?",
+                options: [
+                  "A) Improved security",
+                  "B) Reduced network traffic",
+                  "C) Simplified programming model",
+                  "D) Easier debugging"
+                ],
+                correctAnswer: "B) Reduced network traffic",
+                explanation:
+                  "By running map tasks on the nodes storing the data, MapReduce limits the amount of data transferred."
+              }
+            }
+          },
+          // PART 3
+          {
+            title: "MapReduce Workflows",
+            content:
+              "Real workflows often chain multiple MapReduce jobs. Tools like Airflow, Oozie, and Luigi orchestrate multi-step data transformations and handle scheduling and error recovery.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "drag-and-drop",
+              title: "Mini Exercise: MapReduce Execution Order",
+              description:
+                "Place the MapReduce steps in the correct sequence.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                items: [
+                  "Shuffle data between mappers and reducers",
+                  "Execute map tasks on input partitions",
+                  "Write final output to distributed filesystem",
+                  "Partition input data",
+                  "Execute reduce tasks on shuffled data"
+                ],
+                targets: [
+                  "Step 1",
+                  "Step 2",
+                  "Step 3",
+                  "Step 4",
+                  "Step 5"
+                ],
+                correctPairs: [
+                  [
+                    "Partition input data",
+                    "Step 1"
+                  ],
+                  [
+                    "Execute map tasks on input partitions",
+                    "Step 2"
+                  ],
+                  [
+                    "Shuffle data between mappers and reducers",
+                    "Step 3"
+                  ],
+                  [
+                    "Execute reduce tasks on shuffled data",
+                    "Step 4"
+                  ],
+                  [
+                    "Write final output to distributed filesystem",
+                    "Step 5"
+                  ]
+                ]
+              }
+            }
+          }
+        ],
+        endOfLessonQuiz: {
+          title: "MapReduce Basics Quiz",
+          description:
+            "Check your knowledge of MapReduce architecture, data locality, and multi-step workflows for big data jobs.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "What happens between the Map and Reduce phases in a MapReduce job?",
+              options: [
+                "A) Compression",
+                "B) Sampling",
+                "C) Shuffling and sorting",
+                "D) Indexing"
+              ],
+              correctAnswer:
+                "C) Shuffling and sorting",
+              points: 10,
+              explanation:
+                "Key-value pairs are regrouped by key, then sorted before reaching each reducer."
+            }
+          ]
+        }
+      },
+
+      // ---------------------------
+      // LESSON 3
+      // ---------------------------
+      {
+        title: "Joins and Beyond MapReduce",
+        slug: "joins-and-beyond-mapreduce",
+        description:
+          "Explore batch join strategies, more advanced dataflow engines like Spark or Flink, and specialized graph processing systems.",
+        order: 3,
+        duration: 45,
+        parts: [
+          // PART 1
+          {
+            title: "Joins in Batch Processing",
+            content:
+              "Joins combine records across multiple datasets. Without indexes, batch systems rely on techniques like sort-merge or broadcast hash join. Partitioned hash joins handle two large datasets efficiently.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Broadcast Hash Join Use Case",
+              description:
+                "When does broadcast hash join excel at joining datasets?",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which join strategy is appropriate when one dataset is small enough to fit in memory?",
+                options: [
+                  "A) Sort-merge join",
+                  "B) Broadcast hash join",
+                  "C) Nested loop join",
+                  "D) Partitioned hash join"
+                ],
+                correctAnswer:
+                  "B) Broadcast hash join",
+                explanation:
+                  "Broadcasting the small dataset to all nodes allows them to join locally with the large dataset."
+              }
+            }
+          },
+          // PART 2
+          {
+            title: "Beyond MapReduce: Dataflow Engines",
+            content:
+              "Modern engines like Spark, Flink, and Tez improve over MapReduce with in-memory dataflows, DAGs of operators, and less disk IO, lowering latencies and boosting throughput.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Modern Dataflow Advantages",
+              description:
+                "Select which is NOT a benefit of these next-gen dataflow engines over classic MapReduce.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which of the following is NOT an advantage of modern dataflow engines over traditional MapReduce?",
+                options: [
+                  "A) Reduced disk I/O",
+                  "B) Better optimization of processing workflows",
+                  "C) Improved fault tolerance",
+                  "D) Support for iterative algorithms"
+                ],
+                correctAnswer: "C) Improved fault tolerance",
+                explanation:
+                  "Although these engines have fault tolerance, the main improvements are typically performance, optimization, in-memory ops, and iterative processing. MapReduce is already quite fault-tolerant."
+              }
+            }
+          },
+          // PART 3
+          {
+            title: "Graph Processing and High-Level APIs",
+            content:
+              "Graph frameworks (Pregel, Giraph, GraphX) handle iterative graph algorithms. High-level DSLs (Hive, Pig, Spark SQL) let you write simpler code while the engine optimizes under the hood.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: BSP Model for Graphs",
+              description:
+                "Explain how the BSP model handles graph algorithms.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "How does the Bulk Synchronous Parallel model handle graph processing?",
+                options: [
+                  "A) By converting graphs to tables and using SQL",
+                  "B) By iteratively passing messages between vertices",
+                  "C) By loading the entire graph into memory",
+                  "D) By decomposing the graph into unconnected subgraphs"
+                ],
+                correctAnswer:
+                  "B) By iteratively passing messages between vertices",
+                explanation:
+                  "In BSP, each superstep involves sending messages along edges, processing them, and synchronizing."
+              }
+            }
+          }
+        ],
+        endOfLessonQuiz: {
+          title: "Advanced Batch Processing Quiz",
+          description:
+            "Ensure you understand joining large datasets, dataflow engine improvements, and specialized graph processing methods.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which factor most significantly limits the performance of traditional MapReduce?",
+              options: [
+                "A) CPU speed",
+                "B) Network bandwidth",
+                "C) Writing intermediate results to disk",
+                "D) Programming language limitations"
+              ],
+              correctAnswer:
+                "C) Writing intermediate results to disk",
+              points: 10,
+              explanation:
+                "Frequent writes to and reads from disk hamper speed. Engines like Spark reduce this cost by using memory."
+            }
+          ]
+        }
+      }
+    ],
+    endOfChapterQuiz: {
+      title: "Chapter 10 Quiz",
+      description:
+        "Review batch fundamentals, MapReduce, advanced dataflow engines, and how large-scale joins and graph tasks are handled in offline processing contexts.",
+      duration: 30,
+      passingScore: 75,
+      slug: "chapter-10-quiz",
+      questions: [
+        {
+          type: "multiple-choice",
+          question:
+            "For joining a large dataset with a small dataset, which approach is most efficient?",
+          options: [
+            "A) Sort-merge join",
+            "B) Broadcast hash join",
+            "C) Full shuffling of both datasets",
+            "D) Multiple MapReduce stages"
+          ],
+          correctAnswer:
+            "B) Broadcast hash join",
+          points: 10,
+          explanation:
+            "Broadcasting the small dataset to every node is simpler and avoids sorting or large-scale shuffles."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Modern dataflow engines like Spark improve on MapReduce by:",
+          options: [
+            "A) Using completely different programming paradigms",
+            "B) Supporting only smaller datasets",
+            "C) Keeping intermediate data in memory when possible",
+            "D) Requiring manual memory management"
+          ],
+          correctAnswer:
+            "C) Keeping intermediate data in memory when possible",
+          points: 10,
+          explanation:
+            "This approach reduces the overhead of writing intermediate results to disk."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "When processing graph data, the Bulk Synchronous Parallel model:",
+          options: [
+            "A) Converts graphs to relational tables",
+            "B) Processes one vertex at a time sequentially",
+            "C) Passes messages between vertices in synchronized rounds",
+            "D) Requires the entire graph to fit in a single machine's memory"
+          ],
+          correctAnswer:
+            "C) Passes messages between vertices in synchronized rounds",
+          points: 10,
+          explanation:
+            "Vertices exchange data in supersteps, synchronizing at each round."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Which of these is NOT a common batch processing use case?",
+          options: [
+            "A) Building search indexes",
+            "B) Training machine learning models",
+            "C) Responding to user queries in real-time",
+            "D) Generating analytics reports"
+          ],
+          correctAnswer:
+            "C) Responding to user queries in real-time",
+          points: 10,
+          explanation:
+            "Real-time queries are typically a streaming or OLTP scenario, not batch."
+        }
+      ]
+    }
+  },
+
+  // ========================================
+  // CHAPTER 11
+  // ========================================
+  {
+    title: "Stream Processing",
+    description:
+      "Discover how to handle unbounded, continuous data streams, compare messaging systems, and explore real-time analytics, event time vs. processing time, and fault tolerance strategies.",
+    order: 11,
+    lessons: [
+      // ---------------------------
+      // LESSON 1
+      // ---------------------------
+      {
+        title: "Foundations of Stream Processing",
+        slug: "foundations-of-stream-processing",
+        description:
+          "Learn what event streams are, how messaging systems handle them, and the differences between message brokers and log-based systems like Kafka.",
+        order: 1,
+        duration: 45,
+        parts: [
+          // PART 1
+          {
+            title: "Understanding Event Streams",
+            content:
+              "In stream processing, data is unbounded, arriving as events over time. Each event records a single fact that happened at a specific moment.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Event Definition",
+              description:
+                "Pick the best definition of an event in stream processing.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which of the following best describes an event in stream processing?",
+                options: [
+                  "A) A continuous flow of data",
+                  "B) A small, immutable record of something that happened at a point in time",
+                  "C) A materialized view of all data",
+                  "D) A query result from a database"
+                ],
+                correctAnswer:
+                  "B) A small, immutable record of something that happened at a point in time",
+                explanation:
+                  "Each event stands alone as a record of a single occurrence."
+              }
+            }
+          },
+          // PART 2
+          {
+            title: "Messaging Systems",
+            content:
+              "Messaging systems carry events between producers and consumers, using either a broker/queue model or a log-based model. Reliable delivery is key, often requiring acknowledgments.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "drag-and-drop",
+              title: "Mini Exercise: Messaging System Features",
+              description:
+                "Match each feature with the appropriate messaging system type.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                items: [
+                  "Messages are deleted after consumption",
+                  "Maintains a persistent log of all messages",
+                  "Typically uses a push model",
+                  "Allows replay of historical messages"
+                ],
+                targets: [
+                  "[Message broker]",
+                  "[Log-based broker]",
+                  "[Message broker]",
+                  "[Log-based broker]"
+                ],
+                correctPairs: [
+                  [
+                    "Messages are deleted after consumption",
+                    "[Message broker]"
+                  ],
+                  [
+                    "Maintains a persistent log of all messages",
+                    "[Log-based broker]"
+                  ],
+                  [
+                    "Typically uses a push model",
+                    "[Message broker]"
+                  ],
+                  [
+                    "Allows replay of historical messages",
+                    "[Log-based broker]"
+                  ]
+                ]
+              }
+            }
+          },
+          // PART 3
+          {
+            title: "Comparing Messaging Models",
+            content:
+              "Traditional brokers remove messages once consumed. Log-based systems like Kafka store data for a set time, enabling replays and multiple independent consumers reading at different offsets.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Log-Based Brokers",
+              description:
+                "Select the scenario best served by a log-based approach like Kafka.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which scenario would be better suited for a log-based messaging system like Kafka instead of a traditional message broker?",
+                options: [
+                  "A) Processing payments where each payment should be handled exactly once",
+                  "B) Distributing tasks among workers where each task can go to any available worker",
+                  "C) Building a real-time analytics dashboard that needs to process all historical and new events",
+                  "D) Managing a job queue where completed jobs should be removed from the system"
+                ],
+                correctAnswer:
+                  "C) Building a real-time analytics dashboard that needs to process all historical and new events",
+                explanation:
+                  "Log-based brokers retain messages and allow new consumers to read from the beginning for full history."
+              }
+            }
+          }
+        ],
+        endOfLessonQuiz: {
+          title: "Stream Fundamentals Quiz",
+          description:
+            "Quick review on unbounded data flows, event definitions, and how messaging systems differ between brokers and logs.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "What distinguishes stream processing from batch processing?",
+              options: [
+                "A) Stream processing uses more powerful hardware",
+                "B) Stream processing handles unbounded datasets that are continually updated",
+                "C) Stream processing can only work with small amounts of data",
+                "D) Stream processing always produces more accurate results"
+              ],
+              correctAnswer:
+                "B) Stream processing handles unbounded datasets that are continually updated",
+              points: 10,
+              explanation:
+                "Streams don’t stop – new events keep arriving indefinitely."
+            }
+          ]
+        }
+      },
+
+      // ---------------------------
+      // LESSON 2
+      // ---------------------------
+      {
+        title: "Stream Processing Patterns",
+        slug: "stream-processing-patterns",
+        description:
+          "Dive into operator pipelines, handling event time vs. processing time, windowing, streaming joins, and typical use cases like CEP, analytics, and view maintenance.",
+        order: 2,
+        duration: 45,
+        parts: [
+          {
+            title: "Stream Processing Concepts",
+            content:
+              "Operators transform events individually or in windows. Event time vs. processing time must be considered, and streaming joins can combine multiple streams or streams with tables.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Event vs. Processing Time",
+              description:
+                "Identify the key issue with event vs. processing time alignment.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "In stream processing, what is the key challenge when dealing with event time versus processing time?",
+                options: [
+                  "A) Event timestamps are always inaccurate",
+                  "B) Processing times are too slow for real-time applications",
+                  "C) Events may arrive out of order or with variable delays",
+                  "D) Converting between different time zones"
+                ],
+                correctAnswer:
+                  "C) Events may arrive out of order or with variable delays",
+                explanation:
+                  "Late or out-of-order arrivals require special handling to correctly interpret event time."
+              }
+            }
+          },
+          {
+            title: "Stream Processing Applications",
+            content:
+              "Complex Event Processing (CEP) looks for patterns across multiple events. Stream analytics aggregates over time windows. Materialized views keep data derived from streams up to date.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: CEP Use Case",
+              description:
+                "Decide which scenario suits Complex Event Processing best.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which stream processing application would you use to detect when a credit card is used in multiple countries within a short time period?",
+                options: [
+                  "A) Stream Analytics",
+                  "B) Complex Event Processing",
+                  "C) Materialized View Maintenance",
+                  "D) Batch Processing"
+                ],
+                correctAnswer: "B) Complex Event Processing",
+                explanation:
+                  "CEP matches patterns across streams to trigger alerts for suspicious or targeted behavior."
+              }
+            }
+          },
+          {
+            title: "Handling Time in Streams",
+            content:
+              "Windowing organizes events by time intervals (tumbling, hopping, sliding, session), and watermarks help manage late arrivals. Systems may update or retract earlier results.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "drag-and-drop",
+              title: "Mini Exercise: Window Types",
+              description:
+                "Match each window type with its description.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                items: [
+                  "Fixed-size, non-overlapping time buckets",
+                  "Windows that capture events within a time range of each other",
+                  "Windows grouped by periods of activity with a timeout",
+                  "Fixed-size windows that advance by smaller increments"
+                ],
+                targets: [
+                  "[Tumbling window]",
+                  "[Sliding window]",
+                  "[Session window]",
+                  "[Hopping window]"
+                ],
+                correctPairs: [
+                  [
+                    "Fixed-size, non-overlapping time buckets",
+                    "[Tumbling window]"
+                  ],
+                  [
+                    "Windows that capture events within a time range of each other",
+                    "[Sliding window]"
+                  ],
+                  [
+                    "Windows grouped by periods of activity with a timeout",
+                    "[Session window]"
+                  ],
+                  [
+                    "Fixed-size windows that advance by smaller increments",
+                    "[Hopping window]"
+                  ]
+                ]
+              }
+            }
+          }
+        ],
+        endOfLessonQuiz: {
+          title: "Stream Processing Patterns Quiz",
+          description:
+            "Check knowledge of operator pipelines, time handling, windowing, CEP, and how real-time analytics is implemented.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which scenario would be best handled by CEP (Complex Event Processing)?",
+              options: [
+                "A) Aggregating a rolling count of page views",
+                "B) Quickly detecting suspicious sequences of events for fraud",
+                "C) Caching frequently requested items",
+                "D) Maintaining a real-time global scoreboard"
+              ],
+              correctAnswer:
+                "B) Quickly detecting suspicious sequences of events for fraud",
+              points: 10,
+              explanation:
+                "CEP is designed for pattern matching across multiple event streams to identify complex conditions."
+            }
+          ]
+        }
+      },
+
+      // ---------------------------
+      // LESSON 3
+      // ---------------------------
+      {
+        title: "Fault Tolerance and Streaming Systems",
+        slug: "fault-tolerance-and-streaming-systems",
+        description:
+          "Examine exactly-once vs. at-least-once processing, checkpointing, and popular frameworks like Kafka, Flink, and Spark Streaming. Learn about using CDC and event sourcing.",
+        order: 3,
+        duration: 45,
+        parts: [
+          // PART 1
+          {
+            title: "Fault Tolerance in Streaming",
+            content:
+              "Recovery from node failures often uses checkpointing to resume from a safe state. Exactly-once semantics rely on idempotent operations to avoid double-counting.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Idempotent Operation Benefit",
+              description:
+                "Identify how idempotent operations aid streaming reliability.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What does an idempotent operation allow in stream processing?",
+                options: [
+                  "A) Processing events in any order",
+                  "B) Processing events only during business hours",
+                  "C) Safely processing the same event multiple times",
+                  "D) Ignoring events that arrive too late"
+                ],
+                correctAnswer:
+                  "C) Safely processing the same event multiple times",
+                explanation:
+                  "Repeating an idempotent action yields the same end result, enabling safe retries."
+              }
+            }
+          },
+          // PART 2
+          {
+            title: "Stream Processing Systems",
+            content:
+              "Kafka handles high-throughput logs, Flink provides stateful event-time streaming, Spark uses micro-batches, and others like Samza or Storm offer different trade-offs.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Micro-Batch Approach",
+              description:
+                "Choose which framework uses micro-batches for streaming data.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which stream processing system uses a micro-batch approach rather than true record-by-record processing?",
+                options: [
+                  "A) Apache Flink",
+                  "B) Apache Storm",
+                  "C) Apache Spark Streaming",
+                  "D) Apache Samza"
+                ],
+                correctAnswer:
+                  "C) Apache Spark Streaming",
+                explanation:
+                  "Spark Streaming breaks incoming data into small time-sliced micro-batches."
+              }
+            }
+          },
+          // PART 3
+          {
+            title: "Streaming and Databases",
+            content:
+              "CDC allows capturing changes from databases as streams. Event sourcing logs changes as events, deriving state from replaying. Some systems unify streaming with queryable state for real-time apps.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Event Sourcing Benefit",
+              description:
+                "Pick the main advantage of storing all changes as events over time.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is the primary benefit of Event Sourcing compared to traditional database updates?",
+                options: [
+                  "A) Faster query performance",
+                  "B) Complete history of all changes",
+                  "C) Simpler database schema",
+                  "D) Lower storage requirements"
+                ],
+                correctAnswer: "B) Complete history of all changes",
+                explanation:
+                  "You can reconstruct any past state by replaying the full event log."
+              }
+            }
+          }
+        ],
+        endOfLessonQuiz: {
+          title: "Streaming Systems Quiz",
+          description:
+            "Verify your understanding of streaming reliability, system choices, and integration with databases via CDC and event sourcing.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Exactly-once processing semantics means:",
+              options: [
+                "A) Each event is processed exactly one time and never retried",
+                "B) The effect of processing each event is reflected exactly once in the output",
+                "C) The system can only process one event at a time",
+                "D) Events are guaranteed to arrive in exactly the right order"
+              ],
+              correctAnswer:
+                "B) The effect of processing each event is reflected exactly once in the output",
+              points: 10,
+              explanation:
+                "Internally, the system may reprocess an event on failure, but it ensures no duplicate side effects."
+            }
+          ]
+        }
+      }
+    ],
+    endOfChapterQuiz: {
+      title: "Chapter 11 Quiz",
+      description:
+        "Reinforce your knowledge of streaming fundamentals, time handling, fault tolerance, and how frameworks and CDC unify real-time data flows.",
+      duration: 30,
+      passingScore: 75,
+      slug: "chapter-11-quiz",
+      questions: [
+        {
+          type: "multiple-choice",
+          question:
+            "In log-based messaging systems like Kafka:",
+          options: [
+            "A) Messages are deleted as soon as they're consumed",
+            "B) Each message is delivered to exactly one consumer",
+            "C) Messages are retained for a configured period regardless of consumption",
+            "D) Consumers must process messages at the same rate they are produced"
+          ],
+          correctAnswer:
+            "C) Messages are retained for a configured period regardless of consumption",
+          points: 10,
+          explanation:
+            "Kafka and similar systems keep messages in the log, letting consumers read asynchronously at their own offsets."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What is the challenge when dealing with event time in stream processing?",
+          options: [
+            "A) Event timestamps are always inaccurate",
+            "B) Events may arrive out of order or be delayed",
+            "C) Event time requires special hardware to measure",
+            "D) Event time is always less important than processing time"
+          ],
+          correctAnswer:
+            "B) Events may arrive out of order or be delayed",
+          points: 10,
+          explanation:
+            "Late arrivals complicate aggregations or windowing based on event time."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "A tumbling window in stream processing is:",
+          options: [
+            "A) A window that gets smaller over time",
+            "B) A fixed-size, non-overlapping time interval",
+            "C) A window that groups events from the same user session",
+            "D) A sliding window that advances at variable rates"
+          ],
+          correctAnswer:
+            "B) A fixed-size, non-overlapping time interval",
+          points: 10,
+          explanation:
+            "Tumbling windows partition the timeline into contiguous chunks of equal length."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What is Change Data Capture (CDC)?",
+          options: [
+            "A) A method for enforcing data quality rules",
+            "B) A technique for capturing changes to a database as a stream of events",
+            "C) A way to detect unauthorized changes to data",
+            "D) A process for changing database schemas"
+          ],
+          correctAnswer:
+            "B) A technique for capturing changes to a database as a stream of events",
+          points: 10,
+          explanation:
+            "CDC extracts inserts/updates/deletes from a database, often publishing them to a messaging system."
+        }
+      ]
+    }
+  },
+
+  // ========================================
+  // CHAPTER 12
+  // ========================================
+  {
+    title: "The Future of Data Systems",
+    description:
+      "Explore event-driven integration, the unbundled database approach, ensuring correctness with the end-to-end argument, and ethical considerations for next-gen data systems.",
+    order: 12,
+    lessons: [
+      // ---------------------------
+      // LESSON 1
+      // ---------------------------
+      {
+        title: "Data Integration and Unbundling Databases",
+        slug: "data-integration-and-unbundling-databases",
+        description:
+          "Learn why systems must integrate multiple tools (OLTP, search, analytics, caches), how event logs unify them, and what the 'unbundled database' approach means.",
+        order: 1,
+        duration: 45,
+        parts: [
+          {
+            title: "Data Integration Challenges",
+            content:
+              "Modern apps often use many specialized data systems. Keeping them consistent is hard; naive approaches (like dual writes) are fragile. Synchronous distributed transactions hamper scalability.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Dual Writes Issue",
+              description:
+                "Explain why updating multiple systems at once (dual writes) is risky.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why is the 'dual writes' approach to data integration problematic?",
+                options: [
+                  "A) It's too slow for most applications",
+                  "B) It requires specialized hardware",
+                  "C) It's vulnerable to race conditions and partial failures",
+                  "D) It only works with relational databases"
+                ],
+                correctAnswer:
+                  "C) It's vulnerable to race conditions and partial failures",
+                explanation:
+                  "If one system commits and the other fails, data becomes inconsistent."
+              }
+            }
+          },
+          {
+            title: "Event Streams for Data Integration",
+            content:
+              "By capturing changes as an event stream (CDC, event sourcing), we can replicate data across systems in an ordered log. This approach decouples producers from consumers and supports replay.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Event Log Benefit",
+              description:
+                "Identify the key advantage of logging events for system-wide data integration.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is the primary benefit of using an event log for data integration?",
+                options: [
+                  "A) It eliminates the need for databases",
+                  "B) It provides a clear, consistent ordering of all changes",
+                  "C) It makes all operations synchronous",
+                  "D) It reduces the total amount of data stored"
+                ],
+                correctAnswer:
+                  "B) It provides a clear, consistent ordering of all changes",
+                explanation:
+                  "Systems can read the log in order, maintaining a consistent flow of updates."
+              }
+            }
+          },
+          {
+            title: "Unbundling Database Functions",
+            content:
+              "Traditional databases combine storage, indexing, caching, transactions. An alternative is unbundling them into specialized services, tied together by event logs and stream processors.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Replacing Transactions",
+              description:
+                "What mechanism in an unbundled database architecture replaces the role of transactions in a monolithic database?",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "In the 'unbundled database' approach, what plays the role that transactions would in a traditional database?",
+                options: [
+                  "A) Manual coordination between services",
+                  "B) Event logs and stream processors with idempotent operations",
+                  "C) Global locks",
+                  "D) Two-phase commit protocols"
+                ],
+                correctAnswer:
+                  "B) Event logs and stream processors with idempotent operations",
+                explanation:
+                  "By capturing changes in logs and carefully designing operations as idempotent, global consistency can be managed across multiple specialized components."
+              }
+            }
+          }
+        ],
+        endOfLessonQuiz: {
+          title: "Unbundling Databases Quiz",
+          description:
+            "Check your knowledge of event-stream-based integration, why dual writes fail, and how specialized components replace monolithic database functions.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "Which approach to data integration provides the strongest consistency guarantees while maintaining system independence?",
+              options: [
+                "A) Synchronous dual writes to all systems",
+                "B) Event logs with clear ordering guarantees",
+                "C) Periodic batch ETL processes",
+                "D) Distributed transactions across all systems"
+              ],
+              correctAnswer:
+                "B) Event logs with clear ordering guarantees",
+              points: 10,
+              explanation:
+                "Event logs unify updates in a single sequence, letting each subsystem remain decoupled but consistent."
+            }
+          ]
+        }
+      },
+
+      // ---------------------------
+      // LESSON 2
+      // ---------------------------
+      {
+        title: "Designing for Correctness",
+        slug: "designing-for-correctness",
+        description:
+          "Hear about the end-to-end argument, constraints in distributed systems, and verifying correctness when hardware, software, and people can fail.",
+        order: 2,
+        duration: 45,
+        parts: [
+          {
+            title: "The End-to-End Argument",
+            content:
+              "Some properties—like deduplicating requests—must be enforced at the application endpoints, not by the infrastructure alone. This perspective helps ensure correctness despite partial failures or retries.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Payment Exactly Once",
+              description:
+                "Select the best approach to guarantee a payment is processed exactly once.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "According to the end-to-end argument, what's the most reliable way to ensure a user's payment is processed exactly once?",
+                options: [
+                  "A) Use a database with ACID transactions",
+                  "B) Implement unique request IDs at the application level",
+                  "C) Rely on TCP's reliability guarantees",
+                  "D) Use a messaging system with exactly-once delivery"
+                ],
+                correctAnswer:
+                  "B) Implement unique request IDs at the application level",
+                explanation:
+                  "Even if the network or database replays messages, the app can check request IDs to avoid duplicates."
+              }
+            }
+          },
+          {
+            title: "Enforcing Constraints",
+            content:
+              "Distributed constraints like unique user IDs or foreign keys are tough without global transactions. One alternative is routing conflicting ops to the same partition or accepting eventual resolution of conflicts.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Unique Usernames",
+              description:
+                "Pick a feasible strategy to ensure global uniqueness with minimal distributed overhead.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What's a viable approach to enforce uniqueness of usernames in a distributed system?",
+                options: [
+                  "A) Check a central database before allowing registration",
+                  "B) Hash usernames and route registration requests to a partition based on the hash",
+                  "C) Allow duplicate registrations and resolve conflicts later",
+                  "D) Limit username registration to non-peak hours"
+                ],
+                correctAnswer:
+                  "B) Hash usernames and route registration requests to a partition based on the hash",
+                explanation:
+                  "All requests for the same username end up on the same partition, letting it enforce uniqueness."
+              }
+            }
+          },
+          {
+            title: "Trust but Verify",
+            content:
+              "No component is infallible. Verification layers (checksums, self-auditing logs) detect data corruption or bugs. Systems should prefer detection over blind trust.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Reliability Even with Bugs",
+              description:
+                "Explain why verifying correctness is crucial in data systems.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Why is 'trust but verify' important even with reliable database systems?",
+                options: [
+                  "A) It's only important for security, not correctness",
+                  "B) Even well-tested software can have bugs that corrupt data",
+                  "C) It helps improve performance",
+                  "D) It's only needed for financial applications"
+                ],
+                correctAnswer:
+                  "B) Even well-tested software can have bugs that corrupt data",
+                explanation:
+                  "Verification checks can catch silent errors or corruption that slip past normal safeguards."
+              }
+            }
+          }
+        ],
+        endOfLessonQuiz: {
+          title: "Correctness in Distributed Systems Quiz",
+          description:
+            "Quick check on end-to-end argument, distributed constraint strategies, and verifying correctness beyond normal resilience measures.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "According to the end-to-end argument:",
+              options: [
+                "A) Only end users can verify that a system works correctly",
+                "B) Some properties can only be correctly implemented at the application endpoints",
+                "C) All data validation should happen at database boundaries",
+                "D) Network infrastructure should handle all reliability concerns"
+              ],
+              correctAnswer:
+                "B) Some properties can only be correctly implemented at the application endpoints",
+              points: 10,
+              explanation:
+                "Infrastructure might ensure message delivery but can’t know if two identical messages mean the same request or different attempts."
+            }
+          ]
+        }
+      },
+
+      // ---------------------------
+      // LESSON 3
+      // ---------------------------
+      {
+        title: "Ethics in Data Systems",
+        slug: "ethics-in-data-systems",
+        description:
+          "Review the ethical implications of big data collection, algorithmic decisions, privacy, bias, and how to build responsibly.",
+        order: 3,
+        duration: 45,
+        parts: [
+          {
+            title: "Ethical Considerations in Data Collection",
+            content:
+              "Large-scale data gathering raises privacy and consent issues. Policies like 'collect everything' can expose users to risks they can’t fully consent to.",
+            order: 1,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Privacy-Respectful Design",
+              description:
+                "Choose the best approach to handling user data ethically.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which approach better respects user privacy when designing data systems?",
+                options: [
+                  "A) Collect all possible data and determine its use later",
+                  "B) Collect only what's needed for specific purposes and discard when no longer needed",
+                  "C) Anonymize all data but keep it indefinitely",
+                  "D) Get users to sign comprehensive consent forms"
+                ],
+                correctAnswer:
+                  "B) Collect only what's needed for specific purposes and discard when no longer needed",
+                explanation:
+                  "This approach follows data minimization, limiting exposure risks."
+              }
+            }
+          },
+          {
+            title: "Algorithmic Decision Making",
+            content:
+              "AI and ML can amplify biases if trained on skewed data, or make opaque decisions. Accountability and transparency become crucial as these models affect livelihoods.",
+            order: 2,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Feedback Loops",
+              description:
+                "Pick the negative consequence of uncorrected biases in predictive models.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "What is a problematic feedback loop that can occur with predictive algorithms?",
+                options: [
+                  "A) Algorithms become more accurate over time",
+                  "B) Poor predictions cause system crashes",
+                  "C) Predictions can become self-fulfilling prophecies that reinforce inequalities",
+                  "D) Users become overly dependent on algorithm recommendations"
+                ],
+                correctAnswer:
+                  "C) Predictions can become self-fulfilling prophecies that reinforce inequalities",
+                explanation:
+                  "If an algorithm systematically denies resources to a group, performance outcomes degrade, reinforcing the initial bias."
+              }
+            }
+          },
+          {
+            title: "Building Responsible Data Systems",
+            content:
+              "Data minimization, transparency, adversarial thinking, and stronger ethics frameworks can help. 'Move fast and break things' should be replaced with mindful design.",
+            order: 3,
+            duration: 15,
+            exercise: {
+              type: "multiple-choice",
+              title: "Mini Exercise: Responsible Data Practices",
+              description:
+                "Select the design practice that best fosters ethical data usage.",
+              points: 10,
+              difficulty: "beginner",
+              content: {
+                question:
+                  "Which practice represents responsible data system design?",
+                options: [
+                  "A) Collecting all possible data to maximize future options",
+                  "B) Making systems as automated as possible to remove human bias",
+                  "C) Building privacy controls and data governance from the beginning",
+                  "D) Moving quickly to establish market share before regulations catch up"
+                ],
+                correctAnswer:
+                  "C) Building privacy controls and data governance from the beginning",
+                explanation:
+                  "Privacy by design ensures user rights are protected from the outset."
+              }
+            }
+          }
+        ],
+        endOfLessonQuiz: {
+          title: "Ethics in Data Systems Quiz",
+          description:
+            "Confirm your understanding of privacy, algorithmic bias, and responsible design choices in modern data-intensive applications.",
+          duration: 15,
+          passingScore: 70,
+          questions: [
+            {
+              type: "multiple-choice",
+              question:
+                "What ethical concern is raised by long-term data retention?",
+              options: [
+                "A) Storage costs become prohibitive",
+                "B) Old data becomes technically obsolete",
+                "C) Historical data creates ongoing privacy risks",
+                "D) Developers forget how the data is structured"
+              ],
+              correctAnswer:
+                "C) Historical data creates ongoing privacy risks",
+              points: 10,
+              explanation:
+                "Storing personal data indefinitely increases exposure to breaches or misuse."
+            }
+          ]
+        }
+      }
+    ],
+    endOfChapterQuiz: {
+      title: "Chapter 12 Quiz",
+      description:
+        "Evaluate your knowledge of event-driven integration, correctness strategies, and ethical considerations shaping the future of data systems.",
+      duration: 30,
+      passingScore: 75,
+      slug: "chapter-12-quiz",
+      questions: [
+        {
+          type: "multiple-choice",
+          question:
+            "The 'unbundled database' approach refers to:",
+          options: [
+            "A) Using smaller database instances for better performance",
+            "B) Breaking database functionality into specialized components connected by event streams",
+            "C) Running different databases for development and production",
+            "D) Migrating from monolithic to microservice architectures"
+          ],
+          correctAnswer:
+            "B) Breaking database functionality into specialized components connected by event streams",
+          points: 10,
+          explanation:
+            "Storage, indexing, transaction logic, etc., can each be separate systems working in concert."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What is a viable approach to uniqueness constraints in distributed systems?",
+          options: [
+            "A) Always use distributed transactions",
+            "B) Route operations that need the same constraint to the same partition",
+            "C) Check constraints only during off-peak hours",
+            "D) Ignore constraints and fix violations manually"
+          ],
+          correctAnswer:
+            "B) Route operations that need the same constraint to the same partition",
+          points: 10,
+          explanation:
+            "This ensures conflicting operations meet at a single node that can enforce the constraint."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "What ethical concern is raised by long-term data retention?",
+          options: [
+            "A) Storage costs become prohibitive",
+            "B) Old data becomes technically obsolete",
+            "C) Historical data creates ongoing privacy risks",
+            "D) Developers forget how the data is structured"
+          ],
+          correctAnswer:
+            "C) Historical data creates ongoing privacy risks",
+          points: 10,
+          explanation:
+            "Keeping personal or sensitive data indefinitely can lead to bigger breaches or misuse in the future."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "Which approach to data integration provides the strongest consistency while maintaining system independence?",
+          options: [
+            "A) Synchronous dual writes to all systems",
+            "B) Event logs with clear ordering guarantees",
+            "C) Periodic batch ETL processes",
+            "D) Distributed transactions across all systems"
+          ],
+          correctAnswer: "B) Event logs with clear ordering guarantees",
+          points: 10,
+          explanation:
+            "An event log can unify updates without locking every system in a global transaction, while preserving a single ordered sequence of changes."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "The 'trust but verify' principle suggests that:",
+          options: [
+            "A) All systems should be assumed to be compromised",
+            "B) Users cannot be trusted with sensitive features",
+            "C) Even reliable components should be checked for correctness",
+            "D) Verification should replace all security measures"
+          ],
+          correctAnswer:
+            "C) Even reliable components should be checked for correctness",
+          points: 10,
+          explanation:
+            "Bugs, data corruption, or misconfigurations can slip through if verification isn’t performed regularly."
+        },
+        {
+          type: "multiple-choice",
+          question:
+            "When algorithms make predictions that affect people's lives:",
+          options: [
+            "A) The results are always more fair than human decisions",
+            "B) There's a risk of amplifying biases in the training data",
+            "C) The decisions should always be accepted without question",
+            "D) Traditional legal frameworks are sufficient for accountability"
+          ],
+          correctAnswer:
+            "B) There's a risk of amplifying biases in the training data",
+          points: 10,
+          explanation:
+            "Training data may embed historical discrimination or skew, which ML models can reinforce."
+        }
+      ]
+    }
   }
+
 
   ],
 
