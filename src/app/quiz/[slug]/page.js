@@ -78,6 +78,10 @@ export default function QuizPage() {
       }
 
       const quizData = await quizResponse.json();
+      
+      // Dispatch quiz completion event
+      window.dispatchEvent(new Event('quizCompleted'));
+
       let completionInfo = {
         score: quizData.score,
         xpGained: quizData.xpGained,

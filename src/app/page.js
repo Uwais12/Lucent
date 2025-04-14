@@ -89,6 +89,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [enrollingCourseId, setEnrollingCourseId] = useState(null);
+  const [canTakeQuizToday, setCanTakeQuizToday] = useState(true);
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -131,30 +133,61 @@ export default function Home() {
     }
   }, [isLoaded, isSignedIn]);
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await fetch('/api/profile');
-        if (!response.ok) throw new Error('Failed to fetch profile');
-        const data = await response.json();
-        setUserProfile(data);
-        
-        // Show streak broken notification if applicable
-        if (data.streakStatus?.broken) {
-          toast.error(`Your ${data.streakStatus.previousStreak}-day streak was broken! Start a new one today!`, {
-            duration: 5000,
-            position: 'top-center'
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch('/api/profile');
+      if (!response.ok) throw new Error('Failed to fetch profile');
+      const data = await response.json();
+      setUserProfile(data);
+      console.log('Last quiz completion: ', data);
+      // Check if user can take a quiz today
+      if (data.lastQuizCompletion) {
+        const lastQuizDate = new Date(data.lastQuizCompletion);
+        const today = new Date();
+        const isSameDay = lastQuizDate.toDateString() === today.toDateString();
+        setCanTakeQuizToday(!isSameDay);
+      } else {
+        setCanTakeQuizToday(true);
       }
-    };
+      
+      // Show streak broken notification if applicable
+      if (data.streakStatus?.broken) {
+        toast.error(`Your ${data.streakStatus.previousStreak}-day streak was broken! Start a new one today!`, {
+          duration: 5000,
+          position: 'top-center'
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
-    if (session?.user) {
+  // Initial fetch when signed in
+  useEffect(() => {
+    if (isSignedIn) {
       fetchUserProfile();
     }
-  }, [session]);
+  }, [isSignedIn]);
+
+  // Refresh profile when lastUpdate changes
+  useEffect(() => {
+    if (isSignedIn) {
+      fetchUserProfile();
+    }
+  }, [lastUpdate]);
+
+  // Listen for quiz completion events
+  useEffect(() => {
+    const handleQuizComplete = () => {
+      setLastUpdate(Date.now());
+    };
+
+    window.addEventListener('quizCompleted', handleQuizComplete);
+
+    return () => {
+      window.removeEventListener('quizCompleted', handleQuizComplete);
+    };
+  }, []);
 
   useEffect(() => {
     // const seedDatabase = async () => {
@@ -301,6 +334,15 @@ export default function Home() {
       console.error("No quiz slug found");
       return;
     }
+
+    if (!canTakeQuizToday) {
+      toast.error("You've already completed a quiz today. Come back tomorrow for more!", {
+        duration: 5000,
+        position: 'top-center'
+      });
+      return;
+    }
+
     console.log('Checking enrollment for quiz + slug: ', quiz.slug, 'and type: ', quiz.type);
     const isEnrolled = await checkEnrollment(quiz.slug, quiz.type);
     if (isEnrolled) {
@@ -357,7 +399,6 @@ export default function Home() {
       <Navbar />
       <div className="color-bar w-full fixed top-16 left-0"></div>
 
-      {/* XP Notification with Confetti */}
       <Suspense fallback={null}>
         <XPNotificationHandler />
       </Suspense>
@@ -414,6 +455,27 @@ export default function Home() {
                     {userProfile?.progress?.completedLessons || 0}
                   </h3>
                   <p className="text-xs sm:text-sm text-gray-600">Lessons Completed</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Daily Quiz Status */}
+          <div className="mb-8 sm:mb-12">
+            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className={`p-2 sm:p-3 ${canTakeQuizToday ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} rounded-lg`}>
+                  <Target className="w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <div>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">
+                    {canTakeQuizToday ? "Daily Quiz Available!" : "Daily Quiz Completed"}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-600">
+                    {canTakeQuizToday 
+                      ? "Take a quiz to earn rewards!" 
+                      : "Come back tomorrow for more quizzes!"}
+                  </p>
                 </div>
               </div>
             </div>

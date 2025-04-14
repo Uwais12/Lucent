@@ -75,6 +75,20 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Check if user has already completed a quiz today
+    if (user.lastQuizCompletion) {
+      const lastQuizDate = new Date(user.lastQuizCompletion);
+      const today = new Date();
+      
+      // Check if last quiz was completed today
+      if (lastQuizDate.toDateString() === today.toDateString()) {
+        return NextResponse.json({ 
+          error: "Daily quiz limit reached. You can take another quiz tomorrow.",
+          dailyLimitReached: true
+        }, { status: 403 });
+      }
+    }
+
     // Calculate score
     let correctAnswers = 0;
     quiz.questions.forEach((question, index) => {
@@ -108,6 +122,13 @@ export async function POST(req, { params }) {
     });
 
     const score = Math.round((correctAnswers / quiz.questions.length) * 100);
+
+    // Only update lastQuizCompletion if score is passing (70% or higher)
+    const passingScore = score >= 70;
+    if (passingScore) {
+      user.lastQuizCompletion = new Date();
+      await user.save();
+    }
 
     // Calculate rewards based on score brackets
     let xpGained = 0;

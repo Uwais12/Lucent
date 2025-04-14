@@ -2194,7 +2194,7 @@ export const ddiaCourse = {
     // ========================================
     {
     title: "Encoding and Evolution",
-    description:
+      description:
     "Explore how data is serialized, how to maintain backward and forward compatibility, and how data flows between systems even as schemas evolve.",
     order: 4,
     lessons: [

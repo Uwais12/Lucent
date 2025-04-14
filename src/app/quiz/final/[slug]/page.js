@@ -76,6 +76,10 @@ export default function FinalExam() {
       }
 
       const data = await response.json();
+      
+      // Dispatch quiz completion event
+      window.dispatchEvent(new Event('quizCompleted'));
+
       const completionInfo = {
         score: data.score,
         xpGained: data.xpGained,
