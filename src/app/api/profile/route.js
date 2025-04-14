@@ -38,9 +38,19 @@ export async function GET(request) {
         await user.save();
       } else {
         // Streak broken
+        const oldStreak = user.dailyStreak;
         user.dailyStreak = 1;
         user.lastDailyActivity = now;
         await user.save();
+        
+        // Add streak status to response
+        return NextResponse.json({
+          ...user.toObject(),
+          streakStatus: {
+            broken: true,
+            previousStreak: oldStreak
+          }
+        });
       }
     } else {
       // First activity
@@ -49,8 +59,13 @@ export async function GET(request) {
       await user.save();
     }
 
-    // 4) Return user doc
-    return NextResponse.json(user);
+    // 4) Return user doc with streak status
+    return NextResponse.json({
+      ...user.toObject(),
+      streakStatus: {
+        broken: false
+      }
+    });
   } catch (err) {
     console.error("Error in GET /api/profile:", err);
     // Return a 500

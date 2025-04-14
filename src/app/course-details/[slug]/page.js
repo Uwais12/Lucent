@@ -21,6 +21,7 @@ import {
 import Navbar from "@/app/components/Navbar";
 import Dialog from "@/components/Dialog";
 import XPNotification from "../../components/XPNotification";
+import { toast } from "react-hot-toast";
 
 // Separate client component for handling XP notifications
 function XPNotificationHandler({ params }) {
@@ -80,6 +81,7 @@ export default function CourseDetails() {
   const [isEnrollDialogOpen, setIsEnrollDialogOpen] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -165,6 +167,26 @@ export default function CourseDetails() {
     } finally {
       setEnrolling(false);
       setIsEnrollDialogOpen(false);
+    }
+  };
+
+  const checkEnrollment = async (quizSlug, quizType) => {
+    try {
+      const response = await fetch('/api/courses/check-enrollment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ contentSlug: quizSlug, contentType: quizType })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to check enrollment');
+      }
+      const data = await response.json();
+      return data.isEnrolled;
+    } catch (error) {
+      console.error('Error checking enrollment:', error);
+      return false;
     }
   };
 
@@ -465,12 +487,27 @@ export default function CourseDetails() {
                                   </div>
                                 </div>
                                 <button
-                                  onClick={() => {
+                                  onClick={async () => {
                                     if (!chapter.endOfChapterQuiz.slug) {
                                       console.error('No quiz slug found');
                                       return;
                                     }
-                                    router.push(`/quiz/chapter/${chapter.endOfChapterQuiz.slug}`);
+                                    
+                                    setIsChecking(true);
+                                    try {
+                                      console.log('Checking enrollment for chapter quiz + slug: ', chapter.endOfChapterQuiz.slug, 'and type: ', 'chapter-quiz');
+                                      const isEnrolled = await checkEnrollment(chapter.endOfChapterQuiz.slug, 'chapter-quiz');
+                                      if (isEnrolled) {
+                                        router.push(`/quiz/chapter/${chapter.endOfChapterQuiz.slug}`);
+                                      } else {
+                                        toast.error('You must be enrolled in this course to take the quiz');
+                                      }
+                                    } catch (error) {
+                                      console.error('Error checking enrollment:', error);
+                                      toast.error('Failed to check enrollment status');
+                                    } finally {
+                                      setIsChecking(false);
+                                    }
                                   }}
                                   className={`w-full px-4 py-2 ${
                                     chapterProgress?.endOfChapterQuiz?.completed
@@ -479,7 +516,7 @@ export default function CourseDetails() {
                                   } text-white rounded-lg transition-colors flex items-center justify-center gap-2`}
                                 >
                                   <GraduationCap className="w-5 h-5" />
-                                  {chapterProgress?.endOfChapterQuiz?.completed
+                                  {isChecking ? 'Checking...' : chapterProgress?.endOfChapterQuiz?.completed
                                     ? 'Review Chapter Quiz'
                                     : 'Start Chapter Quiz'}
                                 </button>
@@ -537,14 +574,25 @@ export default function CourseDetails() {
                       </p>
                     )}
                     <button
-                      onClick={() => {
-                        console.log('Final exam button clicked');
-                        console.log('Exam slug:', course.endOfCourseExam.slug);
+                      onClick={async () => {
                         if (!course.endOfCourseExam.slug) {
                           console.error('No exam slug found');
                           return;
                         }
-                        router.push(`/quiz/final/${course.endOfCourseExam.slug}`);
+                        setIsChecking(true);
+                        try {
+                          const isEnrolled = await checkEnrollment(course.endOfCourseExam.slug, 'course-exam');
+                          if (isEnrolled) {
+                            router.push(`/quiz/final/${course.endOfCourseExam.slug}`);
+                          } else {
+                            toast.error('You must be enrolled in this course to take the exam');
+                          }
+                        } catch (error) {
+                          console.error('Error checking enrollment:', error);
+                          toast.error('Failed to check enrollment status');
+                        } finally {
+                          setIsChecking(false);
+                        }
                       }}
                       className={`w-full px-4 py-2 ${
                         course.userProgress?.completed 
@@ -555,7 +603,7 @@ export default function CourseDetails() {
                       } text-white rounded-lg transition-colors flex items-center justify-center gap-2`}
                     >
                       <GraduationCap className="w-5 h-5" />
-                      {course.userProgress?.completed 
+                      {isChecking ? 'Checking...' : course.userProgress?.completed 
                         ? 'Review Final Assessment'
                         : course.userProgress?.completionPercentage >= 100 
                           ? 'Start Final Assessment'

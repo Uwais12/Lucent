@@ -20,6 +20,7 @@ import {
   Bookmark,
   GraduationCap,
 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 import Navbar from "./components/Navbar";
 import XPNotification from "./components/XPNotification";
@@ -131,36 +132,61 @@ export default function Home() {
   }, [isLoaded, isSignedIn]);
 
   useEffect(() => {
-    const seedDatabase = async () => {
+    const fetchUserProfile = async () => {
       try {
-        // First, clean up existing courses
-        const cleanupResponse = await fetch("/api/cleanup", { 
-          method: "POST",
-          cache: 'no-store'
-        });
-        const cleanupData = await cleanupResponse.json();
-        console.log("Cleanup response:", cleanupData);
-
-        // Then seed the courses
-        const response = await fetch("/api/seed", { 
-          method: "POST",
-          cache: 'no-store'
-        });
+        const response = await fetch('/api/profile');
+        if (!response.ok) throw new Error('Failed to fetch profile');
         const data = await response.json();
-        console.log("Seeding response:", data);
+        setUserProfile(data);
         
-        // Refresh courses after seeding
-        const coursesRes = await fetch("/api/courses", { cache: 'no-store' });
-        const coursesData = await coursesRes.json();
-        setDbCourses(coursesData);
+        // Show streak broken notification if applicable
+        if (data.streakStatus?.broken) {
+          toast.error(`Your ${data.streakStatus.previousStreak}-day streak was broken! Start a new one today!`, {
+            duration: 5000,
+            position: 'top-center'
+          });
+        }
       } catch (error) {
-        console.error("Error seeding database:", error);
+        console.error('Error fetching user profile:', error);
       }
     };
 
-    if (isLoaded && isSignedIn) {
-      seedDatabase();
+    if (session?.user) {
+      fetchUserProfile();
     }
+  }, [session]);
+
+  useEffect(() => {
+    // const seedDatabase = async () => {
+    //   try {
+    //     // First, clean up existing courses
+    //     const cleanupResponse = await fetch("/api/cleanup", { 
+    //       method: "POST",
+    //       cache: 'no-store'
+    //     });
+    //     const cleanupData = await cleanupResponse.json();
+    //     console.log("Cleanup response:", cleanupData);
+
+    //     // Then seed the courses
+    //     const response = await fetch("/api/seed", { 
+    //       method: "POST",
+    //       cache: 'no-store'
+    //     });
+    //     const data = await response.json();
+    //     console.log("Seeding response:", data);
+        
+    //     // Refresh courses after seeding
+    //     const coursesRes = await fetch("/api/courses", { cache: 'no-store' });
+    //     const coursesData = await coursesRes.json();
+    //     setDbCourses(coursesData);
+    //   } catch (error) {
+    //     console.error("Error seeding database:", error);
+    //   }
+    // };
+
+    // if (isLoaded && isSignedIn) {
+    //   seedDatabase();
+    // }
   }, [isLoaded, isSignedIn]);
 
   // Function to handle course enrollment
@@ -275,7 +301,7 @@ export default function Home() {
       console.error("No quiz slug found");
       return;
     }
-
+    console.log('Checking enrollment for quiz + slug: ', quiz.slug, 'and type: ', quiz.type);
     const isEnrolled = await checkEnrollment(quiz.slug, quiz.type);
     if (isEnrolled) {
       router.push(
@@ -705,6 +731,7 @@ export default function Home() {
                         <Link 
                           href="#"
                           onClick={(e) => handleQuizClick(e, quiz)}
+        
                           className="px-3 sm:px-4 py-1.5 sm:py-2 bg-fuchsia-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-fuchsia-700 transition-colors"
                         >
                           {isChecking ? 'Checking...' : 'Take Quiz'}
