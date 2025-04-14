@@ -420,11 +420,10 @@ export default function CourseDetails() {
                                   href="#"
                                   onClick={(e) => {
                                     e.preventDefault();
-                                    // UWAIS -- TO UNCOMMENT 
-                                    // if (!canTakeQuizToday) {
-                                    //   toast.error("You've already completed a quiz today. Come back tomorrow for more!");
-                                    //   return;
-                                    // }
+                                    if (!canTakeQuizToday) {
+                                      toast.error("You've already completed a quiz today. Come back tomorrow for more!");
+                                      return;
+                                    }
                                     router.push(`/lesson/${lesson.slug}`);
                                   }}
                                   className={`block cursor-pointer`}

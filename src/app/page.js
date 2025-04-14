@@ -91,6 +91,25 @@ export default function Home() {
   const [enrollingCourseId, setEnrollingCourseId] = useState(null);
   const [canTakeQuizToday, setCanTakeQuizToday] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
+  // Add new state variables for pagination and filtering
+  const [visibleQuizzes, setVisibleQuizzes] = useState(6);
+  const [selectedCourse, setSelectedCourse] = useState('all');
+  const [selectedType, setSelectedType] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Add function to filter quizzes
+  const filteredQuizzes = quizzes.filter(quiz => {
+    const matchesCourse = selectedCourse === 'all' || quiz.courseSlug === selectedCourse;
+    const matchesType = selectedType === 'all' || quiz.type === selectedType;
+    const matchesSearch = quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         quiz.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCourse && matchesType && matchesSearch;
+  });
+
+  // Add function to handle showing more quizzes
+  const showMoreQuizzes = () => {
+    setVisibleQuizzes(prev => prev + 6);
+  };
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -738,12 +757,70 @@ export default function Home() {
           <div>
             <div className="flex items-center justify-between mb-4 sm:mb-6">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Challenge Yourself</h2>
-              <button className="text-violet-600 hover:text-violet-700 text-sm flex items-center gap-1 sm:gap-2 transition-colors">
-                All Quizzes <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
-              </button>
             </div>
+
+            {/* Filters */}
+            <div className="mb-6">
+              <div className="bg-white p-4 rounded-xl shadow-sm">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search quizzes..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50"
+                      />
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="relative">
+                      <select
+                        value={selectedCourse}
+                        onChange={(e) => setSelectedCourse(e.target.value)}
+                        className="appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50 pr-8"
+                      >
+                        <option value="all">All Courses</option>
+                        {dbCourses.map(course => (
+                          <option key={course.slug} value={course.slug}>{course.title}</option>
+                        ))}
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <select
+                        value={selectedType}
+                        onChange={(e) => setSelectedType(e.target.value)}
+                        className="appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50 pr-8"
+                      >
+                        <option value="all">All Types</option>
+                        <option value="course-exam">Final Exam</option>
+                        <option value="chapter-quiz">Chapter Quiz</option>
+                        <option value="lesson-quiz">Lesson Quiz</option>
+                      </select>
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {quizzes.map((quiz) => (
+              {filteredQuizzes.slice(0, visibleQuizzes).map((quiz) => (
                 <div
                   key={quiz.id}
                   className="card hover-lift overflow-hidden group h-full"
@@ -793,7 +870,6 @@ export default function Home() {
                         <Link 
                           href="#"
                           onClick={(e) => handleQuizClick(e, quiz)}
-        
                           className="px-3 sm:px-4 py-1.5 sm:py-2 bg-fuchsia-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-fuchsia-700 transition-colors"
                         >
                           {isChecking ? 'Checking...' : 'Take Quiz'}
@@ -804,6 +880,27 @@ export default function Home() {
                 </div>
               ))}
             </div>
+
+            {filteredQuizzes.length > visibleQuizzes && (
+              <div className="mt-8 text-center">
+                <button
+                  onClick={showMoreQuizzes}
+                  className="px-6 py-3 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors flex items-center gap-2 mx-auto"
+                >
+                  Show More Quizzes
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            {filteredQuizzes.length === 0 && (
+              <div className="text-center py-8 bg-white rounded-xl shadow-sm">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <BookOpen className="w-6 h-6 text-gray-400" />
+                </div>
+                <p className="text-gray-600">No quizzes found matching your criteria.</p>
+              </div>
+            )}
           </div>
         </div>
       </main>
