@@ -82,6 +82,7 @@ export default function CourseDetails() {
   const [enrolling, setEnrolling] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const [canTakeQuizToday, setCanTakeQuizToday] = useState(true);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -104,6 +105,16 @@ export default function CourseDetails() {
             );
             
             setIsEnrolled(!!enrolledCourse);
+            
+            // Check if user can take a quiz today
+            if (userData.lastQuizCompletion) {
+              const lastQuizDate = new Date(userData.lastQuizCompletion);
+              const today = new Date();
+              const isSameDay = lastQuizDate.toDateString() === today.toDateString();
+              setCanTakeQuizToday(!isSameDay);
+            } else {
+              setCanTakeQuizToday(true);
+            }
             
             // If we have enrollment data but the course data doesn't have user progress
             if (enrolledCourse) {
@@ -248,6 +259,12 @@ export default function CourseDetails() {
                     // If course is completed, just go to course overview
                     if (isCompleted) {
                       router.push(`/course-details/${course.slug}`);
+                      return;
+                    }
+
+                    // Check if user can take a quiz today
+                    if (!canTakeQuizToday) {
+                      toast.error("You've already completed a quiz today. Come back tomorrow for more!");
                       return;
                     }
                     
@@ -400,7 +417,15 @@ export default function CourseDetails() {
                               return (
                                 <Link
                                   key={lesson._id}
-                                  href={`/lesson/${lesson.slug}`}
+                                  href="#"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    if (!canTakeQuizToday) {
+                                      toast.error("You've already completed a quiz today. Come back tomorrow for more!");
+                                      return;
+                                    }
+                                    router.push(`/lesson/${lesson.slug}`);
+                                  }}
                                   className={`block cursor-pointer`}
                                 >
                                   <div
