@@ -10,9 +10,36 @@ import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { useEnrollmentCheck } from "@/app/contexts/EnrollmentCheckContext";
+import { LessonContent } from "./components/LessonContent";
+import DOMPurify from 'dompurify';
 
 // Import React DnD hooks
 import { useDrag, useDrop } from "react-dnd";
+
+// Configure marked options
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+  headerIds: false,
+  mangle: false,
+  smartLists: true,
+  smartypants: true
+});
+
+const renderer = new marked.Renderer();
+renderer.paragraph = (text) => {
+  return `<p class="mb-4 text-gray-700">${text}</p>`;
+};
+renderer.list = (body, ordered) => {
+  const type = ordered ? 'ol' : 'ul';
+  const className = ordered ? 'list-decimal' : 'list-disc';
+  return `<${type} class="pl-6 mb-4 ${className}">${body}</${type}>`;
+};
+renderer.listitem = (text) => {
+  return `<li class="mb-1">${text}</li>`;
+};
+
+marked.use({ renderer });
 
 function DraggableTerm({ term }) {
   const [{ isDragging }, dragRef] = useDrag(() => ({
@@ -337,45 +364,29 @@ export default function LessonPage() {
       <Navbar />
       <XPNotificationHandler params={params} />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Lesson Header */}
-        <div className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">{lesson.title}</h1>
-              <p className="text-gray-600 text-sm sm:text-base break-words">{lesson.description}</p>
-            </div>
-            <div className="flex items-center gap-4 text-sm text-gray-500 flex-shrink-0">
-              <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4 flex-shrink-0" />
-                <span>{lesson.duration} min</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <BookOpen className="w-4 h-4 flex-shrink-0" />
-                <span>Part {currentPartIndex + 1} of {lesson.parts.length}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Lesson Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 md:p-8">
-              <div className="prose prose-violet max-w-none">
-                {marked(lesson.parts[currentPartIndex].content)}
-              </div>
+            <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
+              <div 
+                className="prose prose-violet max-w-none prose-headings:font-bold prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4 prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-4 prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4 prose-li:mb-1 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-blockquote:border-l-4 prose-blockquote:border-violet-200 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600"
+                dangerouslySetInnerHTML={{ 
+                  __html: DOMPurify.sanitize(marked(currentPart.content.trim()))
+                }}
+              />
             </div>
 
             {/* Exercise */}
             {lesson.parts[currentPartIndex].exercise && (
-              <div className="mt-8">
-                <ExerciseWrapper
-                  exercise={lesson.parts[currentPartIndex].exercise}
-                  onComplete={handleExerciseComplete}
-                />
-              </div>
+              <LessonContent
+                lesson={lesson}
+                currentPartIndex={currentPartIndex}
+                progress={progress}
+                onExerciseComplete={handleExerciseComplete}
+                onPartComplete={() => {}}
+                exerciseOnly={true}
+              />
             )}
 
             {/* Quiz Button */}

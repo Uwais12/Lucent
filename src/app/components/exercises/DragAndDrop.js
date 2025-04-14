@@ -176,7 +176,7 @@ export default function DragAndDrop({ exercise, onComplete }) {
           <div className="space-y-2">
             {items.map((item, index) => (
               <DraggableItem
-                key={item.id}
+                key={`item-${item.id}-${index}`}
                 id={item.id}
                 text={item.text}
                 index={index}
@@ -190,9 +190,9 @@ export default function DragAndDrop({ exercise, onComplete }) {
         <div>
           <h4 className="text-sm font-medium text-gray-700 mb-3">Target Concepts</h4>
           <div className="space-y-2">
-            {exercise.content.targets.map((target) => (
+            {exercise.content.targets.map((target, index) => (
               <TargetZone
-                key={target.id}
+                key={`target-${target.id || target.text}-${index}`}
                 target={target}
                 items={items}
                 matches={matches}

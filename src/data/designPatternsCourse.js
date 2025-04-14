@@ -90,20 +90,17 @@ export const designPatternsCourse = {
           parts: [
             {
               title: "Understanding Factory Method",
-              content: `
-                The Factory Method pattern defines an interface for creating objects but lets subclasses decide which class to instantiate.
-
-                Key components:
-                - Creator (abstract class/interface)
-                - Concrete Creator
-                - Product (interface)
-                - Concrete Product
-
-                Benefits:
-                - Encapsulates object creation
-                - Promotes loose coupling
-                - Supports the Open/Closed Principle
-              `,
+              content: 
+                "The Factory Method pattern defines an interface for creating objects but lets subclasses decide which class to instantiate.\n\n" +
+                "Key components:\n" +
+                "- Creator (abstract class/interface)\n" +
+                "- Concrete Creator\n" +
+                "- Product (interface)\n" +
+                "- Concrete Product\n\n" +
+                "Benefits:\n" +
+                "- Encapsulates object creation\n" +
+                "- Promotes loose coupling\n" +
+                "- Supports the Open/Closed Principle",
               order: 1,
               duration: 20,
               exercise: {

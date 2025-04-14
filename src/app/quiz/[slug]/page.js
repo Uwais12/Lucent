@@ -187,7 +187,7 @@ export default function QuizPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
           <div className="mb-8">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">{quiz.title}</h1>
