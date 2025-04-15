@@ -14,6 +14,16 @@ async function isAdmin(userId) {
   }
 }
 
+// Helper function to check if user can take daily quiz
+function canTakeDailyQuiz(lastQuizCompletion) {
+  if (!lastQuizCompletion) return true;
+  const lastQuizDate = new Date(lastQuizCompletion);
+  const today = new Date();
+  return lastQuizDate.getDate() !== today.getDate() ||
+         lastQuizDate.getMonth() !== today.getMonth() ||
+         lastQuizDate.getFullYear() !== today.getFullYear();
+}
+
 export async function GET(req) {
   try {
     const { userId } = getAuth(req);
@@ -69,14 +79,15 @@ export async function GET(req) {
         level: 1,
         dailyStreak: 1,
         lastActivity: 1,
+        lastQuizCompletion: 1,
         createdAt: 1,
-        'progress.courses': 1 // Include courses array for completion calculation
+        'progress.courses': 1
       })
-      .lean() // Convert to plain JavaScript objects
+      .lean()
       .exec();
 
-    // Calculate completion percentage manually to avoid virtual property issues
-    const usersWithCompletion = users.map(user => {
+    // Calculate completion percentage and add daily quiz status
+    const usersWithDetails = users.map(user => {
       const courses = user.progress?.courses || [];
       const completionPercentage = courses.length > 0
         ? courses.reduce((sum, course) => sum + (course.completionPercentage || 0), 0) / courses.length
@@ -84,12 +95,14 @@ export async function GET(req) {
 
       return {
         ...user,
-        completionPercentage
+        completionPercentage,
+        canTakeDailyQuiz: canTakeDailyQuiz(user.lastQuizCompletion),
+        lastQuizCompletion: user.lastQuizCompletion
       };
     });
 
     return new Response(JSON.stringify({
-      users: usersWithCompletion,
+      users: usersWithDetails,
       pagination: {
         total,
         pages: Math.ceil(total / limit),
@@ -153,6 +166,54 @@ export async function DELETE(req) {
   } catch (error) {
     console.error('Error deleting user:', error);
     return new Response(JSON.stringify({ error: 'Failed to delete user' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+}
+
+export async function PATCH(req) {
+  try {
+    const { userId } = getAuth(req);
+    if (!userId || !await isAdmin(userId)) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { targetUserId, action } = await req.json();
+    if (!targetUserId || action !== 'resetDailyQuiz') {
+      return new Response(JSON.stringify({ error: 'Invalid request' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    await connectToDatabase();
+    
+    const user = await User.findById(targetUserId);
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'User not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Reset the last quiz completion time
+    user.lastQuizCompletion = null;
+    await user.save();
+
+    return new Response(JSON.stringify({ 
+      message: 'Daily quiz reset successfully',
+      canTakeDailyQuiz: true
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error resetting daily quiz:', error);
+    return new Response(JSON.stringify({ error: 'Failed to reset daily quiz' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

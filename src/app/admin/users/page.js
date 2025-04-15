@@ -197,63 +197,39 @@ export default function AdminUsers() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <button
-                        onClick={() => handleSort("email")}
-                        className="flex items-center gap-1 hover:text-gray-700"
-                      >
-                        User
-                        <ArrowUpDown className="w-4 h-4" />
-                      </button>
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Role
+                      User
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <button
-                        onClick={() => handleSort("xp")}
-                        className="flex items-center gap-1 hover:text-gray-700"
+                        onClick={() => handleSort('role')}
+                        className="flex items-center space-x-1"
                       >
-                        XP
+                        <span>Role</span>
                         <ArrowUpDown className="w-4 h-4" />
                       </button>
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <button
-                        onClick={() => handleSort("gems")}
-                        className="flex items-center gap-1 hover:text-gray-700"
+                        onClick={() => handleSort('xp')}
+                        className="flex items-center space-x-1"
                       >
-                        Gems
+                        <span>XP</span>
                         <ArrowUpDown className="w-4 h-4" />
                       </button>
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <button
-                        onClick={() => handleSort("level")}
-                        className="flex items-center gap-1 hover:text-gray-700"
+                        onClick={() => handleSort('gems')}
+                        className="flex items-center space-x-1"
                       >
-                        Level
+                        <span>Gems</span>
                         <ArrowUpDown className="w-4 h-4" />
                       </button>
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <button
-                        onClick={() => handleSort("dailyStreak")}
-                        className="flex items-center gap-1 hover:text-gray-700"
-                      >
-                        Streak
-                        <ArrowUpDown className="w-4 h-4" />
-                      </button>
+                      Daily Quiz Status
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <button
-                        onClick={() => handleSort("lastActivity")}
-                        className="flex items-center gap-1 hover:text-gray-700"
-                      >
-                        Last Active
-                        <ArrowUpDown className="w-4 h-4" />
-                      </button>
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -262,58 +238,89 @@ export default function AdminUsers() {
                   {users.map((user) => (
                     <tr key={user._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
-                          {user.email || 'No email'}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          ID: {user.clerkId}
+                        <div className="flex items-center">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {user.email}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              Joined {new Date(user.createdAt).toLocaleDateString()}
+                            </div>
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          user.role === "ADMIN"
-                            ? "bg-violet-100 text-violet-800"
-                            : "bg-gray-100 text-gray-800"
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          user.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
                         }`}>
                           {user.role}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm text-gray-900">
-                          <Star className="w-4 h-4 text-yellow-400 mr-1" />
-                          {user.xp}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm text-gray-900">
-                          <Gem className="w-4 h-4 text-emerald-400 mr-1" />
-                          {user.gems}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm text-gray-900">
-                          <Activity className="w-4 h-4 text-violet-400 mr-1" />
-                          {user.level}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm text-gray-900">
-                          <Calendar className="w-4 h-4 text-orange-400 mr-1" />
-                          {user.dailyStreak}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div className="flex items-center space-x-1">
+                          <Star className="w-4 h-4 text-yellow-400" />
+                          <span>{user.xp}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {user.lastActivity
-                          ? new Date(user.lastActivity).toLocaleDateString()
-                          : "Never"}
+                        <div className="flex items-center space-x-1">
+                          <Gem className="w-4 h-4 text-blue-400" />
+                          <span>{user.gems}</span>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => handleDeleteUser(user._id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center space-x-2">
+                          <span className={`h-2.5 w-2.5 rounded-full ${user.canTakeDailyQuiz ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                          <span className="text-sm text-gray-500">
+                            {user.canTakeDailyQuiz ? 'Available' : 'Completed'}
+                            {!user.canTakeDailyQuiz && user.lastQuizCompletion && (
+                              <span className="block text-xs text-gray-400">
+                                {new Date(user.lastQuizCompletion).toLocaleTimeString()}
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                        <div className="flex items-center space-x-2">
+                          {!user.canTakeDailyQuiz && (
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch('/api/admin/users', {
+                                    method: 'PATCH',
+                                    headers: {
+                                      'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({
+                                      targetUserId: user._id,
+                                      action: 'resetDailyQuiz'
+                                    }),
+                                  });
+
+                                  const data = await response.json();
+                                  if (response.ok) {
+                                    toast.success('Daily quiz reset successfully');
+                                    fetchUsers();
+                                  } else {
+                                    toast.error(data.error || 'Failed to reset daily quiz');
+                                  }
+                                } catch (err) {
+                                  toast.error('Failed to reset daily quiz');
+                                }
+                              }}
+                              className="inline-flex items-center px-2.5 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500"
+                            >
+                              Reset Quiz
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeleteUser(user._id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
