@@ -432,6 +432,27 @@ export default function Home() {
             <p className="text-lg sm:text-xl text-secondary">
               Your journey to mastery continues
             </p>
+            
+            {/* Daily Quiz Status */}
+            <div className="mt-8">
+              <div className={`p-4 sm:p-6 rounded-2xl ${canTakeQuizToday ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200' : 'bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200'}`}>
+                <div className="flex items-center gap-4">
+                  <div className={`p-3 rounded-xl ${canTakeQuizToday ? 'bg-emerald-100' : 'bg-amber-100'}`}>
+                    <Target className={`w-6 h-6 ${canTakeQuizToday ? 'text-emerald-600' : 'text-amber-600'}`} />
+                  </div>
+                  <div>
+                    <h3 className={`text-lg font-semibold ${canTakeQuizToday ? 'text-emerald-800' : 'text-amber-800'}`}>
+                      {canTakeQuizToday ? "Daily Quiz Available!" : "Daily Quiz Completed"}
+                    </h3>
+                    <p className={`text-sm ${canTakeQuizToday ? 'text-emerald-700' : 'text-amber-700'}`}>
+                      {canTakeQuizToday 
+                        ? "Take a quiz to earn rewards and maintain your streak!" 
+                        : "Great job! Come back tomorrow for more lessons and quizzes."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Stats Overview */}
@@ -474,27 +495,6 @@ export default function Home() {
                     {userProfile?.progress?.completedLessons || 0}
                   </h3>
                   <p className="text-xs sm:text-sm text-gray-600">Lessons Completed</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Daily Quiz Status */}
-          <div className="mb-8 sm:mb-12">
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className={`p-2 sm:p-3 ${canTakeQuizToday ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'} rounded-lg`}>
-                  <Target className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                    {canTakeQuizToday ? "Daily Quiz Available!" : "Daily Quiz Completed"}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-600">
-                    {canTakeQuizToday 
-                      ? "Take a quiz to earn rewards!" 
-                      : "Come back tomorrow for more quizzes!"}
-                  </p>
                 </div>
               </div>
             </div>
@@ -544,12 +544,17 @@ export default function Home() {
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
-                              {course.title}
-                            </h3>
-                            <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
-                              {course.description}
-                            </p>
+                            <Link 
+                              href={`/course-details/${course.slug}`}
+                              className="block hover:opacity-80 transition-opacity"
+                            >
+                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
+                                {course.title}
+                              </h3>
+                              <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+                                {course.description}
+                              </p>
+                            </Link>
                           </div>
                         </div>
 
@@ -667,12 +672,17 @@ export default function Home() {
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
-                            {course.title}
-                          </h3>
-                          <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
-                            {course.description}
-                          </p>
+                          <Link 
+                            href={`/course-details/${course.slug}`}
+                            className="block hover:opacity-80 transition-opacity"
+                          >
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
+                              {course.title}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+                              {course.description}
+                            </p>
+                          </Link>
                         </div>
                       </div>
 
@@ -755,7 +765,7 @@ export default function Home() {
 
           {/* Available Quizzes */}
           <div>
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <div className="mb-4 sm:mb-6">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Challenge Yourself</h2>
             </div>
 

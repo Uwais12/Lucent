@@ -42,9 +42,9 @@ const Navbar = () => {
   }, [user?.id]);
 
   const navLinks = [
-    { name: "Learn", href: "/learn", icon: BookOpen },
-    { name: "Dashboard", href: "/dashboard", icon: Layout },
-    { name: "About", href: "/about", icon: Lightbulb },
+    { name: "Learn", href: "/#courses", icon: BookOpen },
+    { name: "Dashboard", href: "/", icon: Layout },
+    { name: "About", href: "/landing-page", icon: Lightbulb },
     ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
   ];
 
