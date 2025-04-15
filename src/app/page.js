@@ -209,36 +209,36 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const seedDatabase = async () => {
-      try {
-        // First, clean up existing courses
-        const cleanupResponse = await fetch("/api/cleanup", { 
-          method: "POST",
-          cache: 'no-store'
-        });
-        const cleanupData = await cleanupResponse.json();
-        console.log("Cleanup response:", cleanupData);
+    // const seedDatabase = async () => {
+    //   try {
+    //     // First, clean up existing courses
+    //     const cleanupResponse = await fetch("/api/cleanup", { 
+    //       method: "POST",
+    //       cache: 'no-store'
+    //     });
+    //     const cleanupData = await cleanupResponse.json();
+    //     console.log("Cleanup response:", cleanupData);
 
-        // Then seed the courses
-        const response = await fetch("/api/seed", { 
-          method: "POST",
-          cache: 'no-store'
-        });
-        const data = await response.json();
-        console.log("Seeding response:", data);
+    //     // Then seed the courses
+    //     const response = await fetch("/api/seed", { 
+    //       method: "POST",
+    //       cache: 'no-store'
+    //     });
+    //     const data = await response.json();
+    //     console.log("Seeding response:", data);
         
-        // Refresh courses after seeding
-        const coursesRes = await fetch("/api/courses", { cache: 'no-store' });
-        const coursesData = await coursesRes.json();
-        setDbCourses(coursesData);
-      } catch (error) {
-        console.error("Error seeding database:", error);
-      }
-    };
+    //     // Refresh courses after seeding
+    //     const coursesRes = await fetch("/api/courses", { cache: 'no-store' });
+    //     const coursesData = await coursesRes.json();
+    //     setDbCourses(coursesData);
+    //   } catch (error) {
+    //     console.error("Error seeding database:", error);
+    //   }
+    // };
 
-    if (isLoaded && isSignedIn) {
-      seedDatabase();
-    }
+    // if (isLoaded && isSignedIn) {
+    //   seedDatabase();
+    // }
   }, [isLoaded, isSignedIn]);
 
   // Function to handle course enrollment
