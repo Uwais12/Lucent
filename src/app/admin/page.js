@@ -11,8 +11,10 @@ import {
   ChevronRight,
   Save,
   X,
+  Users,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
+import Link from "next/link";
 
 export default function AdminPanel() {
   const router = useRouter();
@@ -271,6 +273,40 @@ export default function AdminPanel() {
                 <Plus className="w-5 h-5" />
                 Create Course
               </button>
+            </div>
+          </div>
+
+          {/* Admin Navigation */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <Link
+              href="/admin/users"
+              className="card p-6 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-violet-100 rounded-lg flex items-center justify-center">
+                  <Users className="w-6 h-6 text-violet-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    User Management
+                  </h3>
+                  <p className="text-gray-500">Manage users and permissions</p>
+                </div>
+              </div>
+            </Link>
+
+            <div className="card p-6 hover:bg-gray-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
+                  <BookOpen className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Course Management
+                  </h3>
+                  <p className="text-gray-500">Create and edit courses</p>
+                </div>
+              </div>
             </div>
           </div>
 

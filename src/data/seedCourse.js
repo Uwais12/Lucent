@@ -591,7 +591,7 @@ export const ddiaCourse = {
                 content: {
                   question:
                     "What is the main advantage of using elastic scaling compared to manual scaling, especially for workloads with unpredictable peaks?",
-                  options: [
+                options: [
                       "A) It always uses less powerful hardware.",
                       "B) It eliminates the need for monitoring.",
                       "C) It automatically adjusts resources to match load, improving cost-efficiency and responsiveness.",
@@ -800,7 +800,7 @@ export const ddiaCourse = {
              question:
                "There exists a single, universal 'best' architecture suitable for all data-intensive applications regardless of their specific load patterns or requirements.",
              options: ["true", "false"],
-             correctAnswer: "false",
+                correctAnswer: "false",
              points: 10,
              explanation:
                "System design involves trade-offs. The optimal architecture depends heavily on the specific needs (read/write patterns, consistency requirements, scale, etc.) of the application."
@@ -1299,7 +1299,7 @@ export const ddiaCourse = {
         passingScore: 75,
         slug: "chapter-2-quiz",
         questions: [
-           {
+          {
             type: "multiple-choice",
             question:
               "Which data model is generally most suitable for representing data with complex many-to-many relationships requiring frequent joins?",
@@ -1761,7 +1761,7 @@ export const ddiaCourse = {
               content:
                 "With decreasing RAM costs, databases that keep the entire dataset primarily in memory have become viable for performance-critical applications.\n\n* **Speed:** Eliminating disk I/O bottlenecks provides extremely fast read and write performance.\n* **Durability:** Contrary to common belief, in-memory databases *can* provide durability through techniques like:\n    * **Write-Ahead Logging (WAL):** Persisting changes to disk before acknowledging writes.\n    * **Periodic Snapshots:** Writing the entire in-memory state to disk at intervals.\n    * **Replication:** Copying data to other nodes (which might persist to disk).\n* **Use Cases:** Caching (e.g., Redis, Memcached), real-time analytics, session management, high-frequency trading.\n\nThey often use specialized data structures optimized for memory access rather than disk block access.",
               order: 3,
-              duration: 15,
+            duration: 15,
               exercise: {
                 type: "multiple-choice",
                 title: "Mini Exercise: In-Memory Durability Myth",
@@ -1879,7 +1879,7 @@ export const ddiaCourse = {
               title: "Data Warehousing: Bridging the Gap",
               content:
                 "Running complex OLAP queries directly on an OLTP database is usually a bad idea – it can severely impact the performance for end-users. Therefore, organizations often maintain a separate **data warehouse** specifically for analytics.\n\n* **ETL Process:** Data is periodically copied from OLTP databases (and potentially other sources) into the warehouse using an **Extract, Transform, Load (ETL)** process:\n    * **Extract:** Read data from source systems.\n    * **Transform:** Clean, enrich, and restructure data into a format suitable for analysis (e.g., denormalizing, standardizing units).\n    * **Load:** Write the transformed data into the data warehouse.\n* **Separation:** This separation allows analysts to run heavy queries without affecting operational systems and enables schema optimization specifically for analytical needs (e.g., star schema).",
-              order: 2,
+          order: 2,
               duration: 15,
               exercise: {
                 type: "multiple-choice",
@@ -2165,8 +2165,8 @@ export const ddiaCourse = {
             question:
               "LSM-trees generally achieve higher write throughput but suffer from greater write amplification compared to B-trees.",
             options: ["true", "false"],
-            correctAnswer: "true",
-            points: 10,
+                correctAnswer: "true",
+                points: 10,
             explanation:
               "LSM-trees optimize for sequential writes but rewrite data during compaction (amplification), while B-trees update in place (less amplification, potentially more random I/O)."
           },
@@ -2762,14 +2762,14 @@ export const ddiaCourse = {
           }
         ], // end lessons in Chapter 4
 
-        endOfChapterQuiz: {
+      endOfChapterQuiz: {
           title: "Chapter 4 Quiz: Encoding and Evolution",
           description:
             "Comprehensive assessment of data encoding formats (text vs. binary), schema evolution principles (backward/forward compatibility), and data flow patterns.",
-          duration: 30,
-          passingScore: 75,
+        duration: 30,
+        passingScore: 75,
           slug: "chapter-4-quiz",
-          questions: [
+        questions: [
              { // From original, slightly reworded
               type: "multiple-choice",
               question:
@@ -2916,11 +2916,11 @@ export const ddiaCourse = {
               order: 1,
               duration: 15,
               exercise: {
-                type: "multiple-choice",
+            type: "multiple-choice",
                 title: "Mini Exercise: Replication Goals",
                 description:
                   "Select the primary benefits provided by database replication.",
-                points: 10,
+            points: 10,
                 difficulty: "beginner",
                 content: {
                   question:
@@ -3057,10 +3057,10 @@ export const ddiaCourse = {
                 points: 10,
                 explanation:
                   "Asynchronous replication acknowledges writes before confirming follower persistence, risking data loss if the leader fails immediately after acknowledgment."
-              }
-            ]
           }
-        },
+        ]
+      }
+    },
 
         // ---------------------------
         // LESSON 2 - ENHANCED
@@ -8781,17 +8781,17 @@ export const ddiaCourse = {
   // END-OF-COURSE EXAM
   // ----------------------------------
   endOfCourseExam: {
-    title: "Final Exam",
+    title: "Final Exam: Designing Data-Intensive Applications Concepts",
     description:
-      "A comprehensive test of the reliability, scalability, data modeling, and storage concepts covered throughout this course.",
-    duration: 60,
-    passingScore: 80,
+      "A comprehensive test covering data models, storage, encoding, replication, partitioning, transactions, consistency, consensus, batch processing, stream processing, integration, and ethical considerations.",
+    duration: 90, // Increased duration for more questions
+    passingScore: 75, // Adjusted passing score slightly
     slug: "final-exam",
     questions: [
-      {
+      { // Original Q1 - Ch 2
         type: "multiple-choice",
         question:
-          "Which term refers to storing different parts of an application's data in different specialized databases?",
+          "Which term refers to storing different parts of an application's data in different specialized databases (e.g., using Redis for caching, Elasticsearch for search, PostgreSQL for transactions)?",
         options: [
           "A) Horizontal partitioning",
           "B) Polyglot persistence",
@@ -8801,31 +8801,31 @@ export const ddiaCourse = {
         correctAnswer: "B) Polyglot persistence",
         points: 10,
         explanation:
-          "Polyglot persistence is about using multiple databases, each specialized for certain data or queries."
+          "Polyglot persistence is the practice of using multiple different database technologies, choosing the best tool for each specific job within a single application."
       },
-      {
+      { // Original Q2 - Ch 3
         type: "true-false",
         question:
-          "B-trees append writes sequentially and rely on background compaction merges.",
+          "B-trees primarily work by appending writes sequentially to a log file and rely heavily on background compaction merges to remove old data.",
         options: ["true", "false"],
         correctAnswer: "false",
         points: 10,
         explanation:
-          "B-trees typically modify data in place; LSM-trees do sequential appends and compaction."
+          "This describes LSM-trees (Log-Structured Merge-Trees). B-trees typically modify data in place within fixed-size pages."
       },
-      {
+      { // Original Q3 - Ch 1
         type: "short-answer",
         question:
-          "Name the three key design concerns introduced at the start of this course for data-intensive systems: _______, _______, and _______.",
-        correctAnswer: "reliability, scalability, maintainability",
+          "What are the three primary high-level concerns (non-functional requirements) for data systems discussed extensively in Chapter 1: _______, _______, and _______?",
+        correctAnswer: "Reliability, Scalability, Maintainability", // Case-insensitive check recommended
         points: 10,
         explanation:
-          "These form the core framework for evaluating data systems throughout the book."
+          "These three pillars (working correctly despite faults, handling load growth, and being easy to manage/evolve) form the core framework for evaluating data systems."
       },
-      {
+      { // Original Q4 - Ch 3
         type: "multiple-choice",
         question:
-          "Which storage model organizes data by columns and is most beneficial for analytical queries?",
+          "Which storage layout organizes data by storing all values for a single column together, making it highly efficient for analytical queries that read only a few columns?",
         options: [
           "A) Row-oriented store",
           "B) Graph database",
@@ -8835,7 +8835,138 @@ export const ddiaCourse = {
         correctAnswer: "C) Column-oriented store",
         points: 10,
         explanation:
-          "Column stores excel at reading only the needed columns for analytics, enabling better compression and reduced I/O."
+          "Columnar storage significantly reduces I/O for typical OLAP queries by only reading required column data, and enables better compression."
+      },
+      { // New Q5 - Ch 9 / Ch 5
+        type: "multiple-choice",
+        question:
+          "According to the CAP theorem, during a network partition, a system that chooses to remain Available must potentially sacrifice:",
+        options: [
+          "A) Durability",
+          "B) Scalability",
+          "C) Strong Consistency (e.g., Linearizability)",
+          "D) Fault Tolerance"
+        ],
+        correctAnswer: "C) Strong Consistency (e.g., Linearizability)",
+        points: 10,
+        explanation:
+          "The CAP theorem states you can only pick two out of Consistency, Availability, and Partition Tolerance. If P occurs and you choose A, you must sacrifice C."
+      },
+      { // New Q6 - Ch 7
+        type: "true-false",
+        question:
+          "Snapshot Isolation guarantees that transactions are fully Serializable and prevents all possible concurrency anomalies, including write skew.",
+        options: ["true", "false"],
+        correctAnswer: "false",
+        points: 10,
+        explanation:
+          "Snapshot Isolation (using MVCC) is strong but weaker than Serializable. It prevents non-repeatable reads but still allows write skew and some phantom reads."
+      },
+      { // New Q7 - Ch 9
+        type: "short-answer",
+        question:
+          "Define Linearizability. What is the core guarantee it provides?",
+        correctAnswer: "Linearizability makes a system appear as if there is only a single copy of the data, and all operations appear to take effect atomically at some single point in time (recency guarantee).", // Variations acceptable
+        points: 10,
+        explanation:
+          "It's the strongest single-object consistency model, providing the illusion of a single, instantaneously updated data copy."
+      },
+      { // New Q8 - Ch 5 / Ch 9
+        type: "multiple-choice",
+        question:
+          "What is the primary purpose of using Vector Clocks in distributed systems?",
+        options: [
+          "A) To synchronize physical clocks with high precision.",
+          "B) To provide a total ordering for all events.",
+          "C) To detect concurrent updates and accurately track causal dependencies between events.",
+          "D) To implement leader election."
+        ],
+        correctAnswer: "C) To detect concurrent updates and accurately track causal dependencies between events.",
+        points: 10,
+        explanation:
+          "Vector clocks explicitly track causality and allow determining if one event happened-before another or if they were concurrent, unlike simpler Lamport timestamps."
+      },
+      { // New Q9 - Ch 10
+        type: "multiple-choice",
+        question:
+          "The principle of 'data locality' in MapReduce aims to improve performance primarily by:",
+        options: [
+          "A) Compressing data more effectively.",
+          "B) Reducing the amount of data transferred over the network.",
+          "C) Simplifying the Reduce function logic.",
+          "D) Ensuring all map tasks finish at the same time."
+        ],
+        correctAnswer: "B) Reducing the amount of data transferred over the network.",
+        points: 10,
+        explanation:
+          "By running map tasks on nodes holding the data, large input splits don't need to be sent across the network."
+      },
+      { // New Q10 - Ch 11
+        type: "short-answer",
+        question:
+          "What does it mean for an operation to be idempotent, and why is this important for fault tolerance in stream processing?",
+        correctAnswer: "Idempotent means applying the operation multiple times has the same effect as applying it once. This is important because it allows safe retries of operations upon failure without causing incorrect results (e.g., duplicate processing).", // Variations acceptable
+        points: 10,
+        explanation:
+          "Idempotency enables at-least-once processing systems to achieve exactly-once *semantics* by making retries safe."
+      },
+      { // New Q11 - Ch 11
+        type: "multiple-choice",
+        question:
+          "In stream processing, 'event time' refers to _____, while 'processing time' refers to _____.",
+        options: [
+          "A) when the event was processed / when the event occurred",
+          "B) when the event occurred / when the system processed the event",
+          "C) the duration of the event / the system's clock time",
+          "D) the system's clock time / the time zone of the event"
+        ],
+        correctAnswer: "B) when the event occurred / when the system processed the event",
+        points: 10,
+        explanation:
+          "Distinguishing these is crucial for correct results when events are delayed or arrive out of order."
+      },
+       { // New Q12 - Ch 8
+        type: "true-false",
+        question:
+          "Fencing tokens are primarily used to enhance network security by encrypting communication between distributed nodes.",
+        options: ["true", "false"],
+        correctAnswer: "false",
+        points: 10,
+        explanation:
+          "Fencing tokens are used for safety in coordination (e.g., preventing a stale leader with an old lease from making writes) by allowing resources to reject requests with outdated tokens."
+      },
+       { // New Q13 - Ch 10
+        type: "multiple-choice",
+        question:
+          "Which batch join strategy is most suitable for joining two very large datasets when neither fits easily into memory?",
+        options: [
+          "A) Broadcast Hash Join",
+          "B) Nested Loop Join",
+          "C) Sort-Merge Join or Partitioned Hash Join",
+          "D) Cross Join"
+        ],
+        correctAnswer: "C) Sort-Merge Join or Partitioned Hash Join",
+        points: 10,
+        explanation:
+          "Both sort-merge and partitioned hash (shuffle) joins are designed to handle large-to-large dataset joins by sorting/partitioning data across the cluster."
+      },
+      { // New Q14 - Ch 12
+        type: "short-answer",
+        question:
+          "Briefly explain the 'end-to-end argument' and give an example related to data systems.",
+        correctAnswer: "The argument states some functionality can only be fully guaranteed at the application endpoints, as intermediate systems lack full context. Example: Ensuring exactly-once message processing often needs application-level deduplication (using request IDs) because the message queue might only guarantee at-least-once delivery.", // Variations acceptable
+        points: 10,
+        explanation:
+          "It highlights that relying solely on infrastructure guarantees is often insufficient for application-level correctness."
+      },
+      { // New Q15 - Ch 4
+        type: "multiple-choice",
+        question:
+          "Which data encoding format relies on comparing writer and reader schemas at runtime for evolution, rather than using field tags in the encoded data?",
+        options: ["A) JSON", "B) Protocol Buffers", "C) Apache Thrift", "D) Apache Avro"],
+        correctAnswer: "D) Apache Avro",
+        points: 10,
+        explanation: "Avro's schema resolution mechanism allows for more flexibility, especially with dynamically generated schemas, by decoupling the schema from the binary data."
       }
     ]
   }

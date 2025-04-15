@@ -390,7 +390,7 @@ export default function LessonPage() {
             )}
 
             {/* Quiz Button */}
-            {currentPartIndex === lesson.parts.length - 1 && (
+            {currentPartIndex === lesson.parts.length - 1 && lesson.endOfLessonQuiz && (
               <div className="mt-8">
                 <button
                   onClick={startQuiz}

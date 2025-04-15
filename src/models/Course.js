@@ -185,16 +185,16 @@ const LessonSchema = new mongoose.Schema({
   order: { type: Number, required: true },
   duration: { type: Number, required: true },
   parts: { type: [LessonPartSchema], default: [] },
-  endOfLessonQuiz: { type: QuizSchema, required: true },
+  endOfLessonQuiz: { type: QuizSchema },
   progress: {
     completed: { type: Boolean, default: false },
     lastAccessed: { type: Date },
     score: { type: Number, default: 0 },
-    exercisesCompleted: [Number], // Array of completed exercise indices
-    maxAttempts: { type: Number, default: 3 }, // Maximum number of attempts for quizzes
-    currentAttempt: { type: Number, default: 0 }, // Current attempt number
-    isLocked: { type: Boolean, default: false }, // Whether the lesson is locked
-    prerequisiteLessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }] // Required lessons to unlock this one
+    exercisesCompleted: [Number],
+    maxAttempts: { type: Number, default: 3 },
+    currentAttempt: { type: Number, default: 0 },
+    isLocked: { type: Boolean, default: false },
+    prerequisiteLessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }]
   }
 });
 

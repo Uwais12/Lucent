@@ -83,6 +83,7 @@ export default function CourseDetails() {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [canTakeQuizToday, setCanTakeQuizToday] = useState(true);
+  const [expandedChapters, setExpandedChapters] = useState(new Set());
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -389,165 +390,181 @@ export default function CourseDetails() {
                 <div className="space-y-4">
                   {course.chapters.map((chapter, chapterIndex) => {
                     const chapterProgress = course.userProgress?.chapters?.[chapterIndex];
+                    const totalLessons = chapter.lessons.length;
+                    const completedLessons = chapter.lessons.filter((_, lessonIndex) => 
+                      chapterProgress?.lessons?.[lessonIndex]?.completed
+                    ).length;
+                    const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+                    
                     return (
-                      <div key={chapter._id} className="card">
-                        <div className="p-6">
-                          <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-semibold text-gray-900">
-                              Chapter {chapterIndex + 1}: {chapter.title}
-                            </h3>
-                            {chapterProgress?.completed && (
-                              <div className="flex items-center gap-2 text-emerald-600">
-                                <CheckCircle className="w-5 h-5" />
-                                <span className="text-sm font-medium">Completed</span>
+                      <div key={chapter._id} className="card overflow-hidden">
+                        <button 
+                          onClick={() => {
+                            const newExpandedChapters = new Set(expandedChapters);
+                            if (newExpandedChapters.has(chapterIndex)) {
+                              newExpandedChapters.delete(chapterIndex);
+                            } else {
+                              newExpandedChapters.add(chapterIndex);
+                            }
+                            setExpandedChapters(newExpandedChapters);
+                          }}
+                          className="w-full"
+                        >
+                          <div className="p-6 hover:bg-gray-50 transition-colors">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-3">
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                  chapterProgress?.completed ? "bg-emerald-100" : "bg-violet-100"
+                                }`}>
+                                  {chapterProgress?.completed ? (
+                                    <CheckCircle className="w-4 h-4 text-emerald-600" />
+                                  ) : (
+                                    <span className="font-medium text-violet-600">{chapterIndex + 1}</span>
+                                  )}
+                                </div>
+                                <h3 className="text-lg font-semibold text-gray-900">
+                                  {chapter.title}
+                                </h3>
                               </div>
-                            )}
+                              <div className="flex items-center gap-4">
+                                <div className="text-sm text-gray-500">
+                                  {completedLessons}/{totalLessons} lessons
+                                </div>
+                                <ChevronRight 
+                                  className={`w-5 h-5 text-gray-400 transition-transform ${
+                                    expandedChapters.has(chapterIndex) ? 'rotate-90' : ''
+                                  }`} 
+                                />
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-emerald-500 transition-all duration-300"
+                                  style={{ width: `${progressPercentage}%` }}
+                                />
+                              </div>
+                              <span className="text-sm font-medium text-gray-600">
+                                {Math.round(progressPercentage)}%
+                              </span>
+                            </div>
                           </div>
-                          <div className="space-y-3">
-                            {chapter.lessons.map((lesson, lessonIndex) => {
-                              const lessonProgress = chapterProgress?.lessons?.[lessonIndex];
-                              const isCurrentLesson = 
-                                course.userProgress?.currentChapter === chapterIndex &&
-                                course.userProgress?.currentLesson === lessonIndex;
-                              
-                              // Check if course is completed
-                              const isCourseCompleted = course.userProgress?.completed || 
-                                                       course.userProgress?.completionPercentage >= 100;
-                              
-                              return (
-                                <Link
-                                  key={lesson._id}
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    if (!canTakeQuizToday) {
-                                      toast.error("You've already completed a quiz today. Come back tomorrow for more!");
-                                      return;
-                                    }
-                                    router.push(`/lesson/${lesson.slug}`);
-                                  }}
-                                  className={`block cursor-pointer`}
-                                >
-                                  <div
-                                    className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                        </button>
+
+                        {/* Collapsible Lessons Section */}
+                        <div className={`transition-all duration-300 ease-in-out ${
+                          expandedChapters.has(chapterIndex) 
+                            ? 'max-h-[2000px] opacity-100' 
+                            : 'max-h-0 opacity-0 overflow-hidden'
+                        }`}>
+                          <div className="border-t border-gray-100">
+                            <div className="space-y-1 p-4">
+                              {chapter.lessons.map((lesson, lessonIndex) => {
+                                const lessonProgress = chapterProgress?.lessons?.[lessonIndex];
+                                const isCurrentLesson = 
+                                  course.userProgress?.currentChapter === chapterIndex &&
+                                  course.userProgress?.currentLesson === lessonIndex;
+                                const isCourseCompleted = course.userProgress?.completed || 
+                                                        course.userProgress?.completionPercentage >= 100;
+                                
+                                return (
+                                  <Link
+                                    key={lesson._id}
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      if (!canTakeQuizToday) {
+                                        toast.error("You've already completed a quiz today. Come back tomorrow for more!");
+                                        return;
+                                      }
+                                      router.push(`/lesson/${lesson.slug}`);
+                                    }}
+                                    className="block"
+                                  >
+                                    <div className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
                                       isCurrentLesson && !isCourseCompleted
                                         ? "bg-violet-50 border-violet-100"
                                         : "hover:bg-gray-50"
-                                    } ${lessonProgress?.completed ? "border-emerald-100" : "border-gray-100"
-                                    } border`}
-                                  >
-                                    <div className="flex items-center gap-3">
-                                      <div
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                      } ${lessonProgress?.completed ? "border-emerald-100" : "border-gray-100"} border`}
+                                    >
+                                      <div className="flex items-center gap-3">
+                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                                           lessonProgress?.completed
                                             ? "bg-emerald-100"
                                             : isCurrentLesson && !isCourseCompleted
                                             ? "bg-violet-100"
                                             : "bg-gray-100"
-                                        }`}
-                                      >
-                                        {lessonProgress?.completed ? (
-                                          <CheckCircle className="w-4 h-4 text-emerald-600" />
-                                        ) : isCurrentLesson && !isCourseCompleted ? (
-                                          <PlayCircle className="w-4 h-4 text-violet-600" />
-                                        ) : (
-                                          <Lock className="w-4 h-4 text-gray-400" />
-                                        )}
-                                      </div>
-                                      <div>
-                                        <h4 className="font-medium text-gray-900">
-                                          {lesson.title}
-                                        </h4>
-                                        <div className="flex items-center gap-4 mt-1">
-                                          <span className="text-sm text-gray-500 flex items-center gap-1">
-                                            <Clock className="w-4 h-4" />
-                                            {lesson.duration} min
-                                          </span>
-                                          {lesson.parts.some(part => part.exercise) && (
-                                            <span className="text-sm text-gray-500 flex items-center gap-1">
-                                              <Code className="w-4 h-4" />
-                                              Practice
-                                            </span>
+                                        }`}>
+                                          {lessonProgress?.completed ? (
+                                            <CheckCircle className="w-4 h-4 text-emerald-600" />
+                                          ) : isCurrentLesson && !isCourseCompleted ? (
+                                            <PlayCircle className="w-4 h-4 text-violet-600" />
+                                          ) : (
+                                            <Lock className="w-4 h-4 text-gray-400" />
                                           )}
                                         </div>
+                                        <div>
+                                          <h4 className="font-medium text-gray-900">
+                                            {lesson.title}
+                                          </h4>
+                                          <div className="flex items-center gap-4 mt-1">
+                                            <span className="text-sm text-gray-500 flex items-center gap-1">
+                                              <Clock className="w-4 h-4" />
+                                              {lesson.duration} min
+                                            </span>
+                                            {lesson.parts.some(part => part.exercise) && (
+                                              <span className="text-sm text-gray-500 flex items-center gap-1">
+                                                <Code className="w-4 h-4" />
+                                                Practice
+                                              </span>
+                                            )}
+                                          </div>
+                                        </div>
                                       </div>
+                                      {isCurrentLesson && !isCourseCompleted && (
+                                        <span className="text-sm font-medium text-violet-600">
+                                          Current Lesson
+                                        </span>
+                                      )}
                                     </div>
-                                    {isCurrentLesson && !isCourseCompleted && (
-                                      <span className="text-sm font-medium text-violet-600">
-                                        Current Lesson
-                                      </span>
-                                    )}
-                                  </div>
-                                </Link>
-                              );
-                            })}
-                          </div>
-                          {/* Add Chapter Quiz Section */}
-                          {chapter.endOfChapterQuiz && (
-                            <div className="p-6 border-t border-gray-100">
-                              <div className="flex items-center justify-between mb-4">
-                                <h4 className="text-lg font-semibold text-gray-900">
-                                  Chapter Quiz
-                                </h4>
-                                {chapterProgress?.endOfChapterQuiz?.completed && (
-                                  <div className="flex items-center gap-2 text-emerald-600">
-                                    <CheckCircle className="w-5 h-5" />
-                                    <span className="text-sm font-medium">Completed</span>
-                                  </div>
-                                )}
-                              </div>
-                              <div className="space-y-4">
-                                <div className="flex items-center gap-6 text-sm text-gray-600">
-                                  <div className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4" />
-                                    <span>{chapter.endOfChapterQuiz.duration} minutes</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <GraduationCap className="w-4 h-4" />
-                                    <span>Passing Score: {chapter.endOfChapterQuiz.passingScore}%</span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <Star className="w-4 h-4" />
-                                    <span>{chapter.endOfChapterQuiz.questions.length} Questions</span>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+
+                            {/* Chapter Quiz Section */}
+                            {chapter.endOfChapterQuiz && (
+                              <div className="p-6 border-t border-gray-100">
+                                <div className="flex items-center justify-between mb-4">
+                                  <h4 className="text-lg font-semibold text-gray-900">
+                                    Chapter Quiz
+                                  </h4>
+                                  {chapterProgress?.endOfChapterQuiz?.completed && (
+                                    <div className="flex items-center gap-2 text-emerald-600">
+                                      <CheckCircle className="w-5 h-5" />
+                                      <span className="text-sm font-medium">Completed</span>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="space-y-4">
+                                  <div className="flex items-center gap-6 text-sm text-gray-600">
+                                    <div className="flex items-center gap-2">
+                                      <Clock className="w-4 h-4" />
+                                      <span>{chapter.endOfChapterQuiz.duration} minutes</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <GraduationCap className="w-4 h-4" />
+                                      <span>Passing Score: {chapter.endOfChapterQuiz.passingScore}%</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Star className="w-4 h-4" />
+                                      <span>{chapter.endOfChapterQuiz.questions.length} Questions</span>
+                                    </div>
                                   </div>
                                 </div>
-                                <button
-                                  onClick={async () => {
-                                    if (!chapter.endOfChapterQuiz.slug) {
-                                      console.error('No quiz slug found');
-                                      return;
-                                    }
-                                    
-                                    setIsChecking(true);
-                                    try {
-                                      console.log('Checking enrollment for chapter quiz + slug: ', chapter.endOfChapterQuiz.slug, 'and type: ', 'chapter-quiz');
-                                      const isEnrolled = await checkEnrollment(chapter.endOfChapterQuiz.slug, 'chapter-quiz');
-                                      if (isEnrolled) {
-                                        router.push(`/quiz/chapter/${chapter.endOfChapterQuiz.slug}`);
-                                      } else {
-                                        toast.error('You must be enrolled in this course to take the quiz');
-                                      }
-                                    } catch (error) {
-                                      console.error('Error checking enrollment:', error);
-                                      toast.error('Failed to check enrollment status');
-                                    } finally {
-                                      setIsChecking(false);
-                                    }
-                                  }}
-                                  className={`w-full px-4 py-2 ${
-                                    chapterProgress?.endOfChapterQuiz?.completed
-                                      ? 'bg-emerald-600 hover:bg-emerald-700'
-                                      : 'bg-violet-600 hover:bg-violet-700'
-                                  } text-white rounded-lg transition-colors flex items-center justify-center gap-2`}
-                                >
-                                  <GraduationCap className="w-5 h-5" />
-                                  {isChecking ? 'Checking...' : chapterProgress?.endOfChapterQuiz?.completed
-                                    ? 'Review Chapter Quiz'
-                                    : 'Start Chapter Quiz'}
-                                </button>
                               </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                       </div>
                     );

@@ -1,0 +1,9 @@
+{
+  "name": "lucent-scripts",
+  "type": "module",
+  "dependencies": {
+    "@clerk/clerk-sdk-node": "^4.13.11",
+    "dotenv": "^16.5.0",
+    "mongoose": "^8.9.5"
+  }
+} 

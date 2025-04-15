@@ -43,7 +43,7 @@ export function LessonNavigation({
 
       {/* Next/Quiz Button */}
       <div>
-        {showQuizButton ? (
+        {showQuizButton && onStartQuiz && (
           <button
             onClick={onStartQuiz}
             className="flex items-center gap-2 px-6 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors font-medium"
@@ -51,7 +51,8 @@ export function LessonNavigation({
             <Trophy className="w-5 h-5" />
             <span>Take Quiz</span>
           </button>
-        ) : currentPartIndex < totalParts - 1 ? (
+        )}
+        {!showQuizButton && currentPartIndex < totalParts - 1 && (
           <button
             onClick={() => onNavigate(currentPartIndex + 1)}
             className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
@@ -59,7 +60,8 @@ export function LessonNavigation({
             <span className="font-medium">Next Part</span>
             <ChevronRight className="w-5 h-5" />
           </button>
-        ) : nextLesson ? (
+        )}
+        {!showQuizButton && currentPartIndex >= totalParts - 1 && nextLesson && (
           <Link
             href={`/lesson/${nextLesson.slug}`}
             className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
@@ -67,7 +69,8 @@ export function LessonNavigation({
             <span className="font-medium">Next Lesson</span>
             <ChevronRight className="w-5 h-5" />
           </Link>
-        ) : (
+        )}
+        {!showQuizButton && currentPartIndex >= totalParts - 1 && !nextLesson && (
           <div className="w-[120px]" /> {/* Spacer for layout balance */}
         )}
       </div>

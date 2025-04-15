@@ -271,7 +271,7 @@ UserSchema.methods.addXP = function(amount) {
 
 // Virtual for calculating overall completion percentage
 UserSchema.virtual('completionPercentage').get(function() {
-  if (!this.progress.courses.length) return 0;
+  if (!this.progress?.courses?.length) return 0;
   
   const totalPercentage = this.progress.courses.reduce(
     (sum, course) => sum + (course.completionPercentage || 0),
