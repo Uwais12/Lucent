@@ -209,36 +209,36 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // const seedDatabase = async () => {
-    //   try {
-    //     // First, clean up existing courses
-    //     const cleanupResponse = await fetch("/api/cleanup", { 
-    //       method: "POST",
-    //       cache: 'no-store'
-    //     });
-    //     const cleanupData = await cleanupResponse.json();
-    //     console.log("Cleanup response:", cleanupData);
+    const seedDatabase = async () => {
+      try {
+        // First, clean up existing courses
+        const cleanupResponse = await fetch("/api/cleanup", { 
+          method: "POST",
+          cache: 'no-store'
+        });
+        const cleanupData = await cleanupResponse.json();
+        console.log("Cleanup response:", cleanupData);
 
-    //     // Then seed the courses
-    //     const response = await fetch("/api/seed", { 
-    //       method: "POST",
-    //       cache: 'no-store'
-    //     });
-    //     const data = await response.json();
-    //     console.log("Seeding response:", data);
+        // Then seed the courses
+        const response = await fetch("/api/seed", { 
+          method: "POST",
+          cache: 'no-store'
+        });
+        const data = await response.json();
+        console.log("Seeding response:", data);
         
-    //     // Refresh courses after seeding
-    //     const coursesRes = await fetch("/api/courses", { cache: 'no-store' });
-    //     const coursesData = await coursesRes.json();
-    //     setDbCourses(coursesData);
-    //   } catch (error) {
-    //     console.error("Error seeding database:", error);
-    //   }
-    // };
+        // Refresh courses after seeding
+        const coursesRes = await fetch("/api/courses", { cache: 'no-store' });
+        const coursesData = await coursesRes.json();
+        setDbCourses(coursesData);
+      } catch (error) {
+        console.error("Error seeding database:", error);
+      }
+    };
 
-    // if (isLoaded && isSignedIn) {
-    //   seedDatabase();
-    // }
+    if (isLoaded && isSignedIn) {
+      seedDatabase();
+    }
   }, [isLoaded, isSignedIn]);
 
   // Function to handle course enrollment
@@ -772,8 +772,8 @@ export default function Home() {
             {/* Filters */}
             <div className="mb-6">
               <div className="bg-white p-4 rounded-xl shadow-sm">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="flex-1">
+                <div className="flex flex-col gap-4">
+                  <div className="w-full">
                     <div className="relative">
                       <input
                         type="text"
@@ -789,12 +789,12 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="relative">
                       <select
                         value={selectedCourse}
                         onChange={(e) => setSelectedCourse(e.target.value)}
-                        className="appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50 pr-8"
+                        className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50 pr-8"
                       >
                         <option value="all">All Courses</option>
                         {dbCourses.map(course => (
@@ -811,7 +811,7 @@ export default function Home() {
                       <select
                         value={selectedType}
                         onChange={(e) => setSelectedType(e.target.value)}
-                        className="appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50 pr-8"
+                        className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50 pr-8"
                       >
                         <option value="all">All Types</option>
                         <option value="course-exam">Final Exam</option>

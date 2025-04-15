@@ -535,30 +535,53 @@ export default function CourseDetails() {
                             {/* Chapter Quiz Section */}
                             {chapter.endOfChapterQuiz && (
                               <div className="p-6 border-t border-gray-100">
-                                <div className="flex items-center justify-between mb-4">
-                                  <h4 className="text-lg font-semibold text-gray-900">
-                                    Chapter Quiz
-                                  </h4>
-                                  {chapterProgress?.endOfChapterQuiz?.completed && (
-                                    <div className="flex items-center gap-2 text-emerald-600">
-                                      <CheckCircle className="w-5 h-5" />
-                                      <span className="text-sm font-medium">Completed</span>
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="space-y-4">
-                                  <div className="flex items-center gap-6 text-sm text-gray-600">
-                                    <div className="flex items-center gap-2">
-                                      <Clock className="w-4 h-4" />
-                                      <span>{chapter.endOfChapterQuiz.duration} minutes</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <GraduationCap className="w-4 h-4" />
-                                      <span>Passing Score: {chapter.endOfChapterQuiz.passingScore}%</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Star className="w-4 h-4" />
-                                      <span>{chapter.endOfChapterQuiz.questions.length} Questions</span>
+                                <div 
+                                  onClick={async (e) => {
+                                    e.preventDefault();
+                                    if (!canTakeQuizToday) {
+                                      toast.error("You've already completed a quiz today. Come back tomorrow for more!");
+                                      return;
+                                    }
+                                    setIsChecking(true);
+                                    try {
+                                      const isEnrolled = await checkEnrollment(chapter.endOfChapterQuiz.slug, 'chapter-quiz');
+                                      if (isEnrolled) {
+                                        router.push(`/quiz/chapter/${chapter.endOfChapterQuiz.slug}`);
+                                      }
+                                    } catch (error) {
+                                      console.error('Error checking enrollment:', error);
+                                      toast.error('Failed to check enrollment status');
+                                    } finally {
+                                      setIsChecking(false);
+                                    }
+                                  }}
+                                  className="cursor-pointer hover:bg-gray-50 transition-colors rounded-lg"
+                                >
+                                  <div className="flex items-center justify-between mb-4">
+                                    <h4 className="text-lg font-semibold text-gray-900">
+                                      Chapter Quiz
+                                    </h4>
+                                    {chapterProgress?.endOfChapterQuiz?.completed && (
+                                      <div className="flex items-center gap-2 text-emerald-600">
+                                        <CheckCircle className="w-5 h-5" />
+                                        <span className="text-sm font-medium">Completed</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="space-y-4">
+                                    <div className="flex items-center gap-6 text-sm text-gray-600">
+                                      <div className="flex items-center gap-2">
+                                        <Clock className="w-4 h-4" />
+                                        <span>{chapter.endOfChapterQuiz.duration} minutes</span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <GraduationCap className="w-4 h-4" />
+                                        <span>Passing Score: {chapter.endOfChapterQuiz.passingScore}%</span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <Star className="w-4 h-4" />
+                                        <span>{chapter.endOfChapterQuiz.questions.length} Questions</span>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>

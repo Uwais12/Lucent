@@ -418,13 +418,13 @@ export const designPatternsCourse = {
                 correctAnswer: "true",
                 points: 10,
                 explanation: "By changing the behavior object the Duck holds (e.g., via `setFlyBehavior`), its behavior can be altered dynamically."
-              },
-               {
-                 type: "short-answer",
-                 question: "What is the general intent of the Strategy pattern?",
-                 correctAnswer: "Define a family of algorithms, encapsulate each one, and make them interchangeable.", // Variations acceptable
-                 points: 10
-               }
+              }
+              //  {
+              //    type: "short-answer",
+              //    question: "What is the general intent of the Strategy pattern?",
+              //    correctAnswer: "Define a family of algorithms, encapsulate each one, and make them interchangeable.", // Variations acceptable
+              //    points: 10
+              //  }
             ]
           }
         }
@@ -1505,13 +1505,13 @@ export const designPatternsCourse = {
                 correctAnswer: "false",
                 points: 10,
                 explanation: "The Invoker merely triggers `command.execute()`; the actual work is done by the Receiver, called by the Concrete Command."
-              },
-              {
-                type: "short-answer",
-                question: "Besides decoupling, name one other common use case or benefit of the Command pattern.",
-                correctAnswer: "Undo/Redo, Queuing requests, Logging requests, Macro commands", // Accept any one
-                points: 10
               }
+              // {
+              //   type: "short-answer",
+              //   question: "Besides decoupling, name one other common use case or benefit of the Command pattern.",
+              //   correctAnswer: "Undo/Redo, Queuing requests, Logging requests, Macro commands", // Accept any one
+              //   points: 10
+              // }
             ]
           }
         }
@@ -1779,13 +1779,13 @@ export const designPatternsCourse = {
                  correctAnswer: "false",
                  points: 10,
                  explanation: "Facade provides a simpler interface but doesn't necessarily prevent access to the subsystem if needed (though it's often discouraged)."
-               },
-               {
-                 type: "short-answer",
-                 question: "Which design principle encourages minimizing interactions between objects ('talk only to your immediate friends'), often supported by using a Facade?",
-                 correctAnswer: "Principle of Least Knowledge", // or Law of Demeter
-                 points: 10
                }
+              //  {
+              //    type: "short-answer",
+              //    question: "Which design principle encourages minimizing interactions between objects ('talk only to your immediate friends'), often supported by using a Facade?",
+              //    correctAnswer: "Principle of Least Knowledge", // or Law of Demeter
+              //    points: 10
+              //  }
             ]
           }
         }

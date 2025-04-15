@@ -682,16 +682,16 @@ export const ddiaCourse = {
                 points: 10,
                 explanation:
                   "Elastic scaling systems are designed to react automatically to changes in load by adjusting resource allocation."
-              },
-             {
-                type: "short-answer",
-                question:
-                  "Why is it generally easier to horizontally scale a stateless web application server compared to a database?",
-                correctAnswer: "Because stateless servers don't manage persistent data/state between requests, while databases must manage distributed data consistency and replication.", // Variations acceptable
-                points: 10,
-                explanation:
-                  "The core challenge difference lies in managing the distributed state (data) required by stateful systems like databases."
               }
+            //  {
+            //     type: "short-answer",
+            //     question:
+            //       "Why is it generally easier to horizontally scale a stateless web application server compared to a database?",
+            //     correctAnswer: "Because stateless servers don't manage persistent data/state between requests, while databases must manage distributed data consistency and replication.", // Variations acceptable
+            //     points: 10,
+            //     explanation:
+            //       "The core challenge difference lies in managing the distributed state (data) required by stateful systems like databases."
+            //   }
             ]
           }
         }
@@ -721,15 +721,15 @@ export const ddiaCourse = {
             explanation:
               "While cost is always a factor, the three core non-functional requirements focused on were reliability, scalability, and maintainability."
           },
-          {
-            type: "short-answer",
-            question:
-              "Define the difference between a 'fault' and a 'failure' in the context of system reliability.",
-            correctAnswer: "A fault is a component deviating from spec; a failure is the system stopping required service.", // Variations acceptable
-            points: 10,
-            explanation:
-              "Understanding this distinction is key to designing fault-tolerant systems, which aim to prevent faults from causing failures."
-          },
+          // {
+          //   type: "short-answer",
+          //   question:
+          //     "Define the difference between a 'fault' and a 'failure' in the context of system reliability.",
+          //   correctAnswer: "A fault is a component deviating from spec; a failure is the system stopping required service.", // Variations acceptable
+          //   points: 10,
+          //   explanation:
+          //     "Understanding this distinction is key to designing fault-tolerant systems, which aim to prevent faults from causing failures."
+          // },
           {
             type: "true-false",
             question:
@@ -1099,16 +1099,16 @@ export const ddiaCourse = {
                 points: 10,
                 explanation:
                   "Schema-on-read means the *application* interprets the structure upon reading; the database typically doesn't enforce a schema during reads."
-              },
-              { // Converted drag-and-drop
-                type: "short-answer",
-                question:
-                  "Match 'Better locality for nested data' and 'Superior handling of complex joins' to either 'Relational' or 'Document'.",
-                correctAnswer: "Document: Better locality for nested data; Relational: Superior handling of complex joins.",
-                points: 10,
-                explanation:
-                  "Document models benefit from locality, while relational models excel at joins between normalized tables."
               }
+              // { // Converted drag-and-drop
+              //   type: "short-answer",
+              //   question:
+              //     "Match 'Better locality for nested data' and 'Superior handling of complex joins' to either 'Relational' or 'Document'.",
+              //   correctAnswer: "Document: Better locality for nested data; Relational: Superior handling of complex joins.",
+              //   points: 10,
+              //   explanation:
+              //     "Document models benefit from locality, while relational models excel at joins between normalized tables."
+              // }
             ]
           }
         },
@@ -1262,15 +1262,15 @@ export const ddiaCourse = {
                 explanation:
                   "These two user-provided functions define the core logic of the MapReduce computation."
               },
-              {
-                type: "short-answer",
-                question:
-                  "In the property graph model, what two main components represent the data structure?",
-                correctAnswer: "Vertices (or nodes) and Edges (or relationships)",
-                points: 10,
-                explanation:
-                  "Graphs are fundamentally defined by their vertices (entities) and the edges (connections) between them."
-              },
+              // {
+              //   type: "short-answer",
+              //   question:
+              //     "In the property graph model, what two main components represent the data structure?",
+              //   correctAnswer: "Vertices (or nodes) and Edges (or relationships)",
+              //   points: 10,
+              //   explanation:
+              //     "Graphs are fundamentally defined by their vertices (entities) and the edges (connections) between them."
+              // },
               {
                 type: "multiple-choice",
                 question:
@@ -1348,15 +1348,15 @@ export const ddiaCourse = {
             explanation:
               "Abstraction from the execution details allows for optimization and easier query writing."
           },
-          { // Converted drag-and-drop
-            type: "short-answer",
-            question:
-              "Match data models (Relational, Document, Graph, Key-value) to their primary strengths: 'Fast key lookups', 'Nested data locality', 'Relationship traversal', 'Complex joins'.",
-            correctAnswer: "Key-value: Fast key lookups; Document: Nested data locality; Graph: Relationship traversal; Relational: Complex joins.",
-            points: 10,
-            explanation:
-              "Each model is optimized for different access patterns and data structures."
-          },
+          // { // Converted drag-and-drop
+          //   type: "short-answer",
+          //   question:
+          //     "Match data models (Relational, Document, Graph, Key-value) to their primary strengths: 'Fast key lookups', 'Nested data locality', 'Relationship traversal', 'Complex joins'.",
+          //   correctAnswer: "Key-value: Fast key lookups; Document: Nested data locality; Graph: Relationship traversal; Relational: Complex joins.",
+          //   points: 10,
+          //   explanation:
+          //     "Each model is optimized for different access patterns and data structures."
+          // },
           {
             type: "multiple-choice",
             question:
@@ -1816,15 +1816,15 @@ export const ddiaCourse = {
                 explanation:
                   "In a clustered index, the row data *is* stored within the leaf level of the index structure."
               },
-              {
-                type: "short-answer",
-                question:
-                  "What is the primary performance benefit of using an in-memory database?",
-                correctAnswer: "Elimination of disk I/O latency", // or variations like faster access, speed
-                points: 10,
-                explanation:
-                  "Keeping data in RAM avoids the significant delays associated with reading from or writing to disk."
-              },
+              // {
+              //   type: "short-answer",
+              //   question:
+              //     "What is the primary performance benefit of using an in-memory database?",
+              //   correctAnswer: "Elimination of disk I/O latency", // or variations like faster access, speed
+              //   points: 10,
+              //   explanation:
+              //     "Keeping data in RAM avoids the significant delays associated with reading from or writing to disk."
+              // },
               {
                 type: "multiple-choice",
                 question:
@@ -2170,15 +2170,15 @@ export const ddiaCourse = {
             explanation:
               "LSM-trees optimize for sequential writes but rewrite data during compaction (amplification), while B-trees update in place (less amplification, potentially more random I/O)."
           },
-          { // From original
-            type: "short-answer",
-            question:
-              "In column-oriented storage, why is compression often significantly more effective than in row-oriented storage?",
-            correctAnswer: "Because values within the same column are stored together and tend to be similar or repetitive.",
-            points: 10,
-            explanation:
-              "Grouping values by column increases data locality and repetition, which compression algorithms exploit."
-          },
+          // { // From original
+          //   type: "short-answer",
+          //   question:
+          //     "In column-oriented storage, why is compression often significantly more effective than in row-oriented storage?",
+          //   correctAnswer: "Because values within the same column are stored together and tend to be similar or repetitive.",
+          //   points: 10,
+          //   explanation:
+          //     "Grouping values by column increases data locality and repetition, which compression algorithms exploit."
+          // },
           { // From original, rephrased
             type: "multiple-choice",
             question:
@@ -8862,15 +8862,15 @@ export const ddiaCourse = {
         explanation:
           "Snapshot Isolation (using MVCC) is strong but weaker than Serializable. It prevents non-repeatable reads but still allows write skew and some phantom reads."
       },
-      { // New Q7 - Ch 9
-        type: "short-answer",
-        question:
-          "Define Linearizability. What is the core guarantee it provides?",
-        correctAnswer: "Linearizability makes a system appear as if there is only a single copy of the data, and all operations appear to take effect atomically at some single point in time (recency guarantee).", // Variations acceptable
-        points: 10,
-        explanation:
-          "It's the strongest single-object consistency model, providing the illusion of a single, instantaneously updated data copy."
-      },
+      // { // New Q7 - Ch 9
+      //   type: "short-answer",
+      //   question:
+      //     "Define Linearizability. What is the core guarantee it provides?",
+      //   correctAnswer: "Linearizability makes a system appear as if there is only a single copy of the data, and all operations appear to take effect atomically at some single point in time (recency guarantee).", // Variations acceptable
+      //   points: 10,
+      //   explanation:
+      //     "It's the strongest single-object consistency model, providing the illusion of a single, instantaneously updated data copy."
+      // },
       { // New Q8 - Ch 5 / Ch 9
         type: "multiple-choice",
         question:
@@ -8901,15 +8901,15 @@ export const ddiaCourse = {
         explanation:
           "By running map tasks on nodes holding the data, large input splits don't need to be sent across the network."
       },
-      { // New Q10 - Ch 11
-        type: "short-answer",
-        question:
-          "What does it mean for an operation to be idempotent, and why is this important for fault tolerance in stream processing?",
-        correctAnswer: "Idempotent means applying the operation multiple times has the same effect as applying it once. This is important because it allows safe retries of operations upon failure without causing incorrect results (e.g., duplicate processing).", // Variations acceptable
-        points: 10,
-        explanation:
-          "Idempotency enables at-least-once processing systems to achieve exactly-once *semantics* by making retries safe."
-      },
+      // { // New Q10 - Ch 11
+      //   type: "short-answer",
+      //   question:
+      //     "What does it mean for an operation to be idempotent, and why is this important for fault tolerance in stream processing?",
+      //   correctAnswer: "Idempotent means applying the operation multiple times has the same effect as applying it once. This is important because it allows safe retries of operations upon failure without causing incorrect results (e.g., duplicate processing).", // Variations acceptable
+      //   points: 10,
+      //   explanation:
+      //     "Idempotency enables at-least-once processing systems to achieve exactly-once *semantics* by making retries safe."
+      // },
       { // New Q11 - Ch 11
         type: "multiple-choice",
         question:
@@ -8950,15 +8950,15 @@ export const ddiaCourse = {
         explanation:
           "Both sort-merge and partitioned hash (shuffle) joins are designed to handle large-to-large dataset joins by sorting/partitioning data across the cluster."
       },
-      { // New Q14 - Ch 12
-        type: "short-answer",
-        question:
-          "Briefly explain the 'end-to-end argument' and give an example related to data systems.",
-        correctAnswer: "The argument states some functionality can only be fully guaranteed at the application endpoints, as intermediate systems lack full context. Example: Ensuring exactly-once message processing often needs application-level deduplication (using request IDs) because the message queue might only guarantee at-least-once delivery.", // Variations acceptable
-        points: 10,
-        explanation:
-          "It highlights that relying solely on infrastructure guarantees is often insufficient for application-level correctness."
-      },
+      // { // New Q14 - Ch 12
+      //   type: "short-answer",
+      //   question:
+      //     "Briefly explain the 'end-to-end argument' and give an example related to data systems.",
+      //   correctAnswer: "The argument states some functionality can only be fully guaranteed at the application endpoints, as intermediate systems lack full context. Example: Ensuring exactly-once message processing often needs application-level deduplication (using request IDs) because the message queue might only guarantee at-least-once delivery.", // Variations acceptable
+      //   points: 10,
+      //   explanation:
+      //     "It highlights that relying solely on infrastructure guarantees is often insufficient for application-level correctness."
+      // },
       { // New Q15 - Ch 4
         type: "multiple-choice",
         question:
