@@ -84,6 +84,11 @@ export async function POST(req, { params }) {
     lessonProgress.completionDate = new Date();
     lessonProgress.attempts = (lessonProgress.attempts || 0) + 1;
     
+    // If this is the first time completing this lesson, increment the global counter
+    if (isFirstCompletion) {
+      user.progress.completedLessons = (user.progress.completedLessons || 0) + 1;
+    }
+    
     // Track time spent (assuming average time based on lesson duration)
     const timeSpent = lesson.duration || 10; // Default to 10 minutes if duration not specified
     user.progress.totalTimeSpent = (user.progress.totalTimeSpent || 0) + timeSpent;
@@ -217,6 +222,7 @@ export async function POST(req, { params }) {
       xpGained,
       gemsGained,
       levelUp,
+      totalCompletedLessons: user.progress.completedLessons,
       redirectUrl
     }), {
       status: 200,
