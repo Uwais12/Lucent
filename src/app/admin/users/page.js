@@ -239,6 +239,9 @@ export default function AdminUsers() {
                     <tr key={user._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
+                          {new Date(user.createdAt).getTime() < new Date("2025-04-16T19:50:00Z").getTime() && (
+                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">DEV</span>
+                          )}
                           <div>
                             <div className="text-sm font-medium text-gray-900">
                               {user.email}
