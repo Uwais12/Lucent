@@ -27,16 +27,33 @@ marked.setOptions({
 });
 
 const renderer = new marked.Renderer();
-renderer.paragraph = (text) => {
-  return `<p class="mb-4 text-gray-700">${text}</p>`;
+
+// Update code block rendering
+renderer.code = (code, language) => {
+  return `<div class="relative">
+    <pre class="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 my-4 p-4 bg-gray-100 rounded-lg text-sm sm:text-base font-mono">
+      <code class="language-${language || 'plaintext'} whitespace-pre">${code}</code>
+    </pre>
+  </div>`;
 };
+
+renderer.paragraph = (text) => {
+  return `<p class="mb-4 text-gray-700 break-words">${text}</p>`;
+};
+
 renderer.list = (body, ordered) => {
   const type = ordered ? 'ol' : 'ul';
   const className = ordered ? 'list-decimal' : 'list-disc';
-  return `<${type} class="pl-6 mb-4 ${className}">${body}</${type}>`;
+  return `<${type} class="pl-6 mb-4 ${className} break-words">${body}</${type}>`;
 };
+
 renderer.listitem = (text) => {
-  return `<li class="mb-1">${text}</li>`;
+  return `<li class="mb-1 break-words">${text}</li>`;
+};
+
+// Add inline code styling
+renderer.codespan = (code) => {
+  return `<code class="px-1.5 py-0.5 bg-gray-100 text-sm sm:text-base font-mono rounded">${code}</code>`;
 };
 
 marked.use({ renderer });
@@ -365,6 +382,54 @@ export default function LessonPage() {
       <XPNotificationHandler params={params} />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+        {/* Top Navigation Header */}
+        <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl font-bold text-gray-900 truncate">{lesson.title}</h1>
+              <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+                <BookOpen className="w-4 h-4" />
+                <span>Part {currentPartIndex + 1}/{lesson.parts.length}</span>
+                <span className="mx-1">•</span>
+                <Clock className="w-4 h-4" />
+                <span>{currentPart.duration}m</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 ml-auto">
+              <button
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setCurrentPartIndex(prev => Math.max(0, prev - 1));
+                }}
+                disabled={currentPartIndex === 0}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${
+                  currentPartIndex === 0
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-violet-50 text-violet-700 hover:bg-violet-100'
+                }`}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span className="text-sm">Prev</span>
+              </button>
+              <button
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setCurrentPartIndex(prev => Math.min(lesson.parts.length - 1, prev + 1));
+                }}
+                disabled={currentPartIndex === lesson.parts.length - 1}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${
+                  currentPartIndex === lesson.parts.length - 1
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'bg-violet-50 text-violet-700 hover:bg-violet-100'
+                }`}
+              >
+                <span className="text-sm">Next</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
@@ -462,7 +527,10 @@ export default function LessonPage() {
               <div className="mt-8 pt-6 border-t">
                 <div className="flex justify-between">
                   <button
-                    onClick={() => setCurrentPartIndex(prev => Math.max(0, prev - 1))}
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      setCurrentPartIndex(prev => Math.max(0, prev - 1));
+                    }}
                     disabled={currentPartIndex === 0}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                       currentPartIndex === 0
@@ -474,7 +542,10 @@ export default function LessonPage() {
                     <span className="text-sm">Previous</span>
                   </button>
                   <button
-                    onClick={() => setCurrentPartIndex(prev => Math.min(lesson.parts.length - 1, prev + 1))}
+                    onClick={() => {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      setCurrentPartIndex(prev => Math.min(lesson.parts.length - 1, prev + 1));
+                    }}
                     disabled={currentPartIndex === lesson.parts.length - 1}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                       currentPartIndex === lesson.parts.length - 1

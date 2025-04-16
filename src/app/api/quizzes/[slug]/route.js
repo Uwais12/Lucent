@@ -12,46 +12,29 @@ export async function GET(req, { params }) {
 
     await connectToDatabase();
 
-    // Await params before using
-    const { slug } = await params;
-
-    // Find the course that contains this quiz
+    // Find the course that contains this quiz with a more efficient query
     const course = await Course.findOne({
-      "chapters.lessons.slug": slug
-    }).populate({
-      path: "chapters.lessons",
-      select: "title description slug endOfLessonQuiz"
+      "chapters.lessons.slug": params.slug
+    }, {
+      "chapters.lessons.$": 1,
+      "title": 1,
+      "slug": 1
     });
 
     if (!course) {
       return NextResponse.json({ error: "Course not found" }, { status: 404 });
     }
 
-    // Find the chapter and lesson containing this quiz
-    const chapter = course.chapters.find(chapter =>
-      chapter.lessons.some(lesson => lesson.slug === slug)
-    );
+    // Find the lesson containing this quiz
+    const lesson = course.chapters[0].lessons[0]; // Since we used $ operator, we know it's the first match
 
-    if (!chapter) {
-      return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
-    }
-
-    const lesson = chapter.lessons.find(lesson => lesson.slug === slug);
-
-    if (!lesson) {
-      return NextResponse.json({ error: "Lesson not found" }, { status: 404 });
-    }
-
-    // Get the quiz data
-    const quiz = lesson.endOfLessonQuiz;
-
-    if (!quiz) {
+    if (!lesson || !lesson.endOfLessonQuiz) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
 
     // Return the quiz data with course information
     return NextResponse.json({
-      ...quiz.toObject(),
+      ...lesson.endOfLessonQuiz.toObject(),
       course: {
         _id: course._id,
         slug: course.slug,
