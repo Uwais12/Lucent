@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trophy } from 'lucide-react';
+import { Trophy, CheckCircle, XCircle } from 'lucide-react';
 
 export default function Quiz({ questions, lessonSlug, onComplete }) {
   const router = useRouter();
@@ -12,6 +12,8 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [quizResults, setQuizResults] = useState(null);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [reviewAnswers, setReviewAnswers] = useState(null);
 
   // Timer effect
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
   };
 
   const handleSubmit = async () => {
-    if (isCompleted) return; // Prevent multiple submissions
+    if (isCompleted) return;
     
     setIsSubmitting(true);
     try {
@@ -64,17 +66,55 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
         }
 
         if (question.type === 'fill-blank') {
-          // For fill-in-the-blank questions, ensure we have an array of answers
           return Array.isArray(answer) ? answer : [answer];
         }
 
         return answer;
       });
 
-      console.log('Submitting answers array:', answersArray);
       const results = await onComplete(answersArray);
       setQuizResults(results);
       setIsCompleted(true);
+
+      // Prepare review answers with improved answer comparison
+      const reviewData = questions.map((question, index) => {
+        let isCorrect = false;
+        const userAnswer = answers[question._id];
+
+        switch (question.type) {
+          case 'true-false':
+            isCorrect = userAnswer?.toLowerCase() === question.correctAnswer?.toLowerCase();
+            break;
+          case 'multiple-choice':
+            isCorrect = userAnswer === question.correctAnswer;
+            break;
+          case 'fill-blank':
+            if (Array.isArray(userAnswer)) {
+              isCorrect = question.blanks.every((blank, blankIndex) => {
+                const answer = userAnswer[blankIndex]?.toLowerCase().trim();
+                return answer === blank.correctAnswer.toLowerCase().trim();
+              });
+            }
+            break;
+          case 'short-answer':
+            isCorrect = userAnswer?.toLowerCase().trim() === question.correctAnswer?.toLowerCase().trim();
+            break;
+          default:
+            isCorrect = userAnswer === question.correctAnswer;
+        }
+
+        return {
+          question: question.question,
+          userAnswer,
+          correctAnswer: question.correctAnswer,
+          type: question.type,
+          isCorrect,
+          explanation: question.explanation,
+          options: question.options
+        };
+      });
+
+      setReviewAnswers(reviewData);
     } catch (error) {
       console.error('Error submitting quiz:', error);
       setFeedback({
@@ -180,10 +220,62 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
     }
   };
 
+  const renderReviewContent = () => {
+    return (
+      <div className="space-y-8">
+        {reviewAnswers.map((answer, index) => (
+          <div key={index} className="p-6 bg-white rounded-xl shadow-sm">
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-medium text-gray-900">Question {index + 1}</h3>
+              {answer.isCorrect ? (
+                <div className="flex items-center text-green-600">
+                  <CheckCircle className="w-5 h-5 mr-2" />
+                  <span>Correct</span>
+                </div>
+              ) : (
+                <div className="flex items-center text-red-600">
+                  <XCircle className="w-5 h-5 mr-2" />
+                  <span>Incorrect</span>
+                </div>
+              )}
+            </div>
+            
+            <p className="text-gray-700 mb-4">{answer.question}</p>
+            
+            <div className="space-y-2">
+              <div className="flex items-center text-gray-600">
+                <span className="font-medium mr-2">Your Answer:</span>
+                <span className={answer.isCorrect ? 'text-green-600' : 'text-red-600'}>
+                  {answer.userAnswer}
+                </span>
+              </div>
+              
+              {!answer.isCorrect && (
+                <div className="flex items-center text-green-600">
+                  <span className="font-medium mr-2">Correct Answer:</span>
+                  <span>{answer.correctAnswer}</span>
+                </div>
+              )}
+            </div>
+
+            {answer.explanation && (
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-700">
+                  <span className="font-medium">Explanation: </span>
+                  {answer.explanation}
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   if (isTimeUp || isCompleted) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+        <div className="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
           <div className="text-center">
             <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Quiz Completed!</h3>
@@ -213,13 +305,34 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
                     </div>
                   </div>
                 )}
-                <button
-                  onClick={() => onComplete(null, true)}
-                  disabled={isSubmitting}
-                  className="w-full mt-6 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? 'Redirecting...' : 'Return to Course'}
-                </button>
+                <div className="flex flex-col gap-4 mt-6">
+                  {isReviewing ? (
+                    <>
+                      {renderReviewContent()}
+                      <button
+                        onClick={() => onComplete(null, true)}
+                        className="w-full bg-violet-600 text-white py-2 px-4 rounded-md hover:bg-violet-700 transition-colors"
+                      >
+                        Return to Course
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => setIsReviewing(true)}
+                        className="w-full bg-violet-600 text-white py-2 px-4 rounded-md hover:bg-violet-700 transition-colors"
+                      >
+                        Review Answers
+                      </button>
+                      <button
+                        onClick={() => onComplete(null, true)}
+                        className="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 transition-colors"
+                      >
+                        Return to Course
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             ) : (
               <>
@@ -256,7 +369,7 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
                     }
                   }}
                   disabled={isSubmitting}
-                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-violet-600 text-white py-2 px-4 rounded-md hover:bg-violet-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Submitting...' : 'Show Results'}
                 </button>

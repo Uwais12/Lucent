@@ -91,37 +91,40 @@ export async function POST(req, { params }) {
 
     // Calculate score
     let correctAnswers = 0;
+    let totalQuestions = quiz.questions.length;
+
     quiz.questions.forEach((question, index) => {
       const userAnswer = answers[index];
       if (!userAnswer) return;
 
+      let isCorrect = false;
       switch (question.type) {
         case "true-false":
-          if (userAnswer.toLowerCase() === question.correctAnswer.toLowerCase()) {
-            correctAnswers++;
-          }
+          isCorrect = userAnswer?.toLowerCase() === question.correctAnswer?.toLowerCase();
           break;
         case "multiple-choice":
-          if (userAnswer === question.correctAnswer) {
-            correctAnswers++;
-          }
+          isCorrect = userAnswer === question.correctAnswer;
           break;
         case "fill-blank":
-          // For fill-blank questions, userAnswer is an array of answers
           if (Array.isArray(userAnswer)) {
-            const allBlanksCorrect = question.blanks.every((blank, blankIndex) => {
+            isCorrect = question.blanks.every((blank, blankIndex) => {
               const answer = userAnswer[blankIndex]?.toLowerCase().trim();
               return answer === blank.correctAnswer.toLowerCase().trim();
             });
-            if (allBlanksCorrect) {
-              correctAnswers++;
-            }
           }
           break;
+        case "short-answer":
+          isCorrect = userAnswer?.toLowerCase().trim() === question.correctAnswer?.toLowerCase().trim();
+          break;
+        default:
+          isCorrect = userAnswer === question.correctAnswer;
+      }
+      if (isCorrect) {
+        correctAnswers++;
       }
     });
 
-    const score = Math.round((correctAnswers / quiz.questions.length) * 100);
+    const score = Math.round((correctAnswers / totalQuestions) * 100);
 
     // Only update lastQuizCompletion if score is passing (70% or higher)
     const passingScore = score >= 70;
