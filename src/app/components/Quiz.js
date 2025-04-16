@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Trophy } from 'lucide-react';
 
@@ -13,9 +13,6 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [quizResults, setQuizResults] = useState(null);
 
-  // Memoize the current question
-  const currentQuestion = useMemo(() => questions[currentQuestionIndex], [questions, currentQuestionIndex]);
-
   // Timer effect
   useEffect(() => {
     if (timeLeft > 0 && !isTimeUp && !isCompleted) {
@@ -29,35 +26,37 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
     }
   }, [timeLeft, isTimeUp, isCompleted]);
 
-  const handleAnswerSelect = useCallback((questionId, answer) => {
+  const handleAnswerSelect = (questionId, answer) => {
+    console.log('Selected answer:', { questionId, answer }); // Debug log
     setAnswers(prev => ({
       ...prev,
       [questionId]: answer
     }));
     setFeedback('');
-  }, []);
+  };
 
-  const handleNext = useCallback(() => {
+  const handleNext = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
       setFeedback('');
     } else {
       handleSubmit();
     }
-  }, [currentQuestionIndex, questions.length]);
+  };
 
-  const handlePrevious = useCallback(() => {
+  const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(prev => prev - 1);
       setFeedback('');
     }
-  }, [currentQuestionIndex]);
+  };
 
-  const handleSubmit = useCallback(async () => {
-    if (isCompleted || isSubmitting) return;
+  const handleSubmit = async () => {
+    if (isCompleted) return; // Prevent multiple submissions
     
     setIsSubmitting(true);
     try {
+      // Convert answers object to array format
       const answersArray = questions.map((question) => {
         const answer = answers[question._id];
         if (!answer) {
@@ -65,12 +64,14 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
         }
 
         if (question.type === 'fill-blank') {
+          // For fill-in-the-blank questions, ensure we have an array of answers
           return Array.isArray(answer) ? answer : [answer];
         }
 
         return answer;
       });
 
+      console.log('Submitting answers array:', answersArray);
       const results = await onComplete(answersArray);
       setQuizResults(results);
       setIsCompleted(true);
@@ -83,15 +84,15 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [answers, isCompleted, isSubmitting, onComplete, questions]);
+  };
 
-  const formatTime = useCallback((seconds) => {
+  const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  }, []);
+  };
 
-  const renderQuestionContent = useCallback((question) => {
+  const renderQuestionContent = (question) => {
     switch (question.type) {
       case 'true-false':
         return (
@@ -177,7 +178,7 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
           </div>
         );
     }
-  }, [answers, handleAnswerSelect]);
+  };
 
   if (isTimeUp || isCompleted) {
     return (
@@ -228,7 +229,32 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
                     : "Your answers have been submitted successfully."}
                 </p>
                 <button
-                  onClick={handleSubmit}
+                  onClick={async () => {
+                    try {
+                      // Convert answers object to array format before submitting
+                      const answersArray = questions.map((question) => {
+                        const answer = answers[question._id];
+                        if (!answer) {
+                          throw new Error(`No answer provided for question "${question.question}"`);
+                        }
+
+                        if (question.type === 'fill-blank') {
+                          return Array.isArray(answer) ? answer : [answer];
+                        }
+
+                        return answer;
+                      });
+                      const results = await onComplete(answersArray);
+                      setQuizResults(results);
+                      setIsCompleted(true);
+                    } catch (error) {
+                      console.error('Error submitting quiz:', error);
+                      setFeedback({
+                        type: 'error',
+                        message: error.message || 'Failed to submit quiz. Please try again.'
+                      });
+                    }
+                  }}
                   disabled={isSubmitting}
                   className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -241,6 +267,8 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
       </div>
     );
   }
+
+  const currentQuestion = questions[currentQuestionIndex];
 
   return (
     <div className="p-4 sm:p-6 bg-white rounded-xl shadow-sm">

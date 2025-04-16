@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Navbar from '@/app/components/Navbar';
 import Quiz from '@/app/components/Quiz';
@@ -19,59 +19,91 @@ export default function QuizPage() {
   const [showNotification, setShowNotification] = useState(false);
   const [completionData, setCompletionData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const hasCheckedEnrollment = useRef(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [enrollmentChecked, setEnrollmentChecked] = useState(false);
+
+  const fetchQuizData = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/quizzes/${params.slug}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setQuiz(data);
+        setTimeLeft(data.duration * 60);
+      } else {
+        setError(data.error || 'Failed to load quiz');
+      }
+    } catch (err) {
+      setError('Failed to load quiz');
+    } finally {
+      setLoading(false);
+    }
+  }, [params.slug]);
 
   useEffect(() => {
-    const fetchQuiz = async () => {
+    const initializeQuiz = async () => {
+      if (!isLoaded || !user || enrollmentChecked) return;
+
       try {
-        // Only check enrollment once
-        if (!hasCheckedEnrollment.current) {
-          const isEnrolled = await checkEnrollment(params.slug, 'quiz');
-          hasCheckedEnrollment.current = true;
-          if (!isEnrolled) {
-            setLoading(false);
-            return;
-          }
-        }
-
-        const response = await fetch(`/api/quizzes/${params.slug}`);
-        const data = await response.json();
-
-        if (response.ok) {
-          setQuiz(data);
+        const isEnrolled = await checkEnrollment(params.slug, 'quiz');
+        setEnrollmentChecked(true);
+        
+        if (isEnrolled) {
+          await fetchQuizData();
         } else {
-          setError(data.error || 'Failed to load quiz');
+          setError('You must be enrolled in the course to take this quiz');
+          setLoading(false);
         }
       } catch (err) {
-        console.error('Error fetching quiz:', err);
-        setError('Failed to load quiz');
-      } finally {
+        setError('Failed to check enrollment');
         setLoading(false);
       }
     };
 
-    if (isLoaded && user && !quiz) {
-    fetchQuiz();
+    initializeQuiz();
+  }, [isLoaded, user, params.slug, checkEnrollment, enrollmentChecked, fetchQuizData]);
+
+  const handleQuizComplete = async (answers, isReturnToCourse = false) => {
+    // If this is a return to course action and we have completion data
+    if (isReturnToCourse && completionData?.redirectUrl) {
+      // Remove the notification and completion data before redirecting
+      setShowNotification(false);
+      setCompletionData(null);
+      router.push(completionData.redirectUrl);
+      return;
     }
-  }, [params.slug, isLoaded, user, checkEnrollment]);
 
-  const handleQuizComplete = useCallback(async (answers, isReturnToCourse = false) => {
-    if (isSubmitting) return;
+    // If no answers provided, return
+    if (!answers) return;
+
     setIsSubmitting(true);
-
     try {
-      const response = await fetch(`/api/quizzes/${params.slug}/complete`, {
+      // First, submit the quiz completion
+      const quizResponse = await fetch(`/api/quizzes/${params.slug}/complete`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to submit quiz');
+      if (!quizResponse.ok) {
+        const errorData = await quizResponse.json();
+        throw new Error(errorData.error || 'Failed to submit quiz');
       }
 
-      const quizData = await response.json();
+      const quizData = await quizResponse.json();
+      
+      // Dispatch quiz completion event
+      window.dispatchEvent(new Event('quizCompleted'));
 
+      let completionInfo = {
+        score: quizData.score,
+        xpGained: quizData.xpGained,
+        gemsGained: quizData.gemsGained,
+        levelUp: quizData.levelUp,
+        completionPercentage: quizData.completionPercentage,
+        message: quizData.score >= 70 ? 'Quiz Completed Successfully! 🎉' : 'Quiz Submitted'
+      };
+      
       // If quiz is passed (score >= 70), mark lesson as complete
       if (quizData.score >= 70) {
         const lessonResponse = await fetch(`/api/lessons/${params.slug}/complete`, {
@@ -86,29 +118,35 @@ export default function QuizPage() {
 
         const lessonData = await lessonResponse.json();
         
-        // Create redirect URL with XP notification parameters
-        const courseSlug = quiz.course?.slug;
-        const courseId = quiz.course?._id;
-        
-        if (!courseSlug || !courseId) {
-          throw new Error('Course information not found');
-        }
-
-        const redirectUrl = `/course-details/${courseSlug}?xpGained=${quizData.xpGained}&gemsGained=${quizData.gemsGained}&levelUp=${quizData.levelUp}&completionPercentage=${lessonData.completionPercentage}&courseId=${courseId}`;
-
-        // Store all the completion data
-        setCompletionData({
-          ...quizData,
+        // Don't add XP/gems from lesson completion since quiz already awarded them
+        completionInfo = {
+          ...completionInfo,
           nextLessonSlug: lessonData.nextLessonSlug,
-          message: 'Quiz & Lesson Completed! 🎉',
-          redirectUrl
-        });
-
-        // Show XP notification
-        setShowNotification(true);
+          message: 'Quiz & Lesson Completed! 🎉'
+        };
       }
 
-      return quizData;
+      // Create redirect URL with XP notification parameters
+      const courseSlug = quiz.course?.slug;
+      const courseId = quiz.course?._id;
+      
+      if (!courseSlug || !courseId) {
+        throw new Error('Course information not found');
+      }
+
+      const redirectUrl = `/course-details/${courseSlug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}&completionPercentage=${completionInfo.completionPercentage}&courseId=${courseId}`;
+
+      // Store all the completion data
+      setCompletionData({
+        ...completionInfo,
+        redirectUrl
+      });
+
+      // Show XP notification for any score (to show feedback)
+      setShowNotification(true);
+
+      return completionInfo;
+
     } catch (error) {
       console.error('Error submitting quiz:', error);
       setError(error.message || 'Failed to submit quiz. Please try again.');
@@ -116,7 +154,7 @@ export default function QuizPage() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [params.slug, quiz, isSubmitting]);
+  };
 
   if (loading || isChecking) {
     return (
@@ -184,6 +222,7 @@ export default function QuizPage() {
           isSubmitting={isSubmitting}
         />
 
+        {/* Completion UI */}
         {showNotification && completionData && (
           <XPNotification
             xpGained={completionData.xpGained}
@@ -191,6 +230,7 @@ export default function QuizPage() {
             levelUp={completionData.levelUp}
             message={completionData.message}
             onClose={() => {
+              // Clear state before redirecting
               setShowNotification(false);
               const redirectUrl = completionData.redirectUrl;
               setCompletionData(null);

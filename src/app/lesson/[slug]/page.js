@@ -28,13 +28,16 @@ marked.setOptions({
 
 const renderer = new marked.Renderer();
 
-// Update code block rendering
+// Customize code block rendering
 renderer.code = (code, language) => {
-  return `<div class="relative">
-    <pre class="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 my-4 p-4 bg-gray-100 rounded-lg text-sm sm:text-base font-mono">
-      <code class="language-${language || 'plaintext'} whitespace-pre">${code}</code>
-    </pre>
-  </div>`;
+  return `<pre class="relative overflow-x-auto p-4 bg-gray-100 rounded-lg text-sm mb-4">
+    <code class="language-${language || 'text'} whitespace-pre font-mono block">${code}</code>
+  </pre>`;
+};
+
+// Customize inline code rendering
+renderer.codespan = (code) => {
+  return `<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono">${code}</code>`;
 };
 
 renderer.paragraph = (text) => {
@@ -49,11 +52,6 @@ renderer.list = (body, ordered) => {
 
 renderer.listitem = (text) => {
   return `<li class="mb-1 break-words">${text}</li>`;
-};
-
-// Add inline code styling
-renderer.codespan = (code) => {
-  return `<code class="px-1.5 py-0.5 bg-gray-100 text-sm sm:text-base font-mono rounded">${code}</code>`;
 };
 
 marked.use({ renderer });
@@ -256,6 +254,8 @@ export default function LessonPage() {
   const navigateToPart = async (index) => {
     if (index >= 0 && index < lesson.parts.length) {
       setCurrentPartIndex(index);
+      // Scroll to top when changing parts
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -382,48 +382,36 @@ export default function LessonPage() {
       <XPNotificationHandler params={params} />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
-        {/* Top Navigation Header */}
-        <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl font-bold text-gray-900 truncate">{lesson.title}</h1>
-              <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
-                <BookOpen className="w-4 h-4" />
-                <span>Part {currentPartIndex + 1}/{lesson.parts.length}</span>
-                <span className="mx-1">•</span>
-                <Clock className="w-4 h-4" />
-                <span>{currentPart.duration}m</span>
-              </div>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">{lesson.title}</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <BookOpen className="w-4 h-4" />
+              <span>Part {currentPartIndex + 1} of {lesson.parts.length}</span>
             </div>
-            <div className="flex items-center gap-2 ml-auto">
+            <div className="flex gap-4">
               <button
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setCurrentPartIndex(prev => Math.max(0, prev - 1));
-                }}
+                onClick={() => navigateToPart(currentPartIndex - 1)}
                 disabled={currentPartIndex === 0}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                   currentPartIndex === 0
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-violet-50 text-violet-700 hover:bg-violet-100'
                 }`}
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span className="text-sm">Prev</span>
+                <span className="text-sm">Previous Part</span>
               </button>
               <button
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setCurrentPartIndex(prev => Math.min(lesson.parts.length - 1, prev + 1));
-                }}
+                onClick={() => navigateToPart(currentPartIndex + 1)}
                 disabled={currentPartIndex === lesson.parts.length - 1}
-                className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                   currentPartIndex === lesson.parts.length - 1
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-violet-50 text-violet-700 hover:bg-violet-100'
                 }`}
               >
-                <span className="text-sm">Next</span>
+                <span className="text-sm">Next Part</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -433,9 +421,9 @@ export default function LessonPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
+            <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 md:p-8">
               <div 
-                className="prose prose-violet max-w-none prose-headings:font-bold prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4 prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-4 prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4 prose-li:mb-1 prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-blockquote:border-l-4 prose-blockquote:border-violet-200 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600"
+                className="prose prose-violet max-w-none prose-headings:font-bold prose-headings:break-words prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4 prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-4 prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4 prose-li:mb-1 prose-li:break-words prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:whitespace-pre prose-blockquote:border-l-4 prose-blockquote:border-violet-200 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600 prose-img:rounded-lg prose-img:max-w-full prose-img:h-auto"
                 dangerouslySetInnerHTML={{ 
                   __html: DOMPurify.sanitize(marked(currentPart.content.trim()))
                 }}
@@ -527,10 +515,7 @@ export default function LessonPage() {
               <div className="mt-8 pt-6 border-t">
                 <div className="flex justify-between">
                   <button
-                    onClick={() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      setCurrentPartIndex(prev => Math.max(0, prev - 1));
-                    }}
+                    onClick={() => navigateToPart(currentPartIndex - 1)}
                     disabled={currentPartIndex === 0}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                       currentPartIndex === 0
@@ -542,10 +527,7 @@ export default function LessonPage() {
                     <span className="text-sm">Previous</span>
                   </button>
                   <button
-                    onClick={() => {
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                      setCurrentPartIndex(prev => Math.min(lesson.parts.length - 1, prev + 1));
-                    }}
+                    onClick={() => navigateToPart(currentPartIndex + 1)}
                     disabled={currentPartIndex === lesson.parts.length - 1}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                       currentPartIndex === lesson.parts.length - 1

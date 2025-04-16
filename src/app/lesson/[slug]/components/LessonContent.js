@@ -1,6 +1,31 @@
 import { Clock, ChevronDown, ChevronUp } from "lucide-react";
 import { ExerciseComponent } from "./ExerciseComponent";
 import { useState } from "react";
+import { marked } from "marked";
+import DOMPurify from 'dompurify';
+
+// Configure marked options for consistent rendering
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+  headerIds: false,
+  mangle: false,
+  smartLists: true,
+  smartypants: true
+});
+
+const renderer = new marked.Renderer();
+renderer.code = (code, language) => {
+  return `<pre class="relative overflow-x-auto p-4 bg-gray-100 rounded-lg text-sm mb-4">
+    <code class="language-${language || 'text'} whitespace-pre font-mono block">${code}</code>
+  </pre>`;
+};
+
+renderer.codespan = (code) => {
+  return `<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono">${code}</code>`;
+};
+
+marked.use({ renderer });
 
 export function LessonContent({
   lesson,
@@ -23,7 +48,7 @@ export function LessonContent({
             className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
           >
             <div className="flex items-center gap-2">
-              <span className="text-base sm:text-lg font-medium text-gray-900">
+              <span className="text-base sm:text-lg font-medium text-gray-900 break-words">
                 Optional Practice Exercise
               </span>
               {progress.completedExercises.has(currentPartIndex) && (
@@ -31,9 +56,9 @@ export function LessonContent({
               )}
             </div>
             {isExerciseOpen ? (
-              <ChevronUp className="w-5 h-5 text-gray-500" />
+              <ChevronUp className="w-5 h-5 text-gray-500 flex-shrink-0" />
             ) : (
-              <ChevronDown className="w-5 h-5 text-gray-500" />
+              <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
             )}
           </button>
           
@@ -54,92 +79,24 @@ export function LessonContent({
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Part Header */}
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-4">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 break-words">
           {currentPart.title}
         </h1>
         <div className="flex items-center text-sm text-gray-500">
-          <Clock className="w-4 h-4 mr-2" />
+          <Clock className="w-4 h-4 mr-2 flex-shrink-0" />
           <span>{currentPart.duration} minutes</span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="prose prose-sm sm:prose-base lg:prose-lg max-w-none">
-        <div className="break-words">
-          {/* Add custom styles for code blocks */}
-          <style jsx global>{`
-            .prose pre {
-              overflow-x: auto;
-              white-space: pre;
-              padding: 1rem;
-              border-radius: 0.5rem;
-              background-color: #f3f4f6;
-              margin: 1.5rem 0;
-              font-size: 0.875rem;
-              line-height: 1.5;
-              -webkit-overflow-scrolling: touch;
-              scrollbar-width: thin;
-              scrollbar-color: #9ca3af #f3f4f6;
-            }
-            
-            .prose pre::-webkit-scrollbar {
-              height: 6px;
-            }
-
-            .prose pre::-webkit-scrollbar-track {
-              background: #f3f4f6;
-              border-radius: 3px;
-            }
-
-            .prose pre::-webkit-scrollbar-thumb {
-              background-color: #9ca3af;
-              border-radius: 3px;
-            }
-            
-            .prose code {
-              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-              font-size: 0.875rem;
-              padding: 0.2rem 0.4rem;
-              border-radius: 0.25rem;
-              background-color: #f3f4f6;
-            }
-
-            .prose pre code {
-              padding: 0;
-              background-color: transparent;
-              border-radius: 0;
-              white-space: pre;
-            }
-
-            @media (max-width: 640px) {
-              .prose pre {
-                font-size: 0.75rem;
-                padding: 0.75rem;
-              }
-              
-              .prose code {
-                font-size: 0.75rem;
-                padding: 0.15rem 0.3rem;
-              }
-            }
-
-            /* Ensure tables are responsive */
-            .prose table {
-              display: block;
-              width: 100%;
-              overflow-x: auto;
-              -webkit-overflow-scrolling: touch;
-            }
-
-            /* Ensure images are responsive */
-            .prose img {
-              max-width: 100%;
-              height: auto;
-            }
-          `}</style>
-          {currentPart.content}
-        </div>
+      <div className="prose prose-violet max-w-none prose-headings:font-bold prose-headings:break-words prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4 prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-4 prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4 prose-li:mb-1 prose-li:break-words prose-code:bg-gray-100 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-pre:bg-gray-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto prose-pre:whitespace-pre prose-blockquote:border-l-4 prose-blockquote:border-violet-200 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600 prose-img:rounded-lg prose-img:max-w-full prose-img:h-auto">
+        <div 
+          className="break-words"
+          dangerouslySetInnerHTML={{ 
+            __html: DOMPurify.sanitize(marked(currentPart.content.trim()))
+          }}
+        />
       </div>
     </div>
   );

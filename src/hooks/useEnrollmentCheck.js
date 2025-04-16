@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 
@@ -7,11 +7,9 @@ export function useEnrollmentCheck() {
   const router = useRouter();
   const enrollmentCache = useRef(new Map());
 
-  const checkEnrollment = async (contentSlug, contentType) => {
-    // Generate cache key
-    const cacheKey = `${contentSlug}-${contentType}`;
-
+  const checkEnrollment = useCallback(async (contentSlug, contentType) => {
     // Check cache first
+    const cacheKey = `${contentSlug}-${contentType}`;
     if (enrollmentCache.current.has(cacheKey)) {
       return enrollmentCache.current.get(cacheKey);
     }
@@ -30,16 +28,17 @@ export function useEnrollmentCheck() {
         throw new Error(data.error || 'Failed to check enrollment');
       }
 
-      if (!data.isEnrolled) {
+      const isEnrolled = data.isEnrolled;
+      
+      // Cache the result
+      enrollmentCache.current.set(cacheKey, isEnrolled);
+
+      if (!isEnrolled) {
         toast.error(`You need to enroll in "${data.courseTitle}" before accessing this content`);
         router.push(`/course-details/${data.courseSlug}`);
-        // Cache the negative result
-        enrollmentCache.current.set(cacheKey, false);
         return false;
       }
 
-      // Cache the positive result
-      enrollmentCache.current.set(cacheKey, true);
       return true;
     } catch (error) {
       console.error('Error checking enrollment:', error);
@@ -48,11 +47,7 @@ export function useEnrollmentCheck() {
     } finally {
       setIsChecking(false);
     }
-  };
+  }, [router]);
 
-  const clearEnrollmentCache = () => {
-    enrollmentCache.current.clear();
-  };
-
-  return { checkEnrollment, isChecking, clearEnrollmentCache };
+  return { checkEnrollment, isChecking };
 } 
