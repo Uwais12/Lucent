@@ -28,7 +28,8 @@ export default function FinalExam() {
         if (!isEnrolled) {
           return;
         }
-
+        
+        // Use the direct endpoint with slug parameter
         const response = await fetch(`/api/quizzes/final/${params.slug}`);
         const data = await response.json();
 
@@ -64,6 +65,7 @@ export default function FinalExam() {
 
     setIsSubmitting(true);
     try {
+      // Submit via the updated route
       const response = await fetch(`/api/quizzes/final/${params.slug}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,12 +87,12 @@ export default function FinalExam() {
         xpGained: data.xpGained,
         gemsGained: data.gemsGained,
         levelUp: data.levelUp,
-        completionPercentage: data.completionPercentage,
+        completionPercentage: data.completionPercentage || 100,
         message: data.passed ? 'Course Completed Successfully! 🎓' : 'Final Exam Submitted'
       };
 
       // Create redirect URL with XP notification parameters
-      const redirectUrl = `/course-details/${quiz.course.slug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}&completionPercentage=${completionInfo.completionPercentage}&courseId=${quiz.course._id}`;
+      const redirectUrl = `/course-details/${quiz.course.slug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}`;
 
       // Store all the completion data
       setCompletionData({
@@ -197,7 +199,7 @@ export default function FinalExam() {
             levelUp={completionData.levelUp}
             message={completionData.message}
             onClose={() => {
-              // Clear state before redirecting
+              // Clear notification state before redirecting
               setShowNotification(false);
               const redirectUrl = completionData.redirectUrl;
               setCompletionData(null);

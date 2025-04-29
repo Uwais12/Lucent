@@ -169,6 +169,7 @@ export async function POST(req, { params }) {
 
       // Update final exam progress
       courseProgress.endOfCourseExam = {
+        quizId: finalExam._id.toString(),
         completed: score >= finalExam.passingScore,
         score,
         lastAttemptDate: new Date(),

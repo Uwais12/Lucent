@@ -287,7 +287,7 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
                 </div>
                 <p className="text-gray-600">
                   {quizResults.score >= 70 
-                    ? "Congratulations! You've passed the quiz! 🎉" 
+                    ? "Congratulations! You&apos;ve passed the quiz! 🎉" 
                     : "Keep practicing! You can retake the quiz to improve your score."}
                 </p>
                 {quizResults.score >= 70 && (
@@ -318,12 +318,14 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
                     </>
                   ) : (
                     <>
-                      <button
-                        onClick={() => setIsReviewing(true)}
-                        className="w-full bg-violet-600 text-white py-2 px-4 rounded-md hover:bg-violet-700 transition-colors"
-                      >
-                        Review Answers
-                      </button>
+                      {quizResults.score >= 70 ? (
+                        <button
+                          onClick={() => setIsReviewing(true)}
+                          className="w-full bg-violet-600 text-white py-2 px-4 rounded-md hover:bg-violet-700 transition-colors"
+                        >
+                          Review Answers
+                        </button>
+                      ) : null}
                       <button
                         onClick={() => onComplete(null, true)}
                         className="w-full border border-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-50 transition-colors"
