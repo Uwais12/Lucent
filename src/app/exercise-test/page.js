@@ -1,26 +1,52 @@
 "use client";
 
-import { Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import DragAndDropTest from '../components/exercises/DragAndDropTest';
+import FillInBlanksTest from '../components/exercises/FillInBlanksTest';
+import MultipleChoiceTest from '../components/exercises/MultipleChoiceTest';
 import Navbar from "../components/Navbar";
 
 export default function ExerciseTestPage() {
+  const [activeExercise, setActiveExercise] = useState('fill-in-blanks');
+  
   return (
-    <div className="min-h-screen bg-gray-50">
+    <>
       <Navbar />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+      <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Exercise Testing Page</h1>
           <p className="text-gray-600 mt-2">
-            This page is used to test exercise components with sample data.
+            This page allows you to test different types of exercises. Select an exercise type below.
           </p>
         </div>
         
+        <div className="mb-8 flex gap-4">
+          <button
+            onClick={() => setActiveExercise('fill-in-blanks')}
+            className={`px-4 py-2 rounded-lg ${activeExercise === 'fill-in-blanks' ? 'bg-violet-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+          >
+            Fill in the Blanks
+          </button>
+          <button
+            onClick={() => setActiveExercise('drag-and-drop')}
+            className={`px-4 py-2 rounded-lg ${activeExercise === 'drag-and-drop' ? 'bg-violet-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+          >
+            Drag and Drop
+          </button>
+          <button
+            onClick={() => setActiveExercise('multiple-choice')}
+            className={`px-4 py-2 rounded-lg ${activeExercise === 'multiple-choice' ? 'bg-violet-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+          >
+            Multiple Choice
+          </button>
+        </div>
+        
         <Suspense fallback={<div>Loading test component...</div>}>
-          <DragAndDropTest />
+          {activeExercise === 'fill-in-blanks' && <FillInBlanksTest />}
+          {activeExercise === 'drag-and-drop' && <DragAndDropTest />}
+          {activeExercise === 'multiple-choice' && <MultipleChoiceTest />}
         </Suspense>
       </main>
-    </div>
+    </>
   );
 } 

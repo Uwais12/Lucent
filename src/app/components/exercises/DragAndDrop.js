@@ -2,8 +2,9 @@ import { useState, useCallback, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { CheckCircle, XCircle } from 'lucide-react';
 
-const DraggableItem = ({ id, text, index, moveItem }) => {
+const DraggableItem = ({ id, text, index, moveItem, status }) => {
   const [{ isDragging }, drag] = useDrag({
     type: 'ITEM',
     item: { id, index },
@@ -22,19 +23,34 @@ const DraggableItem = ({ id, text, index, moveItem }) => {
     },
   });
 
+  // Add status indicator (correct/incorrect)
+  const getStatusStyle = () => {
+    if (status === 'correct') return 'border-green-300 bg-green-50';
+    if (status === 'incorrect') return 'border-red-300 bg-red-50';
+    return 'border-violet-100 bg-violet-50 hover:bg-violet-100';
+  };
+
   return (
     <div
       ref={(node) => drag(drop(node))}
-      className={`p-3 bg-violet-50 border border-violet-100 rounded-lg cursor-move transition-all ${
+      className={`p-3 border rounded-lg cursor-move transition-all ${
         isDragging ? 'opacity-50' : 'opacity-100'
-      } hover:bg-violet-100 active:bg-violet-200 touch-manipulation`}
+      } ${getStatusStyle()}`}
     >
-      <div className="text-sm sm:text-base break-words">{text}</div>
+      <div className="relative text-sm sm:text-base break-words">
+        {text}
+        {status === 'correct' && (
+          <CheckCircle className="absolute right-0 top-0 w-4 h-4 text-green-500 -mt-2 -mr-2" />
+        )}
+        {status === 'incorrect' && (
+          <XCircle className="absolute right-0 top-0 w-4 h-4 text-red-500 -mt-2 -mr-2" />
+        )}
+      </div>
     </div>
   );
 };
 
-const TargetZone = ({ target, items, matches, onDrop }) => {
+const TargetZone = ({ target, items, matches, onDrop, status }) => {
   const matchedItemText = Object.entries(matches).find(([targetId, itemText]) => 
     targetId === target.id
   )?.[1];
@@ -48,21 +64,36 @@ const TargetZone = ({ target, items, matches, onDrop }) => {
     }),
   });
 
+  // Add status indicator styles
+  const getStatusStyle = () => {
+    if (status === 'correct') return 'border-green-300 bg-green-50';
+    if (status === 'incorrect') return 'border-red-300 bg-red-50';
+    return matchedItemText 
+      ? 'bg-violet-100 border-violet-200'
+      : isOver 
+      ? 'bg-violet-50 border-violet-300'
+      : 'bg-gray-50 border-gray-200';
+  };
+
   return (
     <div
       ref={drop}
-      className={`p-3 rounded-lg transition-all min-h-[60px] ${
-        matchedItemText
-          ? 'bg-violet-100 border-violet-200'
-          : isOver
-          ? 'bg-violet-50 border-violet-300'
-          : 'bg-gray-50 border-gray-200'
-      } border`}
+      className={`p-3 rounded-lg transition-all min-h-[60px] ${getStatusStyle()} border`}
     >
-      <div className="text-sm sm:text-base text-gray-700 break-words">{target.text}</div>
+      <div className="text-sm sm:text-base text-gray-700 break-words">
+        {target.text}
+        {status === 'correct' && (
+          <CheckCircle className="inline-block ml-2 w-4 h-4 text-green-500" />
+        )}
+        {status === 'incorrect' && (
+          <XCircle className="inline-block ml-2 w-4 h-4 text-red-500" />
+        )}
+      </div>
       {matchedItemText && (
-        <div className="mt-2 p-2 bg-violet-200 rounded-md">
-          <div className="text-sm sm:text-base text-violet-900 break-words">{matchedItemText}</div>
+        <div className={`mt-2 p-2 rounded-md ${status === 'correct' ? 'bg-green-200' : status === 'incorrect' ? 'bg-red-200' : 'bg-violet-200'}`}>
+          <div className="text-sm sm:text-base text-gray-900 break-words">
+            {matchedItemText}
+          </div>
         </div>
       )}
     </div>
@@ -70,7 +101,7 @@ const TargetZone = ({ target, items, matches, onDrop }) => {
 };
 
 // Mobile-friendly selection component
-const SelectionBased = ({ targets, items, matches, onMatch }) => {
+const SelectionBased = ({ targets, items, matches, onMatch, matchStatuses }) => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [selectedTarget, setSelectedTarget] = useState(null);
 
@@ -88,24 +119,48 @@ const SelectionBased = ({ targets, items, matches, onMatch }) => {
     }
   };
 
+  // Get status of an item
+  const getItemStatus = (itemId) => {
+    for (const [targetId, status] of Object.entries(matchStatuses)) {
+      if (matches[targetId] === itemId) {
+        return status;
+      }
+    }
+    return null;
+  };
+
   return (
     <div className="space-y-6">
       <div>
         <h4 className="text-sm font-medium text-gray-700 mb-3">Step 1: Select an Item</h4>
         <div className="space-y-2">
-          {items.map((item, index) => (
-            <button
-              key={`item-${item.id}-${index}`}
-              onClick={() => handleItemSelect(item)}
-              className={`w-full p-3 text-left rounded-lg border transition-all ${
-                selectedItem && selectedItem.id === item.id
-                  ? 'bg-violet-100 border-violet-300'
-                  : 'bg-violet-50 border-violet-100 hover:bg-violet-100'
-              }`}
-            >
-              <div className="text-sm sm:text-base break-words">{item.text || item}</div>
-            </button>
-          ))}
+          {items.map((item, index) => {
+            const status = getItemStatus(item.id);
+            const getStatusStyle = () => {
+              if (status === 'correct') return 'bg-green-100 border-green-300';
+              if (status === 'incorrect') return 'bg-red-100 border-red-300';
+              if (selectedItem && selectedItem.id === item.id) return 'bg-violet-100 border-violet-300';
+              return 'bg-violet-50 border-violet-100 hover:bg-violet-100';
+            };
+            
+            return (
+              <button
+                key={`item-${item.id}-${index}`}
+                onClick={() => handleItemSelect(item)}
+                className={`w-full p-3 text-left rounded-lg border transition-all ${getStatusStyle()}`}
+              >
+                <div className="relative text-sm sm:text-base break-words">
+                  {item.text || item}
+                  {status === 'correct' && (
+                    <CheckCircle className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-500" />
+                  )}
+                  {status === 'incorrect' && (
+                    <XCircle className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-red-500" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -117,22 +172,33 @@ const SelectionBased = ({ targets, items, matches, onMatch }) => {
               targetId === target.id
             )?.[1];
             
+            const status = matchStatuses[target.id];
+            const getStatusStyle = () => {
+              if (status === 'correct') return 'bg-green-100 border-green-300';
+              if (status === 'incorrect') return 'bg-red-100 border-red-300';
+              if (matchedItem) return 'bg-violet-100 border-violet-200';
+              if (selectedTarget && selectedTarget.id === target.id) return 'bg-violet-100 border-violet-300';
+              return 'bg-gray-50 border-gray-200 hover:bg-gray-100';
+            };
+            
             return (
               <button
                 key={`target-${target.id || target.text}-${index}`}
                 onClick={() => selectedItem && handleTargetSelect(target)}
                 disabled={!selectedItem}
-                className={`w-full p-3 text-left rounded-lg border transition-all ${
-                  matchedItem
-                    ? 'bg-violet-100 border-violet-200'
-                    : selectedTarget && selectedTarget.id === target.id
-                    ? 'bg-violet-100 border-violet-300'
-                    : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-                }`}
+                className={`w-full p-3 text-left rounded-lg border transition-all ${getStatusStyle()}`}
               >
-                <div className="text-sm sm:text-base text-gray-700 break-words">{target.text}</div>
+                <div className="relative text-sm sm:text-base text-gray-700 break-words">
+                  {target.text}
+                  {status === 'correct' && (
+                    <CheckCircle className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-green-500" />
+                  )}
+                  {status === 'incorrect' && (
+                    <XCircle className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-red-500" />
+                  )}
+                </div>
                 {matchedItem && (
-                  <div className="mt-2 p-2 bg-violet-200 rounded-md">
+                  <div className={`mt-2 p-2 rounded-md ${status === 'correct' ? 'bg-green-200' : status === 'incorrect' ? 'bg-red-200' : 'bg-violet-200'}`}>
                     <div className="text-sm sm:text-base text-violet-900 break-words">{matchedItem}</div>
                   </div>
                 )}
@@ -156,6 +222,8 @@ export default function DragAndDrop({ exercise, onComplete }) {
   const [attempts, setAttempts] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [useMobileUI, setUseMobileUI] = useState(false);
+  const [matchStatuses, setMatchStatuses] = useState({});
+  const [showCorrectAnswers, setShowCorrectAnswers] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
@@ -194,6 +262,9 @@ export default function DragAndDrop({ exercise, onComplete }) {
     
     setItems(shuffledItems);
     setTargets(processedTargets);
+    // Reset match statuses when exercise changes
+    setMatchStatuses({});
+    setShowCorrectAnswers(false);
   }, [exercise]);
 
   const moveItem = useCallback((fromIndex, toIndex) => {
@@ -211,6 +282,12 @@ export default function DragAndDrop({ exercise, onComplete }) {
       [targetId]: itemId,
     }));
     setShowHint(false);
+    
+    // Reset match status when a new match is made
+    setMatchStatuses(prev => ({
+      ...prev,
+      [targetId]: null
+    }));
   }, []);
 
   const getSuccessFeedback = (attempts) => {
@@ -219,10 +296,16 @@ export default function DragAndDrop({ exercise, onComplete }) {
     return 'Well done! You persevered and got it right! ⭐';
   };
 
-  const getIncorrectFeedback = (attempts) => {
-    if (attempts === 1) return 'Not quite right. Try again! Remember to think about the relationships between concepts.';
-    if (attempts === 2) return 'Still not correct. Take a moment to review each pair carefully.';
-    return 'Keep trying! Consider using a hint if you need help.';
+  const getIncorrectFeedback = (attempts, correctCount, totalCount) => {
+    if (correctCount === 0) {
+      return 'None of your matches are correct. Take another look and try different combinations.';
+    }
+    
+    if (correctCount === totalCount - 1) {
+      return 'So close! Just one match is incorrect. Check the highlighted pairs and try again.';
+    }
+    
+    return `You have ${correctCount} out of ${totalCount} correct matches. Review the highlighted pairs and try again.`;
   };
 
   const checkAnswer = useCallback(() => {
@@ -233,31 +316,54 @@ export default function DragAndDrop({ exercise, onComplete }) {
     
     setAttempts(prev => prev + 1);
     
-    // Check if all matches are correct
-    const isAnswerCorrect = exercise.content.correctPairs.every(([itemText, targetText]) => {
-      // Find the target with matching text
-      const target = targets.find(t => t.text === targetText);
-      if (!target) return false;
+    // Check each match and track correctness
+    const newMatchStatuses = {};
+    let correctCount = 0;
+    const totalCount = exercise.content.correctPairs.length;
+    
+    // First, evaluate each matched target
+    for (const [targetId, itemId] of Object.entries(matches)) {
+      const target = targets.find(t => t.id === targetId);
+      if (!target) continue;
       
-      // Get the matched item for this target
-      const matchedItemId = matches[target.id];
-      if (!matchedItemId) return false;
+      // Find the correct pair for this target
+      const correctPair = exercise.content.correctPairs.find(([_, targetText]) => 
+        targetText === target.text
+      );
       
-      // Get the matched item's text
-      const matchedItem = items.find(item => item.id === matchedItemId);
-      return matchedItem && (matchedItem.text === itemText || matchedItem.id === itemText);
-    });
-
-    setIsCorrect(isAnswerCorrect);
-    setFeedback(
-      isAnswerCorrect
-        ? getSuccessFeedback(attempts)
-        : getIncorrectFeedback(attempts)
-    );
-
-    if (isAnswerCorrect && onComplete) {
-      const score = Math.max(exercise.points - (hintsUsed * 2), Math.floor(exercise.points * 0.6));
-      onComplete(score);
+      if (!correctPair) continue;
+      
+      // Check if the matched item is correct
+      const correctItemText = correctPair[0];
+      const matchedItem = items.find(item => item.id === itemId);
+      
+      const isCorrectMatch = matchedItem && 
+        (matchedItem.text === correctItemText || matchedItem.id === correctItemText);
+      
+      newMatchStatuses[targetId] = isCorrectMatch ? 'correct' : 'incorrect';
+      
+      if (isCorrectMatch) {
+        correctCount++;
+      }
+    }
+    
+    // Update match statuses
+    setMatchStatuses(newMatchStatuses);
+    
+    // Check if all matches are correct and all targets have matches
+    const allCorrect = correctCount === totalCount && 
+      Object.keys(matches).length === totalCount;
+    
+    setIsCorrect(allCorrect);
+    
+    if (allCorrect) {
+      setFeedback(getSuccessFeedback(attempts));
+      if (onComplete) {
+        const score = Math.max(exercise.points - (hintsUsed * 2), Math.floor(exercise.points * 0.6));
+        onComplete(score);
+      }
+    } else {
+      setFeedback(getIncorrectFeedback(attempts, correctCount, totalCount));
     }
   }, [exercise, matches, onComplete, attempts, hintsUsed, items, targets]);
 
@@ -270,6 +376,8 @@ export default function DragAndDrop({ exercise, onComplete }) {
     setIsCorrect(null);
     setFeedback('');
     setShowHint(false);
+    setMatchStatuses({});
+    setShowCorrectAnswers(false);
   }, [items]);
 
   const getHint = useCallback(() => {
@@ -323,6 +431,39 @@ export default function DragAndDrop({ exercise, onComplete }) {
     setFeedback("Keep going, you're on the right track!");
   }, [exercise, matches, items, targets]);
 
+  // Function to show correct answers
+  const revealCorrectAnswers = useCallback(() => {
+    const newMatches = {};
+    const newMatchStatuses = {};
+    
+    // Create correct matches based on correctPairs
+    exercise.content.correctPairs.forEach(([itemText, targetText]) => {
+      const target = targets.find(t => t.text === targetText);
+      if (!target) return;
+      
+      const item = items.find(i => i.text === itemText || i.id === itemText);
+      if (!item) return;
+      
+      newMatches[target.id] = item.id;
+      newMatchStatuses[target.id] = 'correct';
+    });
+    
+    setMatches(newMatches);
+    setMatchStatuses(newMatchStatuses);
+    setShowCorrectAnswers(true);
+    setFeedback("Here are the correct answers. Take a moment to study them.");
+  }, [exercise, items, targets]);
+
+  // Get the status of an item for displaying in the UI
+  const getItemStatus = useCallback((itemId) => {
+    for (const [targetId, status] of Object.entries(matchStatuses)) {
+      if (matches[targetId] === itemId) {
+        return status;
+      }
+    }
+    return null;
+  }, [matches, matchStatuses]);
+
   // If exercise data is not properly formatted, show an error
   if (!exercise?.content || !items.length || !targets.length) {
     return (
@@ -334,6 +475,35 @@ export default function DragAndDrop({ exercise, onComplete }) {
       </div>
     );
   }
+
+  // Render a summary of the match results
+  const renderMatchSummary = () => {
+    if (Object.keys(matchStatuses).length === 0) return null;
+    
+    const correctCount = Object.values(matchStatuses).filter(status => status === 'correct').length;
+    const incorrectCount = Object.values(matchStatuses).filter(status => status === 'incorrect').length;
+    const totalCount = exercise.content.correctPairs.length;
+    
+    return (
+      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+        <h4 className="font-medium mb-2">Match Summary:</h4>
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="p-2 bg-green-100 rounded-md">
+            <div className="text-xl font-bold text-green-700">{correctCount}</div>
+            <div className="text-sm text-green-600">Correct</div>
+          </div>
+          <div className="p-2 bg-red-100 rounded-md">
+            <div className="text-xl font-bold text-red-700">{incorrectCount}</div>
+            <div className="text-sm text-red-600">Incorrect</div>
+          </div>
+          <div className="p-2 bg-blue-100 rounded-md">
+            <div className="text-xl font-bold text-blue-700">{totalCount}</div>
+            <div className="text-sm text-blue-600">Total</div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="p-4 sm:p-6 bg-white rounded-xl shadow-sm">
@@ -362,6 +532,7 @@ export default function DragAndDrop({ exercise, onComplete }) {
             items={items}
             matches={matches}
             onMatch={handleDrop}
+            matchStatuses={matchStatuses}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
@@ -376,6 +547,7 @@ export default function DragAndDrop({ exercise, onComplete }) {
                     text={item.text || item.id}
                     index={index}
                     moveItem={moveItem}
+                    status={getItemStatus(item.id)}
                   />
                 ))}
               </div>
@@ -392,6 +564,7 @@ export default function DragAndDrop({ exercise, onComplete }) {
                     items={items}
                     matches={matches}
                     onDrop={handleDrop}
+                    status={matchStatuses[target.id]}
                   />
                 ))}
               </div>
@@ -414,29 +587,45 @@ export default function DragAndDrop({ exercise, onComplete }) {
           >
             Shuffle & Reset
           </button>
-          <button
-            onClick={getHint}
-            disabled={isCorrect || hintsUsed >= 3}
-            className={`flex-1 sm:flex-none px-4 py-2 rounded-lg transition-colors text-sm sm:text-base ${
-              isCorrect || hintsUsed >= 3
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'border border-violet-300 text-violet-700 hover:bg-violet-50'
-            }`}
-          >
-            {hintsUsed >= 3 ? 'No More Hints' : 'Get Hint'}
-            {hintsUsed > 0 && hintsUsed < 3 && ` (${3 - hintsUsed} left)`}
-          </button>
+          
+          <div className="flex-1 sm:flex-none sm:ml-auto flex gap-2">
+            <button
+              onClick={getHint}
+              disabled={isCorrect || hintsUsed >= 3 || showCorrectAnswers}
+              className={`px-4 py-2 rounded-lg transition-colors text-sm sm:text-base ${
+                isCorrect || hintsUsed >= 3 || showCorrectAnswers
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'border border-violet-300 text-violet-700 hover:bg-violet-50'
+              }`}
+            >
+              {hintsUsed >= 3 ? 'No More Hints' : 'Get Hint'}
+              {hintsUsed > 0 && hintsUsed < 3 && ` (${3 - hintsUsed} left)`}
+            </button>
+            
+            {!isCorrect && attempts >= 2 && !showCorrectAnswers && (
+              <button
+                onClick={revealCorrectAnswers}
+                className="px-4 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors text-sm sm:text-base"
+              >
+                Show Answers
+              </button>
+            )}
+          </div>
         </div>
 
         {feedback && (
           <div
             className={`p-3 rounded-lg text-sm sm:text-base ${
-              isCorrect ? 'bg-green-100 text-green-700' : 'bg-amber-50 text-amber-700'
+              isCorrect ? 'bg-green-100 text-green-700' : 
+              showCorrectAnswers ? 'bg-blue-100 text-blue-700' :
+              'bg-amber-50 text-amber-700'
             }`}
           >
             {feedback}
           </div>
         )}
+
+        {Object.keys(matchStatuses).length > 0 && renderMatchSummary()}
 
         {hintsUsed > 0 && (
           <div className="text-xs sm:text-sm text-gray-500">

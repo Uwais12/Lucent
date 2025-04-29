@@ -6,6 +6,7 @@ export default function FillInBlanks({ exercise, onComplete }) {
   const [isCompleted, setIsCompleted] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [allOptions, setAllOptions] = useState([]);
+  const [blankStatuses, setBlankStatuses] = useState({});
 
   // Create a list of all possible answers for the dropdowns
   useEffect(() => {
@@ -28,21 +29,44 @@ export default function FillInBlanks({ exercise, onComplete }) {
       ...prev,
       [blankId]: value
     }));
+    
+    // Reset blank status when answer changes
+    if (blankStatuses[blankId]) {
+      setBlankStatuses(prev => ({
+        ...prev,
+        [blankId]: null
+      }));
+    }
   };
 
   const checkAnswers = () => {
-    const isCorrect = exercise.content.blanks.every(blank => 
-      answers[blank.id]?.toLowerCase() === blank.answer.toLowerCase()
-    );
+    let allCorrect = true;
+    const newBlankStatuses = {};
+    
+    // Check each blank and set individual status
+    exercise.content.blanks.forEach(blank => {
+      const isCorrect = answers[blank.id]?.toLowerCase() === blank.answer.toLowerCase();
+      newBlankStatuses[blank.id] = isCorrect;
+      
+      if (!isCorrect) {
+        allCorrect = false;
+      }
+    });
+    
+    setBlankStatuses(newBlankStatuses);
 
-    if (isCorrect) {
-      setFeedback('Correct! Well done! 🎉');
+    if (allCorrect) {
+      setFeedback('Correct! All answers are right! 🎉');
       setIsCompleted(true);
       if (onComplete) {
         onComplete(exercise.points);
       }
     } else {
-      setFeedback('Not quite right. Try again!');
+      // Count number of correct answers
+      const correctCount = Object.values(newBlankStatuses).filter(Boolean).length;
+      const totalCount = exercise.content.blanks.length;
+      
+      setFeedback(`You got ${correctCount} out of ${totalCount} correct. Check the highlighted answers and try again.`);
     }
   };
 
@@ -53,6 +77,10 @@ export default function FillInBlanks({ exercise, onComplete }) {
       const match = part.match(/\[(\d+)\]/);
       if (match) {
         const blankId = match[1];
+        const status = blankStatuses[blankId];
+        // Only show status after an answer has been checked
+        const showStatus = status !== undefined && status !== null;
+        
         return (
           <select
             key={index}
@@ -60,8 +88,11 @@ export default function FillInBlanks({ exercise, onComplete }) {
             onChange={(e) => handleAnswerChange(blankId, e.target.value)}
             disabled={isCompleted}
             className={cn(
-              "mx-1 px-2 py-1 border-b-2 border-violet-300 focus:border-violet-600 outline-none text-center transition-colors rounded",
-              isCompleted ? "bg-gray-100 cursor-not-allowed" : "bg-white"
+              "mx-1 px-2 py-1 border-b-2 focus:border-violet-600 outline-none text-center transition-colors rounded",
+              isCompleted ? "bg-gray-100 cursor-not-allowed" : "bg-white",
+              showStatus && status ? "border-green-500 bg-green-50" : "",
+              showStatus && !status ? "border-red-500 bg-red-50" : "",
+              !showStatus ? "border-violet-300" : ""
             )}
           >
             <option value="">Select an answer</option>
@@ -73,6 +104,45 @@ export default function FillInBlanks({ exercise, onComplete }) {
       }
       return <span key={index}>{part}</span>;
     });
+  };
+
+  // Render answers with their correct/incorrect status
+  const renderAnswerFeedback = () => {
+    if (Object.keys(blankStatuses).length === 0) return null;
+    
+    return (
+      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+        <h4 className="font-medium mb-2">Answer Status:</h4>
+        <ul className="space-y-2">
+          {exercise.content.blanks.map(blank => {
+            const status = blankStatuses[blank.id];
+            const userAnswer = answers[blank.id] || '(no answer)';
+            
+            return (
+              <li key={blank.id} className="flex items-start gap-2">
+                <span className={cn(
+                  "inline-block w-5 h-5 flex-shrink-0 rounded-full flex items-center justify-center text-white text-xs",
+                  status ? "bg-green-500" : "bg-red-500"
+                )}>
+                  {status ? "✓" : "✗"}
+                </span>
+                <div>
+                  <span className="text-gray-700">Blank #{blank.id}: </span>
+                  <span className={status ? "text-green-700" : "text-red-700 line-through"}>
+                    {userAnswer}
+                  </span>
+                  {/* {!status && (
+                    <span className="text-green-700 ml-2">
+                      Correct answer: {blank.answer}
+                    </span>
+                  )} */}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    );
   };
 
   return (
@@ -96,6 +166,19 @@ export default function FillInBlanks({ exercise, onComplete }) {
           >
             Check Answers
           </button>
+          
+          {Object.keys(blankStatuses).length > 0 && !isCompleted && (
+            <button
+              onClick={() => {
+                // Reset blank statuses but keep answers
+                setBlankStatuses({});
+                setFeedback('');
+              }}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Clear Feedback
+            </button>
+          )}
         </div>
 
         {feedback && (
@@ -107,6 +190,8 @@ export default function FillInBlanks({ exercise, onComplete }) {
             {feedback}
           </div>
         )}
+        
+        {Object.keys(blankStatuses).length > 0 && renderAnswerFeedback()}
       </div>
     </div>
   );
