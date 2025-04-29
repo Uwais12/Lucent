@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 const DraggableItem = ({ id, text, index, moveItem }) => {
   const [{ isDragging }, drag] = useDrag({
@@ -33,7 +35,9 @@ const DraggableItem = ({ id, text, index, moveItem }) => {
 };
 
 const TargetZone = ({ target, items, matches, onDrop }) => {
-  const matchedItem = items.find((item) => matches[target.id] === item.id);
+  const matchedItemText = Object.entries(matches).find(([targetId, itemText]) => 
+    targetId === target.id
+  )?.[1];
   
   const [{ isOver }, drop] = useDrop({
     accept: 'ITEM',
@@ -48,7 +52,7 @@ const TargetZone = ({ target, items, matches, onDrop }) => {
     <div
       ref={drop}
       className={`p-3 rounded-lg transition-all min-h-[60px] ${
-        matchedItem
+        matchedItemText
           ? 'bg-violet-100 border-violet-200'
           : isOver
           ? 'bg-violet-50 border-violet-300'
@@ -56,17 +60,94 @@ const TargetZone = ({ target, items, matches, onDrop }) => {
       } border`}
     >
       <div className="text-sm sm:text-base text-gray-700 break-words">{target.text}</div>
-      {matchedItem && (
+      {matchedItemText && (
         <div className="mt-2 p-2 bg-violet-200 rounded-md">
-          <div className="text-sm sm:text-base text-violet-900 break-words">{matchedItem.text}</div>
+          <div className="text-sm sm:text-base text-violet-900 break-words">{matchedItemText}</div>
         </div>
       )}
     </div>
   );
 };
 
+// Mobile-friendly selection component
+const SelectionBased = ({ targets, items, matches, onMatch }) => {
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedTarget, setSelectedTarget] = useState(null);
+
+  const handleItemSelect = (item) => {
+    setSelectedItem(item);
+    setSelectedTarget(null);
+  };
+
+  const handleTargetSelect = (target) => {
+    setSelectedTarget(target);
+    if (selectedItem) {
+      onMatch(selectedItem.id, target.id);
+      setSelectedItem(null);
+      setSelectedTarget(null);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h4 className="text-sm font-medium text-gray-700 mb-3">Step 1: Select an Item</h4>
+        <div className="space-y-2">
+          {items.map((item, index) => (
+            <button
+              key={`item-${item.id}-${index}`}
+              onClick={() => handleItemSelect(item)}
+              className={`w-full p-3 text-left rounded-lg border transition-all ${
+                selectedItem && selectedItem.id === item.id
+                  ? 'bg-violet-100 border-violet-300'
+                  : 'bg-violet-50 border-violet-100 hover:bg-violet-100'
+              }`}
+            >
+              <div className="text-sm sm:text-base break-words">{item.text || item}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className={`${!selectedItem ? 'opacity-50' : ''}`}>
+        <h4 className="text-sm font-medium text-gray-700 mb-3">Step 2: Select a Target</h4>
+        <div className="space-y-2">
+          {targets.map((target, index) => {
+            const matchedItem = Object.entries(matches).find(([targetId]) => 
+              targetId === target.id
+            )?.[1];
+            
+            return (
+              <button
+                key={`target-${target.id || target.text}-${index}`}
+                onClick={() => selectedItem && handleTargetSelect(target)}
+                disabled={!selectedItem}
+                className={`w-full p-3 text-left rounded-lg border transition-all ${
+                  matchedItem
+                    ? 'bg-violet-100 border-violet-200'
+                    : selectedTarget && selectedTarget.id === target.id
+                    ? 'bg-violet-100 border-violet-300'
+                    : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                }`}
+              >
+                <div className="text-sm sm:text-base text-gray-700 break-words">{target.text}</div>
+                {matchedItem && (
+                  <div className="mt-2 p-2 bg-violet-200 rounded-md">
+                    <div className="text-sm sm:text-base text-violet-900 break-words">{matchedItem}</div>
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function DragAndDrop({ exercise, onComplete }) {
   const [items, setItems] = useState([]);
+  const [targets, setTargets] = useState([]);
   const [matches, setMatches] = useState({});
   const [isCorrect, setIsCorrect] = useState(null);
   const [feedback, setFeedback] = useState('');
@@ -74,22 +155,46 @@ export default function DragAndDrop({ exercise, onComplete }) {
   const [showHint, setShowHint] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [useMobileUI, setUseMobileUI] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setUseMobileUI(mobile); // Default to mobile UI on mobile devices
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Initialize with shuffled items
+  // Process the exercise content to handle both string-based and object-based formats
   useEffect(() => {
-    const shuffledItems = [...exercise.content.items].sort(() => Math.random() - 0.5);
+    if (!exercise?.content) return;
+    
+    // Process items - convert from strings to objects if needed
+    const processedItems = exercise.content.items.map((item, index) => {
+      if (typeof item === 'string') {
+        return { id: item, text: item, index };
+      }
+      return { ...item, index };
+    });
+    
+    // Process targets - convert from strings to objects if needed
+    const processedTargets = exercise.content.targets.map((target, index) => {
+      if (typeof target === 'string') {
+        return { id: target, text: target, index };
+      }
+      return { ...target, index };
+    });
+    
+    // Shuffle the items for the exercise
+    const shuffledItems = [...processedItems].sort(() => Math.random() - 0.5);
+    
     setItems(shuffledItems);
-  }, [exercise.content.items]);
+    setTargets(processedTargets);
+  }, [exercise]);
 
   const moveItem = useCallback((fromIndex, toIndex) => {
     setItems((prevItems) => {
@@ -121,10 +226,26 @@ export default function DragAndDrop({ exercise, onComplete }) {
   };
 
   const checkAnswer = useCallback(() => {
+    if (!exercise?.content?.correctPairs || !exercise.content.correctPairs.length) {
+      setFeedback("Cannot check answer: exercise data is incomplete");
+      return;
+    }
+    
     setAttempts(prev => prev + 1);
-    const isAnswerCorrect = exercise.content.correctPairs.every(([sourceId, targetId]) => {
-      const matchedItemId = matches[targetId];
-      return matchedItemId === sourceId;
+    
+    // Check if all matches are correct
+    const isAnswerCorrect = exercise.content.correctPairs.every(([itemText, targetText]) => {
+      // Find the target with matching text
+      const target = targets.find(t => t.text === targetText);
+      if (!target) return false;
+      
+      // Get the matched item for this target
+      const matchedItemId = matches[target.id];
+      if (!matchedItemId) return false;
+      
+      // Get the matched item's text
+      const matchedItem = items.find(item => item.id === matchedItemId);
+      return matchedItem && (matchedItem.text === itemText || matchedItem.id === itemText);
     });
 
     setIsCorrect(isAnswerCorrect);
@@ -138,29 +259,81 @@ export default function DragAndDrop({ exercise, onComplete }) {
       const score = Math.max(exercise.points - (hintsUsed * 2), Math.floor(exercise.points * 0.6));
       onComplete(score);
     }
-  }, [exercise, matches, onComplete, attempts, hintsUsed]);
+  }, [exercise, matches, onComplete, attempts, hintsUsed, items, targets]);
 
   const resetExercise = useCallback(() => {
-    const shuffledItems = [...exercise.content.items].sort(() => Math.random() - 0.5);
+    if (!items.length) return;
+    
+    const shuffledItems = [...items].sort(() => Math.random() - 0.5);
     setItems(shuffledItems);
     setMatches({});
     setIsCorrect(null);
     setFeedback('');
     setShowHint(false);
-  }, [exercise.content.items]);
+  }, [items]);
 
   const getHint = useCallback(() => {
+    if (!exercise?.content?.correctPairs || !exercise.content.correctPairs.length || !targets.length) {
+      setFeedback("Cannot provide hint: exercise data is incomplete");
+      return;
+    }
+    
     setHintsUsed(prev => prev + 1);
     setShowHint(true);
-    // Find first incorrect match or unmatched item
-    const incorrectMatch = exercise.content.correctPairs.find(([sourceId, targetId]) => {
-      const matchedItemId = matches[targetId];
-      return matchedItemId !== sourceId;
-    });
-    if (incorrectMatch) {
-      setFeedback(`Hint: Try matching "${items.find(item => item.id === incorrectMatch[0]).text}" with a related concept.`);
+    
+    // Find first incorrect match or unmatched target
+    const unmatched = targets.find(target => !matches[target.id]);
+    
+    if (unmatched) {
+      // Find the correct item for this target
+      const correctPair = exercise.content.correctPairs.find(([_, targetText]) => 
+        targetText === unmatched.text
+      );
+      
+      if (correctPair) {
+        const correctItemText = correctPair[0];
+        const correctItem = items.find(item => 
+          item.text === correctItemText || item.id === correctItemText
+        );
+        
+        if (correctItem) {
+          setFeedback(`Hint: Try matching "${correctItem.text}" with "${unmatched.text}".`);
+          return;
+        }
+      }
     }
-  }, [exercise.content.correctPairs, matches, items]);
+    
+    // If we got here, look for incorrectly matched targets
+    for (const [itemText, targetText] of exercise.content.correctPairs) {
+      const target = targets.find(t => t.text === targetText);
+      if (!target) continue;
+      
+      const matchedItemId = matches[target.id];
+      if (!matchedItemId) continue;
+      
+      const matchedItem = items.find(item => item.id === matchedItemId);
+      const isCorrect = matchedItem && (matchedItem.text === itemText || matchedItem.id === itemText);
+      
+      if (!isCorrect) {
+        setFeedback(`Hint: The match for "${target.text}" is incorrect. Try a different item.`);
+        return;
+      }
+    }
+    
+    setFeedback("Keep going, you're on the right track!");
+  }, [exercise, matches, items, targets]);
+
+  // If exercise data is not properly formatted, show an error
+  if (!exercise?.content || !items.length || !targets.length) {
+    return (
+      <div className="p-4 bg-red-50 text-red-700 rounded-lg">
+        {items.length === 0 || targets.length === 0 
+          ? "Loading exercise content..." 
+          : "Exercise data is incomplete or improperly formatted."
+        }
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:p-6 bg-white rounded-xl shadow-sm">
@@ -169,39 +342,63 @@ export default function DragAndDrop({ exercise, onComplete }) {
         <p className="text-gray-600 text-sm sm:text-base">{exercise.description}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
-        {/* Source Items */}
-        <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-3">Items to Match</h4>
-          <div className="space-y-2">
-            {items.map((item, index) => (
-              <DraggableItem
-                key={`item-${item.id}-${index}`}
-                id={item.id}
-                text={item.text}
-                index={index}
-                moveItem={moveItem}
-              />
-            ))}
-          </div>
+      {/* Toggle between drag-and-drop and selection-based UIs */}
+      {isMobile && (
+        <div className="mb-4">
+          <button
+            onClick={() => setUseMobileUI(!useMobileUI)}
+            className="text-sm text-violet-600 underline"
+          >
+            Switch to {useMobileUI ? "drag and drop" : "selection-based"} mode
+          </button>
         </div>
+      )}
 
-        {/* Target Zones */}
-        <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-3">Target Concepts</h4>
-          <div className="space-y-2">
-            {exercise.content.targets.map((target, index) => (
-              <TargetZone
-                key={`target-${target.id || target.text}-${index}`}
-                target={target}
-                items={items}
-                matches={matches}
-                onDrop={handleDrop}
-              />
-            ))}
+      {/* Main exercise UI */}
+      <DndProvider backend={HTML5Backend}>
+        {useMobileUI ? (
+          <SelectionBased
+            targets={targets}
+            items={items}
+            matches={matches}
+            onMatch={handleDrop}
+          />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
+            {/* Source Items */}
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Items to Match</h4>
+              <div className="space-y-2">
+                {items.map((item, index) => (
+                  <DraggableItem
+                    key={`item-${item.id || index}`}
+                    id={item.id}
+                    text={item.text || item.id}
+                    index={index}
+                    moveItem={moveItem}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Target Zones */}
+            <div>
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Target Concepts</h4>
+              <div className="space-y-2">
+                {targets.map((target, index) => (
+                  <TargetZone
+                    key={`target-${target.id || index}`}
+                    target={target}
+                    items={items}
+                    matches={matches}
+                    onDrop={handleDrop}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        )}
+      </DndProvider>
 
       <div className="mt-6 sm:mt-8 space-y-4">
         <div className="flex flex-wrap gap-2 sm:gap-4">
@@ -247,9 +444,10 @@ export default function DragAndDrop({ exercise, onComplete }) {
           </div>
         )}
 
-        {isMobile && (
-          <div className="text-xs sm:text-sm text-gray-500 mt-2">
-            Tip: Tap and hold an item to drag it to a target zone.
+        {isMobile && !useMobileUI && (
+          <div className="text-xs sm:text-sm text-gray-500 bg-blue-50 p-3 rounded-lg">
+            Tip: On mobile devices, you may find the selection-based mode easier to use. 
+            You can switch modes using the button above.
           </div>
         )}
       </div>
