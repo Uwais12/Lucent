@@ -359,9 +359,9 @@ export default function DragAndDrop({ exercise, onComplete }) {
     if (allCorrect) {
       setFeedback(getSuccessFeedback(attempts));
       if (onComplete) {
-        const score = Math.max(exercise.points - (hintsUsed * 2), Math.floor(exercise.points * 0.6));
-        onComplete(score);
-      }
+      const score = Math.max(exercise.points - (hintsUsed * 2), Math.floor(exercise.points * 0.6));
+      onComplete(score);
+    }
     } else {
       setFeedback(getIncorrectFeedback(attempts, correctCount, totalCount));
     }
@@ -474,7 +474,7 @@ export default function DragAndDrop({ exercise, onComplete }) {
         }
       </div>
     );
-  }
+    }
 
   // Render a summary of the match results
   const renderMatchSummary = () => {
@@ -535,41 +535,41 @@ export default function DragAndDrop({ exercise, onComplete }) {
             matchStatuses={matchStatuses}
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
-            {/* Source Items */}
-            <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-3">Items to Match</h4>
-              <div className="space-y-2">
-                {items.map((item, index) => (
-                  <DraggableItem
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
+        {/* Source Items */}
+        <div>
+          <h4 className="text-sm font-medium text-gray-700 mb-3">Items to Match</h4>
+          <div className="space-y-2">
+            {items.map((item, index) => (
+              <DraggableItem
                     key={`item-${item.id || index}`}
-                    id={item.id}
+                id={item.id}
                     text={item.text || item.id}
-                    index={index}
-                    moveItem={moveItem}
+                index={index}
+                moveItem={moveItem}
                     status={getItemStatus(item.id)}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Target Zones */}
-            <div>
-              <h4 className="text-sm font-medium text-gray-700 mb-3">Target Concepts</h4>
-              <div className="space-y-2">
-                {targets.map((target, index) => (
-                  <TargetZone
-                    key={`target-${target.id || index}`}
-                    target={target}
-                    items={items}
-                    matches={matches}
-                    onDrop={handleDrop}
-                    status={matchStatuses[target.id]}
-                  />
-                ))}
-              </div>
-            </div>
+              />
+            ))}
           </div>
+        </div>
+
+        {/* Target Zones */}
+        <div>
+          <h4 className="text-sm font-medium text-gray-700 mb-3">Target Concepts</h4>
+          <div className="space-y-2">
+                {targets.map((target, index) => (
+              <TargetZone
+                    key={`target-${target.id || index}`}
+                target={target}
+                items={items}
+                matches={matches}
+                onDrop={handleDrop}
+                    status={matchStatuses[target.id]}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
         )}
       </DndProvider>
 
@@ -589,18 +589,18 @@ export default function DragAndDrop({ exercise, onComplete }) {
           </button>
           
           <div className="flex-1 sm:flex-none sm:ml-auto flex gap-2">
-            <button
-              onClick={getHint}
+          <button
+            onClick={getHint}
               disabled={isCorrect || hintsUsed >= 3 || showCorrectAnswers}
               className={`px-4 py-2 rounded-lg transition-colors text-sm sm:text-base ${
                 isCorrect || hintsUsed >= 3 || showCorrectAnswers
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'border border-violet-300 text-violet-700 hover:bg-violet-50'
-              }`}
-            >
-              {hintsUsed >= 3 ? 'No More Hints' : 'Get Hint'}
-              {hintsUsed > 0 && hintsUsed < 3 && ` (${3 - hintsUsed} left)`}
-            </button>
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'border border-violet-300 text-violet-700 hover:bg-violet-50'
+            }`}
+          >
+            {hintsUsed >= 3 ? 'No More Hints' : 'Get Hint'}
+            {hintsUsed > 0 && hintsUsed < 3 && ` (${3 - hintsUsed} left)`}
+          </button>
             
             {!isCorrect && attempts >= 2 && !showCorrectAnswers && (
               <button

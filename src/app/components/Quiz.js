@@ -319,12 +319,12 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
                   ) : (
                     <>
                       {quizResults.score >= 70 ? (
-                        <button
-                          onClick={() => setIsReviewing(true)}
-                          className="w-full bg-violet-600 text-white py-2 px-4 rounded-md hover:bg-violet-700 transition-colors"
-                        >
-                          Review Answers
-                        </button>
+                      <button
+                        onClick={() => setIsReviewing(true)}
+                        className="w-full bg-violet-600 text-white py-2 px-4 rounded-md hover:bg-violet-700 transition-colors"
+                      >
+                        Review Answers
+                      </button>
                       ) : null}
                       <button
                         onClick={() => onComplete(null, true)}

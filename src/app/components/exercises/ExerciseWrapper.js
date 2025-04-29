@@ -35,18 +35,18 @@ export default function ExerciseWrapper({ exercise, onComplete }) {
 
   const renderExercise = () => {
     try {
-      switch (exercise.type) {
-        case 'drag-and-drop':
+    switch (exercise.type) {
+      case 'drag-and-drop':
           return <DragAndDrop exercise={exercise} onComplete={handleComplete} />;
-        case 'fill-in-blanks':
+      case 'fill-in-blanks':
           return <FillInBlanks exercise={exercise} onComplete={handleComplete} />;
-        case 'multiple-choice':
+      case 'multiple-choice':
           return <MultipleChoice exercise={exercise} onComplete={handleComplete} />;
-        case 'code-challenge':
+      case 'code-challenge':
           return <CodeChallenge exercise={exercise} onComplete={handleComplete} />;
         case 'short-answer':
           return <ShortAnswer exercise={exercise} onComplete={handleComplete} />;
-        default:
+      default:
           return (
             <div className="p-6 bg-white rounded-xl shadow-sm">
               <p className="text-amber-600">
@@ -57,13 +57,13 @@ export default function ExerciseWrapper({ exercise, onComplete }) {
       }
     } catch (err) {
       console.error('Error rendering exercise:', err);
-      return (
-        <div className="p-6 bg-white rounded-xl shadow-sm">
-          <p className="text-red-600">
+        return (
+          <div className="p-6 bg-white rounded-xl shadow-sm">
+            <p className="text-red-600">
             Error rendering exercise: {err.message || 'Unknown error'}
-          </p>
-        </div>
-      );
+            </p>
+          </div>
+        );
     }
   };
 

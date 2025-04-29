@@ -28,7 +28,7 @@ export default function FinalExam() {
         if (!isEnrolled) {
           return;
         }
-        
+
         // Use the direct endpoint with slug parameter
         const response = await fetch(`/api/quizzes/final/${params.slug}`);
         const data = await response.json();

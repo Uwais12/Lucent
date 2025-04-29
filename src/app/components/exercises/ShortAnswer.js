@@ -70,12 +70,12 @@ export default function ShortAnswer({ exercise, onComplete }) {
           <div className="mb-2">
             <p className="text-sm text-gray-500 italic">{getFormatHint()}</p>
           </div>
-          <input
-            type="text"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            disabled={isCompleted}
-            placeholder="Type your answer here..."
+        <input
+          type="text"
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          disabled={isCompleted}
+          placeholder="Type your answer here..."
             className={cn(
               "w-full px-4 py-2 border rounded-lg outline-none transition-colors",
               isCompleted 
@@ -87,7 +87,7 @@ export default function ShortAnswer({ exercise, onComplete }) {
                 checkAnswer();
               }
             }}
-          />
+        />
         </div>
 
         <div className="flex flex-wrap gap-4">

@@ -8,14 +8,45 @@ import {
   UserButton,
   useUser,
 } from "@clerk/nextjs";
-import { Diamond, User, BookOpen, Layout, Lightbulb, Menu, X, Settings } from "lucide-react";
-import { useState, useEffect } from "react";
+import { 
+  Diamond, 
+  User, 
+  BookOpen, 
+  Layout, 
+  Lightbulb, 
+  Menu, 
+  X, 
+  Settings, 
+  PieChart, 
+  Code, 
+  Calendar
+} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [userStats, setUserStats] = useState({ xp: 0, gems: 0 });
   const { user } = useUser();
+  const [isLandingPage, setIsLandingPage] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    // Check if we're on the landing page or not
+    setIsLandingPage(window.location.pathname === "/landing-page");
+
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -41,12 +72,65 @@ const Navbar = () => {
     fetchUserProfile();
   }, [user?.id]);
 
-  const navLinks = [
+  useEffect(() => {
+    if (isLandingPage) {
+      const handleScroll = () => {
+        const sections = [
+          { id: "home", position: 0 },
+          { id: "courses", selector: "#courses" },
+          { id: "pricing", selector: "#pricing" },
+          { id: "features", selector: ".py-24.bg-gray-50" },
+          { id: "roadmap", selector: ".max-w-7xl.mx-auto .inline-flex.items-center.gap-2.px-4.py-2.rounded-full.bg-violet-100.text-violet-700.mb-4" },
+          { id: "ai", selector: ".inline-flex.items-center.gap-2.px-4.py-2.rounded-full.bg-violet-100.text-violet-700.mb-6" }
+        ];
+
+        const scrollPosition = window.scrollY + 100;
+        
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const section = sections[i];
+          const element = section.selector 
+            ? document.querySelector(section.selector) 
+            : document;
+            
+          if (!element) continue;
+          
+          const position = section.position !== undefined 
+            ? section.position 
+            : element.getBoundingClientRect().top + window.scrollY;
+            
+          if (scrollPosition >= position) {
+            setActiveSection(section.id);
+            break;
+          }
+        }
+      };
+      
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [isLandingPage]);
+
+  // Define different nav links for landing page vs app
+  const appNavLinks = [
     { name: "Learn", href: "/#courses", icon: BookOpen },
     { name: "Dashboard", href: "/", icon: Layout },
     { name: "About", href: "/landing-page", icon: Lightbulb },
     ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
   ];
+
+  const landingNavLinks = [
+    { name: "Home", href: "/landing-page#", icon: Layout, section: "home" },
+    { name: "Courses", href: "/landing-page#courses", icon: BookOpen, section: "courses" },
+    { name: "Pricing", href: "/landing-page#pricing", icon: Diamond, section: "pricing" },
+    { name: "Features", href: "/landing-page#features", icon: Code, section: "features" },
+    { name: "Roadmap", href: "/landing-page#roadmap", icon: Calendar, section: "roadmap" },
+  ];
+
+  const navLinks = isLandingPage ? landingNavLinks : appNavLinks;
+
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
@@ -64,13 +148,18 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-1">
             {navLinks.map((item) => {
               const Icon = item.icon;
+              const isActive = item.section === activeSection;
+              
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200 flex items-center gap-2 group"
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 flex items-center gap-2 group
+                    ${isActive 
+                      ? "text-violet-600 bg-violet-50" 
+                      : "text-gray-700 hover:text-violet-600 hover:bg-violet-50"}`}
                 >
-                  <Icon className="w-4 h-4 group-hover:text-violet-600 transition-colors" />
+                  <Icon className={`w-4 h-4 ${isActive ? "text-violet-600" : "group-hover:text-violet-600"} transition-colors`} />
                   {item.name}
                 </Link>
               );
@@ -115,9 +204,20 @@ const Navbar = () => {
             </SignedIn>
 
             <SignedOut>
-              <button className="hidden md:flex px-4 py-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg text-sm font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-200">
+              <div className="hidden md:flex items-center gap-3">
+                <Link 
+                  href="/sign-in" 
+                  className="px-3 py-2 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
+                >
                 Sign In
-              </button>
+                </Link>
+                <Link 
+                  href="/sign-up" 
+                  className="px-4 py-2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg text-sm font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-200"
+                >
+                  Get Started
+                </Link>
+              </div>
             </SignedOut>
 
             <SignedIn>
@@ -194,9 +294,22 @@ const Navbar = () => {
             
             <div className="pt-2 border-t border-slate-200">
               <SignedOut>
-                <button className="w-full px-4 py-2.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg text-sm font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-200">
+                <div className="space-y-2">
+                  <Link 
+                    href="/sign-in"
+                    className="block w-full px-4 py-2.5 text-center border border-violet-600 text-violet-600 rounded-lg text-sm font-medium hover:bg-violet-50 transition-all duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                   Sign In
-                </button>
+                  </Link>
+                  <Link 
+                    href="/sign-up"
+                    className="block w-full px-4 py-2.5 text-center bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg text-sm font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                </div>
               </SignedOut>
             </div>
           </div>
