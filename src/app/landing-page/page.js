@@ -63,16 +63,16 @@ export default function LandingPage() {
   return (
     <>
       <Head>
-        <title>Lucent - Master Advanced Software Concepts Through Daily Challenges</title>
-        <meta name="description" content="Break down complex engineering books into 15-minute interactive lessons. Build lasting knowledge, one small challenge at a time." />
-        <meta name="keywords" content="software engineering, system design, distributed systems, daily learning, interactive courses" />
-        <meta property="og:title" content="Lucent - Master Advanced Software Concepts" />
-        <meta property="og:description" content="Transform complex engineering books into engaging daily challenges. Start your learning journey today!" />
+        <title>Lucent - Master Advanced Software Engineering Through Daily Micro-Learning</title>
+        <meta name="description" content="Transform complex engineering books into engaging 15-minute interactive lessons. Build lasting knowledge with AI-powered adaptive learning." />
+        <meta name="keywords" content="software engineering, system design, distributed systems, daily learning, micro-learning, interactive courses, AI learning" />
+        <meta property="og:title" content="Lucent - Master Advanced Software Engineering" />
+        <meta property="og:description" content="Break down complex engineering books into 15-minute interactive lessons with our AI-powered platform. Coming Q3 2025." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://lucent.app" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Lucent - Master Advanced Software Concepts" />
-        <meta name="twitter:description" content="Break down complex engineering books into 15-minute interactive lessons. Build lasting knowledge, one small challenge at a time." />
+        <meta name="twitter:title" content="Lucent - Master Advanced Software Engineering" />
+        <meta name="twitter:description" content="Transform complex engineering books into 15-minute interactive lessons with AI-powered adaptive learning. Join our early access program." />
       </Head>
       
       <div className="min-h-screen bg-background">
@@ -143,16 +143,16 @@ export default function LandingPage() {
                     <div className="text-sm text-white/80 font-medium">Active Learners</div>
                   </div>
                   <div className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/15 transition-colors" role="listitem">
-                    <div className="text-2xl font-bold text-white mb-1" aria-label="Expert courses count">1</div>
-                    <div className="text-sm text-white/80 font-medium">Expert Course</div>
+                    <div className="text-2xl font-bold text-white mb-1" aria-label="Expert courses count">2</div>
+                    <div className="text-sm text-white/80 font-medium">Expert Courses</div>
                   </div>
                   <div className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/15 transition-colors" role="listitem">
                     <div className="text-2xl font-bold text-white mb-1" aria-label="Course completion rate">85%</div>
-                    <div className="text-sm text-white/80 font-medium">Completion Rate</div>
+                    <div className="text-sm text-white/80 font-medium">Weekly Retention</div>
                   </div>
                   <div className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/15 transition-colors" role="listitem">
-                    <div className="text-2xl font-bold text-white mb-1" aria-label="User rating">4.8/5</div>
-                    <div className="text-sm text-white/80 font-medium">User Rating</div>
+                    <div className="text-2xl font-bold text-white mb-1" aria-label="User rating">14min</div>
+                    <div className="text-sm text-white/80 font-medium">Avg. Session</div>
                   </div>
                 </div>
               </div>
@@ -434,6 +434,142 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* Roadmap Section - NEW */}
+        <div className="py-24 bg-gradient-to-b from-white to-violet-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-4">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-sm font-medium">Coming Soon</span>
+              </div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                The Future of Learning is Here
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                We&apos;re constantly evolving our platform with cutting-edge features to enhance your learning experience.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Left Column: Timeline */}
+              <div className="relative pl-8 border-l-2 border-violet-200 space-y-12">
+                {/* Phase 1 */}
+                <div className="relative">
+                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">1</span>
+                  </div>
+                  <div className="card p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Engagement & Basic AI</h3>
+                    <div className="text-sm text-violet-600 mb-4">Launch: Q3 2025</div>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Leaderboards & progress dashboard</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">AI-driven vocabulary explainer</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Premium subscription options</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* Phase 2 */}
+                <div className="relative">
+                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-fuchsia-600 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">2</span>
+                  </div>
+                  <div className="card p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Personalization & B2B Pilot</h3>
+                    <div className="text-sm text-fuchsia-600 mb-4">Launch: Q4 2025</div>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-fuchsia-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">GPT-powered Q&A Tutor (beta)</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-fuchsia-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">AI-generated practice questions</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-fuchsia-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Team admin panel & reporting</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right Column: Timeline */}
+              <div className="relative pl-8 border-l-2 border-violet-200 space-y-12">
+                {/* Phase 3 */}
+                <div className="relative">
+                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-pink-600 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">3</span>
+                  </div>
+                  <div className="card p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Adaptive Learning</h3>
+                    <div className="text-sm text-pink-600 mb-4">Launch: Q1-Q2 2026</div>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">ML-based adaptive learning paths</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">AI content recommendation</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">In-app community & virtual office hours</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* Phase 4 */}
+                <div className="relative">
+                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-amber-600 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">4</span>
+                  </div>
+                  <div className="card p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Scale & Marketplace</h3>
+                    <div className="text-sm text-amber-600 mb-4">Launch: Q3-Q4 2026</div>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Community lesson marketplace</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">AI content-expansion pipeline</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Multimodal lessons (auto-generated video)</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="mt-16 text-center">
+              <Link 
+                href="/sign-up"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-all duration-200"
+              >
+                Join the Future of Learning
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
         {/* Features Grid */}
         <div className="py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -521,6 +657,163 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+        
+        {/* Pricing Section - NEW */}
+        <div id="pricing" className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-4">
+                <Zap className="w-4 h-4" />
+                <span className="text-sm font-medium">Simple Pricing</span>
+              </div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Plans for Every Developer
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Choose the plan that fits your learning needs, with no hidden fees.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+              {/* Free Tier */}
+              <div className="card p-8 border-2 border-gray-100 hover:border-violet-100 transition-colors">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">Free</h3>
+                  <div className="mt-2 flex items-baseline">
+                    <span className="text-5xl font-bold text-gray-900">$0</span>
+                    <span className="ml-2 text-gray-500">/month</span>
+                  </div>
+                  <p className="mt-4 text-gray-600">Perfect for trying out Lucent</p>
+                </div>
+                
+                <div className="py-4 border-t border-b border-gray-100 my-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">1 lesson per day</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Basic quizzes</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Community access</span>
+                  </div>
+                </div>
+                
+                <Link 
+                  href="/sign-up"
+                  className="block w-full px-6 py-3 text-center bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                >
+                  Get Started Free
+                </Link>
+              </div>
+              
+              {/* Pro Tier */}
+              <div className="card p-8 border-2 border-violet-500 relative shadow-xl">
+                <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-violet-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                  Most Popular
+                </div>
+                
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">Lucent Pro</h3>
+                  <div className="mt-2 flex items-baseline">
+                    <span className="text-5xl font-bold text-gray-900">$15</span>
+                    <span className="ml-2 text-gray-500">/month</span>
+                  </div>
+                  <p className="mt-1 text-sm text-gray-500">or $120/year (save $60)</p>
+                  <p className="mt-4 text-gray-600">The perfect plan for dedicated learners</p>
+                </div>
+                
+                <div className="py-4 border-t border-b border-gray-100 my-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Unlimited lessons</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Advanced interactive quizzes</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Offline access</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Basic AI-powered help</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Progress analytics</span>
+                  </div>
+                </div>
+                
+                <Link 
+                  href="/sign-up"
+                  className="block w-full px-6 py-3 text-center bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors"
+                >
+                  Start 14-Day Free Trial
+                </Link>
+              </div>
+              
+              {/* Enterprise Tier */}
+              <div className="card p-8 border-2 border-gray-100 hover:border-violet-100 transition-colors">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">Enterprise</h3>
+                  <div className="mt-2 flex items-baseline">
+                    <span className="text-5xl font-bold text-gray-900">$240</span>
+                    <span className="ml-2 text-gray-500">/user/year</span>
+                  </div>
+                  <p className="mt-1 text-sm text-gray-500">Volume discounts available</p>
+                  <p className="mt-4 text-gray-600">Perfect for teams and organizations</p>
+                </div>
+                
+                <div className="py-4 border-t border-b border-gray-100 my-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Everything in Pro, plus:</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Admin dashboard</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Team analytics</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">SSO integration (Enterprise+)</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                    <span className="text-gray-600">Custom learning paths</span>
+                  </div>
+                </div>
+                
+                <Link 
+                  href="/contact"
+                  className="block w-full px-6 py-3 text-center bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors"
+                >
+                  Contact Sales
+                </Link>
+              </div>
+            </div>
+            
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="p-6 bg-violet-50 rounded-2xl">
+                <h3 className="text-lg font-semibold text-violet-900 mb-2">Special Student Discount</h3>
+                <p className="text-gray-700">Students receive 50% off any plan with valid ID verification.</p>
+                <Link 
+                  href="/student-verification"
+                  className="inline-block mt-4 px-6 py-2 bg-violet-100 text-violet-800 rounded-lg font-medium hover:bg-violet-200 transition-colors"
+                >
+                  Verify Student Status
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Testimonials */}
         <div className="py-24 bg-white">
@@ -604,26 +897,181 @@ export default function LandingPage() {
           </div>
         </div>
 
+        {/* AI Strategy Section - NEW */}
+        <div className="py-24 bg-gradient-to-b from-gray-50 to-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              {/* Left column: Content */}
+              <div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-6">
+                  <Sparkles className="w-4 h-4" />
+                  <span className="text-sm font-medium">AI-Powered Learning</span>
+                </div>
+                <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                  Intelligence That Adapts to Your Learning Style
+                </h2>
+                <p className="text-lg text-gray-600 mb-8">
+                  Our platform harnesses the power of advanced AI to create a personalized, adaptive learning experience 
+                  that evolves with your progress and understands your unique needs.
+                </p>
+                
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
+                      <Brain className="w-6 h-6 text-violet-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Intelligent Assistance</h3>
+                      <p className="text-gray-600">
+                        Get instant explanations for complex concepts with our GPT-powered Q&A system that understands context 
+                        and provides answers tailored to your level of understanding.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                      <Target className="w-6 h-6 text-emerald-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Adaptive Learning Paths</h3>
+                      <p className="text-gray-600">
+                        Our ML algorithms analyze your performance and learning patterns to create a customized learning 
+                        journey that focuses on areas where you need the most support.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                      <Zap className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Dynamic Content Generation</h3>
+                      <p className="text-gray-600">
+                        Our AI creates relevant practice questions, challenges, and supplementary materials that reinforce your 
+                        learning and keep content fresh and engaging.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right column: Visual */}
+              <div className="relative">
+                {/* Decorative elements */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 transform rotate-1"></div>
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5 transform -rotate-1"></div>
+                
+                <div className="relative card p-8 overflow-hidden">
+                  {/* AI Chat Simulation */}
+                  <div className="flex flex-col space-y-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="font-medium">Lucent AI</div>
+                    </div>
+                    
+                    {/* User Question */}
+                    <div className="ml-auto max-w-[80%] p-4 rounded-l-xl rounded-tr-xl bg-gray-100">
+                      <p className="text-gray-800">Can you explain how database sharding works in simple terms?</p>
+                    </div>
+                    
+                    {/* AI Response */}
+                    <div className="max-w-[80%] p-4 rounded-r-xl rounded-tl-xl bg-violet-100">
+                      <p className="text-gray-800 mb-2">
+                        Imagine you have a giant book of contacts (your database). If it gets too big and heavy to handle:
+                      </p>
+                      <ol className="list-decimal pl-4 space-y-1 text-gray-700">
+                        <li>You split it into smaller books by last name (A-M, N-Z)</li>
+                        <li>Each smaller book lives on a different shelf (server)</li>
+                        <li>When looking for "Smith", you check the N-Z book directly</li>
+                      </ol>
+                      <p className="text-gray-800 mt-2">
+                        That's sharding - splitting your database across multiple servers based on a "shard key" (like last name), 
+                        allowing for better performance and scalability.
+                      </p>
+                    </div>
+                    
+                    {/* User Follow-up */}
+                    <div className="ml-auto max-w-[80%] p-4 rounded-l-xl rounded-tr-xl bg-gray-100">
+                      <p className="text-gray-800">What are the challenges with this approach?</p>
+                    </div>
+                    
+                    {/* AI Loading State */}
+                    <div className="max-w-[80%] p-4 rounded-r-xl rounded-tl-xl bg-violet-100">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-violet-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-violet-500 rounded-full animate-bounce delay-200"></div>
+                        <div className="w-2 h-2 bg-violet-600 rounded-full animate-bounce delay-500"></div>
+                        <span className="text-violet-700 text-sm">Thinking...</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Feature Callouts */}
+                  <div className="mt-8 grid grid-cols-3 gap-4 text-center">
+                    <div className="p-3 rounded-lg bg-violet-50">
+                      <div className="text-violet-700 font-medium mb-1">RAG-Powered</div>
+                      <div className="text-xs text-violet-600">Context-aware answers</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-violet-50">
+                      <div className="text-violet-700 font-medium mb-1">GPT-4/5</div>
+                      <div className="text-xs text-violet-600">Advanced reasoning</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-violet-50">
+                      <div className="text-violet-700 font-medium mb-1">Domain-Specific</div>
+                      <div className="text-xs text-violet-600">Engineering focused</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* CTA Section */}
         <div className="py-24 bg-gradient-to-b from-violet-900 to-violet-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl font-bold text-white mb-4">
-              Ready to Level Up Your Software Engineering Skills?
+              Ready to Transform Your Technical Learning?
             </h2>
             <p className="text-xl text-violet-200 max-w-3xl mx-auto mb-8">
-              Join our community of developers and start your journey to mastery today.
+              Join our community of developers mastering advanced concepts through daily micro-learning. Launch planned for Q3 2025.
             </p>
-            <Link 
-              href="/sign-up"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-white text-violet-900 rounded-xl font-medium hover:bg-violet-50 transition-all duration-200 group"
-              aria-label="Get started with Lucent"
-            >
-              Get Started for Free
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-            </Link>
-            <p className="text-violet-300 mt-4">
-              No credit card required • 14-day free trial
-            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link 
+                href="/sign-up"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-violet-900 rounded-xl font-medium hover:bg-violet-50 transition-all duration-200 group"
+                aria-label="Get started with Lucent"
+              >
+                Join Early Access
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+              </Link>
+              <Link 
+                href="/enterprise"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-medium hover:bg-white/10 transition-all duration-200 group"
+                aria-label="Learn about enterprise solutions"
+              >
+                Enterprise Solutions
+                <Users className="w-5 h-5" aria-hidden="true" />
+              </Link>
+            </div>
+            <div className="mt-6 flex gap-8 justify-center text-violet-300">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                <span>14-day free trial</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                <span>No credit card required</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5" />
+                <span>Cancel anytime</span>
+              </div>
+            </div>
           </div>
         </div>
 
