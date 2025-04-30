@@ -680,7 +680,7 @@ export default function LandingPage() {
                 <div className="mb-4">
                   <h3 className="text-xl font-bold text-gray-900">Free</h3>
                   <div className="mt-2 flex items-baseline">
-                    <span className="text-5xl font-bold text-gray-900">$0</span>
+                    <span className="text-5xl font-bold text-gray-900">£0</span>
                     <span className="ml-2 text-gray-500">/month</span>
                   </div>
                   <p className="mt-4 text-gray-600">Perfect for trying out Lucent</p>
@@ -718,10 +718,10 @@ export default function LandingPage() {
                 <div className="mb-4">
                   <h3 className="text-xl font-bold text-gray-900">Lucent Pro</h3>
                   <div className="mt-2 flex items-baseline">
-                    <span className="text-5xl font-bold text-gray-900">$15</span>
+                    <span className="text-5xl font-bold text-gray-900">£10</span>
                     <span className="ml-2 text-gray-500">/month</span>
                   </div>
-                  <p className="mt-1 text-sm text-gray-500">or $120/year (save $60)</p>
+                  <p className="mt-1 text-sm text-gray-500">or £100/year (save £20)</p>
                   <p className="mt-4 text-gray-600">The perfect plan for dedicated learners</p>
                 </div>
                 
