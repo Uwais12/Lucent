@@ -115,6 +115,8 @@ const Navbar = () => {
     { name: "Learn", href: "/#courses", icon: BookOpen },
     { name: "Dashboard", href: "/", icon: Layout },
     { name: "About", href: "/landing-page", icon: Lightbulb },
+    { name: "Profile", href: "/profile", icon: Lightbulb },
+
     ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
   ];
 

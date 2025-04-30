@@ -11,6 +11,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.10.3",
     "@monaco-editor/react": "^4.6.0",
+    "@radix-ui/react-tabs": "^1.1.9",
     "clsx": "^2.1.1",
     "dompurify": "^3.2.5",
     "dotenv": "^16.5.0",
@@ -20,6 +21,7 @@
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.5",
     "next": "15.1.6",
+    "ngrok": "^5.0.0-beta.2",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-confetti": "^6.2.3",
@@ -29,6 +31,7 @@
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.5.2",
     "sonner": "^2.0.3",
+    "stripe": "^15.12.0",
     "svix": "^1.64.0",
     "tailwind-merge": "^3.1.0"
   },

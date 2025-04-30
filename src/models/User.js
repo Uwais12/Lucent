@@ -151,6 +151,47 @@ const UserSchema = new mongoose.Schema(
       enum: ["USER", "ADMIN"],
       default: "USER",
     },
+    // Subscription information
+    subscription: {
+      tier: { 
+        type: String, 
+        enum: ["FREE", "PRO", "ENTERPRISE"], 
+        default: "FREE" 
+      },
+      status: { 
+        type: String, 
+        enum: ["ACTIVE", "INACTIVE", "TRIALING", "PAST_DUE", "CANCELED"], 
+        default: "ACTIVE" 
+      },
+      customerId: { 
+        type: String, 
+        default: null 
+      },
+      subscriptionId: { 
+        type: String, 
+        default: null 
+      },
+      priceId: { 
+        type: String, 
+        default: null 
+      },
+      currentPeriodEnd: { 
+        type: Date, 
+        default: null 
+      },
+      createdAt: { 
+        type: Date, 
+        default: null 
+      },
+      updatedAt: { 
+        type: Date, 
+        default: null 
+      },
+      cancelAtPeriodEnd: { 
+        type: Boolean, 
+        default: false 
+      }
+    },
     email: {
       type: String,
       required: false,

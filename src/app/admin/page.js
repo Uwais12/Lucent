@@ -12,6 +12,7 @@ import {
   Save,
   X,
   Users,
+  CreditCard,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Link from "next/link";
@@ -24,6 +25,8 @@ export default function AdminPanel() {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
+  const [migrationStatus, setMigrationStatus] = useState(null);
+  const [migrationLoading, setMigrationLoading] = useState(false);
 
   // Initial empty course template
   const emptyCourse = {
@@ -138,6 +141,119 @@ export default function AdminPanel() {
       fetchCourses();
     }
   }, [isLoaded, user]);
+
+  // Function to test migration (dry run)
+  const handleTestMigration = async () => {
+    setMigrationLoading(true);
+    try {
+      const response = await fetch('/api/admin/migrate-to-subscriptions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dryRun: true })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setMigrationStatus({
+          success: true,
+          message: data.message,
+          count: data.userCount
+        });
+      } else {
+        setMigrationStatus({
+          success: false,
+          message: data.error || 'Failed to run migration test'
+        });
+      }
+    } catch (error) {
+      console.error('Error running migration test:', error);
+      setMigrationStatus({
+        success: false,
+        message: error.message || 'An error occurred during the migration test'
+      });
+    } finally {
+      setMigrationLoading(false);
+    }
+  };
+  
+  // Function to run actual migration
+  const handleRunMigration = async () => {
+    if (!confirm('Are you sure you want to migrate all users to the FREE tier? This cannot be undone.')) {
+      return;
+    }
+    
+    setMigrationLoading(true);
+    try {
+      const response = await fetch('/api/admin/migrate-to-subscriptions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dryRun: false })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setMigrationStatus({
+          success: true,
+          message: data.message,
+          count: data.affectedUsers
+        });
+      } else {
+        setMigrationStatus({
+          success: false,
+          message: data.error || 'Failed to run migration'
+        });
+      }
+    } catch (error) {
+      console.error('Error running migration:', error);
+      setMigrationStatus({
+        success: false,
+        message: error.message || 'An error occurred during the migration'
+      });
+    } finally {
+      setMigrationLoading(false);
+    }
+  };
+
+  // Function to run dev migration
+  const handleDevMigration = async (dryRun = true) => {
+    if (!dryRun && !confirm('Are you sure you want to migrate all users to the FREE tier? This cannot be undone.')) {
+      return;
+    }
+    
+    setMigrationLoading(true);
+    try {
+      const response = await fetch('/api/admin/dev-migrate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dryRun })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setMigrationStatus({
+          success: true,
+          message: data.message,
+          count: dryRun ? data.userCount : data.affectedUsers
+        });
+      } else {
+        setMigrationStatus({
+          success: false,
+          message: data.error || `Failed to run ${dryRun ? 'test' : ''} migration`
+        });
+      }
+    } catch (error) {
+      console.error('Error running migration:', error);
+      setMigrationStatus({
+        success: false,
+        message: error.message || 'An error occurred during the migration'
+      });
+    } finally {
+      setMigrationLoading(false);
+    }
+  };
 
   const handleCreateCourse = () => {
     setEditingCourse(emptyCourse);
@@ -310,39 +426,119 @@ export default function AdminPanel() {
             </div>
           </div>
 
-          {/* Course List */}
-          <div className="space-y-6">
-            {courses.map((course) => (
-              <div key={course._id} className="card p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-violet-100 rounded-lg flex items-center justify-center">
-                      <BookOpen className="w-6 h-6 text-violet-600" />
+          {/* Subscription Management Section */}
+          <div className="bg-white rounded-lg shadow p-6 mb-8">
+            <div className="flex items-center mb-4">
+              <CreditCard className="w-6 h-6 text-blue-600 mr-2" />
+              <h2 className="text-xl font-semibold">Subscription Management</h2>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">
-                        {course.title}
-                      </h3>
-                      <p className="text-gray-500">{course.description}</p>
+            
+            <div className="mb-4">
+              <h3 className="text-lg font-medium mb-2">Migrate Users to Free Tier</h3>
+              <p className="text-gray-600 mb-4">
+                This action will set all users without subscription data to the FREE tier.
+                Run a dry run first to see how many users will be affected.
+              </p>
+              
+              <div className="flex space-x-4 mb-4">
+                <button
+                  onClick={() => handleDevMigration(true)}
+                  disabled={migrationLoading}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50"
+                >
+                  {migrationLoading ? 'Processing...' : 'Test Migration (Dry Run)'}
+                </button>
+                
+                <button
+                  onClick={() => handleDevMigration(false)}
+                  disabled={migrationLoading}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md disabled:opacity-50"
+                >
+                  {migrationLoading ? 'Processing...' : 'Run Migration'}
+                </button>
                     </div>
+              
+              {migrationStatus && (
+                <div className={`p-4 rounded-md ${migrationStatus.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
+                  <p className="font-medium">{migrationStatus.message}</p>
+                  {migrationStatus.count !== undefined && (
+                    <p className="mt-1">Affected users: {migrationStatus.count}</p>
+                  )}
                   </div>
-                  <div className="flex items-center gap-2">
+              )}
+            </div>
+          </div>
+
+          {/* Course Management Section */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <div className="flex items-center mb-4">
+              <BookOpen className="w-6 h-6 text-blue-600 mr-2" />
+              <h2 className="text-xl font-semibold">Course Management</h2>
+            </div>
+            
                     <button
+              className="flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md mb-6"
+              onClick={handleCreateCourse}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create Course
+            </button>
+
+            {error && <p className="text-red-500 mb-4">{error}</p>}
+
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="py-3 px-4 text-left">Title</th>
+                    <th className="py-3 px-4 text-left">Level</th>
+                    <th className="py-3 px-4 text-left">Enrolled</th>
+                    <th className="py-3 px-4 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {courses.map((course) => (
+                    <tr key={course._id}>
+                      <td className="py-3 px-4">
+                        <Link 
+                          href={`/course/${course.slug}`} 
+                          className="text-blue-600 hover:underline"
+                        >
+                          {course.title}
+                        </Link>
+                      </td>
+                      <td className="py-3 px-4 capitalize">{course.level}</td>
+                      <td className="py-3 px-4">{course.enrolledCount || 0}</td>
+                      <td className="py-3 px-4">
+                        <div className="flex space-x-2">
+                          <button
+                            className="flex items-center text-blue-600 hover:text-blue-800"
                       onClick={() => handleEditCourse(course)}
-                      className="p-2 text-violet-600 hover:bg-violet-50 rounded-lg transition-colors"
                     >
-                      <Edit className="w-5 h-5" />
+                            <Edit className="w-4 h-4 mr-1" />
+                            Edit
                     </button>
                     <button
+                            className="flex items-center text-red-600 hover:text-red-800 ml-4"
                       onClick={() => handleDeleteCourse(course._id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                     >
-                      <Trash className="w-5 h-5" />
+                            <Trash className="w-4 h-4 mr-1" />
+                            Delete
                     </button>
                   </div>
-                </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {courses.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="py-4 px-4 text-center text-gray-500">
+                        No courses found. Create your first course!
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
               </div>
-            ))}
           </div>
 
           {/* Edit Modal */}

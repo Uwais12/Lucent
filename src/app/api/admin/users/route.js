@@ -81,7 +81,8 @@ export async function GET(req) {
         lastActivity: 1,
         lastQuizCompletion: 1,
         createdAt: 1,
-        'progress.courses': 1
+        'progress.courses': 1,
+        subscription: 1
       })
       .lean()
       .exec();
@@ -182,9 +183,10 @@ export async function PATCH(req) {
       });
     }
 
-    const { targetUserId, action } = await req.json();
-    if (!targetUserId || action !== 'resetDailyQuiz') {
-      return new Response(JSON.stringify({ error: 'Invalid request' }), {
+    const { targetUserId, action, tier } = await req.json();
+    
+    if (!targetUserId) {
+      return new Response(JSON.stringify({ error: 'User ID is required' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -200,20 +202,68 @@ export async function PATCH(req) {
       });
     }
 
-    // Reset the last quiz completion time
-    user.lastQuizCompletion = null;
-    await user.save();
+    if (action === 'resetDailyQuiz') {
+      // Reset the last quiz completion time
+      user.lastQuizCompletion = null;
+      await user.save();
 
-    return new Response(JSON.stringify({ 
-      message: 'Daily quiz reset successfully',
-      canTakeDailyQuiz: true
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+      return new Response(JSON.stringify({ 
+        message: 'Daily quiz reset successfully',
+        canTakeDailyQuiz: true
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } 
+    else if (action === 'updateSubscription') {
+      if (!tier || !['FREE', 'PRO', 'ENTERPRISE'].includes(tier)) {
+        return new Response(JSON.stringify({ error: 'Invalid subscription tier' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Initialize subscription object if it doesn't exist
+      if (!user.subscription) {
+        user.subscription = {};
+      }
+
+      // Update subscription tier
+      user.subscription.tier = tier;
+      user.subscription.status = 'ACTIVE';
+      
+      // Set expiration date to 1 year from now if upgrading to paid tier
+      if (tier !== 'FREE') {
+        const oneYearFromNow = new Date();
+        oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+        user.subscription.currentPeriodEnd = oneYearFromNow;
+      } else {
+        // For free tier, remove the expiration date
+        user.subscription.currentPeriodEnd = null;
+      }
+      
+      // Update the updatedAt timestamp
+      user.subscription.updatedAt = new Date();
+      
+      await user.save();
+
+      return new Response(JSON.stringify({
+        message: `Subscription updated to ${tier} successfully`,
+        subscription: user.subscription
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+    else {
+      return new Response(JSON.stringify({ error: 'Invalid action' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
   } catch (error) {
-    console.error('Error resetting daily quiz:', error);
-    return new Response(JSON.stringify({ error: 'Failed to reset daily quiz' }), {
+    console.error('Error updating user:', error);
+    return new Response(JSON.stringify({ error: 'Failed to update user' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

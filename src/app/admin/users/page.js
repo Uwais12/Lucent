@@ -209,6 +209,9 @@ export default function AdminUsers() {
                       </button>
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Subscription Tier
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <button
                         onClick={() => handleSort('xp')}
                         className="flex items-center space-x-1"
@@ -258,6 +261,116 @@ export default function AdminUsers() {
                         }`}>
                           {user.role}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center justify-between">
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            user.subscription?.tier === 'PRO' ? 'bg-blue-100 text-blue-800' : 
+                            user.subscription?.tier === 'ENTERPRISE' ? 'bg-indigo-100 text-indigo-800' : 
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {user.subscription?.tier || 'FREE'}
+                          </span>
+                          <div className="relative group">
+                            <button className="text-xs text-blue-600 hover:text-blue-800">
+                              Change
+                            </button>
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block z-10">
+                              <div className="py-1">
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      const response = await fetch('/api/admin/users', {
+                                        method: 'PATCH',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                          targetUserId: user._id,
+                                          action: 'updateSubscription',
+                                          tier: 'FREE'
+                                        }),
+                                      });
+                                      
+                                      const data = await response.json();
+                                      if (response.ok) {
+                                        toast.success('Subscription updated successfully');
+                                        fetchUsers();
+                                      } else {
+                                        toast.error(data.error || 'Failed to update subscription');
+                                      }
+                                    } catch (err) {
+                                      toast.error('Failed to update subscription');
+                                    }
+                                  }}
+                                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  Set to FREE
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      const response = await fetch('/api/admin/users', {
+                                        method: 'PATCH',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                          targetUserId: user._id,
+                                          action: 'updateSubscription',
+                                          tier: 'PRO'
+                                        }),
+                                      });
+                                      
+                                      const data = await response.json();
+                                      if (response.ok) {
+                                        toast.success('Subscription updated successfully');
+                                        fetchUsers();
+                                      } else {
+                                        toast.error(data.error || 'Failed to update subscription');
+                                      }
+                                    } catch (err) {
+                                      toast.error('Failed to update subscription');
+                                    }
+                                  }}
+                                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  Set to PRO
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    try {
+                                      const response = await fetch('/api/admin/users', {
+                                        method: 'PATCH',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                          targetUserId: user._id,
+                                          action: 'updateSubscription',
+                                          tier: 'ENTERPRISE'
+                                        }),
+                                      });
+                                      
+                                      const data = await response.json();
+                                      if (response.ok) {
+                                        toast.success('Subscription updated successfully');
+                                        fetchUsers();
+                                      } else {
+                                        toast.error(data.error || 'Failed to update subscription');
+                                      }
+                                    } catch (err) {
+                                      toast.error('Failed to update subscription');
+                                    }
+                                  }}
+                                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                >
+                                  Set to ENTERPRISE
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="flex items-center space-x-1">

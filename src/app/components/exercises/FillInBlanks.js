@@ -131,11 +131,7 @@ export default function FillInBlanks({ exercise, onComplete }) {
                   <span className={status ? "text-green-700" : "text-red-700 line-through"}>
                     {userAnswer}
                   </span>
-                  {/* {!status && (
-                    <span className="text-green-700 ml-2">
-                      Correct answer: {blank.answer}
-                    </span>
-                  )} */}
+
                 </div>
               </li>
             );
