@@ -203,17 +203,17 @@ export async function PATCH(req) {
     }
 
     if (action === 'resetDailyQuiz') {
-      // Reset the last quiz completion time
-      user.lastQuizCompletion = null;
-      await user.save();
+    // Reset the last quiz completion time
+    user.lastQuizCompletion = null;
+    await user.save();
 
-      return new Response(JSON.stringify({ 
-        message: 'Daily quiz reset successfully',
-        canTakeDailyQuiz: true
-      }), {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
-      });
+    return new Response(JSON.stringify({ 
+      message: 'Daily quiz reset successfully',
+      canTakeDailyQuiz: true
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
     } 
     else if (action === 'updateSubscription') {
       if (!tier || !['FREE', 'PRO', 'ENTERPRISE'].includes(tier)) {

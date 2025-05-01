@@ -19,7 +19,8 @@ import {
   Settings, 
   PieChart, 
   Code, 
-  Calendar
+  Calendar,
+  CreditCard
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
@@ -78,9 +79,7 @@ const Navbar = () => {
         const sections = [
           { id: "home", position: 0 },
           { id: "courses", selector: "#courses" },
-          { id: "pricing", selector: "#pricing" },
           { id: "features", selector: ".py-24.bg-gray-50" },
-          { id: "roadmap", selector: ".max-w-7xl.mx-auto .inline-flex.items-center.gap-2.px-4.py-2.rounded-full.bg-violet-100.text-violet-700.mb-4" },
           { id: "ai", selector: ".inline-flex.items-center.gap-2.px-4.py-2.rounded-full.bg-violet-100.text-violet-700.mb-6" }
         ];
 
@@ -112,20 +111,19 @@ const Navbar = () => {
 
   // Define different nav links for landing page vs app
   const appNavLinks = [
-    { name: "Learn", href: "/#courses", icon: BookOpen },
     { name: "Dashboard", href: "/", icon: Layout },
+    { name: "Learn", href: "/#courses", icon: BookOpen },
     { name: "About", href: "/landing-page", icon: Lightbulb },
-    { name: "Profile", href: "/profile", icon: Lightbulb },
-
+    ...(user ? [{ name: "Profile", href: "/profile", icon: User }] : []),
     ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
   ];
 
   const landingNavLinks = [
     { name: "Home", href: "/landing-page#", icon: Layout, section: "home" },
     { name: "Courses", href: "/landing-page#courses", icon: BookOpen, section: "courses" },
-    { name: "Pricing", href: "/landing-page#pricing", icon: Diamond, section: "pricing" },
     { name: "Features", href: "/landing-page#features", icon: Code, section: "features" },
-    { name: "Roadmap", href: "/landing-page#roadmap", icon: Calendar, section: "roadmap" },
+    { name: "Pricing", href: "/pricing", icon: CreditCard },
+    { name: "Roadmap", href: "/roadmap", icon: Calendar },
   ];
 
   const navLinks = isLandingPage ? landingNavLinks : appNavLinks;
@@ -223,13 +221,60 @@ const Navbar = () => {
             </SignedOut>
 
             <SignedIn>
-              <UserButton 
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: "w-8 h-8 rounded-lg",
-                  },
-                }}
-              />
+              {/* User Profile Menu */}
+              <div className="relative" ref={dropdownRef}>
+                <div 
+                  onClick={toggleDropdown}
+                  className="cursor-pointer"
+                >
+                  <UserButton 
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: "w-8 h-8 rounded-lg",
+                      },
+                    }}
+                  />
+                </div>
+                
+                {/* Profile Dropdown */}
+                {showDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200">
+                    <Link 
+                      href="/profile" 
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      <User className="w-4 h-4" />
+                      Your Profile
+                    </Link>
+                    <Link 
+                      href="/dashboard" 
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      <PieChart className="w-4 h-4" />
+                      Dashboard
+                    </Link>
+                    <Link 
+                      href="/learning-stats" 
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      <Diamond className="w-4 h-4" />
+                      Your Stats
+                    </Link>
+                    <div className="border-t border-gray-100 my-1"></div>
+                    <Link 
+                      href="/settings" 
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
+                      onClick={() => setShowDropdown(false)}
+                    >
+                      <Settings className="w-4 h-4" />
+                      Settings
+                    </Link>
+                  </div>
+                )}
+              </div>
             </SignedIn>
 
             {/* Mobile Menu Button */}
@@ -266,8 +311,36 @@ const Navbar = () => {
               );
             })}
             
-            {/* Mobile Stats Display */}
+            {/* Mobile User Links (when signed in) */}
             <SignedIn>
+              <div className="pt-2 border-t border-slate-200">
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <User className="w-4 h-4" />
+                  Your Profile
+                </Link>
+                <Link
+                  href="/learning-stats"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Diamond className="w-4 h-4" />
+                  Your Stats
+                </Link>
+                <Link
+                  href="/settings"
+                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Settings className="w-4 h-4" />
+                  Settings
+                </Link>
+              </div>
+              
+              {/* Mobile Stats Display */}
               <div className="flex items-center gap-3 px-4 py-2.5">
                 <div className="flex items-center gap-2">
                   <Diamond className="w-4 h-4 text-violet-600" />
@@ -294,8 +367,9 @@ const Navbar = () => {
               </div>
             </SignedIn>
             
-            <div className="pt-2 border-t border-slate-200">
-              <SignedOut>
+            {/* Mobile Sign In/Up Buttons */}
+            <SignedOut>
+              <div className="pt-2 border-t border-slate-200">
                 <div className="space-y-2">
                   <Link 
                     href="/sign-in"
@@ -312,8 +386,8 @@ const Navbar = () => {
                     Get Started
                   </Link>
                 </div>
-              </SignedOut>
-            </div>
+              </div>
+            </SignedOut>
           </div>
         </div>
       )}

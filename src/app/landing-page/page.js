@@ -18,7 +18,8 @@ import {
   BookMarked,
   Laptop,
   PlayCircle,
-  Mail
+  Mail,
+  CreditCard
 } from 'lucide-react';
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
@@ -383,7 +384,7 @@ export default function LandingPage() {
         </div>
 
         {/* How It Works */}
-        <div className="py-24 bg-gray-50">
+        <div className="py-24 bg-gray-50" id="features">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -434,138 +435,51 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Roadmap Section - NEW */}
-        <div className="py-24 bg-gradient-to-b from-white to-violet-50">
+        {/* CTA for Pricing and Roadmap */}
+        <div className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-4">
-                <Sparkles className="w-4 h-4" />
-                <span className="text-sm font-medium">Coming Soon</span>
-              </div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                The Future of Learning is Here
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                We&apos;re constantly evolving our platform with cutting-edge features to enhance your learning experience.
-              </p>
-            </div>
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Left Column: Timeline */}
-              <div className="relative pl-8 border-l-2 border-violet-200 space-y-12">
-                {/* Phase 1 */}
-                <div className="relative">
-                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">1</span>
+              <div className="card p-8 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow text-center md:text-left bg-gradient-to-br from-violet-50 to-white">
+                <div className="mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-4 mx-auto md:mx-0">
+                    <CreditCard className="w-6 h-6 text-violet-600" />
                   </div>
-                  <div className="card p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Engagement & Basic AI</h3>
-                    <div className="text-sm text-violet-600 mb-4">Launch: Q3 2025</div>
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">Leaderboards & progress dashboard</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">AI-driven vocabulary explainer</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">Premium subscription options</span>
-                      </li>
-                    </ul>
-                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Pricing Plans
+                  </h3>
+                  <p className="text-gray-600 mt-2">
+                    Choose a plan that works for your learning goals with transparent pricing and no hidden fees.
+                  </p>
                 </div>
-                
-                {/* Phase 2 */}
-                <div className="relative">
-                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-fuchsia-600 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">2</span>
-                  </div>
-                  <div className="card p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Personalization & B2B Pilot</h3>
-                    <div className="text-sm text-fuchsia-600 mb-4">Launch: Q4 2025</div>
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-fuchsia-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">GPT-powered Q&A Tutor (beta)</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-fuchsia-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">AI-generated practice questions</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-fuchsia-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">Team admin panel & reporting</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                <Link
+                  href="/pricing"
+                  className="inline-flex items-center gap-2 font-medium text-violet-600 hover:text-violet-800 transition-colors group mt-2"
+                >
+                  View Pricing Options
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
               
-              {/* Right Column: Timeline */}
-              <div className="relative pl-8 border-l-2 border-violet-200 space-y-12">
-                {/* Phase 3 */}
-                <div className="relative">
-                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-pink-600 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">3</span>
+              <div className="card p-8 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow text-center md:text-left bg-gradient-to-br from-violet-50 to-white">
+                <div className="mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-4 mx-auto md:mx-0">
+                    <Calendar className="w-6 h-6 text-violet-600" />
                   </div>
-                  <div className="card p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Adaptive Learning</h3>
-                    <div className="text-sm text-pink-600 mb-4">Launch: Q1-Q2 2026</div>
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">ML-based adaptive learning paths</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">AI content recommendation</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-pink-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">In-app community & virtual office hours</span>
-                      </li>
-                    </ul>
-                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900">
+                    Product Roadmap
+                  </h3>
+                  <p className="text-gray-600 mt-2">
+                    See what we're building next and how we're evolving the platform to enhance your learning experience.
+                  </p>
                 </div>
-                
-                {/* Phase 4 */}
-                <div className="relative">
-                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-amber-600 flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">4</span>
-                  </div>
-                  <div className="card p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Scale & Marketplace</h3>
-                    <div className="text-sm text-amber-600 mb-4">Launch: Q3-Q4 2026</div>
-                    <ul className="space-y-3">
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">Community lesson marketplace</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">AI content-expansion pipeline</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">Multimodal lessons (auto-generated video)</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                <Link
+                  href="/roadmap"
+                  className="inline-flex items-center gap-2 font-medium text-violet-600 hover:text-violet-800 transition-colors group mt-2"
+                >
+                  Explore Our Roadmap
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
-            </div>
-            
-            <div className="mt-16 text-center">
-              <Link 
-                href="/sign-up"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-all duration-200"
-              >
-                Join the Future of Learning
-                <ArrowRight className="w-5 h-5" />
-              </Link>
             </div>
           </div>
         </div>
@@ -658,163 +572,6 @@ export default function LandingPage() {
           </div>
         </div>
         
-        {/* Pricing Section - NEW */}
-        <div id="pricing" className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-4">
-                <Zap className="w-4 h-4" />
-                <span className="text-sm font-medium">Simple Pricing</span>
-              </div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Plans for Every Developer
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Choose the plan that fits your learning needs, with no hidden fees.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              {/* Free Tier */}
-              <div className="card p-8 border-2 border-gray-100 hover:border-violet-100 transition-colors">
-                <div className="mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">Free</h3>
-                  <div className="mt-2 flex items-baseline">
-                    <span className="text-5xl font-bold text-gray-900">£0</span>
-                    <span className="ml-2 text-gray-500">/month</span>
-                  </div>
-                  <p className="mt-4 text-gray-600">Perfect for trying out Lucent</p>
-                </div>
-                
-                <div className="py-4 border-t border-b border-gray-100 my-6 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">1 lesson per day</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Basic quizzes</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Community access</span>
-                  </div>
-                </div>
-                
-                <Link 
-                  href="/sign-up"
-                  className="block w-full px-6 py-3 text-center bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-colors"
-                >
-                  Get Started Free
-                </Link>
-              </div>
-              
-              {/* Pro Tier */}
-              <div className="card p-8 border-2 border-violet-500 relative shadow-xl">
-                <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-violet-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-                  Most Popular
-                </div>
-                
-                <div className="mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">Lucent Pro</h3>
-                  <div className="mt-2 flex items-baseline">
-                    <span className="text-5xl font-bold text-gray-900">£10</span>
-                    <span className="ml-2 text-gray-500">/month</span>
-                  </div>
-                  <p className="mt-1 text-sm text-gray-500">or £100/year (save £20)</p>
-                  <p className="mt-4 text-gray-600">The perfect plan for dedicated learners</p>
-                </div>
-                
-                <div className="py-4 border-t border-b border-gray-100 my-6 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Unlimited lessons</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Advanced interactive quizzes</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Offline access</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Basic AI-powered help</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Progress analytics</span>
-                  </div>
-                </div>
-                
-                <Link 
-                  href="/sign-up"
-                  className="block w-full px-6 py-3 text-center bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors"
-                >
-                  Start 14-Day Free Trial
-                </Link>
-              </div>
-              
-              {/* Enterprise Tier */}
-              <div className="card p-8 border-2 border-gray-100 hover:border-violet-100 transition-colors">
-                <div className="mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">Enterprise</h3>
-                  <div className="mt-2 flex items-baseline">
-                    <span className="text-5xl font-bold text-gray-900">$240</span>
-                    <span className="ml-2 text-gray-500">/user/year</span>
-                  </div>
-                  <p className="mt-1 text-sm text-gray-500">Volume discounts available</p>
-                  <p className="mt-4 text-gray-600">Perfect for teams and organizations</p>
-                </div>
-                
-                <div className="py-4 border-t border-b border-gray-100 my-6 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Everything in Pro, plus:</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Admin dashboard</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Team analytics</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">SSO integration (Enterprise+)</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
-                    <span className="text-gray-600">Custom learning paths</span>
-                  </div>
-                </div>
-                
-                <Link 
-                  href="/contact"
-                  className="block w-full px-6 py-3 text-center bg-gray-800 text-white rounded-lg font-medium hover:bg-gray-900 transition-colors"
-                >
-                  Contact Sales
-                </Link>
-              </div>
-            </div>
-            
-            <div className="max-w-3xl mx-auto text-center">
-              <div className="p-6 bg-violet-50 rounded-2xl">
-                <h3 className="text-lg font-semibold text-violet-900 mb-2">Special Student Discount</h3>
-                <p className="text-gray-700">Students receive 50% off any plan with valid ID verification.</p>
-                <Link 
-                  href="/student-verification"
-                  className="inline-block mt-4 px-6 py-2 bg-violet-100 text-violet-800 rounded-lg font-medium hover:bg-violet-200 transition-colors"
-                >
-                  Verify Student Status
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Testimonials */}
         <div className="py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
