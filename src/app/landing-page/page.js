@@ -438,7 +438,7 @@ export default function LandingPage() {
         </div>
 
         {/* CTA for Pricing and Roadmap */}
-        <div className="py-20 bg-white">
+        <div className="py-20 bg-white" id="pricing">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-4">
