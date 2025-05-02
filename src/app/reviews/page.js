@@ -22,6 +22,7 @@ export default function ReviewsPage() {
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userData, setUserData] = useState(null);
   
   const [reviewForm, setReviewForm] = useState({
     rating: 5,
@@ -44,56 +45,42 @@ export default function ReviewsPage() {
     }
   }, [isLoaded, user, router]);
   
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user) return;
+      
+      try {
+        const response = await fetch('/api/profile');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        
+        const data = await response.json();
+        setUserData(data);
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+      }
+    };
+    
+    fetchUserData();
+  }, [user]);
+  
   // Fetch reviews
   useEffect(() => {
     const fetchReviews = async () => {
       try {
         setIsLoading(true);
-        // In a real implementation, this would be a fetch to an API endpoint
-        // For now, we'll use mock data
-        const mockReviews = [
-          {
-            id: '1',
-            userId: 'user1',
-            userName: 'Alex Chen',
-            rating: 5,
-            title: 'Transformed my learning journey',
-            content: 'The bite-sized daily lessons make complex engineering topics actually manageable. This is exactly what I was looking for to level up my technical skills.',
-            userRole: 'Software Engineer',
-            userWorkplace: 'Google',
-            likes: 14,
-            createdAt: '2023-09-15T14:35:22Z'
-          },
-          {
-            id: '2',
-            userId: 'user2',
-            userName: 'Samantha Rodriguez',
-            rating: 4,
-            title: 'Great platform for busy professionals',
-            content: 'I love how I can fit these lessons into my busy schedule. The progress tracking keeps me motivated, and I appreciate the hands-on exercises.',
-            userRole: 'Engineering Manager',
-            userWorkplace: 'Microsoft',
-            likes: 8,
-            createdAt: '2023-10-02T09:17:45Z'
-          },
-          {
-            id: '3',
-            userId: 'user3',
-            userName: 'Jordan Taylor',
-            rating: 5,
-            title: 'Finally understanding complex concepts',
-            content: 'The way Lucent breaks down difficult concepts is brilliant. I\'ve tried reading these books on my own before, but this guided approach is so much more effective.',
-            userRole: 'Data Scientist',
-            userWorkplace: 'Netflix',
-            likes: 21,
-            createdAt: '2023-08-28T16:42:10Z'
-          }
-        ];
+        // Call the real API endpoint
+        const response = await fetch('/api/reviews');
         
-        // Simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 800));
+        if (!response.ok) {
+          throw new Error('Failed to fetch reviews');
+        }
         
-        setReviews(mockReviews);
+        const data = await response.json();
+        setReviews(data);
       } catch (err) {
         console.error('Error fetching reviews:', err);
         setError('Failed to load reviews. Please try again later.');
@@ -135,23 +122,27 @@ export default function ReviewsPage() {
     setIsSubmitting(true);
     
     try {
-      // In a real implementation, this would be a POST to an API endpoint
-      // For now, we'll just simulate the API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Send review data to API endpoint
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userName: user.fullName,
+          rating: reviewForm.rating,
+          title: reviewForm.title,
+          content: reviewForm.content,
+          userRole: userData?.workplace?.position || 'User',
+          userWorkplace: userData?.workplace?.company || '',
+        }),
+      });
       
-      // Create new review object (would come from API in a real implementation)
-      const newReview = {
-        id: Date.now().toString(),
-        userId: user.id,
-        userName: user.fullName,
-        rating: reviewForm.rating,
-        title: reviewForm.title,
-        content: reviewForm.content,
-        userRole: 'User',
-        userWorkplace: '',
-        likes: 0,
-        createdAt: new Date().toISOString()
-      };
+      if (!response.ok) {
+        throw new Error('Failed to submit review');
+      }
+      
+      const newReview = await response.json();
       
       // Add to reviews list (optimistic update)
       setReviews(prev => [newReview, ...prev]);
