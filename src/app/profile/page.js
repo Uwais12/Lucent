@@ -17,7 +17,8 @@ import {
   Target,
   Clock,
   Settings,
-  Edit
+  Edit,
+  AlertCircle
 } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -34,6 +35,10 @@ export default function ProfilePage() {
   
   const [selectedInterval, setSelectedInterval] = useState('month');
   const [activeTab, setActiveTab] = useState('account');
+  const [userData, setUserData] = useState(null);
+  const [isUserDataLoading, setIsUserDataLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const router = useRouter();
   
   useEffect(() => {
@@ -42,7 +47,33 @@ export default function ProfilePage() {
     }
   }, [isLoaded, user, router]);
   
-  if (!isLoaded || loading) {
+  // Fetch user data from API
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user) return;
+      
+      try {
+        setIsUserDataLoading(true);
+        const response = await fetch('/api/profile');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        
+        const data = await response.json();
+        setUserData(data);
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        setError(err.message);
+      } finally {
+        setIsUserDataLoading(false);
+      }
+    };
+    
+    fetchUserData();
+  }, [user]);
+  
+  if (!isLoaded || loading || isUserDataLoading) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
@@ -65,6 +96,24 @@ export default function ProfilePage() {
     await redirectToBillingPortal();
   };
   
+  // Get data from the user document
+  const dailyStreak = userData?.dailyStreak || 0;
+  const totalXp = userData?.xp || 0;
+  const userLevel = userData?.level || 1;
+  
+  // Calculate courses data
+  const courseProgress = userData?.progress?.courses || [];
+  const courseStartedCount = courseProgress.length || 0;
+  
+  // Get course completion percentages
+  const courseCompletionData = courseProgress.map(course => ({
+    courseId: course.courseId,
+    name: course.courseId === 'ddia' ? 'Designing Data-Intensive Applications' : 
+           course.courseId === 'system-design' ? 'System Design Fundamentals' : 
+           'Course ' + course.courseId,
+    percentage: course.completionPercentage || 0
+  }));
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -84,13 +133,13 @@ export default function ProfilePage() {
               <Link 
                 href="/dashboard" 
                 className="flex items-center gap-2 text-violet-600 hover:text-violet-800 transition-colors"
-              >
+        >
                 <ArrowRight className="w-4 h-4" />
                 <span className="text-sm font-medium">Back to Dashboard</span>
               </Link>
             </div>
-          </div>
-          
+      </div>
+      
           {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Left Sidebar */}
@@ -101,11 +150,11 @@ export default function ProfilePage() {
                 <div className="p-6 bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white">
                   <div className="flex flex-col items-center text-center">
                     <div className="w-24 h-24 rounded-full border-4 border-white mb-4 overflow-hidden">
-                      <img 
-                        src={user.imageUrl}
-                        alt={user.fullName || 'User'} 
+                  <img 
+                    src={user.imageUrl}
+                    alt={user.fullName || 'User'} 
                         className="w-full h-full object-cover"
-                      />
+                  />
                     </div>
                     <h2 className="text-xl font-bold mb-1">{user.fullName}</h2>
                     <p className="text-sm text-violet-100">{user.primaryEmailAddress?.emailAddress}</p>
@@ -155,17 +204,17 @@ export default function ProfilePage() {
                       </button>
                     </li>
                     <li>
-                      <button
+                  <button
                         onClick={() => setActiveTab('settings')}
                         className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                           activeTab === 'settings' 
                           ? 'bg-violet-50 text-violet-700' 
                           : 'text-gray-700 hover:bg-gray-50'
                         }`}
-                      >
+                  >
                         <Settings className="w-4 h-4" />
                         Settings
-                      </button>
+                  </button>
                     </li>
                   </ul>
                 </nav>
@@ -188,14 +237,14 @@ export default function ProfilePage() {
                         <Award className="w-4 h-4 text-emerald-600" />
                         <span className="text-sm text-gray-600">Current streak</span>
                       </div>
-                      <span className="text-sm font-medium">7 days</span>
+                      <span className="text-sm font-medium">{dailyStreak} {dailyStreak === 1 ? 'day' : 'days'}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <BookOpen className="w-4 h-4 text-amber-600" />
                         <span className="text-sm text-gray-600">Courses started</span>
                       </div>
-                      <span className="text-sm font-medium">2</span>
+                      <span className="text-sm font-medium">{courseStartedCount}</span>
                     </div>
                   </div>
                 </div>
@@ -217,6 +266,20 @@ export default function ProfilePage() {
                       </button>
                     </div>
                     
+                    {/* Non-functional links notification */}
+                    <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                      <h3 className="text-sm font-medium text-amber-800 mb-2">Implementation Needed</h3>
+                      <p className="text-sm text-amber-700 mb-2">The following links need to be implemented:</p>
+                      <ul className="list-disc list-inside text-sm text-amber-700 space-y-1">
+                        <li>Manage Account Settings (/user/account)</li>
+                        <li>Privacy & Security (/user/security)</li>
+                        <li>Edit profile functionality</li>
+                        <li>Profile picture upload</li>
+                        <li>Learning preferences functionality</li>
+                        <li>Notification preferences functionality</li>
+                      </ul>
+                    </div>
+                    
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -226,6 +289,68 @@ export default function ProfilePage() {
                         <div>
                           <label className="block text-sm font-medium text-gray-500 mb-1">Email Address</label>
                           <div className="text-gray-900 font-medium">{user.primaryEmailAddress?.emailAddress}</div>
+                        </div>
+                      </div>
+                      
+                      {/* Workplace Information */}
+                      <div className="pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-medium text-gray-900">Workplace Information</h3>
+                          <button className="flex items-center gap-1 text-sm text-violet-600 hover:text-violet-800">
+                            <Edit className="w-4 h-4" />
+                            Update
+                          </button>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-1">Company</label>
+                            <input
+                              type="text"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                              placeholder="Where do you work?"
+                              value={userData?.workplace?.company || ''}
+                              onChange={(e) => {
+                                // To be implemented: Update workplace info
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-1">Position</label>
+                            <input
+                              type="text"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                              placeholder="Your job title"
+                              value={userData?.workplace?.position || ''}
+                              onChange={(e) => {
+                                // To be implemented: Update workplace info
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-1">Industry</label>
+                            <input
+                              type="text"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                              placeholder="e.g. Technology, Finance, Healthcare"
+                              value={userData?.workplace?.industry || ''}
+                              onChange={(e) => {
+                                // To be implemented: Update workplace info
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-1">Years of Experience</label>
+                            <input
+                              type="number"
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                              placeholder="Years in the field"
+                              value={userData?.workplace?.yearsOfExperience || ''}
+                              onChange={(e) => {
+                                // To be implemented: Update workplace info
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                       
@@ -262,48 +387,48 @@ export default function ProfilePage() {
                 {activeTab === 'subscription' && (
                   <div>
                     <h2 className="text-xl font-bold text-gray-900 mb-6">Your Subscription</h2>
-                    
-                    {subscription && (
+            
+            {subscription && (
                       <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
                         <p className="font-medium flex items-center justify-between">
                           <span>Current Plan:</span> 
                           <span className="text-violet-600 font-bold">{subscription.tier}</span>
-                        </p>
-                        {!isFreeTier && (
-                          <>
+                </p>
+                {!isFreeTier && (
+                  <>
                             <p className="text-sm text-gray-600 mt-1 flex items-center justify-between">
                               <span>Status:</span> 
                               <span className={subscription.status === 'ACTIVE' ? 'text-green-600 font-medium' : 'text-amber-600 font-medium'}>
-                                {subscription.status.toLowerCase()}
-                              </span>
-                            </p>
-                            {formattedExpirationDate && (
+                        {subscription.status.toLowerCase()}
+                      </span>
+                    </p>
+                    {formattedExpirationDate && (
                               <p className="text-sm text-gray-600 mt-1 flex items-center justify-between">
                                 <span>Next billing date:</span>
                                 <span className="font-medium">
-                                  {willCancel 
+                        {willCancel 
                                     ? `Cancels on ${formattedExpirationDate}`
                                     : formattedExpirationDate}
                                 </span>
-                              </p>
-                            )}
-                            <div className="mt-4">
-                              <button
-                                onClick={handleManageBilling}
-                                className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm hover:bg-violet-700 transition-colors"
-                              >
-                                Manage Billing
-                              </button>
-                            </div>
-                          </>
-                        )}
-                      </div>
+                      </p>
                     )}
-                    
-                    {isFreeTier && (
+                    <div className="mt-4">
+                      <button
+                        onClick={handleManageBilling}
+                                className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm hover:bg-violet-700 transition-colors"
+                      >
+                        Manage Billing
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+            
+            {isFreeTier && (
                       // Subscription plans content will go here
                       <div>
-                        <h3 className="font-medium text-lg mb-4">Upgrade Your Plan</h3>
+                <h3 className="font-medium text-lg mb-4">Upgrade Your Plan</h3>
                       </div>
                     )}
                   </div>
@@ -312,33 +437,38 @@ export default function ProfilePage() {
                 {/* Progress Tab Content */}
                 {activeTab === 'progress' && (
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Learning Progress</h2>
-                    <p className="text-gray-600 mb-6">Track your journey and see how far you&apos;ve come.</p>
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">Your Progress</h2>
+                    
+                    {error && (
+                      <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-6">
+                        <div className="flex items-center gap-2 text-red-600 mb-2">
+                          <AlertCircle className="w-5 h-5" />
+                          <p className="font-medium">Error Loading Data</p>
+                        </div>
+                        <p className="text-sm text-red-600">{error}</p>
+                      </div>
+                    )}
                     
                     {/* Progress content will go here */}
                     <div className="space-y-6">
                       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">Course Progress</h3>
+                        <h3 className="text-lg font-medium text-gray-900 mb-4">Courses</h3>
                         <div className="space-y-4">
-                          <div>
-                            <div className="flex justify-between mb-2">
-                              <span className="text-sm font-medium">Designing Data-Intensive Applications</span>
-                              <span className="text-sm text-violet-600 font-medium">27%</span>
-                            </div>
-                            <div className="h-2 w-full bg-gray-200 rounded-full">
-                              <div className="h-2 bg-violet-600 rounded-full" style={{ width: '27%' }}></div>
-                            </div>
-                          </div>
-                          
-                          <div>
-                            <div className="flex justify-between mb-2">
-                              <span className="text-sm font-medium">System Design Fundamentals</span>
-                              <span className="text-sm text-violet-600 font-medium">62%</span>
-                            </div>
-                            <div className="h-2 w-full bg-gray-200 rounded-full">
-                              <div className="h-2 bg-violet-600 rounded-full" style={{ width: '62%' }}></div>
-                            </div>
-                          </div>
+                          {courseCompletionData.length > 0 ? (
+                            courseCompletionData.map((course, index) => (
+                              <div key={index}>
+                                <div className="flex justify-between mb-2">
+                                  <span className="text-sm font-medium">{course.name}</span>
+                                  <span className="text-sm text-violet-600 font-medium">{Math.round(course.percentage)}%</span>
+                                </div>
+                                <div className="h-2 w-full bg-gray-200 rounded-full">
+                                  <div className="h-2 bg-violet-600 rounded-full" style={{ width: `${course.percentage}%` }}></div>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-gray-500">You haven't started any courses yet.</p>
+                          )}
                         </div>
                       </div>
                       
@@ -346,17 +476,25 @@ export default function ProfilePage() {
                         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                           <div className="flex justify-between items-center mb-2">
                             <h3 className="text-lg font-medium text-gray-900">Daily Streak</h3>
-                            <span className="text-xl font-bold text-violet-600">7</span>
+                            <span className="text-xl font-bold text-violet-600">{dailyStreak}</span>
                           </div>
-                          <p className="text-sm text-gray-600">Keep it going! You&apos;re building a great habit.</p>
+                          <p className="text-sm text-gray-600">
+                            {dailyStreak > 0 
+                              ? "Keep it going! You&apos;re building a great habit." 
+                              : "Start your learning streak today!"}
+                          </p>
                         </div>
                         
                         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                           <div className="flex justify-between items-center mb-2">
                             <h3 className="text-lg font-medium text-gray-900">Total XP</h3>
-                            <span className="text-xl font-bold text-violet-600">3,720</span>
+                            <span className="text-xl font-bold text-violet-600">{totalXp.toLocaleString()}</span>
                           </div>
-                          <p className="text-sm text-gray-600">You&apos;re making great progress!</p>
+                          <p className="text-sm text-gray-600">
+                            {totalXp > 0 
+                              ? "You&apos;re making great progress!" 
+                              : "Complete lessons to earn XP!"}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -391,8 +529,8 @@ export default function ProfilePage() {
                             </div>
                           </div>
                         </div>
-                      </div>
-                      
+                    </div>
+                    
                       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Learning Preferences</h3>
                         <div className="space-y-4">
@@ -417,13 +555,13 @@ export default function ProfilePage() {
                             </select>
                           </div>
                         </div>
-                      </div>
-                    </div>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
+        </div>
+      </div>
         </div>
       </main>
     </div>

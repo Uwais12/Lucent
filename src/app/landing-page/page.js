@@ -19,7 +19,8 @@ import {
   Laptop,
   PlayCircle,
   Mail,
-  CreditCard
+  CreditCard,
+  Diamond
 } from 'lucide-react';
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
@@ -31,6 +32,7 @@ export default function LandingPage() {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedInterval, setSelectedInterval] = useState('month');
 
   const handleNewsletterSignup = async (e) => {
     e.preventDefault();
@@ -436,49 +438,437 @@ export default function LandingPage() {
         </div>
 
         {/* CTA for Pricing and Roadmap */}
-        <div className="py-16 bg-white">
+        <div className="py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="card p-8 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow text-center md:text-left bg-gradient-to-br from-violet-50 to-white">
-                <div className="mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-4 mx-auto md:mx-0">
-                    <CreditCard className="w-6 h-6 text-violet-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    Pricing Plans
-                  </h3>
-                  <p className="text-gray-600 mt-2">
-                    Choose a plan that works for your learning goals with transparent pricing and no hidden fees.
-                  </p>
-                </div>
-                <Link
-                  href="/pricing"
-                  className="inline-flex items-center gap-2 font-medium text-violet-600 hover:text-violet-800 transition-colors group mt-2"
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-4">
+                <Diamond className="w-4 h-4" />
+                <span className="text-sm font-medium">Simple, Transparent Pricing</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Pricing Plans
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Choose a plan that works for your learning goals with transparent pricing and no hidden fees.
+              </p>
+            </div>
+            
+            {/* Interval Toggle */}
+            <div className="flex justify-center mb-12">
+              <div className="bg-gray-100 p-1 rounded-full inline-flex">
+                <button
+                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                    selectedInterval === 'month' ? 'bg-white shadow-sm text-violet-700' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                  onClick={() => setSelectedInterval('month')}
                 >
-                  View Pricing Options
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  Monthly
+                </button>
+                <button
+                  className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                    selectedInterval === 'year' ? 'bg-white shadow-sm text-violet-700' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                  onClick={() => setSelectedInterval('year')}
+                >
+                  Yearly
+                  <span className="ml-1 text-xs text-green-600 font-medium">
+                    Save 15%
+                  </span>
+                </button>
+              </div>
+            </div>
+            
+            {/* Pricing Cards */}
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              {/* Free Plan */}
+              <div className="card p-8 hover-lift border border-gray-200 rounded-xl shadow-sm bg-white flex flex-col">
+                <div className="mb-6">
+                  <h3 className="font-bold text-xl text-gray-900 mb-2">Basic</h3>
+                  <p className="text-gray-600">Get started with core features</p>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-3xl font-bold text-gray-900">
+                    Free
+                  </p>
+                  <p className="text-gray-500 text-sm mt-1">Forever</p>
+                </div>
+                
+                <ul className="mb-6 text-sm space-y-4 flex-grow">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">One challenge per day</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Basic performance tracking</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Access to free courses</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Community support</span>
+                  </li>
+                </ul>
+                
+                <Link 
+                  href="/sign-up"
+                  className="w-full py-3 rounded-lg border-2 border-violet-600 text-center font-medium text-violet-700 hover:bg-violet-50 transition-all"
+                >
+                  Get Started
                 </Link>
               </div>
               
-              <div className="card p-8 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow text-center md:text-left bg-gradient-to-br from-violet-50 to-white">
-                <div className="mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-4 mx-auto md:mx-0">
-                    <Calendar className="w-6 h-6 text-violet-600" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    Product Roadmap
-                  </h3>
-                  <p className="text-gray-600 mt-2">
-                    See what we're building next and how we're evolving the platform to enhance your learning experience.
-                  </p>
+              {/* Pro Plan */}
+              <div className="card p-8 hover-lift border-2 border-violet-600 rounded-xl shadow-lg bg-white flex flex-col relative">
+                <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                  Most Popular
                 </div>
-                <Link
-                  href="/roadmap"
-                  className="inline-flex items-center gap-2 font-medium text-violet-600 hover:text-violet-800 transition-colors group mt-2"
+                
+                <div className="mb-6">
+                  <h3 className="font-bold text-xl text-gray-900 mb-2">Pro</h3>
+                  <p className="text-gray-600">Perfect for individual learners</p>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-3xl font-bold text-gray-900">
+                    {selectedInterval === 'month' ? '£10' : '£100'}
+                    <span className="text-gray-400 text-lg font-normal">
+                      /{selectedInterval}
+                    </span>
+                  </p>
+                  {selectedInterval === 'year' && (
+                    <p className="text-green-600 text-sm mt-1">Save £20 annually</p>
+                  )}
+                </div>
+                
+                <ul className="mb-6 text-sm space-y-4 flex-grow">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700"><strong>Unlimited</strong> challenges per day</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Access to all premium courses</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Advanced performance analytics</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Priority support</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Study roadmap guidance</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Full AI tutor</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">AI adaptive learning</span>
+                  </li>
+                </ul>
+                
+                <Link 
+                  href="/sign-up?plan=pro"
+                  className="w-full py-3 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white text-center font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all shadow-md"
                 >
-                  Explore Our Roadmap
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  Get Pro Access
                 </Link>
+              </div>
+              
+              {/* Enterprise Plan */}
+              <div className="card p-8 hover-lift border border-gray-200 rounded-xl shadow-sm bg-white flex flex-col">
+                <div className="mb-6">
+                  <h3 className="font-bold text-xl text-gray-900 mb-2">Enterprise</h3>
+                  <p className="text-gray-600">For teams and organizations</p>
+                </div>
+                
+                <div className="mb-6">
+                  <p className="text-3xl font-bold text-gray-900">
+                    Custom
+                  </p>
+                  <p className="text-gray-500 text-sm mt-1">Tailored solutions</p>
+                </div>
+                
+                <ul className="mb-6 text-sm space-y-4 flex-grow">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Everything in Pro plan</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Dedicated account manager</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Team management dashboard</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Custom learning tracks</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">SSO integration</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">Detailed team analytics</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700">AI generated custom courses</span>
+                  </li>
+                </ul>
+                
+                <Link 
+                  href="/contact"
+                  className="w-full py-3 rounded-lg border-2 border-violet-600 text-center font-medium text-violet-700 hover:bg-violet-50 transition-all"
+                >
+                  Contact Sales
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Roadmap Section */}
+        <div className="py-20 bg-gray-50" id="roadmap">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-4">
+                <Sparkles className="w-4 h-4" />
+                <span className="text-sm font-medium">Future Vision</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Product Roadmap
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                We&apos;re constantly evolving our platform with cutting-edge features to enhance your learning experience. Here&apos;s what we&apos;re building.
+              </p>
+            </div>
+            
+            {/* Timeline Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {/* Left Column: Timeline */}
+              <div className="relative pl-8 border-l-2 border-violet-200 space-y-12">
+                {/* Phase 1 */}
+                <div className="relative">
+                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">1</span>
+                  </div>
+                  <div className="card p-6 bg-white shadow-md rounded-lg border border-gray-100">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Engagement & Basic AI</h3>
+                    <div className="text-sm text-violet-600 mb-4">Launch: Q3 2025</div>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Leaderboards & progress dashboard</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">AI-driven vocabulary explainer</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Premium subscription options</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* Phase 2 */}
+                <div className="relative">
+                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">2</span>
+                  </div>
+                  <div className="card p-6 bg-white shadow-md rounded-lg border border-gray-100">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Interactive Learning</h3>
+                    <div className="text-sm text-violet-600 mb-4">Launch: Q1 2026</div>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Collaborative group challenges</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">AI tutor</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">AI adaptation to your learning pace</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* Phase 3 */}
+                <div className="relative">
+                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">3</span>
+                  </div>
+                  <div className="card p-6 bg-white shadow-md rounded-lg border border-gray-100">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">Advanced AI Tutoring</h3>
+                    <div className="text-sm text-violet-600 mb-4">Launch: Q3 2026</div>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Personalized AI tutor for each user</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Automated code review & feedback</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Custom learning path generation</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">AI generated courses</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-700">Mobile apps for iOS and Android</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* Phase 4 */}
+                <div className="relative">
+                  <div className="absolute -left-10 top-0 w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                    <span className="text-white text-sm font-bold">4</span>
+                  </div>
+                  <div className="card p-6 bg-white shadow-md rounded-lg border border-gray-100 opacity-70">
+                    <h3 className="text-xl font-bold text-gray-700 mb-2">Community & Career Advancement</h3>
+                    <div className="text-sm text-violet-500 mb-4">Launch: 2027</div>
+                    <ul className="space-y-3">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-500 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-600">Mentorship matching platform</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-500 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-600">Certification programs</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-violet-500 flex-shrink-0 mt-0.5" />
+                        <span className="text-gray-600">Job placement assistance</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right Column */}
+              <div className="space-y-10">
+                <div className="card p-6 bg-white shadow-md rounded-lg border border-gray-100">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Our Development Philosophy</h3>
+                  <p className="text-gray-700 mb-4">
+                    At Lucent, we believe in building a learning platform that evolves with both technology trends and user needs. Our roadmap is guided by three core principles:
+                  </p>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2">
+                      <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
+                        <Brain className="w-4 h-4 text-violet-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Cognitive Science Focused</h4>
+                        <p className="text-sm text-gray-600">Features are designed based on proven learning methodologies that maximize knowledge retention and understanding.</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <Users className="w-4 h-4 text-emerald-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Community Driven</h4>
+                        <p className="text-sm text-gray-600">We regularly gather feedback from our user community to prioritize features that deliver the most value.</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                        <Target className="w-4 h-4 text-amber-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">Measurable Impact</h4>
+                        <p className="text-sm text-gray-600">Every feature must demonstrate clear improvements in learning outcomes through rigorous testing.</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                
+                <div className="card p-6 bg-white shadow-md rounded-lg border border-gray-100">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Current Focus</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center">
+                        <Code className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-gray-900">Interactive Challenges</span>
+                          <span className="text-sm text-emerald-600 font-medium">87% complete</span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-100 rounded-full mt-2">
+                          <div className="h-full w-[87%] bg-emerald-500 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center">
+                        <BookOpen className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-gray-900">Advanced Algorithm Course</span>
+                          <span className="text-sm text-amber-600 font-medium">65% complete</span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-100 rounded-full mt-2">
+                          <div className="h-full w-[65%] bg-amber-500 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center">
+                        <Calendar className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-gray-900">Weekly Challenges</span>
+                          <span className="text-sm text-violet-600 font-medium">42% complete</span>
+                        </div>
+                        <div className="h-2 w-full bg-gray-100 rounded-full mt-2">
+                          <div className="h-full w-[42%] bg-violet-500 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="card p-6 bg-white shadow-md rounded-lg border border-gray-100">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Request Features</h3>
+                  <p className="text-gray-700 mb-4">
+                    We value your input on what features would enhance your learning experience. Your feedback directly influences our roadmap priorities.
+                  </p>
+                  <Link 
+                    href="/contact"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-all font-medium"
+                  >
+                    Submit Feature Request
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -743,10 +1133,10 @@ export default function LandingPage() {
                       <ol className="list-decimal pl-4 space-y-1 text-gray-700">
                         <li>You split it into smaller books by last name (A-M, N-Z)</li>
                         <li>Each smaller book lives on a different shelf (server)</li>
-                        <li>When looking for "Smith", you check the N-Z book directly</li>
+                        <li>When looking for &quot;Smith&quot;, you check the N-Z book directly</li>
                       </ol>
                       <p className="text-gray-800 mt-2">
-                        That's sharding - splitting your database across multiple servers based on a "shard key" (like last name), 
+                        That&apos;s sharding - splitting your database across multiple servers based on a &quot;shard key&quot; (like last name), 
                         allowing for better performance and scalability.
                       </p>
                     </div>

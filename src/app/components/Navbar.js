@@ -20,7 +20,8 @@ import {
   PieChart, 
   Code, 
   Calendar,
-  CreditCard
+  CreditCard,
+  MessageSquare
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
@@ -113,6 +114,7 @@ const Navbar = () => {
   const appNavLinks = [
     { name: "Dashboard", href: "/", icon: Layout },
     { name: "Learn", href: "/#courses", icon: BookOpen },
+    { name: "Reviews", href: "/reviews", icon: MessageSquare },
     { name: "About", href: "/landing-page", icon: Lightbulb },
     ...(user ? [{ name: "Profile", href: "/profile", icon: User }] : []),
     ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
@@ -122,8 +124,9 @@ const Navbar = () => {
     { name: "Home", href: "/landing-page#", icon: Layout, section: "home" },
     { name: "Courses", href: "/landing-page#courses", icon: BookOpen, section: "courses" },
     { name: "Features", href: "/landing-page#features", icon: Code, section: "features" },
-    { name: "Pricing", href: "/pricing", icon: CreditCard },
-    { name: "Roadmap", href: "/roadmap", icon: Calendar },
+    { name: "Pricing", href: "/landing-page#pricing", icon: CreditCard, section: "pricing" },
+    { name: "Roadmap", href: "/landing-page#roadmap", icon: Calendar, section: "roadmap" },
+    { name: "Contact", href: "/contact", icon: Calendar },
   ];
 
   const navLinks = isLandingPage ? landingNavLinks : appNavLinks;
@@ -227,13 +230,13 @@ const Navbar = () => {
                   onClick={toggleDropdown}
                   className="cursor-pointer"
                 >
-                  <UserButton 
-                    appearance={{
-                      elements: {
-                        userButtonAvatarBox: "w-8 h-8 rounded-lg",
-                      },
-                    }}
-                  />
+              <UserButton 
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: "w-8 h-8 rounded-lg",
+                  },
+                }}
+              />
                 </div>
                 
                 {/* Profile Dropdown */}
@@ -369,7 +372,7 @@ const Navbar = () => {
             
             {/* Mobile Sign In/Up Buttons */}
             <SignedOut>
-              <div className="pt-2 border-t border-slate-200">
+            <div className="pt-2 border-t border-slate-200">
                 <div className="space-y-2">
                   <Link 
                     href="/sign-in"
@@ -387,7 +390,7 @@ const Navbar = () => {
                   </Link>
                 </div>
               </div>
-            </SignedOut>
+              </SignedOut>
           </div>
         </div>
       )}

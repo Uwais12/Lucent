@@ -198,6 +198,12 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       sparse: true,
     },
+    workplace: {
+      company: { type: String, default: null },
+      position: { type: String, default: null },
+      industry: { type: String, default: null },
+      yearsOfExperience: { type: Number, default: null }
+    },
     gems: {
       type: Number,
       default: 0,
