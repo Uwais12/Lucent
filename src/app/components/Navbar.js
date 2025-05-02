@@ -81,6 +81,8 @@ const Navbar = () => {
           { id: "home", position: 0 },
           { id: "courses", selector: "#courses" },
           { id: "features", selector: ".py-24.bg-gray-50" },
+          { id: "pricing", selector: "#pricing" },
+          { id: "roadmap", selector: "#roadmap" },
           { id: "ai", selector: ".inline-flex.items-center.gap-2.px-4.py-2.rounded-full.bg-violet-100.text-violet-700.mb-6" }
         ];
 
