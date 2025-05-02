@@ -385,54 +385,329 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* How It Works */}
-        <div className="py-24 bg-gray-50" id="features">
+        {/* AI Strategy Section - Moved up for better flow */}
+        <div id="ai" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              {/* Left column: Content */}
+              <div>
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-6">
+                  <Sparkles className="w-4 h-4" />
+                  <span className="text-sm font-medium">AI-Powered Learning</span>
+                </div>
+                <h2 className="text-4xl font-bold text-gray-900 mb-6">
+                  Intelligence That Adapts to Your Learning Style
+                </h2>
+                <p className="text-lg text-gray-600 mb-8">
+                  Our platform harnesses the power of advanced AI to create a personalized, adaptive learning experience 
+                  that evolves with your progress and understands your unique needs.
+                </p>
+                
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
+                      <Brain className="w-6 h-6 text-violet-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Intelligent Assistance</h3>
+                      <p className="text-gray-600">
+                        Get instant explanations for complex concepts with our GPT-powered Q&A system that understands context 
+                        and provides answers tailored to your level of understanding.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                      <Target className="w-6 h-6 text-emerald-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Adaptive Learning Paths</h3>
+                      <p className="text-gray-600">
+                        Our ML algorithms analyze your performance and learning patterns to create a customized learning 
+                        journey that focuses on areas where you need the most support.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+                      <Zap className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Dynamic Content Generation</h3>
+                      <p className="text-gray-600">
+                        Our AI creates relevant practice questions, challenges, and supplementary materials that reinforce your 
+                        learning and keep content fresh and engaging.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right column: Visual */}
+              <div className="relative">
+                {/* Decorative elements */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 transform rotate-1"></div>
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5 transform -rotate-1"></div>
+                
+                <div className="relative card p-8 overflow-hidden">
+                  {/* AI Chat Simulation */}
+                  <div className="flex flex-col space-y-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="font-medium">Lucent AI</div>
+                    </div>
+                    
+                    {/* User Question */}
+                    <div className="ml-auto max-w-[80%] p-4 rounded-l-xl rounded-tr-xl bg-gray-100">
+                      <p className="text-gray-800">Can you explain how database sharding works in simple terms?</p>
+                    </div>
+                    
+                    {/* AI Response */}
+                    <div className="max-w-[80%] p-4 rounded-r-xl rounded-tl-xl bg-violet-100">
+                      <p className="text-gray-800 mb-2">
+                        Imagine you have a giant book of contacts (your database). If it gets too big and heavy to handle:
+                      </p>
+                      <ol className="list-decimal pl-4 space-y-1 text-gray-700">
+                        <li>You split it into smaller books by last name (A-M, N-Z)</li>
+                        <li>Each smaller book lives on a different shelf (server)</li>
+                        <li>When looking for &quot;Smith&quot;, you check the N-Z book directly</li>
+                      </ol>
+                      <p className="text-gray-800 mt-2">
+                        That&apos;s sharding - splitting your database across multiple servers based on a &quot;shard key&quot; (like last name), 
+                        allowing for better performance and scalability.
+                      </p>
+                    </div>
+                    
+                    {/* User Follow-up */}
+                    <div className="ml-auto max-w-[80%] p-4 rounded-l-xl rounded-tr-xl bg-gray-100">
+                      <p className="text-gray-800">What are the challenges with this approach?</p>
+                    </div>
+                    
+                    {/* AI Loading State */}
+                    <div className="max-w-[80%] p-4 rounded-r-xl rounded-tl-xl bg-violet-100">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-violet-400 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-violet-500 rounded-full animate-bounce delay-200"></div>
+                        <div className="w-2 h-2 bg-violet-600 rounded-full animate-bounce delay-500"></div>
+                        <span className="text-violet-700 text-sm">Thinking...</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Feature Callouts */}
+                  <div className="mt-8 grid grid-cols-3 gap-4 text-center">
+                    <div className="p-3 rounded-lg bg-violet-50">
+                      <div className="text-violet-700 font-medium mb-1">RAG-Powered</div>
+                      <div className="text-xs text-violet-600">Context-aware answers</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-violet-50">
+                      <div className="text-violet-700 font-medium mb-1">GPT-4/5</div>
+                      <div className="text-xs text-violet-600">Advanced reasoning</div>
+                    </div>
+                    <div className="p-3 rounded-lg bg-violet-50">
+                      <div className="text-violet-700 font-medium mb-1">Domain-Specific</div>
+                      <div className="text-xs text-violet-600">Engineering focused</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Features Grid */}
+        <div id="features" className="py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Your Daily Learning Adventure
+                Engineered for Developer Growth
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                We&apos;ve transformed the way you learn advanced software concepts through a unique daily learning system.
+                Every feature is designed to help you build lasting knowledge and practical skills.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="card p-6 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-4">
+                  <Brain className="w-6 h-6 text-violet-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Spaced Repetition
+                </h3>
+                <p className="text-gray-600">
+                  Our algorithm ensures you review concepts at the optimal time for long-term retention.
+                </p>
+              </div>
+
+              <div className="card p-6 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center mb-4">
+                  <Code className="w-6 h-6 text-pink-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Interactive Challenges
+                </h3>
+                <p className="text-gray-600">
+                  Practice concepts through hands-on coding challenges and real-world scenarios.
+                </p>
+              </div>
+
+              <div className="card p-6 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-4">
+                  <Target className="w-6 h-6 text-amber-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Daily Streaks
+                </h3>
+                <p className="text-gray-600">
+                  Build a consistent learning habit with daily challenges and streak rewards.
+                </p>
+              </div>
+
+              <div className="card p-6 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-emerald-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Community Learning
+                </h3>
+                <p className="text-gray-600">
+                  Discuss solutions, share insights, and learn from fellow developers.
+                </p>
+              </div>
+
+              <div className="card p-6 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
+                  <Sparkles className="w-6 h-6 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  AI-Powered Hints
+                </h3>
+                <p className="text-gray-600">
+                  Get intelligent suggestions when stuck, without revealing the full solution.
+                </p>
+              </div>
+
+              <div className="card p-6 hover-lift">
+                <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center mb-4">
+                  <Laptop className="w-6 h-6 text-indigo-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  Progress Analytics
+                </h3>
+                <p className="text-gray-600">
+                  Track your learning journey with detailed progress analytics and insights.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Testimonials */}
+        <div className="py-24 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-4">
+                <Star className="w-4 h-4" />
+                <span className="text-sm font-medium">Success Stories</span>
+              </div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+                Transforming How Developers Learn
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Join thousands of engineers who are mastering complex concepts through our unique learning system.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="card p-8 hover-lift">
-                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-6">
-                  <Calendar className="w-6 h-6 text-violet-600" />
+              <div className="card p-8 bg-white shadow-lg rounded-xl hover:shadow-xl transition-shadow">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center">
+                    <span className="text-lg font-semibold text-violet-600">JS</span>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900">John Smith</div>
+                    <div className="text-sm text-gray-500">Senior Developer @ Tech Co</div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  One Challenge Per Day
-                </h3>
-                <p className="text-gray-600">
-                  Focus on a single concept each day. No overwhelm, just steady progress. Return daily to maintain your learning streak.
+                <div className="flex items-center gap-1 text-amber-400 mb-4">
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                </div>
+                <p className="text-gray-600 mb-4">
+                  &quot;This platform transformed how I learn advanced concepts. The daily challenges keep me engaged and I&apos;m actually retaining what I learn. Most importantly, it fits into my busy schedule perfectly.&quot;
                 </p>
+                <div className="text-sm text-violet-600 font-medium">
+                  Mastered: Distributed Systems in 8 weeks
+                </div>
               </div>
 
-              <div className="card p-8 hover-lift">
-                <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-6">
-                  <Trophy className="w-6 h-6 text-amber-600" />
+              <div className="card p-8 bg-white shadow-lg rounded-xl hover:shadow-xl transition-shadow">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <span className="text-lg font-semibold text-emerald-600">AK</span>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900">Alice Kim</div>
+                    <div className="text-sm text-gray-500">Lead Engineer @ Startup</div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Level Up Your Skills
-                </h3>
-                <p className="text-gray-600">
-                  Earn XP, unlock achievements, and track your progress. Watch your developer level grow as you master new concepts.
+                <div className="flex items-center gap-1 text-amber-400 mb-4">
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                </div>
+                <p className="text-gray-600 mb-4">
+                  &quot;The gamification aspect makes learning addictive. I&apos;ve maintained a 60-day streak and my system design skills have improved dramatically. The interactive exercises are what really make it stick.&quot;
                 </p>
+                <div className="text-sm text-emerald-600 font-medium">
+                  73-day learning streak and counting
+                </div>
               </div>
 
-              <div className="card p-8 hover-lift">
-                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-6">
-                  <BookMarked className="w-6 h-6 text-emerald-600" />
+              <div className="card p-8 bg-white shadow-lg rounded-xl hover:shadow-xl transition-shadow">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+                    <span className="text-lg font-semibold text-amber-600">MR</span>
+                  </div>
+                  <div>
+                    <div className="font-medium text-gray-900">Mike Rodriguez</div>
+                    <div className="text-sm text-gray-500">Software Architect</div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Learn from the Best
-                </h3>
-                <p className="text-gray-600">
-                  Courses based on renowned software engineering books, broken down into engaging, interactive lessons.
+                <div className="flex items-center gap-1 text-amber-400 mb-4">
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                  <Star className="w-5 h-5 fill-current" />
+                </div>
+                <p className="text-gray-600 mb-4">
+                  &quot;Finally, a platform that makes advanced software concepts accessible. The community discussions add so much value to the learning experience, and the AI tutor is incredibly helpful.&quot;
                 </p>
+                <div className="text-sm text-amber-600 font-medium">
+                  Completed 4 advanced courses in 3 months
+                </div>
               </div>
+            </div>
+            
+            <div className="mt-12 text-center">
+              <Link 
+                href="/sign-up"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-all font-medium"
+              >
+                Join Our Community
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </div>
@@ -582,7 +857,7 @@ export default function LandingPage() {
                   Get Pro Access
                 </Link>
               </div>
-              
+
               {/* Enterprise Plan */}
               <div className="card p-8 hover-lift border border-gray-200 rounded-xl shadow-sm bg-white flex flex-col">
                 <div className="mb-6">
@@ -874,382 +1149,45 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Features Grid */}
-        <div className="py-24 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Engineered for Developer Growth
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Every feature is designed to help you build lasting knowledge and practical skills.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="card p-6 hover-lift">
-                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-4">
-                  <Brain className="w-6 h-6 text-violet-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Spaced Repetition
-                </h3>
-                <p className="text-gray-600">
-                  Our algorithm ensures you review concepts at the optimal time for long-term retention.
-                </p>
-              </div>
-
-              <div className="card p-6 hover-lift">
-                <div className="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center mb-4">
-                  <Code className="w-6 h-6 text-pink-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Interactive Challenges
-                </h3>
-                <p className="text-gray-600">
-                  Practice concepts through hands-on coding challenges and real-world scenarios.
-                </p>
-              </div>
-
-              <div className="card p-6 hover-lift">
-                <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-4">
-                  <Target className="w-6 h-6 text-amber-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Daily Streaks
-                </h3>
-                <p className="text-gray-600">
-                  Build a consistent learning habit with daily challenges and streak rewards.
-                </p>
-              </div>
-
-              <div className="card p-6 hover-lift">
-                <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-4">
-                  <Users className="w-6 h-6 text-emerald-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Community Learning
-                </h3>
-                <p className="text-gray-600">
-                  Discuss solutions, share insights, and learn from fellow developers.
-                </p>
-              </div>
-
-              <div className="card p-6 hover-lift">
-                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center mb-4">
-                  <Sparkles className="w-6 h-6 text-blue-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  AI-Powered Hints
-                </h3>
-                <p className="text-gray-600">
-                  Get intelligent suggestions when stuck, without revealing the full solution.
-                </p>
-              </div>
-
-              <div className="card p-6 hover-lift">
-                <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center mb-4">
-                  <Laptop className="w-6 h-6 text-indigo-600" />
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Progress Analytics
-                </h3>
-                <p className="text-gray-600">
-                  Track your learning journey with detailed progress analytics and insights.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Testimonials */}
-        <div className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Loved by Developers
-              </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Join thousands of developers who are leveling up their skills.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="card p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-violet-600">JS</span>
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-900">John Smith</div>
-                    <div className="text-sm text-gray-500">Senior Developer @ Tech Co</div>
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-4">
-                  &quot;This platform transformed how I learn advanced concepts. The daily challenges keep me engaged and I&apos;m actually retaining what I learn.&quot;
-                </p>
-                <div className="flex items-center gap-1 text-amber-400">
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                </div>
-              </div>
-
-              <div className="card p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-emerald-600">AK</span>
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-900">Alice Kim</div>
-                    <div className="text-sm text-gray-500">Lead Engineer @ Startup</div>
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-4">
-                  &quot;The gamification aspect makes learning addictive. I&apos;ve maintained a 60-day streak and my system design skills have improved dramatically.&quot;
-                </p>
-                <div className="flex items-center gap-1 text-amber-400">
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                </div>
-              </div>
-
-              <div className="card p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-amber-600">MR</span>
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-900">Mike Rodriguez</div>
-                    <div className="text-sm text-gray-500">Software Architect</div>
-                  </div>
-                </div>
-                <p className="text-gray-600 mb-4">
-                  &quot;Finally, a platform that makes advanced software concepts accessible. The community discussions add so much value to the learning experience.&quot;
-                </p>
-                <div className="flex items-center gap-1 text-amber-400">
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* AI Strategy Section - NEW */}
-        <div className="py-24 bg-gradient-to-b from-gray-50 to-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              {/* Left column: Content */}
-              <div>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-6">
-                  <Sparkles className="w-4 h-4" />
-                  <span className="text-sm font-medium">AI-Powered Learning</span>
-                </div>
-                <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                  Intelligence That Adapts to Your Learning Style
-                </h2>
-                <p className="text-lg text-gray-600 mb-8">
-                  Our platform harnesses the power of advanced AI to create a personalized, adaptive learning experience 
-                  that evolves with your progress and understands your unique needs.
-                </p>
-                
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
-                      <Brain className="w-6 h-6 text-violet-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Intelligent Assistance</h3>
-                      <p className="text-gray-600">
-                        Get instant explanations for complex concepts with our GPT-powered Q&A system that understands context 
-                        and provides answers tailored to your level of understanding.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                      <Target className="w-6 h-6 text-emerald-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Adaptive Learning Paths</h3>
-                      <p className="text-gray-600">
-                        Our ML algorithms analyze your performance and learning patterns to create a customized learning 
-                        journey that focuses on areas where you need the most support.
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
-                      <Zap className="w-6 h-6 text-amber-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Dynamic Content Generation</h3>
-                      <p className="text-gray-600">
-                        Our AI creates relevant practice questions, challenges, and supplementary materials that reinforce your 
-                        learning and keep content fresh and engaging.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Right column: Visual */}
-              <div className="relative">
-                {/* Decorative elements */}
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 transform rotate-1"></div>
-                <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-violet-500/5 to-fuchsia-500/5 transform -rotate-1"></div>
-                
-                <div className="relative card p-8 overflow-hidden">
-                  {/* AI Chat Simulation */}
-                  <div className="flex flex-col space-y-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-10 h-10 rounded-full bg-violet-600 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="font-medium">Lucent AI</div>
-                    </div>
-                    
-                    {/* User Question */}
-                    <div className="ml-auto max-w-[80%] p-4 rounded-l-xl rounded-tr-xl bg-gray-100">
-                      <p className="text-gray-800">Can you explain how database sharding works in simple terms?</p>
-                    </div>
-                    
-                    {/* AI Response */}
-                    <div className="max-w-[80%] p-4 rounded-r-xl rounded-tl-xl bg-violet-100">
-                      <p className="text-gray-800 mb-2">
-                        Imagine you have a giant book of contacts (your database). If it gets too big and heavy to handle:
-                      </p>
-                      <ol className="list-decimal pl-4 space-y-1 text-gray-700">
-                        <li>You split it into smaller books by last name (A-M, N-Z)</li>
-                        <li>Each smaller book lives on a different shelf (server)</li>
-                        <li>When looking for &quot;Smith&quot;, you check the N-Z book directly</li>
-                      </ol>
-                      <p className="text-gray-800 mt-2">
-                        That&apos;s sharding - splitting your database across multiple servers based on a &quot;shard key&quot; (like last name), 
-                        allowing for better performance and scalability.
-                      </p>
-                    </div>
-                    
-                    {/* User Follow-up */}
-                    <div className="ml-auto max-w-[80%] p-4 rounded-l-xl rounded-tr-xl bg-gray-100">
-                      <p className="text-gray-800">What are the challenges with this approach?</p>
-                    </div>
-                    
-                    {/* AI Loading State */}
-                    <div className="max-w-[80%] p-4 rounded-r-xl rounded-tl-xl bg-violet-100">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-violet-400 rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-violet-500 rounded-full animate-bounce delay-200"></div>
-                        <div className="w-2 h-2 bg-violet-600 rounded-full animate-bounce delay-500"></div>
-                        <span className="text-violet-700 text-sm">Thinking...</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Feature Callouts */}
-                  <div className="mt-8 grid grid-cols-3 gap-4 text-center">
-                    <div className="p-3 rounded-lg bg-violet-50">
-                      <div className="text-violet-700 font-medium mb-1">RAG-Powered</div>
-                      <div className="text-xs text-violet-600">Context-aware answers</div>
-                    </div>
-                    <div className="p-3 rounded-lg bg-violet-50">
-                      <div className="text-violet-700 font-medium mb-1">GPT-4/5</div>
-                      <div className="text-xs text-violet-600">Advanced reasoning</div>
-                    </div>
-                    <div className="p-3 rounded-lg bg-violet-50">
-                      <div className="text-violet-700 font-medium mb-1">Domain-Specific</div>
-                      <div className="text-xs text-violet-600">Engineering focused</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* CTA Section */}
         <div className="py-24 bg-gradient-to-b from-violet-900 to-violet-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl font-bold text-white mb-4">
-              Ready to Transform Your Technical Learning?
+              Start Your Learning Journey Today
             </h2>
             <p className="text-xl text-violet-200 max-w-3xl mx-auto mb-8">
-              Join our community of developers mastering advanced concepts through daily micro-learning. Launch planned for Q3 2025.
+              Join our community of 1,000+ developers mastering advanced concepts through daily micro-learning. Launching Q3 2025.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link 
                 href="/sign-up"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-violet-900 rounded-xl font-medium hover:bg-violet-50 transition-all duration-200 group"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-violet-900 rounded-xl font-medium hover:bg-violet-50 transition-all duration-200 group shadow-lg shadow-violet-900/20"
                 aria-label="Get started with Lucent"
               >
-                Join Early Access
+                Get Started Free
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
               </Link>
               <Link 
-                href="/enterprise"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-medium hover:bg-white/10 transition-all duration-200 group"
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-medium hover:bg-white/10 transition-all duration-200 group"
                 aria-label="Learn about enterprise solutions"
               >
-                Enterprise Solutions
+                Team Solutions
                 <Users className="w-5 h-5" aria-hidden="true" />
               </Link>
             </div>
-            <div className="mt-6 flex gap-8 justify-center text-violet-300">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>14-day free trial</span>
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+              <div className="flex items-center gap-2 justify-center bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                <CheckCircle className="w-5 h-5 text-white" />
+                <span className="text-white font-medium">Free tier available</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>No credit card required</span>
+              <div className="flex items-center gap-2 justify-center bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                <CheckCircle className="w-5 h-5 text-white" />
+                <span className="text-white font-medium">Flexible payment options</span>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5" />
-                <span>Cancel anytime</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Feature Highlights Section */}
-        <div className="py-24 bg-gradient-to-b from-white to-violet-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Our Platform?</h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">Experience learning like never before with our unique features</p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <div className="p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-4">
-                  <Calendar className="w-6 h-6 text-violet-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Daily Learning Habit</h3>
-                <p className="text-gray-600">Build a consistent learning routine with our 15-minute daily challenges</p>
-              </div>
-              <div className="p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-4">
-                  <Trophy className="w-6 h-6 text-violet-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Progress Tracking</h3>
-                <p className="text-gray-600">Track your learning journey with detailed progress metrics and streaks</p>
-              </div>
-              <div className="p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow">
-                <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-4">
-                  <Brain className="w-6 h-6 text-violet-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Interactive Exercises</h3>
-                <p className="text-gray-600">Reinforce your learning with hands-on exercises and quizzes</p>
+              <div className="flex items-center gap-2 justify-center bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                <CheckCircle className="w-5 h-5 text-white" />
+                <span className="text-white font-medium">Cancel anytime</span>
               </div>
             </div>
           </div>

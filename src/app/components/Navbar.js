@@ -21,7 +21,8 @@ import {
   Code, 
   Calendar,
   CreditCard,
-  MessageSquare
+  MessageSquare,
+  Sparkles
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
@@ -80,10 +81,9 @@ const Navbar = () => {
         const sections = [
           { id: "home", position: 0 },
           { id: "courses", selector: "#courses" },
-          { id: "features", selector: ".py-24.bg-gray-50" },
+          { id: "features", selector: "#features" },
           { id: "pricing", selector: "#pricing" },
           { id: "roadmap", selector: "#roadmap" },
-          { id: "ai", selector: ".inline-flex.items-center.gap-2.px-4.py-2.rounded-full.bg-violet-100.text-violet-700.mb-6" }
         ];
 
         const scrollPosition = window.scrollY + 100;
@@ -115,7 +115,7 @@ const Navbar = () => {
   // Define different nav links for landing page vs app
   const appNavLinks = [
     { name: "Dashboard", href: "/", icon: Layout },
-    { name: "Learn", href: "/#courses", icon: BookOpen },
+    { name: "Learn", href: "/courses", icon: BookOpen },
     { name: "Reviews", href: "/reviews", icon: MessageSquare },
     { name: "About", href: "/landing-page", icon: Lightbulb },
     ...(user ? [{ name: "Profile", href: "/profile", icon: User }] : []),
@@ -128,7 +128,7 @@ const Navbar = () => {
     { name: "Features", href: "/landing-page#features", icon: Code, section: "features" },
     { name: "Pricing", href: "/landing-page#pricing", icon: CreditCard, section: "pricing" },
     { name: "Roadmap", href: "/landing-page#roadmap", icon: Calendar, section: "roadmap" },
-    { name: "Contact", href: "/contact", icon: Calendar },
+    { name: "Contact", href: "/contact", icon: MessageSquare },
   ];
 
   const navLinks = isLandingPage ? landingNavLinks : appNavLinks;

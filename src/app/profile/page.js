@@ -78,7 +78,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-background">
         <Navbar />
         <div className="container mx-auto px-4 pt-24 flex justify-center">
-          <div className="animate-pulse h-64 w-full max-w-3xl bg-gray-100 rounded-lg"></div>
+        <div className="animate-pulse h-64 w-full max-w-3xl bg-gray-100 rounded-lg"></div>
         </div>
       </div>
     );
@@ -351,9 +351,9 @@ export default function ProfilePage() {
                               }}
                             />
                           </div>
-                        </div>
-                      </div>
-                      
+          </div>
+        </div>
+        
                       <div className="pt-4 border-t border-gray-200">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Account Management</h3>
                         <div className="space-y-3">
@@ -446,7 +446,7 @@ export default function ProfilePage() {
                           <p className="font-medium">Error Loading Data</p>
                         </div>
                         <p className="text-sm text-red-600">{error}</p>
-                      </div>
+                    </div>
                     )}
                     
                     {/* Progress content will go here */}
@@ -483,8 +483,8 @@ export default function ProfilePage() {
                               ? "Keep it going! You&apos;re building a great habit." 
                               : "Start your learning streak today!"}
                           </p>
-                        </div>
-                        
+                  </div>
+                  
                         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                           <div className="flex justify-between items-center mb-2">
                             <h3 className="text-lg font-medium text-gray-900">Total XP</h3>
