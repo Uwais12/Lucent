@@ -84,7 +84,7 @@ export default function ReviewsPage() {
     };
     
     if (user) {
-      fetchUserData();
+    fetchUserData();
     }
   }, [user]);
   
@@ -231,7 +231,7 @@ export default function ReviewsPage() {
         window.scrollTo({
           top: document.querySelector('.lg\\:col-span-2')?.offsetTop - 100 || 0,
           behavior: 'smooth'
-        });
+      });
       }, 500);
     } catch (err) {
       console.error('Error submitting review:', err);
@@ -494,14 +494,14 @@ export default function ReviewsPage() {
         ) : (
           // Regular Review Display
           <>
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="font-bold text-gray-900 mb-1">{review.title}</h3>
-                <div className="flex items-center gap-2">
-                  <StarRating rating={review.rating} />
-                  <span className="text-sm text-gray-500">{formattedDate}</span>
-                </div>
-              </div>
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h3 className="font-bold text-gray-900 mb-1">{review.title}</h3>
+            <div className="flex items-center gap-2">
+              <StarRating rating={review.rating} />
+              <span className="text-sm text-gray-500">{formattedDate}</span>
+            </div>
+          </div>
               
               {isOwner && (
                 <div className="flex gap-1">
@@ -531,24 +531,24 @@ export default function ReviewsPage() {
                   </button>
                 </div>
               )}
+        </div>
+        
+        <p className="text-gray-700 mb-4">{review.content}</p>
+        
+        <div className="flex items-center justify-between border-t border-gray-100 pt-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
+              <User className="w-4 h-4 text-violet-600" />
             </div>
-            
-            <p className="text-gray-700 mb-4">{review.content}</p>
-            
-            <div className="flex items-center justify-between border-t border-gray-100 pt-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
-                  <User className="w-4 h-4 text-violet-600" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-gray-900">{review.userName}</div>
-                  <div className="text-xs text-gray-500 flex items-center gap-1">
-                    <Briefcase className="w-3 h-3" />
-                    {review.userRole}{review.userWorkplace ? ` at ${review.userWorkplace}` : ''}
-                  </div>
-                </div>
+            <div>
+              <div className="text-sm font-medium text-gray-900">{review.userName}</div>
+              <div className="text-xs text-gray-500 flex items-center gap-1">
+                <Briefcase className="w-3 h-3" />
+                {review.userRole}{review.userWorkplace ? ` at ${review.userWorkplace}` : ''}
               </div>
             </div>
+          </div>
+        </div>
           </>
         )}
       </div>

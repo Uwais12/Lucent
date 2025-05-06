@@ -20,9 +20,10 @@ import {
   PlayCircle,
   Mail,
   CreditCard,
-  Diamond
+  Diamond,
+  User
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -33,6 +34,38 @@ export default function LandingPage() {
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [selectedInterval, setSelectedInterval] = useState('month');
+  const [reviews, setReviews] = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(true);
+  const [reviewsError, setReviewsError] = useState(null);
+
+  // Fetch reviews from the API
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setReviewsLoading(true);
+        const response = await fetch('/api/reviews');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch reviews');
+        }
+        
+        const data = await response.json();
+        // Sort by rating (highest first) and take the top 3
+        const topReviews = [...data]
+          .sort((a, b) => b.rating - a.rating)
+          .slice(0, 3);
+          
+        setReviews(topReviews);
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+        setReviewsError('Failed to load reviews');
+      } finally {
+        setReviewsLoading(false);
+      }
+    };
+    
+    fetchReviews();
+  }, []);
 
   const handleNewsletterSignup = async (e) => {
     e.preventDefault();
@@ -140,7 +173,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Quick Stats - Refined */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12 mb-8" role="list" aria-label="Platform statistics">
+                {/* <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12 mb-8" role="list" aria-label="Platform statistics">
                   <div className="px-4 py-3 rounded-lg bg-white/10 backdrop-blur-md border border-white/20 shadow-xl hover:bg-white/15 transition-colors" role="listitem">
                     <div className="text-2xl font-bold text-white mb-1" aria-label="Active learners count">1K+</div>
                     <div className="text-sm text-white/80 font-medium">Active Learners</div>
@@ -157,7 +190,7 @@ export default function LandingPage() {
                     <div className="text-2xl font-bold text-white mb-1" aria-label="User rating">14min</div>
                     <div className="text-sm text-white/80 font-medium">Avg. Session</div>
                   </div>
-                </div>
+                </div> */}
               </div>
 
               {/* Right Column - Course Cards */}
@@ -623,92 +656,92 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="card p-8 bg-white shadow-lg rounded-xl hover:shadow-xl transition-shadow">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-violet-100 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-violet-600">JS</span>
+            {reviewsLoading ? (
+              // Loading state
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[1, 2, 3].map((item) => (
+                  <div key={item} className="card p-8 bg-white shadow-lg rounded-xl animate-pulse">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 rounded-full bg-gray-200"></div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-24"></div>
+                        <div className="h-3 bg-gray-200 rounded w-36"></div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 mb-4">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <div key={star} className="w-5 h-5 rounded-full bg-gray-200"></div>
+                      ))}
+                    </div>
+                    <div className="space-y-2">
+                      <div className="h-3 bg-gray-200 rounded w-full"></div>
+                      <div className="h-3 bg-gray-200 rounded w-full"></div>
+                      <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-medium text-gray-900">John Smith</div>
-                    <div className="text-sm text-gray-500">Senior Developer @ Tech Co</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-amber-400 mb-4">
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                </div>
-                <p className="text-gray-600 mb-4">
-                  &quot;This platform transformed how I learn advanced concepts. The daily challenges keep me engaged and I&apos;m actually retaining what I learn. Most importantly, it fits into my busy schedule perfectly.&quot;
-                </p>
-                <div className="text-sm text-violet-600 font-medium">
-                  Mastered: Distributed Systems in 8 weeks
-                </div>
+                ))}
               </div>
-
-              <div className="card p-8 bg-white shadow-lg rounded-xl hover:shadow-xl transition-shadow">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-emerald-600">AK</span>
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-900">Alice Kim</div>
-                    <div className="text-sm text-gray-500">Lead Engineer @ Startup</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 text-amber-400 mb-4">
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                </div>
-                <p className="text-gray-600 mb-4">
-                  &quot;The gamification aspect makes learning addictive. I&apos;ve maintained a 60-day streak and my system design skills have improved dramatically. The interactive exercises are what really make it stick.&quot;
-                </p>
-                <div className="text-sm text-emerald-600 font-medium">
-                  73-day learning streak and counting
-                </div>
+            ) : reviewsError ? (
+              // Error state
+              <div className="text-center p-8 bg-red-50 rounded-xl">
+                <p className="text-red-600">{reviewsError}</p>
               </div>
-
-              <div className="card p-8 bg-white shadow-lg rounded-xl hover:shadow-xl transition-shadow">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-amber-600">MR</span>
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-900">Mike Rodriguez</div>
-                    <div className="text-sm text-gray-500">Software Architect</div>
-                  </div>
+            ) : (
+              // Display real reviews
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  {reviews.length > 0 ? (
+                    reviews.map((review) => (
+                      <div key={review._id} className="card p-8 bg-white shadow-lg rounded-xl hover:shadow-xl transition-shadow">
+                        <div className="flex items-center gap-4 mb-6">
+                          <div className={`w-12 h-12 rounded-full ${
+                            review.userName === 'Anonymous' 
+                              ? 'bg-gray-100 flex items-center justify-center' 
+                              : `bg-${['violet', 'emerald', 'amber', 'blue', 'purple'][Math.floor(Math.random() * 5)]}-100 flex items-center justify-center`
+                          }`}>
+                            {review.userName === 'Anonymous' ? (
+                              <User className="w-6 h-6 text-gray-500" />
+                            ) : (
+                              <span className="text-lg font-semibold text-violet-600">
+                                {review.userName.split(' ').map(name => name[0]).join('').slice(0, 2)}
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-medium text-gray-900">{review.userName}</div>
+                            <div className="text-sm text-gray-500">
+                              {review.userRole} {review.userWorkplace ? `@ ${review.userWorkplace}` : ''}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-amber-400 mb-4">
+                          {[...Array(5)].map((_, i) => (
+                            <Star key={i} className={`w-5 h-5 ${i < review.rating ? 'fill-current' : 'text-gray-300'}`} />
+                          ))}
+                        </div>
+                        <h3 className="font-bold text-gray-900 mb-2">{review.title}</h3>
+                        <p className="text-gray-600 mb-4">
+                          {review.content.length > 150 ? `${review.content.substring(0, 150)}...` : review.content}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-span-3 text-center p-8">
+                      <p className="text-gray-600">No reviews available yet. Be the first to share your experience!</p>
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center gap-1 text-amber-400 mb-4">
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
-                  <Star className="w-5 h-5 fill-current" />
+                <div className="mt-12 text-center">
+                  <Link 
+                    href="/reviews"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-all font-medium"
+                  >
+                    See More Reviews
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
-                <p className="text-gray-600 mb-4">
-                  &quot;Finally, a platform that makes advanced software concepts accessible. The community discussions add so much value to the learning experience, and the AI tutor is incredibly helpful.&quot;
-                </p>
-                <div className="text-sm text-amber-600 font-medium">
-                  Completed 4 advanced courses in 3 months
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-12 text-center">
-              <Link 
-                href="/sign-up"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-all font-medium"
-              >
-                Join Our Community
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+              </>
+            )}
           </div>
         </div>
 

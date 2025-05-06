@@ -13,6 +13,7 @@ import {
   X,
   Users,
   CreditCard,
+  CheckCircle,
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Link from "next/link";
@@ -27,6 +28,10 @@ export default function AdminPanel() {
   const [editingCourse, setEditingCourse] = useState(null);
   const [migrationStatus, setMigrationStatus] = useState(null);
   const [migrationLoading, setMigrationLoading] = useState(false);
+  const [enrolledStudents, setEnrolledStudents] = useState([]);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [showEnrolledModal, setShowEnrolledModal] = useState(false);
+  const [loadingStudents, setLoadingStudents] = useState(false);
 
   // Initial empty course template
   const emptyCourse = {
@@ -344,6 +349,28 @@ export default function AdminPanel() {
     }
   };
 
+  const fetchEnrolledStudents = async (course) => {
+    try {
+      setLoadingStudents(true);
+      setSelectedCourse(course);
+      
+      const response = await fetch(`/api/admin/courses/${course._id}/enrolled`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        setEnrolledStudents(data);
+        setShowEnrolledModal(true);
+      } else {
+        const error = await response.json();
+        setError(error.message || 'Failed to fetch enrolled students');
+      }
+    } catch (err) {
+      setError('Failed to fetch enrolled students');
+    } finally {
+      setLoadingStudents(false);
+    }
+  };
+
   function generateSlug(title) {
     return title
       .toLowerCase()
@@ -513,19 +540,26 @@ export default function AdminPanel() {
                         <div className="flex space-x-2">
                           <button
                             className="flex items-center text-blue-600 hover:text-blue-800"
-                      onClick={() => handleEditCourse(course)}
-                    >
+                            onClick={() => handleEditCourse(course)}
+                          >
                             <Edit className="w-4 h-4 mr-1" />
                             Edit
-                    </button>
-                    <button
+                          </button>
+                          <button
                             className="flex items-center text-red-600 hover:text-red-800 ml-4"
-                      onClick={() => handleDeleteCourse(course._id)}
-                    >
+                            onClick={() => handleDeleteCourse(course._id)}
+                          >
                             <Trash className="w-4 h-4 mr-1" />
                             Delete
-                    </button>
-                  </div>
+                          </button>
+                          <button
+                            className="flex items-center text-green-600 hover:text-green-800 ml-4"
+                            onClick={() => fetchEnrolledStudents(course)}
+                          >
+                            <Users className="w-4 h-4 mr-1" />
+                            Students
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -1121,6 +1155,86 @@ export default function AdminPanel() {
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Enrolled Students Modal */}
+          {showEnrolledModal && selectedCourse && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Students Enrolled in {selectedCourse.title}
+                  </h2>
+                  <button
+                    onClick={() => setShowEnrolledModal(false)}
+                    className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {loadingStudents ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-secondary">Loading enrolled students...</p>
+                  </div>
+                ) : (
+                  <>
+                    {enrolledStudents.length === 0 ? (
+                      <p className="text-center py-8 text-gray-500">No students enrolled in this course yet.</p>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full bg-white">
+                          <thead className="bg-gray-100">
+                            <tr>
+                              <th className="py-3 px-4 text-left">Email</th>
+                              <th className="py-3 px-4 text-left">Enrolled Date</th>
+                              <th className="py-3 px-4 text-left">Progress</th>
+                              <th className="py-3 px-4 text-left">Last Access</th>
+                              <th className="py-3 px-4 text-left">Workplace</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-200">
+                            {enrolledStudents.map((student) => (
+                              <tr key={student.userId}>
+                                <td className="py-3 px-4">{student.email}</td>
+                                <td className="py-3 px-4">
+                                  {new Date(student.progress.enrollmentDate).toLocaleDateString()}
+                                </td>
+                                <td className="py-3 px-4">
+                                  <div className="flex items-center">
+                                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                      <div 
+                                        className="bg-blue-600 h-2.5 rounded-full" 
+                                        style={{ width: `${student.progress.completionPercentage}%` }}
+                                      ></div>
+                                    </div>
+                                    <span className="ml-2">{student.progress.completionPercentage}%</span>
+                                  </div>
+                                  {student.progress.completed && (
+                                    <span className="inline-flex items-center text-xs text-green-600 mt-1">
+                                      <CheckCircle className="w-3 h-3 mr-1" /> Completed
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="py-3 px-4">
+                                  {student.progress.lastAccessDate 
+                                    ? new Date(student.progress.lastAccessDate).toLocaleDateString()
+                                    : 'Never'}
+                                </td>
+                                <td className="py-3 px-4">
+                                  {student.workplace?.company || 'N/A'}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           )}
