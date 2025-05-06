@@ -17,7 +17,8 @@ import {
   Target,
   Clock,
   Edit,
-  AlertCircle
+  AlertCircle,
+  MessageSquare
 } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -263,6 +264,15 @@ export default function ProfilePage() {
                         <Target className="w-4 h-4" />
                         Learning Progress
                       </button>
+                    </li>
+                    <li>
+                      <Link
+                        href="/reviews"
+                        className="w-full flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 hover:text-violet-700"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        Reviews
+                      </Link>
                     </li>
                     <li>
                   {/* <button

@@ -33,22 +33,10 @@ const Navbar = () => {
   const { user } = useUser();
   const [isLandingPage, setIsLandingPage] = useState(false);
   const [activeSection, setActiveSection] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownRef = useRef(null);
 
   useEffect(() => {
     // Check if we're on the landing page or not
     setIsLandingPage(window.location.pathname === "/landing-page");
-
-    // Close dropdown when clicking outside
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -115,7 +103,7 @@ const Navbar = () => {
   // Define different nav links for landing page vs app
   const appNavLinks = [
     { name: "Dashboard", href: "/", icon: Layout },
-    { name: "Learn", href: "/courses", icon: BookOpen },
+    { name: "Profile", href: "/profile", icon: User },
     { name: "About", href: "/landing-page", icon: Lightbulb },
     ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
   ];
@@ -130,10 +118,6 @@ const Navbar = () => {
   ];
 
   const navLinks = isLandingPage ? landingNavLinks : appNavLinks;
-
-  const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200">
@@ -224,66 +208,17 @@ const Navbar = () => {
             </SignedOut>
 
             <SignedIn>
-              {/* User Profile Menu */}
-              <div className="relative" ref={dropdownRef}>
-                <div className="flex items-center gap-2">
-                  {/* Clerk UserButton (not clickable for dropdown) */}
-                  <UserButton 
-                    appearance={{
-                      elements: {
-                        userButtonAvatarBox: "w-8 h-8 rounded-lg",
-                        userButtonTrigger: "focus:outline-none"
-                      },
-                    }}
-                    afterSignOutUrl="/"
-                  />
-                  
-                  {/* Custom dropdown trigger button */}
-                  <button
-                    className="p-1.5 rounded-lg hover:bg-violet-50 text-gray-700 hover:text-violet-600 transition-colors"
-                    onClick={toggleDropdown}
-                    aria-label="Open user menu"
-                  >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      width="16" 
-                      height="16" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                    >
-                      <path d="m6 9 6 6 6-6"/>
-                    </svg>
-                  </button>
-                </div>
-                
-                {/* Profile Dropdown - Position with fixed styles */}
-                {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 z-[100] border border-gray-200">
-                    <div className="absolute -top-2 right-3 w-4 h-4 bg-white transform rotate-45 border-t border-l border-gray-200"></div>
-                    <div className="relative pt-1">
-                      <Link 
-                        href="/profile" 
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        <User className="w-4 h-4" />
-                        Your Profile
-                      </Link>
-                      <Link
-                        href="/reviews"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
-                        onClick={() => setShowDropdown(false)}
-                      >
-                        <MessageSquare className="w-4 h-4" />
-                        Leave a Review
-                      </Link>
-                    </div>
-                  </div>
-                )}
+              {/* User Profile Button */}
+              <div className="relative">
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: "w-8 h-8 rounded-lg",
+                      userButtonTrigger: "focus:outline-none"
+                    },
+                  }}
+                  afterSignOutUrl="/"
+                />
               </div>
             </SignedIn>
 
@@ -324,14 +259,6 @@ const Navbar = () => {
             {/* Mobile User Links (when signed in) */}
             <SignedIn>
               <div className="pt-2 border-t border-slate-200">
-                <Link
-                  href="/profile"
-                  className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <User className="w-4 h-4" />
-                  Your Profile
-                </Link>
                 <Link
                   href="/reviews"
                   className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
