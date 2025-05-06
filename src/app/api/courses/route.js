@@ -3,6 +3,9 @@ import Course from "@/models/Course";
 import User from "@/models/User";
 import { getAuth } from "@clerk/nextjs/server";
 
+// Add Next.js caching
+export const revalidate = 900; // 15 minutes
+
 export async function GET(req) {
   try {
     const { userId } = getAuth(req);
@@ -18,34 +21,43 @@ export async function GET(req) {
       chapters: 1,
       book: 1,
       imageUrl: 1
-    });
+    }).lean(); // Use lean() for better performance
 
     // If user is logged in, get their enrollment status for each course
     if (userId) {
-      const user = await User.findOne({ clerkId: userId });
+      const user = await User.findOne({ clerkId: userId }, { 
+        "progress.courses": 1 // Only request the fields we need
+      }).lean();
       
       if (user) {
         const userCourses = user.progress?.courses || [];
         
-        // Map courses with enrollment status
+        // Create a map for faster lookups
+        const enrollmentMap = new Map();
+        userCourses.forEach(course => {
+          enrollmentMap.set(course.courseId.toString(), {
+            isEnrolled: true,
+            progress: course.completionPercentage || 0,
+            completed: course.completed || false,
+            currentChapter: course.currentChapter || 0,
+            currentLesson: course.currentLesson || 0
+          });
+        });
+        
+        // Map courses with enrollment status using the map for O(1) lookups
         const coursesWithEnrollment = courses.map(course => {
-          const userCourse = userCourses.find(
-            uc => uc.courseId.toString() === course._id.toString()
-          );
+          const courseId = course._id.toString();
+          const userCourse = enrollmentMap.get(courseId);
           
           if (userCourse) {
             return {
-              ...course.toObject(),
-              isEnrolled: true,
-              progress: userCourse.completionPercentage || 0,
-              completed: userCourse.completed || false,
-              currentChapter: userCourse.currentChapter || 0,
-              currentLesson: userCourse.currentLesson || 0
+              ...course,
+              ...userCourse
             };
           }
           
           return {
-            ...course.toObject(),
+            ...course,
             isEnrolled: false,
             progress: 0,
             completed: false
@@ -53,21 +65,27 @@ export async function GET(req) {
         });
         
         return new Response(JSON.stringify(coursesWithEnrollment), {
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "Cache-Control": "private, max-age=60, stale-while-revalidate=600"
+          },
         });
       }
     }
 
     // If no user or user not found, return courses without enrollment info
     const coursesWithoutEnrollment = courses.map(course => ({
-      ...course.toObject(),
+      ...course,
       isEnrolled: false,
       progress: 0,
       completed: false
     }));
 
     return new Response(JSON.stringify(coursesWithoutEnrollment), {
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=1800, stale-while-revalidate=3600"
+      },
     });
   } catch (error) {
     console.error("Error fetching courses:", error);

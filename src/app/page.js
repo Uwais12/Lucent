@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -97,19 +97,53 @@ export default function Home() {
   const [selectedType, setSelectedType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Add function to filter quizzes
-  const filteredQuizzes = quizzes.filter(quiz => {
-    const matchesCourse = selectedCourse === 'all' || quiz.courseSlug === selectedCourse;
-    const matchesType = selectedType === 'all' || quiz.type === selectedType;
-    const matchesSearch = quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  // Use useMemo for filteredQuizzes to prevent unnecessary recalculations
+  const filteredQuizzes = useMemo(() => {
+    return quizzes.filter(quiz => {
+      const matchesCourse = selectedCourse === 'all' || quiz.courseSlug === selectedCourse;
+      const matchesType = selectedType === 'all' || quiz.type === selectedType;
+      const matchesSearch = quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          quiz.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCourse && matchesType && matchesSearch;
-  });
+      return matchesCourse && matchesType && matchesSearch;
+    });
+  }, [quizzes, selectedCourse, selectedType, searchQuery]);
 
-  // Add function to handle showing more quizzes
-  const showMoreQuizzes = () => {
+  // IMPORTANT: Move all hooks to the top level - before any conditional returns
+  // Define memoized values that were previously after conditional returns
+  const completedLessons = useMemo(() => 
+    userProfile?.progress?.completedLessons || 0, 
+    [userProfile]
+  );
+  
+  const completedCourses = useMemo(() => 
+    userProfile?.progress?.completedCourses || 0,
+    [userProfile]
+  );
+  
+  const totalTimeSpent = useMemo(() => 
+    userProfile?.progress?.totalTimeSpent || 0,
+    [userProfile]
+  );
+  
+  // Convert minutes to hours and minutes for display
+  const timeDisplay = useMemo(() => {
+    const timeSpentHours = Math.floor(totalTimeSpent / 60);
+    const timeSpentMinutes = totalTimeSpent % 60;
+    return timeSpentHours > 0 
+      ? `${timeSpentHours}h ${timeSpentMinutes}m` 
+      : `${timeSpentMinutes}m`;
+  }, [totalTimeSpent]);
+
+  // Filter enrolled courses
+  const enrolledCourses = useMemo(() => 
+    dbCourses.filter(course => course.isEnrolled),
+    [dbCourses]
+  );
+
+  // Use useCallback for event handlers to prevent unnecessary re-renders
+  const showMoreQuizzes = useCallback(() => {
     setVisibleQuizzes(prev => prev + 6);
-  };
+  }, []);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -125,7 +159,10 @@ export default function Home() {
       Promise.all([
         fetch("/api/profile").then((res) => res.json()),
         fetch("/api/courses").then((res) => res.json()),
-        fetch("/api/quizzes", { cache: 'no-store' }).then((res) => res.json()),
+        fetch("/api/quizzes", { 
+          cache: 'no-store',
+          next: { revalidate: 3600 } // Cache for 1 hour
+        }).then((res) => res.json()),
       ])
         .then(([profileData, coursesData, quizzesData]) => {
           if (profileData.error) {
@@ -135,13 +172,28 @@ export default function Home() {
           setUserProfile(profileData);
           setCourses(Array.isArray(coursesData) ? coursesData : []);
           setQuizzes(Array.isArray(quizzesData) ? quizzesData : []);
-
-          return fetch("/api/courses");
-        })
-        .then((res) => res.json())
-        .then((dbCoursesData) => {
-          console.log(dbCoursesData);
-          setDbCourses(dbCoursesData);
+          
+          // Use the courses data directly instead of making another call
+          setDbCourses(Array.isArray(coursesData) ? coursesData : []);
+          
+          // Check if user can take a quiz today
+          if (profileData.lastQuizCompletion) {
+            const lastQuizDate = new Date(profileData.lastQuizCompletion);
+            const today = new Date();
+            const isSameDay = lastQuizDate.toDateString() === today.toDateString();
+            setCanTakeQuizToday(!isSameDay);
+          } else {
+            setCanTakeQuizToday(true);
+          }
+          
+          // Show streak broken notification if applicable
+          if (profileData.streakStatus?.broken) {
+            toast.error(`Your ${profileData.streakStatus.previousStreak}-day streak was broken! Start a new one today!`, {
+              duration: 5000,
+              position: 'top-center'
+            });
+          }
+          
           setIsLoading(false);
         })
         .catch((err) => {
@@ -152,48 +204,34 @@ export default function Home() {
     }
   }, [isLoaded, isSignedIn]);
 
-  const fetchUserProfile = async () => {
-    try {
-      const response = await fetch('/api/profile');
-      if (!response.ok) throw new Error('Failed to fetch profile');
-      const data = await response.json();
-      setUserProfile(data);
-      console.log('Last quiz completion: ', data);
-      // Check if user can take a quiz today
-      if (data.lastQuizCompletion) {
-        const lastQuizDate = new Date(data.lastQuizCompletion);
-        const today = new Date();
-        const isSameDay = lastQuizDate.toDateString() === today.toDateString();
-        setCanTakeQuizToday(!isSameDay);
-      } else {
-        setCanTakeQuizToday(true);
-      }
-      
-      // Show streak broken notification if applicable
-      if (data.streakStatus?.broken) {
-        toast.error(`Your ${data.streakStatus.previousStreak}-day streak was broken! Start a new one today!`, {
-          duration: 5000,
-          position: 'top-center'
+  // Remove redundant fetch in separate useEffect hooks
+  // Instead, refresh data only when needed
+  useEffect(() => {
+    if (isSignedIn && lastUpdate && !isLoading) {
+      // Only refresh the profile data when lastUpdate changes
+      fetch('/api/profile')
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to fetch profile');
+          return response.json();
+        })
+        .then(data => {
+          setUserProfile(data);
+          
+          // Check if user can take a quiz today
+          if (data.lastQuizCompletion) {
+            const lastQuizDate = new Date(data.lastQuizCompletion);
+            const today = new Date();
+            const isSameDay = lastQuizDate.toDateString() === today.toDateString();
+            setCanTakeQuizToday(!isSameDay);
+          } else {
+            setCanTakeQuizToday(true);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching user profile:', error);
         });
-      }
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
     }
-  };
-
-  // Initial fetch when signed in
-  useEffect(() => {
-    if (isSignedIn) {
-      fetchUserProfile();
-    }
-  }, [isSignedIn]);
-
-  // Refresh profile when lastUpdate changes
-  useEffect(() => {
-    if (isSignedIn) {
-      fetchUserProfile();
-    }
-  }, [lastUpdate]);
+  }, [isSignedIn, lastUpdate, isLoading]);
 
   // Listen for quiz completion events
   useEffect(() => {
@@ -241,8 +279,8 @@ export default function Home() {
     // }
   }, [isLoaded, isSignedIn]);
 
-  // Function to handle course enrollment
-  const enrollInCourse = async (courseId) => {
+  // Optimize enrollInCourse with useCallback
+  const enrollInCourse = useCallback(async (courseId) => {
     if (enrollingCourseId) return; // Prevent multiple enrollments at once
     
     try {
@@ -255,36 +293,39 @@ export default function Home() {
       });
       
       if (response.ok) {
-        // Refresh courses to get updated enrollment data
+        // Fetch all data at once
         const coursesRes = await fetch("/api/courses");
         const coursesData = await coursesRes.json();
-        if (!coursesRes.ok) {
-          throw new Error(coursesData.error || 'Failed to refresh courses');
-        }
-        setDbCourses(coursesData);
         
-        // Refresh user profile
+        if (!coursesRes.ok) {
+          throw new Error('Failed to refresh courses');
+        }
+        
+        setDbCourses(coursesData);
+        setCourses(coursesData);
+        
+        // Also refresh user profile
         const profileRes = await fetch("/api/profile");
         const profileData = await profileRes.json();
-        if (!profileRes.ok) {
-          throw new Error(profileData.error || 'Failed to refresh profile');
+        if (profileRes.ok) {
+          setUserProfile(profileData);
         }
-        setUserProfile(profileData);
+        
+        toast.success("Successfully enrolled in course!");
       } else {
         const data = await response.json();
         throw new Error(data.error || 'Failed to enroll in course');
       }
     } catch (err) {
       console.error('Error enrolling in course:', err);
-      // Show error to user (could add a toast notification here)
-      alert(`Failed to enroll: ${err.message}`);
+      toast.error(`Failed to enroll: ${err.message}`);
     } finally {
       setEnrollingCourseId(null);
     }
-  };
+  }, [enrollingCourseId]);
 
-  // Function to get course status text and color
-  const getCourseStatusInfo = (course) => {
+  // Optimize getCourseStatusInfo with useMemo
+  const getCourseStatusInfo = useCallback((course) => {
     if (!course.isEnrolled) {
       return {
         text: "Enroll Now",
@@ -306,10 +347,10 @@ export default function Home() {
       icon: <PlayCircle className="w-4 h-4" />,
       bgColor: "bg-blue-600 hover:bg-blue-700"
     };
-  };
+  }, []);
 
-  // Function to handle course action button click
-  const handleCourseAction = (course) => {
+  // Optimize handleCourseAction with useCallback
+  const handleCourseAction = useCallback((course) => {
     if (!course.isEnrolled) {
       enrollInCourse(course._id);
     } else {
@@ -317,34 +358,14 @@ export default function Home() {
       if (course.completed) {
         router.push(`/course-details/${course.slug}`);
       } else {
-        // Find the current chapter and lesson using progress data
-        const currentChapterIndex = course.currentChapter || 0;
-        const currentLessonIndex = course.currentLesson || 0;
-        
-        // Check if the chapter and lesson exist
-        if (course.chapters && 
-            course.chapters[currentChapterIndex] && 
-            course.chapters[currentChapterIndex].lessons && 
-            course.chapters[currentChapterIndex].lessons[currentLessonIndex]) {
-          
-          // Get the lesson slug
-          const lessonSlug = course.chapters[currentChapterIndex].lessons[currentLessonIndex].slug;
-          
-          // if (lessonSlug) {
-          //   router.push(`/lesson/${lessonSlug}`);
-          // } else {
-            // Fallback to course page if lesson slug is missing
-            router.push(`/course-details/${course.slug}`);
-          // }
-        } else {
-          // Fallback to course page if indices are invalid
-          router.push(`/course-details/${course.slug || course._id}`);
-        }
+        // Simplified navigation logic - always go to course details
+        router.push(`/course-details/${course.slug || course._id}`);
       }
     }
-  };
+  }, [enrollInCourse, router]);
 
-  const handleQuizClick = async (e, quiz) => {
+  // Optimize handleQuizClick with useCallback
+  const handleQuizClick = useCallback(async (e, quiz) => {
     e.preventDefault();
     
     if (isChecking) return;
@@ -362,7 +383,6 @@ export default function Home() {
       return;
     }
 
-    console.log('Checking enrollment for quiz + slug: ', quiz.slug, 'and type: ', quiz.type);
     const isEnrolled = await checkEnrollment(quiz.slug, quiz.type);
     if (isEnrolled) {
       router.push(
@@ -373,8 +393,9 @@ export default function Home() {
           : `/quiz/${quiz.slug}`
       );
     }
-  };
+  }, [isChecking, canTakeQuizToday, checkEnrollment, router]);
 
+  // Instead of using useMemo after conditional checks, use regular variables
   if (!isLoaded || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -398,20 +419,8 @@ export default function Home() {
     );
   }
 
-  const { xp = 0, gems = 0, dailyStreak = 0 } = userProfile;
-  const completedLessons = userProfile.progress?.completedLessons || 0;
-  const completedCourses = userProfile.progress?.completedCourses || 0;
-  const totalTimeSpent = userProfile.progress?.totalTimeSpent || 0;
-  
-  // Convert minutes to hours and minutes for display
-  const timeSpentHours = Math.floor(totalTimeSpent / 60);
-  const timeSpentMinutes = totalTimeSpent % 60;
-  const timeDisplay = timeSpentHours > 0 
-    ? `${timeSpentHours}h ${timeSpentMinutes}m` 
-    : `${timeSpentMinutes}m`;
-
-  // Filter enrolled courses
-  const enrolledCourses = dbCourses.filter(course => course.isEnrolled);
+  // Extract basic values without useMemo
+  const { xp = 0, gems = 0, dailyStreak = 0 } = userProfile || {};
 
   return (
     <div className="min-h-screen bg-background pattern-bg">

@@ -4,6 +4,9 @@ import { getAuth } from "@clerk/nextjs/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
 
+// Add a short revalidation time for profile data
+export const revalidate = 60; // 1 minute
+
 export async function GET(request) {
   try {
     // 1) Pass the request to getAuth
@@ -15,15 +18,28 @@ export async function GET(request) {
     // 2) Connect to Mongo
     await connectToDatabase();
 
-    // 3) Find or create the user doc
-    let user = await User.findOne({ clerkId: userId });
+    // 3) Find or create the user doc - using lean() for better performance
+    let user = await User.findOne({ clerkId: userId }).lean();
+    
     if (!user) {
-      user = await User.create({ clerkId: userId });
+      // Only create if not found
+      const newUser = new User({ clerkId: userId });
+      await newUser.save();
+      user = newUser.toObject();
+      
+      // Return immediately since we just created this user
+      return NextResponse.json(user, {
+        headers: {
+          'Cache-Control': 'private, max-age=10, stale-while-revalidate=30'
+        }
+      });
     }
 
-    // Update daily streak if user has activity today
+    // For existing users, check if streak needs updating
     const now = new Date();
     const lastActivity = user.lastDailyActivity ? new Date(user.lastDailyActivity) : null;
+    let streakStatus = { broken: false };
+    let needsUpdate = false;
     
     if (lastActivity) {
       // Check if last activity was yesterday or today
@@ -33,37 +49,48 @@ export async function GET(request) {
         // Already logged today, no streak update needed
       } else if (diffDays === 1) {
         // Last activity was yesterday, increment streak
+        needsUpdate = true;
         user.dailyStreak += 1;
         user.lastDailyActivity = now;
-        await user.save();
       } else {
         // Streak broken
+        needsUpdate = true;
         const oldStreak = user.dailyStreak;
         user.dailyStreak = 1;
         user.lastDailyActivity = now;
-        await user.save();
-        
-        // Add streak status to response
-        return NextResponse.json({
-          ...user.toObject(),
-          streakStatus: {
-            broken: true,
-            previousStreak: oldStreak
-          }
-        });
+        streakStatus = {
+          broken: true,
+          previousStreak: oldStreak
+        };
       }
     } else {
       // First activity
+      needsUpdate = true;
       user.dailyStreak = 1;
       user.lastDailyActivity = now;
-      await user.save();
+    }
+    
+    // Only update if needed to reduce database writes
+    if (needsUpdate) {
+      await User.updateOne(
+        { clerkId: userId },
+        { 
+          $set: { 
+            dailyStreak: user.dailyStreak,
+            lastDailyActivity: user.lastDailyActivity,
+            lastActivity: now
+          } 
+        }
+      );
     }
 
     // 4) Return user doc with streak status
     return NextResponse.json({
-      ...user.toObject(),
-      streakStatus: {
-        broken: false
+      ...user,
+      streakStatus
+    }, {
+      headers: {
+        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60'
       }
     });
   } catch (err) {
@@ -84,31 +111,37 @@ export async function PUT(request) {
     // 2) Connect to Mongo
     await connectToDatabase();
 
-    // 3) Find the user doc
-    const user = await User.findOne({ clerkId: userId });
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    // 4) Get request body
+    // 3) Get request body
     const body = await request.json();
     
-    // 5) Update workplace information if provided
+    // 4) Update workplace information if provided using findOneAndUpdate
+    // This is more efficient than find + save
     if (body.workplace) {
-      user.workplace = {
-        ...user.workplace,
-        ...body.workplace
-      };
+      const updatedUser = await User.findOneAndUpdate(
+        { clerkId: userId },
+        { 
+          $set: { 
+            'workplace': {
+              ...body.workplace
+            },
+            'lastActivity': new Date()
+          } 
+        },
+        { new: true, projection: { workplace: 1 } }
+      ).lean();
+      
+      if (!updatedUser) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+
+      // 7) Return only the updated fields
+      return NextResponse.json({
+        workplace: updatedUser.workplace,
+        message: "Profile updated successfully"
+      });
     }
     
-    // 6) Save the updated user
-    await user.save();
-
-    // 7) Return updated user doc
-    return NextResponse.json({
-      ...user.toObject(),
-      message: "Profile updated successfully"
-    });
+    return NextResponse.json({ error: "No data to update" }, { status: 400 });
   } catch (err) {
     console.error("Error in PUT /api/profile:", err);
     // Return a 500
