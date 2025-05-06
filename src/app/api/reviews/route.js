@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs';
+import { getAuth } from '@clerk/nextjs/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import Review from '@/models/Review';
 
@@ -24,7 +24,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const { userId } = auth();
+    const { userId } = getAuth(request);
     if (!userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -35,10 +35,21 @@ export async function POST(request) {
     const data = await request.json();
     const { rating, title, content, userName, userWorkplace, userRole } = data;
     
+    // Log the incoming data for debugging
+    console.log("Received review data:", { userId, rating, title, content, userName, userWorkplace, userRole });
+    
     // Validate required fields
     if (!rating || !title || !content) {
       return NextResponse.json(
         { error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+    
+    // Ensure userName is present
+    if (!userName) {
+      return NextResponse.json(
+        { error: 'userName is required' },
         { status: 400 }
       );
     }
@@ -63,8 +74,13 @@ export async function POST(request) {
     return NextResponse.json(review);
   } catch (error) {
     console.error('Error creating review:', error);
+    // Provide more detailed error information
+    const errorMessage = error.name === 'ValidationError' 
+      ? `Validation error: ${Object.values(error.errors).map(e => e.message).join(', ')}`
+      : 'Failed to create review';
+    
     return NextResponse.json(
-      { error: 'Failed to create review' },
+      { error: errorMessage, details: error.message },
       { status: 500 }
     );
   }

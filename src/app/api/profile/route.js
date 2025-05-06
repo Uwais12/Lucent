@@ -72,3 +72,46 @@ export async function GET(request) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
+
+export async function PUT(request) {
+  try {
+    // 1) Pass the request to getAuth
+    const { userId } = getAuth(request);
+    if (!userId) {
+      return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+    }
+
+    // 2) Connect to Mongo
+    await connectToDatabase();
+
+    // 3) Find the user doc
+    const user = await User.findOne({ clerkId: userId });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // 4) Get request body
+    const body = await request.json();
+    
+    // 5) Update workplace information if provided
+    if (body.workplace) {
+      user.workplace = {
+        ...user.workplace,
+        ...body.workplace
+      };
+    }
+    
+    // 6) Save the updated user
+    await user.save();
+
+    // 7) Return updated user doc
+    return NextResponse.json({
+      ...user.toObject(),
+      message: "Profile updated successfully"
+    });
+  } catch (err) {
+    console.error("Error in PUT /api/profile:", err);
+    // Return a 500
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
+}

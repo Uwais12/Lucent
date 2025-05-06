@@ -16,7 +16,6 @@ import {
   BookOpen,
   Target,
   Clock,
-  Settings,
   Edit,
   AlertCircle
 } from 'lucide-react';
@@ -38,6 +37,14 @@ export default function ProfilePage() {
   const [userData, setUserData] = useState(null);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateMessage, setUpdateMessage] = useState({ type: '', text: '' });
+  const [workplaceForm, setWorkplaceForm] = useState({
+    company: '',
+    position: '',
+    industry: '',
+    yearsOfExperience: ''
+  });
   
   const router = useRouter();
   
@@ -62,6 +69,14 @@ export default function ProfilePage() {
         
         const data = await response.json();
         setUserData(data);
+        
+        // Initialize workplace form with user data
+        setWorkplaceForm({
+          company: data.workplace?.company || '',
+          position: data.workplace?.position || '',
+          industry: data.workplace?.industry || '',
+          yearsOfExperience: data.workplace?.yearsOfExperience || ''
+        });
       } catch (err) {
         console.error('Error fetching user data:', err);
         setError(err.message);
@@ -94,6 +109,59 @@ export default function ProfilePage() {
   
   const handleManageBilling = async () => {
     await redirectToBillingPortal();
+  };
+  
+  const handleWorkplaceChange = (e) => {
+    const { name, value } = e.target;
+    setWorkplaceForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
+  const handleUpdateWorkplace = async () => {
+    try {
+      setIsUpdating(true);
+      setUpdateMessage({ type: '', text: '' });
+      
+      const response = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          workplace: workplaceForm
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+      
+      const data = await response.json();
+      
+      // Update user data state
+      setUserData(prevData => ({
+        ...prevData,
+        workplace: {
+          ...prevData.workplace,
+          ...workplaceForm
+        }
+      }));
+      
+      setUpdateMessage({ 
+        type: 'success', 
+        text: 'Profile updated successfully!' 
+      });
+    } catch (err) {
+      console.error('Error updating profile:', err);
+      setUpdateMessage({ 
+        type: 'error', 
+        text: 'Failed to update profile. Please try again.' 
+      });
+    } finally {
+      setIsUpdating(false);
+    }
   };
   
   // Get data from the user document
@@ -130,13 +198,6 @@ export default function ProfilePage() {
                 <div className="h-1 w-20 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-full"></div>
               </div>
               
-              <Link 
-                href="/dashboard" 
-                className="flex items-center gap-2 text-violet-600 hover:text-violet-800 transition-colors"
-        >
-                <ArrowRight className="w-4 h-4" />
-                <span className="text-sm font-medium">Back to Dashboard</span>
-              </Link>
             </div>
       </div>
       
@@ -204,7 +265,7 @@ export default function ProfilePage() {
                       </button>
                     </li>
                     <li>
-                  <button
+                  {/* <button
                         onClick={() => setActiveTab('settings')}
                         className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                           activeTab === 'settings' 
@@ -214,7 +275,7 @@ export default function ProfilePage() {
                   >
                         <Settings className="w-4 h-4" />
                         Settings
-                  </button>
+                  </button> */}
                     </li>
                   </ul>
                 </nav>
@@ -266,7 +327,7 @@ export default function ProfilePage() {
                       </button>
                     </div>
                     
-                    {/* Non-functional links notification */}
+                    {/* Non-functional links notification
                     <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
                       <h3 className="text-sm font-medium text-amber-800 mb-2">Implementation Needed</h3>
                       <p className="text-sm text-amber-700 mb-2">The following links need to be implemented:</p>
@@ -278,7 +339,7 @@ export default function ProfilePage() {
                         <li>Learning preferences functionality</li>
                         <li>Notification preferences functionality</li>
                       </ul>
-                    </div>
+                    </div> */}
                     
                     <div className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -296,86 +357,75 @@ export default function ProfilePage() {
                       <div className="pt-4 border-t border-gray-200">
                         <div className="flex items-center justify-between mb-4">
                           <h3 className="text-lg font-medium text-gray-900">Workplace Information</h3>
-                          <button className="flex items-center gap-1 text-sm text-violet-600 hover:text-violet-800">
-                            <Edit className="w-4 h-4" />
-                            Update
+                          <button 
+                            onClick={handleUpdateWorkplace}
+                            disabled={isUpdating}
+                            className="flex items-center gap-1 text-sm text-violet-600 hover:text-violet-800"
+                          >
+                            {isUpdating ? (
+                              <span>Updating...</span>
+                            ) : (
+                              <>
+                                <Edit className="w-4 h-4" />
+                                Update
+                              </>
+                            )}
                           </button>
                         </div>
+                        
+                        {updateMessage.text && (
+                          <div className={`mb-4 p-3 rounded-lg ${
+                            updateMessage.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 
+                            'bg-red-50 text-red-800 border border-red-200'
+                          }`}>
+                            {updateMessage.text}
+                          </div>
+                        )}
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
                             <label className="block text-sm font-medium text-gray-500 mb-1">Company</label>
                             <input
                               type="text"
+                              name="company"
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                               placeholder="Where do you work?"
-                              value={userData?.workplace?.company || ''}
-                              onChange={(e) => {
-                                // To be implemented: Update workplace info
-                              }}
+                              value={workplaceForm.company}
+                              onChange={handleWorkplaceChange}
                             />
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-500 mb-1">Position</label>
                             <input
                               type="text"
+                              name="position"
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                               placeholder="Your job title"
-                              value={userData?.workplace?.position || ''}
-                              onChange={(e) => {
-                                // To be implemented: Update workplace info
-                              }}
+                              value={workplaceForm.position}
+                              onChange={handleWorkplaceChange}
                             />
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-500 mb-1">Industry</label>
                             <input
                               type="text"
+                              name="industry"
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                               placeholder="e.g. Technology, Finance, Healthcare"
-                              value={userData?.workplace?.industry || ''}
-                              onChange={(e) => {
-                                // To be implemented: Update workplace info
-                              }}
+                              value={workplaceForm.industry}
+                              onChange={handleWorkplaceChange}
                             />
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-500 mb-1">Years of Experience</label>
                             <input
                               type="number"
+                              name="yearsOfExperience"
                               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                               placeholder="Years in the field"
-                              value={userData?.workplace?.yearsOfExperience || ''}
-                              onChange={(e) => {
-                                // To be implemented: Update workplace info
-                              }}
+                              value={workplaceForm.yearsOfExperience}
+                              onChange={handleWorkplaceChange}
                             />
-                          </div>
-          </div>
-        </div>
-        
-                      <div className="pt-4 border-t border-gray-200">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">Account Management</h3>
-                        <div className="space-y-3">
-                          <Link 
-                            href="/user/account"
-                            className="inline-flex items-center gap-2 text-sm text-violet-600 hover:text-violet-800"
-                          >
-                            <Settings className="w-4 h-4" />
-                            Manage Account Settings
-                          </Link>
-                          <div className="block">
-                            <Link 
-                              href="/user/security"
-                              className="inline-flex items-center gap-2 text-sm text-violet-600 hover:text-violet-800"
-                            >
-                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M12 16V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M12 8H12.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                              </svg>
-                              Privacy & Security
-                            </Link>
                           </div>
                         </div>
                       </div>
@@ -502,7 +552,7 @@ export default function ProfilePage() {
                 )}
                 
                 {/* Settings Tab Content */}
-                {activeTab === 'settings' && (
+                {/* {activeTab === 'settings' && (
                   <div>
                     <h2 className="text-xl font-bold text-gray-900 mb-6">Account Settings</h2>
                     
@@ -558,7 +608,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

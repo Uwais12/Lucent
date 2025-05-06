@@ -116,9 +116,7 @@ const Navbar = () => {
   const appNavLinks = [
     { name: "Dashboard", href: "/", icon: Layout },
     { name: "Learn", href: "/courses", icon: BookOpen },
-    { name: "Reviews", href: "/reviews", icon: MessageSquare },
     { name: "About", href: "/landing-page", icon: Lightbulb },
-    ...(user ? [{ name: "Profile", href: "/profile", icon: User }] : []),
     ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
   ];
 
@@ -228,55 +226,62 @@ const Navbar = () => {
             <SignedIn>
               {/* User Profile Menu */}
               <div className="relative" ref={dropdownRef}>
-                <div 
-                  onClick={toggleDropdown}
-                  className="cursor-pointer"
-                >
-              <UserButton 
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: "w-8 h-8 rounded-lg",
-                  },
-                }}
-              />
+                <div className="flex items-center gap-2">
+                  {/* Clerk UserButton (not clickable for dropdown) */}
+                  <UserButton 
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: "w-8 h-8 rounded-lg",
+                        userButtonTrigger: "focus:outline-none"
+                      },
+                    }}
+                    afterSignOutUrl="/"
+                  />
+                  
+                  {/* Custom dropdown trigger button */}
+                  <button
+                    className="p-1.5 rounded-lg hover:bg-violet-50 text-gray-700 hover:text-violet-600 transition-colors"
+                    onClick={toggleDropdown}
+                    aria-label="Open user menu"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="16" 
+                      height="16" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                  </button>
                 </div>
                 
-                {/* Profile Dropdown */}
+                {/* Profile Dropdown - Position with fixed styles */}
                 {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200">
-                    <Link 
-                      href="/profile" 
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      <User className="w-4 h-4" />
-                      Your Profile
-                    </Link>
-                    <Link 
-                      href="/dashboard" 
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      <PieChart className="w-4 h-4" />
-                      Dashboard
-                    </Link>
-                    <Link 
-                      href="/learning-stats" 
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      <Diamond className="w-4 h-4" />
-                      Your Stats
-                    </Link>
-                    <div className="border-t border-gray-100 my-1"></div>
-                    <Link 
-                      href="/settings" 
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      <Settings className="w-4 h-4" />
-                      Settings
-                    </Link>
+                  <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 z-[100] border border-gray-200">
+                    <div className="absolute -top-2 right-3 w-4 h-4 bg-white transform rotate-45 border-t border-l border-gray-200"></div>
+                    <div className="relative pt-1">
+                      <Link 
+                        href="/profile" 
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <User className="w-4 h-4" />
+                        Your Profile
+                      </Link>
+                      <Link
+                        href="/reviews"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-violet-50 hover:text-violet-700"
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                        Leave a Review
+                      </Link>
+                    </div>
                   </div>
                 )}
               </div>
@@ -299,15 +304,15 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white">
-          <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 space-y-3">
+        <div className="md:hidden border-t border-slate-200 bg-white shadow-lg animate-fadeIn">
+          <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 space-y-2">
             {navLinks.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <Icon className="w-4 h-4" />
@@ -321,39 +326,31 @@ const Navbar = () => {
               <div className="pt-2 border-t border-slate-200">
                 <Link
                   href="/profile"
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <User className="w-4 h-4" />
                   Your Profile
                 </Link>
                 <Link
-                  href="/learning-stats"
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
+                  href="/reviews"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <Diamond className="w-4 h-4" />
-                  Your Stats
-                </Link>
-                <Link
-                  href="/settings"
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:text-violet-600 rounded-lg hover:bg-violet-50 transition-all duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Settings className="w-4 h-4" />
-                  Settings
+                  <MessageSquare className="w-4 h-4" />
+                  Leave a Review
                 </Link>
               </div>
               
               {/* Mobile Stats Display */}
-              <div className="flex items-center gap-3 px-4 py-2.5">
-                <div className="flex items-center gap-2">
+              <div className="mt-3 grid grid-cols-2 gap-3 p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 p-2 bg-violet-50 rounded-md">
                   <Diamond className="w-4 h-4 text-violet-600" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-violet-800">
                     {userStats.xp.toLocaleString()} XP
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 p-2 bg-emerald-50 rounded-md">
                   <svg 
                     viewBox="0 0 24 24" 
                     className="w-4 h-4 text-emerald-600"
@@ -365,7 +362,7 @@ const Navbar = () => {
                   >
                     <path d="M6 3h12l4 6-10 13L2 9z" />
                   </svg>
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-emerald-800">
                     {userStats.gems} Gems
                   </span>
                 </div>
@@ -374,25 +371,25 @@ const Navbar = () => {
             
             {/* Mobile Sign In/Up Buttons */}
             <SignedOut>
-            <div className="pt-2 border-t border-slate-200">
+              <div className="pt-2 border-t border-slate-200">
                 <div className="space-y-2">
                   <Link 
                     href="/sign-in"
-                    className="block w-full px-4 py-2.5 text-center border border-violet-600 text-violet-600 rounded-lg text-sm font-medium hover:bg-violet-50 transition-all duration-200"
+                    className="block w-full px-4 py-3 text-center border border-violet-600 text-violet-600 rounded-lg text-sm font-medium hover:bg-violet-50 transition-all duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                  Sign In
+                    Sign In
                   </Link>
                   <Link 
                     href="/sign-up"
-                    className="block w-full px-4 py-2.5 text-center bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg text-sm font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-200"
+                    className="block w-full px-4 py-3 text-center bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg text-sm font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all duration-200"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Get Started
                   </Link>
                 </div>
               </div>
-              </SignedOut>
+            </SignedOut>
           </div>
         </div>
       )}
