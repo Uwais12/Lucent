@@ -156,9 +156,27 @@ export default function Home() {
     if (isLoaded && isSignedIn) {
       setIsLoading(true);
 
+      // Check if we just enrolled in a course (from URL parameter)
+      let justEnrolled = false;
+      try {
+        const searchParams = new URLSearchParams(window.location.search);
+        justEnrolled = searchParams.get('enrolled') === 'true';
+        
+        // Clear the URL parameter
+        if (justEnrolled) {
+          router.replace('/');
+        }
+      } catch (e) {
+        // Ignore errors with window/searchParams
+      }
+
+      // Add cache-busting parameter if just enrolled
+      const timestamp = justEnrolled ? Date.now() : '';
+      const cacheParams = justEnrolled ? `?t=${timestamp}` : '';
+
       Promise.all([
-        fetch("/api/profile").then((res) => res.json()),
-        fetch("/api/courses").then((res) => res.json()),
+        fetch(`/api/profile${cacheParams}`).then((res) => res.json()),
+        fetch(`/api/courses${cacheParams}`).then((res) => res.json()),
         fetch("/api/quizzes", { 
           cache: 'no-store',
           next: { revalidate: 3600 } // Cache for 1 hour
@@ -181,7 +199,18 @@ export default function Home() {
             const lastQuizDate = new Date(profileData.lastQuizCompletion);
             const today = new Date();
             const isSameDay = lastQuizDate.toDateString() === today.toDateString();
-            setCanTakeQuizToday(!isSameDay);
+            
+            const isPro = profileData.subscription?.tier === 'PRO' || profileData.subscription?.tier === 'ENTERPRISE';
+            const maxDailyQuizzes = isPro ? 5 : 1;
+            const dailyQuizCount = profileData.dailyQuizCount || 0;
+            
+            // For PRO users with daily quiz count < 5, they can take more quizzes
+            if (isPro && dailyQuizCount < maxDailyQuizzes) {
+              setCanTakeQuizToday(true);
+            } else {
+              // For free users or PRO users who have used all 5 quizzes
+              setCanTakeQuizToday(!isSameDay);
+            }
           } else {
             setCanTakeQuizToday(true);
           }
@@ -194,6 +223,11 @@ export default function Home() {
             });
           }
           
+          // Show success toast if just enrolled
+          if (justEnrolled) {
+            toast.success("Course added to your dashboard!");
+          }
+          
           setIsLoading(false);
         })
         .catch((err) => {
@@ -202,7 +236,7 @@ export default function Home() {
           setIsLoading(false);
         });
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, router]);
 
   // Remove redundant fetch in separate useEffect hooks
   // Instead, refresh data only when needed

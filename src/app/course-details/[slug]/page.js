@@ -22,6 +22,7 @@ import Navbar from "@/app/components/Navbar";
 import Dialog from "@/components/Dialog";
 import XPNotification from "../../components/XPNotification";
 import { toast } from "react-hot-toast";
+import { clearGlobalEnrollmentCache } from '@/hooks/useEnrollmentCheck';
 
 // Separate client component for handling XP notifications
 function XPNotificationHandler({ params }) {
@@ -156,7 +157,9 @@ export default function CourseDetails() {
   const handleEnrollConfirm = async () => {
     try {
       setEnrolling(true);
-      const response = await fetch("/api/courses/enroll", {
+      // Add timestamp to prevent caching
+      const timestamp = Date.now();
+      const response = await fetch(`/api/courses/enroll?t=${timestamp}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ courseId: course._id }),
@@ -171,6 +174,17 @@ export default function CourseDetails() {
           ...prev,
           enrolledCount: prev.enrolledCount + 1,
         }));
+        
+        // Clear the enrollment cache
+        clearGlobalEnrollmentCache();
+        
+        // Show success message
+        toast.success("Successfully enrolled in course! Redirecting to dashboard...");
+        
+        // Wait a moment then redirect to dashboard
+        setTimeout(() => {
+          router.push("/?enrolled=true");
+        }, 1500);
       } else {
         setError(data.error || "Failed to enroll in course");
       }
