@@ -134,11 +134,29 @@ export default function Home() {
       : `${timeSpentMinutes}m`;
   }, [totalTimeSpent]);
 
-  // Filter enrolled courses
-  const enrolledCourses = useMemo(() => 
-    dbCourses.filter(course => course.isEnrolled),
-    [dbCourses]
-  );
+  // Filter enrolled courses - New Logic
+  const enrolledCourses = useMemo(() => {
+    if (!userProfile?.progress?.courses || !dbCourses?.length) {
+      return [];
+    }
+    const userEnrolledCourseIds = new Map(userProfile.progress.courses.map(p => [p.courseId.toString(), p]));
+    
+    return dbCourses
+      .filter(course => userEnrolledCourseIds.has(course._id.toString()))
+      .map(course => {
+        const progressDetails = userEnrolledCourseIds.get(course._id.toString());
+        return {
+          ...course, // Basic course details from dbCourses
+          isEnrolled: true, // Explicitly true
+          progress: progressDetails.completionPercentage || 0, // From userProfile
+          completed: progressDetails.completed || false, // From userProfile
+          // Optionally, add other specific progress fields if needed for display
+          // currentChapter: progressDetails.currentChapter,
+          // currentLesson: progressDetails.currentLesson,
+          // userProgress: progressDetails // Or even the whole progress object
+        };
+      });
+  }, [dbCourses, userProfile]);
 
   // Use useCallback for event handlers to prevent unnecessary re-renders
   const showMoreQuizzes = useCallback(() => {
