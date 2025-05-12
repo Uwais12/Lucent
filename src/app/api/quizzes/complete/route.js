@@ -14,7 +14,7 @@ export async function POST(request) {
     await connectToDatabase();
 
     // Fetch user including subscription data
-    const user = await User.findOne({ clerkId: userId }); 
+    const user = await User.findOne({ clerkId: userId });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -22,9 +22,9 @@ export async function POST(request) {
     const { quizId, score, totalQuestions, quizType } = await request.json();
 
     // --- Daily Quiz Limit Check ---
-    const today = new Date();
+      const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize to start of day
-
+      
     // Reset count if last quiz was before today
     if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
       user.dailyQuizCount = 0;
@@ -38,11 +38,11 @@ export async function POST(request) {
     
     // Check limit
     if (user.dailyQuizCount >= maxDailyQuizzes) {
-      return NextResponse.json({
+        return NextResponse.json({ 
         error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
-        dailyLimitReached: true
-      }, { status: 403 });
-    }
+          dailyLimitReached: true
+        }, { status: 403 });
+      }
     // --- End Daily Quiz Limit Check ---
     
     // Calculate if score is passing
@@ -80,7 +80,7 @@ export async function POST(request) {
            xpGained = calculateXP('default_quiz_pass', score); // Fallback
            gemsGained = calculateGems('default_quiz_pass', score); // Fallback
       }
-      
+
       // Update user's XP and gems
       user.xp = (user.xp || 0) + xpGained;
       user.gems = (user.gems || 0) + gemsGained;
@@ -94,7 +94,7 @@ export async function POST(request) {
       if (levelUp) {
         user.level = newLevel;
       }
-    }
+      }
 
     // Save user changes ONLY if the quiz was passed
     if (quizCompletedSuccessfully) {

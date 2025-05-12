@@ -76,9 +76,9 @@ export async function POST(req, { params }) {
     }
 
     // --- Daily Quiz Limit Check ---
-    const today = new Date();
+      const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize to start of day
-
+      
     // Reset count if last quiz was before today
     if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
       user.dailyQuizCount = 0;
@@ -91,11 +91,11 @@ export async function POST(req, { params }) {
     
     // Check limit
     if (user.dailyQuizCount >= maxDailyQuizzes) {
-      return NextResponse.json({
+        return NextResponse.json({ 
         error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
-        dailyLimitReached: true
-      }, { status: 403 });
-    }
+          dailyLimitReached: true
+        }, { status: 403 });
+      }
     // --- End Daily Quiz Limit Check ---
 
     // Calculate score
@@ -234,7 +234,7 @@ export async function POST(req, { params }) {
 
     // Save user changes IF considered passing OR if it was a new high score (to save progress)
     if (quizCompletedSuccessfully || isNewHighScore) {
-       await user.save();
+      await user.save();
     }
 
     // Calculate completion percentage for the course

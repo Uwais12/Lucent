@@ -88,6 +88,31 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // --- Daily Quiz Limit Check ---
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of day
+
+    // Reset count if last quiz was before today
+    if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
+      user.dailyQuizCount = 0;
+      user.lastQuizDate = today;
+    }
+
+    // Determine max quizzes based on subscription
+    const isPro = user.subscription?.tier === 'PRO' || user.subscription?.tier === 'ENTERPRISE';
+    const maxDailyQuizzes = isPro ? 5 : 1;
+
+    // Check limit
+    if (user.dailyQuizCount >= maxDailyQuizzes) {
+      return NextResponse.json({
+        error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
+        dailyLimitReached: true,
+        quizzesTakenToday: user.dailyQuizCount,
+        maxQuizzesToday: maxDailyQuizzes
+      }, { status: 403 });
+    }
+    // --- End Daily Quiz Limit Check ---
+
     // Calculate score
     let correctAnswers = 0;
     finalExam.questions.forEach((question, index) => {
@@ -137,8 +162,17 @@ export async function POST(req, { params }) {
     let xpGained = 0;
     let gemsGained = 0;
     let levelUp = false;
+    let quizCompletedSuccessfully = false; // Flag to track if we should increment count/save
 
     if (isNewHighScore) {
+      // --- Quiz Limit Increment Logic ---
+      // Only increment count if it's a new high score AND within daily limit
+      user.dailyQuizCount += 1;
+      user.lastQuizCompletion = new Date(); // Timestamp of completion
+      // lastQuizDate is already set during the check
+      quizCompletedSuccessfully = true;
+      // --- End Quiz Limit Increment Logic ---
+
       // Base XP calculation (3 XP per percentage point for final exam)
       xpGained = Math.round(score * 3);
 
@@ -181,7 +215,10 @@ export async function POST(req, { params }) {
         courseProgress.completed = true;
       }
 
+      // --- Combined Save ---
+      // Save user only if the quiz was successfully completed (new high score and within limit)
       await user.save();
+      // --- End Combined Save ---
     }
 
     return NextResponse.json({
@@ -190,7 +227,10 @@ export async function POST(req, { params }) {
       gemsGained: isNewHighScore ? gemsGained : 0,
       levelUp,
       completionPercentage: courseProgress.completionPercentage,
-      passed: score >= finalExam.passingScore
+      passed: score >= finalExam.passingScore,
+      dailyLimitReached: false, // Reached here means limit was not hit
+      quizzesTakenToday: user.dailyQuizCount, // Return the *new* count
+      maxQuizzesToday: maxDailyQuizzes
     });
   } catch (error) {
     console.error("Error completing final exam:", error);

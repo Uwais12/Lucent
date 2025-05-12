@@ -450,6 +450,11 @@ export default function Home() {
 
   // Extract basic values without useMemo
   const { xp = 0, gems = 0, dailyStreak = 0 } = userProfile || {};
+  const isPro = userProfile?.subscription?.tier === 'PRO' || userProfile?.subscription?.tier === 'ENTERPRISE';
+  const maxDailyQuizzes = isPro ? 5 : 1;
+  const dailyQuizCount = userProfile?.dailyQuizCount || 0;
+  const quizzesRemaining = Math.max(0, maxDailyQuizzes - dailyQuizCount);
+  const canTakeAnyQuiz = quizzesRemaining > 0; // Renamed for clarity
 
   return (
     <div className="min-h-screen bg-background pattern-bg">
@@ -473,19 +478,21 @@ export default function Home() {
             
             {/* Daily Quiz Status */}
             <div className="mt-8">
-              <div className={`p-4 sm:p-6 rounded-2xl ${canTakeQuizToday ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200' : 'bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200'}`}>
+              <div className={`p-4 sm:p-6 rounded-2xl ${canTakeAnyQuiz ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200' : 'bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200'}`}>
                 <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-xl ${canTakeQuizToday ? 'bg-emerald-100' : 'bg-amber-100'}`}>
-                    <Target className={`w-6 h-6 ${canTakeQuizToday ? 'text-emerald-600' : 'text-amber-600'}`} />
+                  <div className={`p-3 rounded-xl ${canTakeAnyQuiz ? 'bg-emerald-100' : 'bg-amber-100'}`}>
+                    <Target className={`w-6 h-6 ${canTakeAnyQuiz ? 'text-emerald-600' : 'text-amber-600'}`} />
                   </div>
                   <div>
-                    <h3 className={`text-lg font-semibold ${canTakeQuizToday ? 'text-emerald-800' : 'text-amber-800'}`}>
-                      {canTakeQuizToday ? "Daily Quiz Available!" : "Daily Quiz Completed"}
+                    <h3 className={`text-lg font-semibold ${canTakeAnyQuiz ? 'text-emerald-800' : 'text-amber-800'}`}>
+                      {canTakeAnyQuiz 
+                        ? (isPro ? `${quizzesRemaining} / ${maxDailyQuizzes} Daily Quizzes Available` : 'Daily Quiz Available!') 
+                        : (isPro ? 'Daily Quiz Limit Reached' : 'Daily Quiz Completed')}
                     </h3>
-                    <p className={`text-sm ${canTakeQuizToday ? 'text-emerald-700' : 'text-amber-700'}`}>
-                      {canTakeQuizToday 
-                        ? "Take a quiz to earn rewards and maintain your streak!" 
-                        : "Great job! Come back tomorrow for more lessons and quizzes."}
+                    <p className={`text-sm ${canTakeAnyQuiz ? 'text-emerald-700' : 'text-amber-700'}`}>
+                      {canTakeAnyQuiz 
+                        ? (isPro ? `You can take ${quizzesRemaining} more ${quizzesRemaining === 1 ? 'quiz' : 'quizzes'} today.` : 'Take a quiz to earn rewards and maintain your streak!') 
+                        : 'Great job! Come back tomorrow for more lessons and quizzes.'}
                     </p>
                   </div>
                 </div>

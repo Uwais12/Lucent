@@ -85,6 +85,7 @@ export default function CourseDetails() {
   const [isChecking, setIsChecking] = useState(false);
   const [canTakeQuizToday, setCanTakeQuizToday] = useState(true);
   const [expandedChapters, setExpandedChapters] = useState(new Set());
+  const [maxQuizzes, setMaxQuizzes] = useState(0);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -116,6 +117,8 @@ export default function CourseDetails() {
 
             // User can take a quiz if their count is less than the max allowed for their tier
             setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
+            // Pass max limit to state for use in UI messages
+            setMaxQuizzes(maxDailyQuizzes); 
             // --- End Corrected Daily Quiz Limit Check ---
             
             // If we have enrollment data but the course data doesn't have user progress
@@ -279,7 +282,7 @@ export default function CourseDetails() {
 
                     // Check if user can take a quiz today
                     if (!canTakeQuizToday) {
-                      toast.error("You&apos;ve already completed a quiz today. Come back tomorrow for more!");
+                      toast.error(`You&apos;ve reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
                       return;
                     }
                     
@@ -488,7 +491,7 @@ export default function CourseDetails() {
                                     onClick={(e) => {
                                       e.preventDefault();
                                       if (!canTakeQuizToday) {
-                                        toast.error("You&apos;ve already completed a quiz today. Come back tomorrow for more!");
+                                        toast.error(`You&apos;ve reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
                                         return;
                                       }
                                       router.push(`/lesson/${lesson.slug}`);
@@ -553,7 +556,7 @@ export default function CourseDetails() {
                                   onClick={async (e) => {
                                     e.preventDefault();
                                     if (!canTakeQuizToday) {
-                                      toast.error("You&apos;ve already completed a quiz today. Come back tomorrow for more!");
+                                      toast.error(`You&apos;ve reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
                                       return;
                                     }
                                     setIsChecking(true);

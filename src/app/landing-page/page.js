@@ -855,7 +855,7 @@ export default function LandingPage() {
                 <ul className="mb-6 text-sm space-y-4 flex-grow">
                   <li className="flex items-start gap-2">
                     <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700"><strong>Unlimited</strong> challenges per day</span>
+                    <span className="text-gray-700"><strong>5</strong> challenges per day</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle className="w-5 h-5 text-violet-600 flex-shrink-0 mt-0.5" />
