@@ -30,16 +30,30 @@ export async function GET(request) {
       // Return immediately since we just created this user
       return NextResponse.json(user, {
         headers: {
-          'Cache-Control': 'private, max-age=10, stale-while-revalidate=30'
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'Surrogate-Control': 'no-store'
         }
       });
     }
 
-    // For existing users, check if streak needs updating
+    // --- Daily Quiz Count Reset Logic ---
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of day
+    let needsQuizCountReset = false;
+    if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
+      needsQuizCountReset = true;
+      user.dailyQuizCount = 0; // Reset count
+      user.lastQuizDate = today; // Update last quiz date check
+    }
+    // --- End Quiz Count Reset Logic ---
+
+    // --- Streak Update Logic ---
     const now = new Date();
     const lastActivity = user.lastDailyActivity ? new Date(user.lastDailyActivity) : null;
     let streakStatus = { broken: false };
-    let needsUpdate = false;
+    let needsStreakUpdate = false;
     
     if (lastActivity) {
       // Check if last activity was yesterday or today
@@ -49,12 +63,12 @@ export async function GET(request) {
         // Already logged today, no streak update needed
       } else if (diffDays === 1) {
         // Last activity was yesterday, increment streak
-        needsUpdate = true;
-        user.dailyStreak += 1;
+        needsStreakUpdate = true;
+        user.dailyStreak = (user.dailyStreak || 0) + 1; // Ensure dailyStreak exists
         user.lastDailyActivity = now;
       } else {
         // Streak broken
-        needsUpdate = true;
+        needsStreakUpdate = true;
         const oldStreak = user.dailyStreak;
         user.dailyStreak = 1;
         user.lastDailyActivity = now;
@@ -65,32 +79,35 @@ export async function GET(request) {
       }
     } else {
       // First activity
-      needsUpdate = true;
+      needsStreakUpdate = true;
       user.dailyStreak = 1;
       user.lastDailyActivity = now;
     }
     
-    // Only update if needed to reduce database writes
-    if (needsUpdate) {
+    // Combine updates if needed
+    if (needsQuizCountReset || needsStreakUpdate) {
       await User.updateOne(
         { clerkId: userId },
         { 
           $set: { 
-            dailyStreak: user.dailyStreak,
-            lastDailyActivity: user.lastDailyActivity,
-            lastActivity: now
+            ...(needsStreakUpdate && { dailyStreak: user.dailyStreak, lastDailyActivity: user.lastDailyActivity }),
+            ...(needsQuizCountReset && { dailyQuizCount: user.dailyQuizCount, lastQuizDate: user.lastQuizDate }),
+            lastActivity: now // Always update last overall activity
           } 
         }
       );
     }
 
-    // 4) Return user doc with streak status
+    // 4) Return user doc with streak status (and updated quiz count)
     return NextResponse.json({
       ...user,
       streakStatus
     }, {
       headers: {
-        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60'
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Surrogate-Control': 'no-store'
       }
     });
   } catch (err) {

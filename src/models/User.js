@@ -236,6 +236,15 @@ const UserSchema = new mongoose.Schema(
       type: Date,
       default: null
     },
+    dailyQuizCount: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    lastQuizDate: {
+      type: Date,
+      default: null
+    },
     progress: {
       courses: [CourseProgressSchema],
       totalTimeSpent: { type: Number, default: 0 },

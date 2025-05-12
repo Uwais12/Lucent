@@ -108,15 +108,15 @@ export default function CourseDetails() {
             
             setIsEnrolled(!!enrolledCourse);
             
-            // Check if user can take a quiz today
-            if (userData.lastQuizCompletion) {
-              const lastQuizDate = new Date(userData.lastQuizCompletion);
-              const today = new Date();
-              const isSameDay = lastQuizDate.toDateString() === today.toDateString();
-              setCanTakeQuizToday(!isSameDay);
-            } else {
-              setCanTakeQuizToday(true);
-            }
+            // --- Corrected Daily Quiz Limit Check ---
+            // Use dailyQuizCount and subscription tier from profile data
+            const isPro = userData.subscription?.tier === 'PRO' || userData.subscription?.tier === 'ENTERPRISE';
+            const maxDailyQuizzes = isPro ? 5 : 1;
+            const dailyQuizCount = userData.dailyQuizCount || 0;
+
+            // User can take a quiz if their count is less than the max allowed for their tier
+            setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
+            // --- End Corrected Daily Quiz Limit Check ---
             
             // If we have enrollment data but the course data doesn't have user progress
             if (enrolledCourse) {
@@ -279,7 +279,7 @@ export default function CourseDetails() {
 
                     // Check if user can take a quiz today
                     if (!canTakeQuizToday) {
-                      toast.error("You've already completed a quiz today. Come back tomorrow for more!");
+                      toast.error("You&apos;ve already completed a quiz today. Come back tomorrow for more!");
                       return;
                     }
                     
@@ -488,7 +488,7 @@ export default function CourseDetails() {
                                     onClick={(e) => {
                                       e.preventDefault();
                                       if (!canTakeQuizToday) {
-                                        toast.error("You've already completed a quiz today. Come back tomorrow for more!");
+                                        toast.error("You&apos;ve already completed a quiz today. Come back tomorrow for more!");
                                         return;
                                       }
                                       router.push(`/lesson/${lesson.slug}`);
@@ -553,7 +553,7 @@ export default function CourseDetails() {
                                   onClick={async (e) => {
                                     e.preventDefault();
                                     if (!canTakeQuizToday) {
-                                      toast.error("You've already completed a quiz today. Come back tomorrow for more!");
+                                      toast.error("You&apos;ve already completed a quiz today. Come back tomorrow for more!");
                                       return;
                                     }
                                     setIsChecking(true);
@@ -648,7 +648,7 @@ export default function CourseDetails() {
                     </div>
                     {course.userProgress?.completionPercentage < 100 && (
                       <p className="text-sm text-amber-600 bg-amber-50 p-4 rounded-lg">
-                        Note: It's recommended to complete all lessons and chapter quizzes before taking the final exam.
+                        Note: It&apos;s recommended to complete all lessons and chapter quizzes before taking the final exam.
                         Current progress: {course.userProgress?.completionPercentage || 0}%
                       </p>
                     )}

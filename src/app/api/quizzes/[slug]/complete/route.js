@@ -75,19 +75,28 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check if user has already completed a quiz today
-    if (user.lastQuizCompletion) {
-      const lastQuizDate = new Date(user.lastQuizCompletion);
-      const today = new Date();
-      
-      // Check if last quiz was completed today
-      if (lastQuizDate.toDateString() === today.toDateString()) {
-        return NextResponse.json({ 
-          error: "Daily quiz limit reached. You can take another quiz tomorrow.",
-          dailyLimitReached: true
-        }, { status: 403 });
-      }
+    // --- Daily Quiz Limit Check ---
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of day
+
+    // Reset count if last quiz was before today
+    if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
+      user.dailyQuizCount = 0;
+      user.lastQuizDate = today; 
     }
+    
+    // Determine max quizzes based on subscription
+    const isPro = user.subscription?.tier === 'PRO' || user.subscription?.tier === 'ENTERPRISE';
+    const maxDailyQuizzes = isPro ? 5 : 1;
+    
+    // Check limit
+    if (user.dailyQuizCount >= maxDailyQuizzes) {
+      return NextResponse.json({
+        error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
+        dailyLimitReached: true
+      }, { status: 403 });
+    }
+    // --- End Daily Quiz Limit Check ---
 
     // Calculate score
     let correctAnswers = 0;
@@ -126,12 +135,10 @@ export async function POST(req, { params }) {
 
     const score = Math.round((correctAnswers / totalQuestions) * 100);
 
-    // Only update lastQuizCompletion if score is passing (70% or higher)
-    const passingScore = score >= 70;
-    if (passingScore) {
-      user.lastQuizCompletion = new Date();
-      await user.save();
-    }
+    // Lesson quizzes might not have a strict "passing" score, but we still record completion.
+    // We'll use 70% as a baseline for incrementing the daily count, similar to others.
+    const isConsideredPassing = score >= 70;
+    let quizCompletedSuccessfully = false;
 
     // Calculate rewards based on score brackets
     let xpGained = 0;
@@ -208,7 +215,26 @@ export async function POST(req, { params }) {
         attempts: (lessonProgress.quizProgress?.attempts || 0) + 1
       };
 
-      await user.save();
+    } else {
+      // Even if not a new high score, update attempts and last attempt date
+      lessonProgress.quizProgress = {
+        ...(lessonProgress.quizProgress || { score: 0 }), // Ensure score exists
+        lastAttemptDate: new Date(),
+        attempts: (lessonProgress.quizProgress?.attempts || 0) + 1
+      };
+    }
+
+    // Update user progress and check limits ONLY if considered passing
+    if (isConsideredPassing) {
+        user.dailyQuizCount += 1;
+        user.lastQuizCompletion = new Date(); 
+        user.lastQuizDate = today; // Ensure lastQuizDate reflects today
+        quizCompletedSuccessfully = true;
+    }
+
+    // Save user changes IF considered passing OR if it was a new high score (to save progress)
+    if (quizCompletedSuccessfully || isNewHighScore) {
+       await user.save();
     }
 
     // Calculate completion percentage for the course
@@ -224,6 +250,9 @@ export async function POST(req, { params }) {
       gemsGained: isNewHighScore ? gemsGained : 0,
       levelUp,
       completionPercentage,
+      dailyLimitReached: false, // Limit wasn't reached if we got here
+      quizzesTakenToday: user.dailyQuizCount, // Return updated count
+      maxQuizzesToday: maxDailyQuizzes // Return max allowed count
     });
   } catch (error) {
     console.error("Error completing quiz:", error);

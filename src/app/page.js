@@ -204,14 +204,11 @@ export default function Home() {
             const maxDailyQuizzes = isPro ? 5 : 1;
             const dailyQuizCount = profileData.dailyQuizCount || 0;
             
-            // For PRO users with daily quiz count < 5, they can take more quizzes
-            if (isPro && dailyQuizCount < maxDailyQuizzes) {
-              setCanTakeQuizToday(true);
-            } else {
-              // For free users or PRO users who have used all 5 quizzes
-              setCanTakeQuizToday(!isSameDay);
-            }
+            // User can take a quiz if their count is less than the max allowed for their tier
+            setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
+
           } else {
+            // If they haven't completed any quiz ever, they can take one
             setCanTakeQuizToday(true);
           }
           
@@ -251,15 +248,13 @@ export default function Home() {
         .then(data => {
           setUserProfile(data);
           
-          // Check if user can take a quiz today
-          if (data.lastQuizCompletion) {
-            const lastQuizDate = new Date(data.lastQuizCompletion);
-            const today = new Date();
-            const isSameDay = lastQuizDate.toDateString() === today.toDateString();
-            setCanTakeQuizToday(!isSameDay);
-          } else {
-            setCanTakeQuizToday(true);
-          }
+          // Determine max quizzes based on subscription tier
+          const isPro = data.subscription?.tier === 'PRO' || data.subscription?.tier === 'ENTERPRISE';
+          const maxDailyQuizzes = isPro ? 5 : 1;
+          const dailyQuizCount = data.dailyQuizCount || 0;
+          
+          // User can take a quiz if their count is less than the max allowed for their tier
+          setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
         })
         .catch(error => {
           console.error('Error fetching user profile:', error);

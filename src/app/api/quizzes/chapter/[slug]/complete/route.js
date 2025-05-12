@@ -49,27 +49,33 @@ export async function POST(req, { params }) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Check if user has already completed a quiz today
-    if (user.lastQuizCompletion) {
-      const lastQuizDate = new Date(user.lastQuizCompletion);
-      const today = new Date();
-      
-      // Check if last quiz was completed today
-      if (lastQuizDate.toDateString() === today.toDateString()) {
-        return NextResponse.json({ 
-          error: "Daily quiz limit reached. You can take another quiz tomorrow.",
-          dailyLimitReached: true
-        }, { status: 403 });
-      }
-    }
+    // --- Daily Quiz Limit Check ---
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of day
 
-    // Only update lastQuizCompletion if score is passing
-    const passingScore = score >= chapter.endOfChapterQuiz.passingScore;
-    if (passingScore) {
-      user.lastQuizCompletion = new Date();
-      await user.save();
-      console.log('User lastQuizCompletion updated to:', user.lastQuizCompletion);
+    // Reset count if last quiz was before today
+    if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
+      user.dailyQuizCount = 0;
+      user.lastQuizDate = today; 
     }
+    
+    // Determine max quizzes based on subscription
+    const isPro = user.subscription?.tier === 'PRO' || user.subscription?.tier === 'ENTERPRISE';
+    const maxDailyQuizzes = isPro ? 5 : 1;
+    
+    // Check limit
+    if (user.dailyQuizCount >= maxDailyQuizzes) {
+      return NextResponse.json({
+        error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
+        dailyLimitReached: true
+      }, { status: 403 });
+    }
+    // --- End Daily Quiz Limit Check ---
+
+    // Determine if score is passing
+    const passingScoreThreshold = chapter.endOfChapterQuiz?.passingScore || 70; // Default to 70 if not defined
+    const isPassingScore = score >= passingScoreThreshold;
+    let quizCompletedSuccessfully = false;
 
     // Initialize user progress if it doesn't exist
     if (!user.progress) {
@@ -120,18 +126,23 @@ export async function POST(req, { params }) {
     // Update quiz progress regardless of score
     chapterProgress.quizProgress = {
       ...chapterProgress.quizProgress,
-      completed: score >= chapter.endOfChapterQuiz.passingScore,
+      completed: isPassingScore,
       score,
-      attempts: (chapterProgress.quizProgress.attempts || 0) + 1,
+      attempts: (chapterProgress.quizProgress?.attempts || 0) + 1,
       lastAttemptDate: new Date()
     };
 
-    const currentPassed = score >= chapter.endOfChapterQuiz.passingScore;
-    const previousPassed = chapterProgress.quizProgress.score >= chapter.endOfChapterQuiz.passingScore;
-    const isFirstPass = currentPassed && !previousPassed;
+    const previousPassed = chapterProgress.quizProgress?.score >= passingScoreThreshold;
+    const isFirstPass = isPassingScore && !previousPassed;
 
     // If passed, mark chapter and all its lessons as complete
-    if (currentPassed) {
+    if (isPassingScore) {
+      // Increment daily count and update dates ONLY if passing
+      user.dailyQuizCount += 1;
+      user.lastQuizCompletion = new Date(); 
+      user.lastQuizDate = today; // Ensure lastQuizDate reflects today
+      quizCompletedSuccessfully = true;
+      
       chapterProgress.completed = true;
       chapterProgress.completedAt = new Date();
       
@@ -194,16 +205,22 @@ export async function POST(req, { params }) {
     const completionPercentage = Math.round((completedLessons / totalLessons) * 100);
     courseProgress.completionPercentage = completionPercentage;
 
-    await user.save();
+    // Save user changes ONLY if the quiz was successfully completed (passed and within limit)
+    if (quizCompletedSuccessfully) {
+       await user.save();
+    }
 
     return NextResponse.json({
       success: true,
       score,
-      passed: currentPassed,
+      passed: isPassingScore,
       xpEarned,
       gemsEarned,
       levelUp,
-      completionPercentage
+      completionPercentage,
+      dailyLimitReached: false,
+      quizzesTakenToday: user.dailyQuizCount,
+      maxQuizzesToday: maxDailyQuizzes
     });
   } catch (error) {
     console.error("Error completing chapter quiz:", error);
