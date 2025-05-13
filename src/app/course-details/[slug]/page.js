@@ -56,6 +56,11 @@ function XPNotificationHandler({ params }) {
   const handleClose = () => {
     setShowXPNotification(false);
     setXPNotificationData(null);
+    // Clear the URL parameters when notification is closed, if they haven't been cleared yet.
+    // This ensures that if the user closes it quickly, the params are still removed.
+    if (window.location.search.includes('xpGained')) {
+      router.replace(`/course-details/${params.slug}`, { scroll: false });
+    }
   };
 
   return (
@@ -235,8 +240,114 @@ export default function CourseDetails() {
   }
 
   if (!course) {
-    return <div className="text-center mt-6">Course not found</div>;
+    return <div className="text-center mt-6">Course not found. It might be an invalid link or the course hasn&apos;t been published yet.</div>;
   }
+
+  const { title, description, chapters, difficulty, duration, book, endOfCourseExam, prerequisites, learningOutcomes, completionBadge, slug: courseSlug, enrolledUsersCount } = course;
+  
+  // Default to empty array if prerequisites or learningOutcomes are undefined
+  const safePrerequisites = prerequisites || [];
+  console.log(" LO -- ",course.learningOutcomes);
+  const safelearningOutcomes = learningOutcomes || [];
+
+  const toggleChapter = (chapterId) => {
+    setExpandedChapters((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(chapterId)) {
+        newSet.delete(chapterId);
+      } else {
+        newSet.add(chapterId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleQuizNavigation = async (quizSlug, quizType, courseIdForQuiz) => {
+    if (isChecking) return;
+    setIsChecking(true);
+
+    if (!canTakeQuizToday) {
+      toast.error(`You have reached your daily quiz limit of ${maxQuizzes}. Please try again tomorrow.`, {
+        duration: 5000,
+        position: 'top-center'
+      });
+      setIsChecking(false);
+      return;
+    }
+    
+    // Check enrollment specifically for the quiz's content (lesson, chapter, or course exam)
+    const isContentEnrolled = await checkEnrollment(quizSlug, quizType);
+
+    if (isContentEnrolled) {
+      let quizPath = '';
+      if (quizType === 'lesson-quiz') {
+        quizPath = `/quiz/${quizSlug}?courseId=${courseIdForQuiz}`;
+      } else if (quizType === 'chapter-quiz') {
+        quizPath = `/quiz/chapter/${quizSlug}?courseId=${courseIdForQuiz}`;
+      } else if (quizType === 'course-exam') {
+        quizPath = `/quiz/final/${quizSlug}`;
+      }
+
+      if (quizPath) {
+        router.push(quizPath);
+      } else {
+        toast.error("Could not determine the quiz path.");
+      }
+    } else {
+      // This case should ideally not be hit if buttons are disabled correctly
+      // but as a fallback:
+      toast.error("You are not enrolled in the required content to take this quiz.");
+    }
+    setIsChecking(false);
+  };
+
+  // Determine if the main course is completed
+  const isCourseCompleted = course.userProgress?.completionPercentage >= 100;
+
+  // Find the current lesson to resume, if any
+  let resumeLessonSlug = null;
+  let resumeChapterSlug = null;
+  if (course.userProgress && course.userProgress.currentLesson && course.userProgress.currentChapter) {
+    const currentChapterData = chapters.find(ch => ch._id.toString() === course.userProgress.currentChapter.toString());
+    if (currentChapterData) {
+      const currentLessonData = currentChapterData.lessons.find(l => l._id.toString() === course.userProgress.currentLesson.toString());
+      if (currentLessonData && !currentLessonData.completed) { // Only if not completed
+        resumeLessonSlug = currentLessonData.slug;
+        resumeChapterSlug = currentChapterData.slug;
+      }
+    }
+  }
+  
+  // If no specific lesson to resume, but course started, find the first uncompleted lesson
+  if (!resumeLessonSlug && course.userProgress && course.userProgress.isEnrolled) {
+    for (const chapter of chapters) {
+      const firstUncompletedLesson = chapter.lessons.find(lesson => {
+        const lessonProgress = course.userProgress?.chapters
+          ?.find(chProg => chProg.chapterId.toString() === chapter._id.toString())
+          ?.lessons?.find(lProg => lProg.lessonId.toString() === lesson._id.toString());
+        return !lessonProgress?.completed;
+      });
+      if (firstUncompletedLesson) {
+        resumeLessonSlug = firstUncompletedLesson.slug;
+        resumeChapterSlug = chapter.slug;
+        break;
+      }
+    }
+  }
+
+  const startOrContinueText = isCourseCompleted
+    ? "Review Course"
+    : course.userProgress?.isEnrolled
+    ? "Continue Learning"
+    : "Start Learning";
+
+  const startOrContinuePath = isCourseCompleted
+    ? `/course-details/${courseSlug}` // Or maybe first lesson? For now, details.
+    : resumeLessonSlug && resumeChapterSlug
+    ? `/courses/${courseSlug}/chapters/${resumeChapterSlug}/lessons/${resumeLessonSlug}`
+    : (chapters && chapters.length > 0 && chapters[0].lessons && chapters[0].lessons.length > 0)
+    ? `/courses/${courseSlug}/chapters/${chapters[0].slug}/lessons/${chapters[0].lessons[0].slug}`
+    : `/course-details/${courseSlug}`; // Fallback if no lessons
 
   return (
     <div className="min-h-screen bg-background pattern-bg">
@@ -268,31 +379,8 @@ export default function CourseDetails() {
                 </p>
               </div>
               <div>
-                <button
-                  onClick={isEnrolled ? () => {
-                    // Determine if course is completed
-                    const isCompleted = course.userProgress?.completed || 
-                                       (course.userProgress?.completionPercentage >= 100);
-                                       
-                    // If course is completed, just go to course overview
-                    if (isCompleted) {
-                      router.push(`/course-details/${course.slug}`);
-                      return;
-                    }
-
-                    // Check if user can take a quiz today
-                    if (!canTakeQuizToday) {
-                      toast.error(`You have reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
-                      return;
-                    }
-                    
-                    // Find the current lesson using the progress indices
-                    const currentChapter = course.chapters[course.userProgress?.currentChapter];
-                    const currentLesson = currentChapter?.lessons[course.userProgress?.currentLesson];
-                    if (currentLesson) {
-                      router.push(`/lesson/${currentLesson.slug}`);
-                    }
-                  } : handleEnrollClick}
+                <Link
+                  href={startOrContinuePath}
                   className={`px-6 py-3 bg-gradient-to-r ${
                     !isEnrolled
                       ? "from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
@@ -320,7 +408,7 @@ export default function CourseDetails() {
                         : "Continue Learning"}
                     </>
                   )}
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -369,7 +457,7 @@ export default function CourseDetails() {
                       Prerequisites
                     </h3>
                     <ul className="space-y-3">
-                      {course.prerequisites.map((prereq, index) => (
+                      {safePrerequisites.map((prereq, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <div className="w-6 h-6 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <CheckCircle className="w-4 h-4 text-violet-600" />
@@ -383,10 +471,10 @@ export default function CourseDetails() {
                   {/* Learning Outcomes */}
                   <div className="card p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      What You'll Learn
+                      What You&apos;ll Learn
                     </h3>
                     <ul className="space-y-3">
-                      {course.learningOutcomes.map((outcome, index) => (
+                      {safelearningOutcomes.map((outcome, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                             <Zap className="w-4 h-4 text-emerald-600" />
@@ -405,7 +493,7 @@ export default function CourseDetails() {
                   Course Curriculum
                 </h2>
                 <div className="space-y-4">
-                  {course.chapters.map((chapter, chapterIndex) => {
+                  {chapters.map((chapter, chapterIndex) => {
                     const chapterProgress = course.userProgress?.chapters?.[chapterIndex];
                     const totalLessons = chapter.lessons.length;
                     const completedLessons = chapter.lessons.filter((_, lessonIndex) => 
@@ -710,26 +798,29 @@ export default function CourseDetails() {
             {/* Right Column - Course Info */}
             <div className="space-y-6">
               {/* Course Stats */}
-              <div className="card p-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-4 bg-violet-50 rounded-lg">
-                    <Clock className="w-6 h-6 text-violet-600 mx-auto mb-2" />
-                    <div className="text-sm text-gray-600">Duration</div>
+              <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Course Stats</h3>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+                  <div className="text-center">
+                    <div className="text-sm text-gray-600">Chapters</div>
+                    <div className="font-semibold text-gray-900">{chapters?.length || 0}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-sm text-gray-600">Lessons</div>
                     <div className="font-semibold text-gray-900">
-                      {course.chapters.reduce(
-                        (total, chapter) =>
-                          total +
-                          chapter.lessons.reduce((sum, lesson) => sum + lesson.duration, 0),
-                        0
-                      )}{" "}
-                      mins
+                      {chapters?.reduce((acc, chapter) => acc + (chapter.lessons?.length || 0), 0) || 0}
                     </div>
                   </div>
-                  <div className="text-center p-4 bg-emerald-50 rounded-lg">
-                    <Users className="w-6 h-6 text-emerald-600 mx-auto mb-2" />
+                  <div className="text-center">
+                    <div className="text-sm text-gray-600">End of Course Quizzes</div>
+                    <div className="font-semibold text-gray-900">
+                      {chapters?.reduce((acc, chapter) => acc + (chapter.quizzes?.length || 0), 0) + (endOfCourseExam ? 1 : 0)}
+                    </div>
+                  </div>
+                  <div className="text-center">
                     <div className="text-sm text-gray-600">Enrolled</div>
                     <div className="font-semibold text-gray-900">
-                      {course.enrolledCount || 0}
+                      {course.enrolledUsersCount || 0}
                     </div>
                   </div>
                 </div>
@@ -791,43 +882,23 @@ export default function CourseDetails() {
       <Dialog
         isOpen={isEnrollDialogOpen}
         onClose={() => setIsEnrollDialogOpen(false)}
-        title="Enroll in Course"
+        title="Confirm Enrollment"
+        description={`Are you sure you want to enroll in "${course?.title}"?`}
       >
-        <div className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Ready to start learning?
-          </h3>
-          <div className="space-y-4 text-gray-600">
-            <p>You're about to enroll in <strong>{course?.title}</strong>.</p>
-            <p>Heres what you need to know:</p>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>You can only complete one lesson per day</li>
-              <li>Each lesson includes interactive exercises and a mini quiz</li>
-              <li>There will be a comprehensive course quiz at the end</li>
-              <li>Upon completion, you'll earn:
-                <ul className="list-disc pl-5 mt-2">
-                  <li>XP points for your progress</li>
-                  <li>Gems for completing exercises and quizzes</li>
-                  <li>A &quot;{course?.title}&quot; badge for your profile</li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-          <div className="mt-6 flex justify-end gap-3">
-            <button
-              onClick={() => setIsEnrollDialogOpen(false)}
-              className="px-4 py-2 text-gray-600 hover:text-gray-800"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleEnrollConfirm}
-              disabled={enrolling}
-              className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50"
-            >
-              {enrolling ? "Enrolling..." : "Confirm Enrollment"}
-            </button>
-          </div>
+        <div className="mt-4 flex justify-end space-x-2">
+          <button
+            onClick={() => setIsEnrollDialogOpen(false)}
+            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleEnrollConfirm}
+            disabled={enrolling}
+            className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50"
+          >
+            {enrolling ? "Enrolling..." : "Confirm Enrollment"}
+          </button>
         </div>
       </Dialog>
     </div>

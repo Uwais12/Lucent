@@ -51,6 +51,11 @@ export async function GET(req, { params }) {
       }
     }
 
+    // Calculate enrolled users count
+    const enrolledUsersCount = await User.countDocuments({
+      "progress.courses.courseId": course._id,
+    });
+
     // Add badge information
     const completionBadge = {
       type: "course_completion",
@@ -59,7 +64,7 @@ export async function GET(req, { params }) {
       imageUrl: "/badges/course-completion.svg" // You'll need to add this asset
     };
 
-    return new Response(JSON.stringify({ ...course.toObject(), userProgress, completionBadge }), {
+    return new Response(JSON.stringify({ ...course.toObject(), userProgress, completionBadge, enrolledUsersCount }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

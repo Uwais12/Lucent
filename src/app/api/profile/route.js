@@ -95,7 +95,6 @@ export async function GET(request) {
         'Surrogate-Control': 'no-store'
       }
     })
-    console.log(nr)
     return nr;
   } catch (err) {
     console.error("Error in GET /api/profile:", err);
