@@ -80,6 +80,15 @@ export default function FinalAssessment() {
 
       const data = await response.json();
 
+      // Dispatch badge notifications if any badges were awarded
+      if (data.awardedBadges && Array.isArray(data.awardedBadges)) {
+        data.awardedBadges.forEach(badge => {
+          if (badge && badge.id) { // Ensure badge and badge.id are valid
+            window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
+          }
+        });
+      }
+
       if (response.ok) {
         // Redirect to course details with completion info
         router.push(`/course-details/${quiz.course.slug}?xpGained=${data.xpGained}&gemsGained=${data.gemsGained}&levelUp=${data.levelUp}&completionPercentage=${data.completionPercentage}&courseId=${quiz.course._id}`);
@@ -106,6 +115,15 @@ export default function FinalAssessment() {
       });
 
       const data = await response.json();
+
+      // Dispatch badge notifications if any badges were awarded
+      if (data.awardedBadges && Array.isArray(data.awardedBadges)) {
+        data.awardedBadges.forEach(badge => {
+          if (badge && badge.id) { // Ensure badge and badge.id are valid
+            window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
+          }
+        });
+      }
 
       if (response.ok) {
         // Redirect to course details with completion info

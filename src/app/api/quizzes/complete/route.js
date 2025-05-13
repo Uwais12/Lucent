@@ -3,6 +3,7 @@ import { getAuth } from "@clerk/nextjs/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User"; // Ensure User model is imported
 import { calculateXP, calculateGems } from "@/lib/rewards"; // Assuming these are correctly imported
+import { badgeDefinitions } from "@/lib/badgeDefinitions.js"; // Import badge definitions
 
 export async function POST(request) {
   try {
@@ -54,6 +55,7 @@ export async function POST(request) {
     let levelUp = false;
     let completionPercentage = 0; // This seems unused, consider removing
     let quizCompletedSuccessfully = false;
+    let newlyAwardedBadges = []; // To store details of newly awarded badges
 
     if (passingScore) {
       // Increment daily count and update dates
@@ -94,7 +96,24 @@ export async function POST(request) {
       if (levelUp) {
         user.level = newLevel;
       }
+
+      // Try to award the "First Quiz Completed" badge
+      const firstQuizBadgeDef = badgeDefinitions.FIRST_QUIZ_COMPLETED;
+      if (firstQuizBadgeDef) {
+        const wasFirstQuizBadgeAwarded = user.awardBadge({
+          badgeId: firstQuizBadgeDef.id,
+          name: firstQuizBadgeDef.name,
+          description: firstQuizBadgeDef.description,
+          iconUrl: firstQuizBadgeDef.iconUrl,
+          type: firstQuizBadgeDef.type // Pass type for the awardBadge method if it uses it
+        });
+        console.log("wasFirstQuizBadgeAwarded", wasFirstQuizBadgeAwarded);
+
+        if (wasFirstQuizBadgeAwarded) {
+          newlyAwardedBadges.push(firstQuizBadgeDef);
+        }
       }
+    }
 
     // Save user changes ONLY if the quiz was passed
     if (quizCompletedSuccessfully) {
@@ -114,7 +133,8 @@ export async function POST(request) {
       // completionPercentage, // Consider removing if unused
       dailyLimitReached: false, // Limit wasn't reached if we got here
       quizzesTakenToday: user.dailyQuizCount, // Return updated count
-      maxQuizzesToday: maxDailyQuizzes // Return max allowed count
+      maxQuizzesToday: maxDailyQuizzes, // Return max allowed count
+      awardedBadges: newlyAwardedBadges // Include awarded badges in the response
     });
 
   } catch (err) {

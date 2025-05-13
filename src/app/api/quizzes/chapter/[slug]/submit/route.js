@@ -2,6 +2,7 @@ import { connectToDatabase } from '@/lib/mongodb';
 import Course from '@/models/Course';
 import User from '@/models/User';
 import { getAuth } from '@clerk/nextjs/server';
+import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
 
 export async function POST(req, { params }) {
   try {
@@ -86,6 +87,29 @@ export async function POST(req, { params }) {
     let xpEarned = 0;
     let gemsEarned = 0;
     let levelUp = false;
+    let newlyAwardedBadges = [];
+
+    // --- Daily Quiz Limit Check (Copied from other quiz route) ---
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
+
+    if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
+      user.dailyQuizCount = 0;
+      // user.lastQuizDate = today; // Will be set if quiz is passed
+    }
+    
+    const isPro = user.subscription?.tier === 'PRO' || user.subscription?.tier === 'ENTERPRISE';
+    const maxDailyQuizzes = isPro ? 5 : 1;
+    
+    if (user.dailyQuizCount >= maxDailyQuizzes) {
+        return new Response(JSON.stringify({ 
+          error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
+          dailyLimitReached: true,
+          quizzesTakenToday: user.dailyQuizCount,
+          maxQuizzesToday: maxDailyQuizzes
+        }), { status: 403, headers: { 'Content-Type': 'application/json' } });
+      }
+    // --- End Daily Quiz Limit Check ---
 
     if (!existingCompletion) {
       // Calculate rewards based on score
@@ -115,16 +139,35 @@ export async function POST(req, { params }) {
           chapterProgress.completedAt = new Date();
         }
 
-        // Save user progress
-        await user.save();
+        // Update daily quiz count and last completion date
+        user.dailyQuizCount = (user.dailyQuizCount || 0) + 1;
+        user.lastQuizCompletion = new Date();
+        user.lastQuizDate = today;
 
+        // Try to award the "First Quiz Completed" badge
+        const firstQuizBadgeDef = badgeDefinitions.FIRST_QUIZ_COMPLETED;
+        if (firstQuizBadgeDef) {
+          const wasFirstQuizBadgeAwarded = user.awardBadge({
+            badgeId: firstQuizBadgeDef.id,
+            name: firstQuizBadgeDef.name,
+            description: firstQuizBadgeDef.description,
+            iconUrl: firstQuizBadgeDef.iconUrl, // Will be undefined, user.awardBadge should handle
+            type: firstQuizBadgeDef.type
+          });
+          console.log("wasFirstQuizBadgeAwarded", wasFirstQuizBadgeAwarded);
+
+          if (wasFirstQuizBadgeAwarded) {
+            newlyAwardedBadges.push(firstQuizBadgeDef);
+          }
+        }
+        
         // Check for level up
         const newLevel = Math.floor(Math.sqrt(user.xp / 100));
         if (newLevel > user.level) {
           levelUp = true;
           user.level = newLevel;
-          await user.save();
         }
+        await user.save();
       }
     }
 
@@ -147,6 +190,10 @@ export async function POST(req, { params }) {
       xpEarned,
       gemsEarned,
       levelUp,
+      newlyAwardedBadges,
+      dailyLimitReached: false,
+      quizzesTakenToday: user.dailyQuizCount,
+      maxQuizzesToday: maxDailyQuizzes,
       courseId: course._id,
       courseSlug: course.slug,
       completionPercentage: calculateCourseCompletion(user, course)

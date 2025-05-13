@@ -5,6 +5,7 @@ import Course from "@/models/Course";
 import User from "@/models/User";
 import { calculateXP } from "@/lib/rewards";
 import { calculateGems } from "@/lib/rewards";
+import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
 
 export async function POST(req, { params }) {
   try {
@@ -143,6 +144,23 @@ export async function POST(req, { params }) {
       user.lastQuizDate = today; // Ensure lastQuizDate reflects today
       quizCompletedSuccessfully = true;
       
+      // Try to award the "First Quiz Completed" badge
+      const firstQuizBadgeDef = badgeDefinitions.FIRST_QUIZ_COMPLETED;
+      if (firstQuizBadgeDef) {
+        const wasFirstQuizBadgeAwarded = user.awardBadge({
+          badgeId: firstQuizBadgeDef.id,
+          name: firstQuizBadgeDef.name,
+          description: firstQuizBadgeDef.description,
+          iconUrl: firstQuizBadgeDef.iconUrl,
+          type: firstQuizBadgeDef.type
+        });
+        console.log("wasFirstQuizBadgeAwarded", wasFirstQuizBadgeAwarded);
+
+        if (wasFirstQuizBadgeAwarded) {
+          newlyAwardedBadges.push(firstQuizBadgeDef);
+        }
+      }
+      
       chapterProgress.completed = true;
       chapterProgress.completedAt = new Date();
       
@@ -179,6 +197,7 @@ export async function POST(req, { params }) {
     let xpEarned = 0;
     let gemsEarned = 0;
     let levelUp = false;
+    let newlyAwardedBadges = [];
 
     if (isFirstPass) {
       xpEarned = calculateXP(score, 'chapter-quiz');
@@ -220,7 +239,8 @@ export async function POST(req, { params }) {
       completionPercentage,
       dailyLimitReached: false,
       quizzesTakenToday: user.dailyQuizCount,
-      maxQuizzesToday: maxDailyQuizzes
+      maxQuizzesToday: maxDailyQuizzes,
+      awardedBadges: newlyAwardedBadges
     });
   } catch (error) {
     console.error("Error completing chapter quiz:", error);

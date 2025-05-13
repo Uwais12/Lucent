@@ -95,6 +95,15 @@ export default function QuizPage() {
       // Dispatch quiz completion event
       window.dispatchEvent(new Event('quizCompleted'));
 
+      // Dispatch badge notifications if any badges were awarded
+      if (quizData.awardedBadges && Array.isArray(quizData.awardedBadges)) {
+        quizData.awardedBadges.forEach(badge => {
+          if (badge && badge.id) { // Ensure badge and badge.id are valid
+            window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
+          }
+        });
+      }
+
       let completionInfo = {
         score: quizData.score,
         xpGained: quizData.xpGained,

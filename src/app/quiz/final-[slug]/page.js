@@ -8,6 +8,7 @@ import Navbar from "@/app/components/Navbar";
 import XPNotification from "@/app/components/XPNotification";
 import { useUser } from "@clerk/nextjs";
 import ReactConfetti from "react-confetti";
+import { toast } from "react-hot-toast";
 
 // Separate client component for handling XP notifications
 function XPNotificationHandler({ params, manualTrigger, onManualClose }) {
@@ -171,69 +172,32 @@ export default function FinalExamPage() {
         })
       });
 
-      if (response.ok) {
         const data = await response.json();
-        setSubmitted(true);
-        setQuizResult(data);
 
-        // Build feedback message
-        let feedbackMsg = passed 
-          ? `Congratulations! You passed with a score of ${score}%` 
-          : `You scored ${score}%. You need ${quiz.passingScore}% to pass. Try again!`;
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to submit final exam");
+      }
 
-        // Add XP info
-        if (data.xpGained) {
-          feedbackMsg += `\nYou earned ${data.xpGained} XP!`;
-        }
-
-        // Add level up info
-        if (data.levelUp) {
-          feedbackMsg += `\nLevel Up! You are now level ${data.level}!`;
-        }
-        
-        // Add badge info
-        if (data.badgeAwarded) {
-          feedbackMsg += `\nYou've earned a new badge for completing this course!`;
-        }
-
-        setFeedback(feedbackMsg);
-
-        // Trigger the XP notification popup and confetti when passing
-        if (passed) {
-          // First show confetti
-          setShowConfetti(true);
-          
-          // Then trigger notification
-          setNotificationTrigger({
-            show: true,
-            data: {
-              message: 'Final Exam Completed!',
-              courseId: quiz.courseId,
-              score: score,
-              xpGained: data.xpGained || 0,
-              gemsGained: data.gemsGained || 0,
-              levelUp: data.levelUp || false,
-              completionPercentage: 100,
-              badgeAwarded: data.badgeAwarded || false
+      // Dispatch badge notifications if any badges were awarded
+      if (data.newlyAwardedBadges && Array.isArray(data.newlyAwardedBadges)) {
+        data.newlyAwardedBadges.forEach(badge => {
+          if (badge && badge.id) { // Ensure badge and badge.id are valid
+            window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
             }
           });
-
-          // Turn off confetti after some time
-          setTimeout(() => {
-            setShowConfetti(false);
-          }, 5000);
-          
-          // Redirect to course details page after a delay
-          setTimeout(() => {
-            router.push(data.redirectUrl || `/course-details/${courseSlug}`);
-          }, 5000);
-        }
-      } else {
-        const data = await response.json();
-        setError(data.error || "Failed to submit quiz");
       }
-    } catch (error) {
-      console.error("Error submitting final exam:", error);
+      
+      // Redirect using the redirectUrl from the API response
+      if (data.redirectUrl) {
+        router.push(data.redirectUrl);
+      } else {
+        // Fallback redirect or error handling if redirectUrl is not present
+        toast.success("Exam submitted! Check your profile for results.");
+        router.push(`/profile`); 
+      }
+
+    } catch (err) {
+      console.error("Error submitting final exam:", err);
       setError("An error occurred while submitting the final exam");
     }
   };

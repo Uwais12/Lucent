@@ -18,90 +18,75 @@ export async function GET(request) {
     // 2) Connect to Mongo
     await connectToDatabase();
 
-    // 3) Find or create the user doc - using lean() for better performance
-    let user = await User.findOne({ clerkId: userId }).lean();
+    // 3) Find or create the user doc - NOT using lean() to allow method calls
+    let userDoc = await User.findOne({ clerkId: userId });
+    let isNewUser = false;
     
-    if (!user) {
+    if (!userDoc) {
       // Only create if not found
-      const newUser = new User({ clerkId: userId });
-      await newUser.save();
-      user = newUser.toObject();
-      
-      // Return immediately since we just created this user
-      return NextResponse.json(user, {
-        headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-          'Surrogate-Control': 'no-store'
-        }
-      });
+      userDoc = new User({ clerkId: userId });
+      // Initialize default fields for a new user if necessary (e.g., streak)
+      userDoc.dailyStreak = 0; 
+      isNewUser = true;
+      // Save immediately to have an _id and other defaults for subsequent operations
+      // Or, ensure updateDailyStreak and other logic correctly initializes for a brand new doc
+      // For simplicity, we can let updateDailyStreak handle first-time setup.
     }
+
+    let needsSave = false;
 
     // --- Daily Quiz Count Reset Logic ---
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Normalize to start of day
-    let needsQuizCountReset = false;
-    if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
-      needsQuizCountReset = true;
-      user.dailyQuizCount = 0; // Reset count
-      user.lastQuizDate = today; // Update last quiz date check
+    if (!userDoc.lastQuizDate || new Date(userDoc.lastQuizDate) < today) {
+      userDoc.dailyQuizCount = 0; // Reset count
+      userDoc.lastQuizDate = today; // Update last quiz date check
+      needsSave = true;
     }
     // --- End Quiz Count Reset Logic ---
 
-    // --- Streak Update Logic ---
-    const now = new Date();
-    const lastActivity = user.lastDailyActivity ? new Date(user.lastDailyActivity) : null;
-    let streakStatus = { broken: false };
-    let needsStreakUpdate = false;
+    // --- Streak Update Logic & Badge Awarding ---
+    const streakBeforeUpdate = userDoc.dailyStreak || 0;
+    // updateDailyStreak method handles its own logic for incrementing/resetting streak and lastDailyActivity
+    const awardedBadgesFromStreak = userDoc.updateDailyStreak(); 
     
-    if (lastActivity) {
-      // Check if last activity was yesterday or today
-      const diffDays = Math.floor((now - lastActivity) / (1000 * 60 * 60 * 24));
-      
-      if (diffDays === 0) {
-        // Already logged today, no streak update needed
-      } else if (diffDays === 1) {
-        // Last activity was yesterday, increment streak
-        needsStreakUpdate = true;
-        user.dailyStreak = (user.dailyStreak || 0) + 1; // Ensure dailyStreak exists
-        user.lastDailyActivity = now;
-      } else {
-        // Streak broken
-        needsStreakUpdate = true;
-        const oldStreak = user.dailyStreak;
-        user.dailyStreak = 1;
-        user.lastDailyActivity = now;
-        streakStatus = {
-          broken: true,
-          previousStreak: oldStreak
-        };
-      }
-    } else {
-      // First activity
-      needsStreakUpdate = true;
-      user.dailyStreak = 1;
-      user.lastDailyActivity = now;
+    let streakStatus = { broken: false, previousStreak: 0 };
+    // If streak is now 1, and it was > 1 before, it means it was broken and reset by updateDailyStreak.
+    // Or if it was 0 and became 1, it's a new streak.
+    // The updateDailyStreak method resets to 1 on a break.
+    if (userDoc.dailyStreak === 1 && streakBeforeUpdate > 1) {
+      streakStatus = {
+        broken: true,
+        previousStreak: streakBeforeUpdate
+      };
+    }
+    // If awardedBadgesFromStreak has items, or if streak value changed, or if it's a new user establishing a streak
+    if (awardedBadgesFromStreak?.length > 0 || userDoc.dailyStreak !== streakBeforeUpdate || isNewUser && userDoc.dailyStreak === 1) {
+      needsSave = true;
+    }
+    // --- End Streak Update Logic ---
+    
+    // Always update last overall activity
+    userDoc.lastActivity = new Date();
+    if (isNewUser) needsSave = true; // Ensure new user is saved
+
+    if (needsSave) {
+      await userDoc.save();
     }
     
-    // Combine updates if needed
-    if (needsQuizCountReset || needsStreakUpdate) {
-      await User.updateOne(
-        { clerkId: userId },
-        { 
-          $set: { 
-            ...(needsStreakUpdate && { dailyStreak: user.dailyStreak, lastDailyActivity: user.lastDailyActivity }),
-            ...(needsQuizCountReset && { dailyQuizCount: user.dailyQuizCount, lastQuizDate: user.lastQuizDate }),
-            lastActivity: now // Always update last overall activity
-          } 
-        }
-      );
-    }
+    // For a newly created user, the initial save within the if(!userDoc) block might be better
+    // Or, if we defer save until here, ensure all fields are set up by methods called.
+    // If isNewUser was true and save happened: fetch again or use the saved doc.
+    // For simplicity, current logic will save if needsSave is true.
+    // If new user, userDoc was new User({clerkId}), updateDailyStreak sets streak to 1 and lastDailyActivity.
+    // Then it gets saved here.
 
     // 4) Return user doc with streak status (and updated quiz count)
-    return NextResponse.json({
-      ...user,
-      streakStatus
+    const userObject = userDoc.toObject(); // Convert to plain object for response
+    let nr = NextResponse.json({
+      ...userObject,
+      streakStatus,
+      awardedBadges: awardedBadgesFromStreak || [] // Include badges from streak update
     }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
@@ -109,7 +94,9 @@ export async function GET(request) {
         'Expires': '0',
         'Surrogate-Control': 'no-store'
       }
-    });
+    })
+    console.log(nr)
+    return nr;
   } catch (err) {
     console.error("Error in GET /api/profile:", err);
     // Return a 500

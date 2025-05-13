@@ -55,6 +55,7 @@ export async function POST(req, { params }) {
     if (!courseProgress) {
       courseProgress = {
         courseId: course._id,
+        courseTitle: course.title,
         chapters: course.chapters.map(ch => ({
           chapterId: ch._id,
           completed: false,
@@ -168,22 +169,27 @@ export async function POST(req, { params }) {
         user.xp += courseXP;
 
         // Award course completion badge
-        if (!user.progress.badges) {
-          user.progress.badges = [];
+        // Ensure courseProgress.badges array exists
+        if (!courseProgress.badges) {
+          courseProgress.badges = [];
         }
         
-        // Check if badge already exists
-        const badgeExists = user.progress.badges.some(badge => 
-          badge.type === 'course_completion' && badge.courseId.toString() === course._id.toString()
+        // Check if badge already exists in this course's progress
+        const badgeExists = courseProgress.badges.some(badge => 
+          badge.type === 'course-completion' && badge.courseId && badge.courseId.toString() === course._id.toString()
         );
 
         if (!badgeExists) {
-          user.progress.badges.push({
-            type: 'course_completion',
-            courseId: course._id,
-            courseTitle: course.title,
-            dateEarned: new Date()
-          });
+          const badgeData = {
+            type: 'course-completion',
+            name: `${course.title} Master`, // Consistent naming
+            description: `Completed the ${course.title} course.`, // Add a default description
+            dateEarned: new Date(),
+            courseId: course._id.toString()
+          };
+          courseProgress.badges.push(badgeData);
+          // We might need a variable here if we want to include badgeAwarded in the response
+          // let courseBadgeAwarded = true; 
         }
       }
     }

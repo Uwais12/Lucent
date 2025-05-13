@@ -18,7 +18,10 @@ import {
   Clock,
   Edit,
   AlertCircle,
-  MessageSquare
+  MessageSquare,
+  ShieldCheck,
+  Star,
+  Lock
 } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -182,6 +185,45 @@ export default function ProfilePage() {
            'Course ' + course.courseId,
     percentage: course.completionPercentage || 0
   }));
+  
+  const renderBadgeCard = (badge, isEarned, keyPrefix = 'all') => {
+    const IconFromDef = badge.icon;
+    const iconUrlFromDef = badge.iconUrl;
+
+    return (
+      <div 
+        key={`${keyPrefix}-${badge.badgeId || badge.name}`}
+        className={`bg-white shadow-lg rounded-xl p-6 flex flex-col items-center text-center transform transition-all hover:scale-105 ${!isEarned ? 'opacity-60 grayscale' : ''}`}
+      >
+        {/* Icon Display Logic */}
+        {IconFromDef && (typeof IconFromDef === 'function' || (typeof IconFromDef === 'object' && IconFromDef !== null)) ? (
+          <IconFromDef className={`w-20 h-20 mb-4 ${isEarned ? 'text-violet-500' : 'text-gray-400'}`} />
+        ) : iconUrlFromDef ? (
+          <img src={iconUrlFromDef} alt={`${badge.name} badge`} className="w-20 h-20 mb-4 object-contain" />
+        ) : (
+          <div className={`w-20 h-20 mb-4 rounded-full flex items-center justify-center text-white ${isEarned ? 'bg-gradient-to-br from-violet-500 to-fuchsia-500' : 'bg-gray-300' }`}>
+            {isEarned ? <Award className="w-10 h-10" /> : <Lock className="w-10 h-10" />}
+          </div>
+        )}
+        <h3 className="text-lg font-semibold text-gray-800 mb-1">{badge.name}</h3>
+        <p className="text-sm text-gray-600 mb-2 flex-grow">{badge.description}</p>
+        {isEarned && badge.dateEarned && (
+           <p className="text-xs text-gray-400 mt-auto">Earned: {new Date(badge.dateEarned).toLocaleDateString()}</p>
+        )}
+        {!isEarned && <p className="text-xs text-amber-600 font-semibold mt-auto">Locked</p>}
+      </div>
+    );
+  };
+  
+  const globalBadges = userData?.badges || [];
+  const courseProgressList = userData?.progress?.courses || [];
+  
+  const earnedGlobalBadgeIds = new Set(userData?.badges?.map(b => b.badgeId) || []);
+  const earnedCourseBadgeIds = new Set(
+    userData?.progress?.courses?.flatMap(course => course.badges?.map(b => b.badgeId || b.name)) || []
+  );
+  
+  const milestoneBadgesToDisplay = userData?.badges?.filter(b => b.type === 'MILESTONE_QUIZ' || b.type === 'MILESTONE_STREAK') || [];
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -540,7 +582,7 @@ export default function ProfilePage() {
                           </div>
                           <p className="text-sm text-gray-600">
                             {dailyStreak > 0 
-                              ? "Keep it going! You&apos;re building a great habit." 
+                              ? "Keep it going! You are building a great habit." 
                               : "Start your learning streak today!"}
                           </p>
                   </div>
@@ -552,7 +594,7 @@ export default function ProfilePage() {
                           </div>
                           <p className="text-sm text-gray-600">
                             {totalXp > 0 
-                              ? "You&apos;re making great progress!" 
+                              ? "You are making great progress!" 
                               : "Complete lessons to earn XP!"}
                           </p>
                         </div>
@@ -561,65 +603,53 @@ export default function ProfilePage() {
                   </div>
                 )}
                 
-                {/* Settings Tab Content */}
-                {/* {activeTab === 'settings' && (
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Account Settings</h2>
-                    
-                    <div className="space-y-6">
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">Notification Preferences</h3>
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <input type="checkbox" id="daily-reminder" className="rounded text-violet-600 focus:ring-violet-500" />
-                              <label htmlFor="daily-reminder" className="text-sm text-gray-700">Daily learning reminders</label>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <input type="checkbox" id="weekly-summary" className="rounded text-violet-600 focus:ring-violet-500" />
-                              <label htmlFor="weekly-summary" className="text-sm text-gray-700">Weekly progress summary</label>
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <input type="checkbox" id="course-updates" className="rounded text-violet-600 focus:ring-violet-500" />
-                              <label htmlFor="course-updates" className="text-sm text-gray-700">New course announcements</label>
-                            </div>
-                          </div>
-                        </div>
+                {/* Global/Milestone Badges Section - Now shows ALL possible milestone badges */}
+                <section className="mb-12">
+                  <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-violet-500 pl-4">Achievements Roadmap</h2>
+                  {milestoneBadgesToDisplay.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                      {milestoneBadgesToDisplay.map(badgeDef => renderBadgeCard(badgeDef, earnedGlobalBadgeIds.has(badgeDef.badgeId), 'milestone'))}
                     </div>
-                    
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">Learning Preferences</h3>
-                        <div className="space-y-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Daily challenge difficulty</label>
-                            <select className="w-full rounded-lg border-gray-300 focus:border-violet-500 focus:ring-violet-500">
-                              <option>Easy</option>
-                              <option selected>Medium</option>
-                              <option>Hard</option>
-                              <option>Expert</option>
-                            </select>
+                  ) : (
+                    <p className="text-gray-600 bg-white p-6 rounded-lg shadow">No milestone achievements defined yet.</p>
+                  )}
+                </section>
+
+                {/* Earned Course Badges Section (remains largely the same, displays earned ones) */}
+                <section className="mb-12">
+                  <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-emerald-500 pl-4">Course Mastery Badges</h2>
+                  {courseProgressList.length > 0 && courseProgressList.some(cp => (cp.badges || []).length > 0) ? (
+                    <div className="space-y-8">
+                      {courseProgressList.map(course => {
+                        const courseSpecificBadges = course.badges || [];
+                        if (courseSpecificBadges.length === 0) return null;
+                        
+                        const courseTitle = course.courseTitle || `Course: ${course.courseId.slice(0,8)}...`;
+
+                        return (
+                          <div key={course.courseId} className="bg-white p-6 rounded-xl shadow-lg">
+                            <h3 className="text-xl font-semibold text-gray-700 mb-4">{courseTitle}</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                              {courseSpecificBadges.map(badge => (
+                                <div key={`${course.courseId}-${badge.name}`} className="bg-white shadow-lg rounded-xl p-6 flex flex-col items-center text-center transform transition-all hover:scale-105">
+                                  <div className={`w-20 h-20 mb-4 rounded-full flex items-center justify-center text-white bg-gradient-to-br from-emerald-500 to-green-500`}>
+                                    <BookOpen className="w-10 h-10" />
+                            </div>
+                                  <h3 className="text-lg font-semibold text-gray-800 mb-1">{badge.name}</h3>
+                                  <p className="text-sm text-gray-600 mb-2 flex-grow">{badge.description}</p>
+                                  <p className="text-xs text-gray-400 mt-auto">Earned: {new Date(badge.dateEarned).toLocaleDateString()}</p>
                           </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Daily learning goal (minutes)</label>
-                            <select className="w-full rounded-lg border-gray-300 focus:border-violet-500 focus:ring-violet-500">
-                              <option>5 minutes</option>
-                              <option>10 minutes</option>
-                              <option selected>15 minutes</option>
-                              <option>30 minutes</option>
-                              <option>45 minutes</option>
-                              <option>60 minutes</option>
-                            </select>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                  </div>
-                </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-gray-600 bg-white p-6 rounded-lg shadow">No course completion badges earned yet. Complete courses to see them here!</p>
+                  )}
+                </section>
               </div>
-            )} */}
-          </div>
         </div>
       </div>
         </div>

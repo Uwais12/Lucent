@@ -3,6 +3,7 @@ import { getAuth } from "@clerk/nextjs/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Course from "@/models/Course";
 import User from "@/models/User";
+import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
 
 export async function POST(req, { params }) {
   try {
@@ -139,11 +140,10 @@ export async function POST(req, { params }) {
     // We'll use 70% as a baseline for incrementing the daily count, similar to others.
     const isConsideredPassing = score >= 70;
     let quizCompletedSuccessfully = false;
-
-    // Calculate rewards based on score brackets
     let xpGained = 0;
     let gemsGained = 0;
     let levelUp = false;
+    let newlyAwardedBadges = [];
 
     // Find or create course progress
     let courseProgress = user.progress.courses.find(
@@ -230,11 +230,23 @@ export async function POST(req, { params }) {
         user.lastQuizCompletion = new Date(); 
         user.lastQuizDate = today; // Ensure lastQuizDate reflects today
         quizCompletedSuccessfully = true;
-    }
 
-    // Save user changes IF considered passing OR if it was a new high score (to save progress)
-    if (quizCompletedSuccessfully || isNewHighScore) {
-      await user.save();
+        // Try to award the "First Quiz Completed" badge if this quiz was successfully completed
+        const firstQuizBadgeDef = badgeDefinitions.FIRST_QUIZ_COMPLETED;
+        if (firstQuizBadgeDef) {
+          const wasFirstQuizBadgeAwarded = user.awardBadge({
+            badgeId: firstQuizBadgeDef.id,
+            name: firstQuizBadgeDef.name,
+            description: firstQuizBadgeDef.description,
+            iconUrl: firstQuizBadgeDef.iconUrl,
+            type: firstQuizBadgeDef.type
+          });
+          console.log("wasFirstQuizBadgeAwarded", wasFirstQuizBadgeAwarded);
+
+          if (wasFirstQuizBadgeAwarded) {
+            newlyAwardedBadges.push(firstQuizBadgeDef);
+          }
+        }
     }
 
     // Calculate completion percentage for the course
@@ -244,15 +256,22 @@ export async function POST(req, { params }) {
     );
     const completionPercentage = Math.round((completedLessons / totalLessons) * 100);
 
+    // Save user changes IF considered passing OR if it was a new high score (to save progress)
+    if (quizCompletedSuccessfully || isNewHighScore) {
+      await user.save();
+    }
+
     return NextResponse.json({
       score,
       xpGained: isNewHighScore ? xpGained : 0,
       gemsGained: isNewHighScore ? gemsGained : 0,
-      levelUp,
+      levelUp: isNewHighScore ? levelUp : false,
       completionPercentage,
-      dailyLimitReached: false, // Limit wasn't reached if we got here
-      quizzesTakenToday: user.dailyQuizCount, // Return updated count
-      maxQuizzesToday: maxDailyQuizzes // Return max allowed count
+      quizCompletedSuccessfully,
+      dailyLimitReached: false, // If we reached here, limit was not an issue for THIS quiz
+      quizzesTakenToday: user.dailyQuizCount,
+      maxQuizzesToday: maxDailyQuizzes,
+      awardedBadges: newlyAwardedBadges // Include awarded badges in the response
     });
   } catch (error) {
     console.error("Error completing quiz:", error);

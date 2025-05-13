@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense, useMemo, useCallback } from "react";
+import { useEffect, useState, Suspense, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -25,6 +25,7 @@ import { toast } from "react-hot-toast";
 import Navbar from "./components/Navbar";
 import XPNotification from "./components/XPNotification";
 import { useEnrollmentCheck } from '@/hooks/useEnrollmentCheck';
+import BadgeNotification from "./components/BadgeNotification";
 
 // Separate client component to handle search params
 function XPNotificationHandler() {
@@ -91,6 +92,8 @@ export default function Home() {
   const [enrollingCourseId, setEnrollingCourseId] = useState(null);
   const [canTakeQuizToday, setCanTakeQuizToday] = useState(true);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
+  const [badgeToNotify, setBadgeToNotify] = useState(null);
+  const notifiedBadgeIds = useRef(new Set());
   // Add new state variables for pagination and filtering
   const [visibleQuizzes, setVisibleQuizzes] = useState(6);
   const [selectedCourse, setSelectedCourse] = useState('all');
@@ -212,6 +215,15 @@ export default function Home() {
           // Use the courses data directly instead of making another call
           setDbCourses(Array.isArray(coursesData) ? coursesData : []);
           
+          // Check for newly awarded badges from profile data (e.g., streak badges)
+          if (profileData.awardedBadges && profileData.awardedBadges.length > 0) {
+            const firstNewBadge = profileData.awardedBadges[0];
+            if (!notifiedBadgeIds.current.has(firstNewBadge.id)) {
+              setBadgeToNotify(firstNewBadge);
+              notifiedBadgeIds.current.add(firstNewBadge.id);
+            }
+          }
+          
           // Check if user can take a quiz today
           if (profileData.lastQuizCompletion) {
             const lastQuizDate = new Date(profileData.lastQuizCompletion);
@@ -266,6 +278,20 @@ export default function Home() {
         .then(data => {
           setUserProfile(data);
           
+          // Check for newly awarded badges from profile data (e.g., streak badges) - also here for updates
+          if (data.awardedBadges && data.awardedBadges.length > 0) {
+            const firstNewBadge = data.awardedBadges[0];
+            // Avoid showing notification if it was *just* shown by the initial load logic
+            if (!badgeToNotify && !notifiedBadgeIds.current.has(firstNewBadge.id)) {
+              setBadgeToNotify(firstNewBadge);
+              notifiedBadgeIds.current.add(firstNewBadge.id);
+            } else if (badgeToNotify && firstNewBadge.id !== badgeToNotify.id && !notifiedBadgeIds.current.has(firstNewBadge.id)) {
+              // If a different badge notification is pending, prioritize the new one if not shown
+              setBadgeToNotify(firstNewBadge);
+              notifiedBadgeIds.current.add(firstNewBadge.id);
+            }
+          }
+
           // Determine max quizzes based on subscription tier
           const isPro = data.subscription?.tier === 'PRO' || data.subscription?.tier === 'ENTERPRISE';
           const maxDailyQuizzes = isPro ? 5 : 1;
@@ -478,6 +504,9 @@ export default function Home() {
     <div className="min-h-screen bg-background pattern-bg">
       <Navbar />
       <div className="color-bar w-full fixed top-16 left-0"></div>
+
+      {/* Badge Notification Modal */}
+      <BadgeNotification badge={badgeToNotify} onClose={() => setBadgeToNotify(null)} />
 
       <Suspense fallback={null}>
         <XPNotificationHandler />

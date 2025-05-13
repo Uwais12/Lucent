@@ -91,6 +91,16 @@ export default function ChapterQuiz() {
         if (data.gemsEarned) {
           toast.success(`+${data.gemsEarned} gems earned!`);
         }
+
+        // Dispatch badge notifications if any badges were awarded
+        if (data.newlyAwardedBadges && Array.isArray(data.newlyAwardedBadges)) {
+          data.newlyAwardedBadges.forEach(badge => {
+            if (badge && badge.id) { // Ensure badge and badge.id are valid
+              window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
+            }
+          });
+        }
+
         router.push(`/course-details/${quiz.courseSlug}`);
       } else {
         toast.error(data.message || "Failed to submit quiz");

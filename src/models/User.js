@@ -80,6 +80,7 @@ const ChapterProgressSchema = new mongoose.Schema({
 // Schema to track overall course progress
 const CourseProgressSchema = new mongoose.Schema({
   courseId: { type: String, required: true },
+  courseTitle: { type: String },
   enrolledDate: { type: Date, default: Date.now },
   completed: { type: Boolean, default: false },
   completionDate: { type: Date, default: null },
@@ -137,6 +138,16 @@ CourseProgressSchema.methods.calculateProgress = function() {
   this.completionPercentage = (completedLessons / totalLessons) * 100;
   return this.completionPercentage;
 };
+
+// New schema for storing awarded global/milestone badges on the User model
+const BadgeEntrySchema = new mongoose.Schema({
+  badgeId: { type: String, required: true }, // Unique ID from badgeDefinitions.js
+  name: { type: String, required: true },
+  description: { type: String },
+  iconUrl: { type: String },
+  type: { type: String, required: true },    // e.g., MILESTONE_QUIZ, MILESTONE_STREAK
+  dateEarned: { type: Date, default: Date.now }
+}, { _id: false });
 
 // Main user schema with detailed progress tracking
 const UserSchema = new mongoose.Schema(
@@ -245,6 +256,10 @@ const UserSchema = new mongoose.Schema(
       type: Date,
       default: null
     },
+    badges: { // Added top-level badges array for global/milestone badges
+      type: [BadgeEntrySchema],
+      default: []
+    },
     progress: {
       courses: [CourseProgressSchema],
       totalTimeSpent: { type: Number, default: 0 },
@@ -292,19 +307,32 @@ UserSchema.methods.updateDailyStreak = function() {
 
 // Method to award badge with validation
 UserSchema.methods.awardBadge = function(badgeData) {
-  if (!badgeData.type || !badgeData.name) {
-    throw new Error('Badge type and name are required');
+  if (!badgeData.badgeId || !badgeData.name || !badgeData.type) {
+    console.error('Badge badgeId, name, and type are required to award a badge.', badgeData);
+    // Consider not throwing here to prevent request failure, but log and return false.
+    // Or ensure calling functions handle this error gracefully.
+    // For now, keeping throw to align with original intent if type/name were critical.
+    throw new Error('Badge badgeId, name, and type are required');
+  }
+
+  // Initialize this.badges if it's undefined (e.g. for existing user documents before this field was added)
+  if (!Array.isArray(this.badges)) {
+    this.badges = [];
   }
   
-  const existingBadge = this.badges.find(b => b.type === badgeData.type);
+  const existingBadge = this.badges.find(b => b.badgeId === badgeData.badgeId); // Check by badgeId
   if (!existingBadge) {
     this.badges.push({
-      ...badgeData,
+      badgeId: badgeData.badgeId,
+      name: badgeData.name,
+      description: badgeData.description,
+      iconUrl: badgeData.iconUrl, // Make sure to save iconUrl
+      type: badgeData.type,       // And type
       dateEarned: new Date()
     });
-    return true;
+    return true; // Badge was awarded
   }
-  return false;
+  return false; // Badge already exists or was not awarded
 };
 
 // Method to update XP and level with rewards

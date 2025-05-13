@@ -56,6 +56,7 @@ export async function POST(req) {
     // Create course progress structure
     const courseProgress = {
       courseId: course._id,
+      courseTitle: course.title,
       enrolled: true,
       enrollmentDate: new Date(),
       completionPercentage: 0,
