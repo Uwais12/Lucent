@@ -588,7 +588,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                    {userProfile?.progress?.courses.reduce((total, course) => total + (course.badges?.length || 0), 0) || 0}
+                    {(userProfile?.badges?.length || 0) + (userProfile?.progress?.courses?.reduce((total, course) => total + (course.badges?.length || 0), 0) || 0)}
                   </h3>
                   <p className="text-xs sm:text-sm text-gray-600">Badges Earned</p>
                 </div>
