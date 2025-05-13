@@ -80,6 +80,31 @@ export async function POST(req) {
         clerkId: id,
         email: primaryEmail?.email_address,
         role: attributes.private_metadata?.role || 'USER',
+        // Initialize new fields for user creation
+        ...(eventType === 'user.created' && {
+          username: null, // Explicitly set to null initially
+          occupation: null,
+          profileSetupComplete: false,
+          workplace: { // Initialize workplace object to avoid issues if accessed before setup
+            company: null,
+            position: null,
+            industry: null,
+            yearsOfExperience: null
+          },
+          gems: 0, // Initial gems
+          xp: 0, // Initial XP
+          level: 1, // Initial level
+          dailyStreak: 0, // Initial streak
+          badges: [], // Initial badges
+          progress: { // Initial progress object
+            courses: [],
+            totalTimeSpent: 0,
+            completedCourses: 0,
+            completedLessons: 0,
+            completedExercises: 0,
+            averageScore: 0
+          }
+        })
       };
 
       // Update or create the user

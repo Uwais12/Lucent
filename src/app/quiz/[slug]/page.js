@@ -21,6 +21,8 @@ export default function QuizPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
   const [enrollmentChecked, setEnrollmentChecked] = useState(false);
+  const [hasPendingQuizNotification, setHasPendingQuizNotification] = useState(false);
+  const [stagedCompletionData, setStagedCompletionData] = useState(null);
 
   const fetchQuizData = useCallback(async () => {
     try {
@@ -63,6 +65,22 @@ export default function QuizPage() {
     initializeQuiz();
   }, [isLoaded, user, params.slug, checkEnrollment, enrollmentChecked, fetchQuizData]);
 
+  useEffect(() => {
+    const showPendingNotification = () => {
+      if (hasPendingQuizNotification && stagedCompletionData) {
+        setCompletionData(stagedCompletionData);
+        setShowNotification(true);
+        setHasPendingQuizNotification(false);
+        setStagedCompletionData(null);
+      }
+    };
+
+    window.addEventListener('badgeNotificationClosed', showPendingNotification);
+    return () => {
+      window.removeEventListener('badgeNotificationClosed', showPendingNotification);
+    };
+  }, [hasPendingQuizNotification, stagedCompletionData]);
+
   const handleQuizComplete = async (answers, isReturnToCourse = false) => {
     // If this is a return to course action and we have completion data
     if (isReturnToCourse && completionData?.redirectUrl) {
@@ -96,7 +114,9 @@ export default function QuizPage() {
       window.dispatchEvent(new Event('quizCompleted'));
 
       // Dispatch badge notifications if any badges were awarded
-      if (quizData.awardedBadges && Array.isArray(quizData.awardedBadges)) {
+      let badgesAwarded = false;
+      if (quizData.awardedBadges && Array.isArray(quizData.awardedBadges) && quizData.awardedBadges.length > 0) {
+        badgesAwarded = true;
         quizData.awardedBadges.forEach(badge => {
           if (badge && badge.id) { // Ensure badge and badge.id are valid
             window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
@@ -146,13 +166,16 @@ export default function QuizPage() {
       const redirectUrl = `/course-details/${courseSlug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}&completionPercentage=${completionInfo.completionPercentage}&courseId=${courseId}`;
 
       // Store all the completion data
-      setCompletionData({
-        ...completionInfo,
-        redirectUrl
-      });
+      setCompletionData(null); // Clear previous completion data
+      setShowNotification(false); // Hide previous notification
 
-      // Show XP notification for any score (to show feedback)
+      if (badgesAwarded) {
+        setStagedCompletionData({ ...completionInfo, redirectUrl });
+        setHasPendingQuizNotification(true);
+      } else {
+        setCompletionData({ ...completionInfo, redirectUrl });
       setShowNotification(true);
+      }
 
       return completionInfo;
 

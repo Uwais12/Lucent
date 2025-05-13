@@ -661,6 +661,13 @@ export default function CourseDetails() {
                           console.error('No exam slug found');
                           return;
                         }
+
+                        // Check if user can take a quiz today
+                        if (!course.userProgress?.completed && !canTakeQuizToday) {
+                          toast.error(`You&apos;ve reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
+                          return;
+                        }
+
                         setIsChecking(true);
                         try {
                           const isEnrolled = await checkEnrollment(course.endOfCourseExam.slug, 'course-exam');
@@ -682,7 +689,10 @@ export default function CourseDetails() {
                           : course.userProgress?.completionPercentage >= 100 
                             ? 'bg-violet-600 hover:bg-violet-700' 
                             : 'bg-violet-500 hover:bg-violet-600'
-                      } text-white rounded-lg transition-colors flex items-center justify-center gap-2`}
+                      } text-white rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                        (!course.userProgress?.completed && !canTakeQuizToday) ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                      disabled={isChecking || (!course.userProgress?.completed && !canTakeQuizToday)}
                     >
                       <GraduationCap className="w-5 h-5" />
                       {isChecking ? 'Checking...' : course.userProgress?.completed 

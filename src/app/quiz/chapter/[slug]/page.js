@@ -19,6 +19,8 @@ export default function ChapterQuiz() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [completionData, setCompletionData] = useState(null);
+  const [hasPendingQuizNotification, setHasPendingQuizNotification] = useState(false);
+  const [stagedCompletionData, setStagedCompletionData] = useState(null);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -38,7 +40,7 @@ export default function ChapterQuiz() {
     };
 
     fetchQuiz();
-  }, [params.slug]);
+  }, [params.slug, user]);
 
   useEffect(() => {
     if (timeLeft === null) return;
@@ -57,10 +59,71 @@ export default function ChapterQuiz() {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
+  useEffect(() => {
+    const showPendingNotification = () => {
+      if (hasPendingQuizNotification && stagedCompletionData) {
+        setCompletionData(stagedCompletionData);
+        setShowNotification(true);
+        setHasPendingQuizNotification(false);
+        setStagedCompletionData(null);
+      }
+    };
+
+    window.addEventListener('badgeNotificationClosed', showPendingNotification);
+    return () => {
+      window.removeEventListener('badgeNotificationClosed', showPendingNotification);
+    };
+  }, [hasPendingQuizNotification, stagedCompletionData]);
+
   const handleTimeUp = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    await handleSubmit([]);
+    try {
+      const response = await fetch(`/api/quizzes/chapter/${params.slug}/submit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id, // Assuming user.id is available
+          answers: quiz.questions.map(() => null), // Submit empty/null answers for time up
+          timeLeft: 0, // Time is up
+          isTimeUp: true
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit quiz due to time up");
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        toast.success("Time's up! Quiz submitted successfully!");
+        if (data.xpEarned) {
+          toast.success(`+${data.xpEarned} XP earned!`);
+        }
+        if (data.gemsEarned) {
+          toast.success(`+${data.gemsEarned} gems earned!`);
+        }
+
+        // Dispatch badge notifications if any badges were awarded
+        if (data.newlyAwardedBadges && Array.isArray(data.newlyAwardedBadges)) {
+          data.newlyAwardedBadges.forEach(badge => {
+            if (badge && badge.id) { // Ensure badge and badge.id are valid
+              window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
+            }
+          });
+        }
+        // The sequential logic for XPNotification is not needed here as handleTimeUp uses toasts directly.
+        // If badge pop-up appears, it will overlay, and then user proceeds. Toasts are less intrusive.
+        router.push(`/course-details/${quiz.courseSlug}`);
+      } else {
+        toast.error(data.message || "Failed to submit quiz due to time up");
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to submit quiz due to time up");
+    } finally {
+      setIsSubmitting(false); // Ensure this is reset
+    }
   };
 
   const handleSubmit = async (answers) => {
@@ -93,7 +156,9 @@ export default function ChapterQuiz() {
         }
 
         // Dispatch badge notifications if any badges were awarded
-        if (data.newlyAwardedBadges && Array.isArray(data.newlyAwardedBadges)) {
+        let badgesAwarded = false;
+        if (data.newlyAwardedBadges && Array.isArray(data.newlyAwardedBadges) && data.newlyAwardedBadges.length > 0) {
+          badgesAwarded = true;
           data.newlyAwardedBadges.forEach(badge => {
             if (badge && badge.id) { // Ensure badge and badge.id are valid
               window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
@@ -102,6 +167,39 @@ export default function ChapterQuiz() {
         }
 
         router.push(`/course-details/${quiz.courseSlug}`);
+
+        let completionInfo = {
+          score: data.score,
+          xpGained: data.xpEarned,
+          gemsGained: data.gemsEarned,
+          levelUp: data.levelUp,
+          completionPercentage: data.completionPercentage,
+          message: data.passed ? 'Chapter Quiz Completed Successfully! 🎉' : 'Quiz Submitted'
+        };
+
+        // Create redirect URL with XP notification parameters
+        const courseSlug = quiz.courseSlug;
+        const courseId = quiz.courseId;
+        
+        if (!courseSlug || !courseId) {
+          throw new Error('Course information not found');
+        }
+
+        const redirectUrl = `/course-details/${courseSlug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}&completionPercentage=${completionInfo.completionPercentage}&courseId=${courseId}`;
+
+        // Store all the completion data
+        setCompletionData(null);
+        setShowNotification(false);
+
+        if (badgesAwarded) {
+          setStagedCompletionData({ ...completionInfo, redirectUrl });
+          setHasPendingQuizNotification(true);
+        } else {
+          setCompletionData({ ...completionInfo, redirectUrl });
+          setShowNotification(true);
+        }
+
+        return completionInfo;
       } else {
         toast.error(data.message || "Failed to submit quiz");
       }
@@ -154,6 +252,17 @@ export default function ChapterQuiz() {
       // Dispatch quiz completion event
       window.dispatchEvent(new Event('quizCompleted'));
 
+      // Dispatch badge notifications if any badges were awarded
+      let badgesAwarded = false;
+      if (quizData.newlyAwardedBadges && Array.isArray(quizData.newlyAwardedBadges) && quizData.newlyAwardedBadges.length > 0) {
+        badgesAwarded = true;
+        quizData.newlyAwardedBadges.forEach(badge => {
+          if (badge && badge.id) { // Ensure badge and badge.id are valid
+            window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
+          }
+        });
+      }
+
       let completionInfo = {
         score: quizData.score,
         xpGained: quizData.xpEarned,
@@ -174,13 +283,16 @@ export default function ChapterQuiz() {
       const redirectUrl = `/course-details/${courseSlug}?xpGained=${completionInfo.xpGained}&gemsGained=${completionInfo.gemsGained}&levelUp=${completionInfo.levelUp}&completionPercentage=${completionInfo.completionPercentage}&courseId=${courseId}`;
 
       // Store all the completion data
-      setCompletionData({
-        ...completionInfo,
-        redirectUrl
-      });
+      setCompletionData(null);
+      setShowNotification(false);
 
-      // Show XP notification for any score (to show feedback)
+      if (badgesAwarded) {
+        setStagedCompletionData({ ...completionInfo, redirectUrl });
+        setHasPendingQuizNotification(true);
+      } else {
+        setCompletionData({ ...completionInfo, redirectUrl });
       setShowNotification(true);
+      }
 
       return completionInfo;
 
@@ -191,6 +303,13 @@ export default function ChapterQuiz() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Renamed from handleSubmit to handleQuizFormSubmit to avoid conflict with form's implicit submit
+  const handleQuizFormSubmit = (answersFromQuizComponent) => {
+    // This function is now called by the Quiz component's onComplete
+    // It then calls the main handleSubmit logic for this page.
+    handleSubmit(answersFromQuizComponent);
   };
 
   if (loading) {

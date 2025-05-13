@@ -79,6 +79,11 @@ export default function FinalExamPage() {
     height: typeof window !== "undefined" ? window.innerHeight : 0,
   });
   
+  // For XPNotification triggered by URL or direct call
+  const [xpTrigger, setXpTrigger] = useState({ show: false, data: null });
+  const [hasPendingQuizNotification, setHasPendingQuizNotification] = useState(false);
+  const [stagedCompletionData, setStagedCompletionData] = useState(null);
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleResize = () => {
@@ -134,6 +139,22 @@ export default function FinalExamPage() {
     fetchQuiz();
   }, [isLoaded, user, courseSlug]);
   
+  useEffect(() => {
+    const showPendingNotification = () => {
+      if (hasPendingQuizNotification && stagedCompletionData) {
+        setQuizResult(stagedCompletionData); // Use for the inline modal
+        setShowResultsPopup(true);          // Show the inline modal
+        setHasPendingQuizNotification(false);
+        setStagedCompletionData(null);
+      }
+    };
+
+    window.addEventListener('badgeNotificationClosed', showPendingNotification);
+    return () => {
+      window.removeEventListener('badgeNotificationClosed', showPendingNotification);
+    };
+  }, [hasPendingQuizNotification, stagedCompletionData]);
+  
   const handleAnswerChange = (questionIndex, answer) => {
     if (submitted) return; // Prevent changing answers after submission
     
@@ -178,8 +199,23 @@ export default function FinalExamPage() {
         throw new Error(data.error || "Failed to submit final exam");
       }
 
-      // Dispatch badge notifications if any badges were awarded
-      if (data.newlyAwardedBadges && Array.isArray(data.newlyAwardedBadges)) {
+      // Prepare data for XPNotification/results pop-up (structure might differ from other quizzes)
+      // This data will be passed to XPNotificationHandler or used for the inline results popup
+      const completionPopUpData = {
+        score: data.score,
+        passed: data.passed,
+        xpGained: data.xpGained,
+        gemsGained: data.gemsGained,
+        levelUp: data.levelUp,
+        // newlyAwardedBadges: data.newlyAwardedBadges, // Badges themselves are handled by GlobalNotificationHandler
+        message: data.passed ? "Exam Passed! Congratulations!" : "Exam Submitted.",
+        courseId: data.courseId,
+        // redirectUrl: data.redirectUrl // The page itself handles redirection or showing results here.
+      };
+
+      let badgesAwarded = false;
+      if (data.newlyAwardedBadges && Array.isArray(data.newlyAwardedBadges) && data.newlyAwardedBadges.length > 0) {
+        badgesAwarded = true;
         data.newlyAwardedBadges.forEach(badge => {
           if (badge && badge.id) { // Ensure badge and badge.id are valid
             window.dispatchEvent(new CustomEvent('showBadgeNotification', { detail: badge }));
@@ -187,14 +223,26 @@ export default function FinalExamPage() {
           });
       }
       
-      // Redirect using the redirectUrl from the API response
-      if (data.redirectUrl) {
-        router.push(data.redirectUrl);
+      // Logic for showing results popup or XP notification
+      // For this page, it seems to use `setQuizResult` and `setShowResultsPopup` for an inline modal
+      // AND also can redirect with parameters that might be picked up by XPNotificationHandler on the target page.
+      // Let's prioritize the inline popup controlled by `setShowResultsPopup` for the immediate feedback.
+
+      setQuizResult(completionPopUpData); // This state is used by the inline result modal
+
+      if (badgesAwarded) {
+        setStagedCompletionData(completionPopUpData); // Store data for when badge modal closes
+        setHasPendingQuizNotification(true);
+        // Do NOT setShowResultsPopup(true) yet
       } else {
-        // Fallback redirect or error handling if redirectUrl is not present
-        toast.success("Exam submitted! Check your profile for results.");
-        router.push(`/profile`); 
+        setShowResultsPopup(true); // Show results pop-up immediately if no badges
+        // If this page also uses the XPNotificationHandler directly for *immediate* feedback:
+        // setXpTrigger({ show: true, data: completionPopUpData }); 
       }
+
+      // The redirection is handled separately after the popup is closed, or by a button in the popup.
+      // If data.redirectUrl exists, it's often used after user interaction with the results popup.
+      // For now, we focus on sequencing the popups.
 
     } catch (err) {
       console.error("Error submitting final exam:", err);

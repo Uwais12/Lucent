@@ -26,6 +26,7 @@ import Navbar from "./components/Navbar";
 import XPNotification from "./components/XPNotification";
 import { useEnrollmentCheck } from '@/hooks/useEnrollmentCheck';
 import BadgeNotification from "./components/BadgeNotification";
+import ProfileSetupModal from "@/components/ProfileSetupModal";
 
 // Separate client component to handle search params
 function XPNotificationHandler() {
@@ -99,6 +100,7 @@ export default function Home() {
   const [selectedCourse, setSelectedCourse] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isProfileSetupModalOpen, setIsProfileSetupModalOpen] = useState(false);
 
   // Use useMemo for filteredQuizzes to prevent unnecessary recalculations
   const filteredQuizzes = useMemo(() => {
@@ -214,6 +216,11 @@ export default function Home() {
           
           // Use the courses data directly instead of making another call
           setDbCourses(Array.isArray(coursesData) ? coursesData : []);
+          
+          // Check if profile setup is needed
+          if (profileData && !profileData.profileSetupComplete) {
+            setIsProfileSetupModalOpen(true);
+          }
           
           // Check for newly awarded badges from profile data (e.g., streak badges)
           if (profileData.awardedBadges && profileData.awardedBadges.length > 0) {
@@ -468,6 +475,20 @@ export default function Home() {
     }
   }, [isChecking, canTakeQuizToday, checkEnrollment, router]);
 
+  const handleProfileSetupModalClose = (updatedUserData) => {
+    setIsProfileSetupModalOpen(false);
+    if (updatedUserData) {
+      setUserProfile(prev => ({ 
+        ...prev, 
+        ...updatedUserData, 
+        // Ensure workplace is properly merged if it's nested in updatedUserData.user
+        workplace: updatedUserData.workplace || prev.workplace 
+      }));
+      // Optionally, trigger a toast or other UI update
+      toast.success("Profile setup complete!");
+    }
+  };
+
   // Instead of using useMemo after conditional checks, use regular variables
   if (!isLoaded || isLoading) {
     return (
@@ -504,6 +525,17 @@ export default function Home() {
     <div className="min-h-screen bg-background pattern-bg">
       <Navbar />
       <div className="color-bar w-full fixed top-16 left-0"></div>
+
+      {/* Profile Setup Modal */}
+      {userProfile && (
+        <ProfileSetupModal
+          isOpen={isProfileSetupModalOpen}
+          onClose={handleProfileSetupModalClose}
+          currentUsername={userProfile.username || ''}
+          currentCompanyName={userProfile.workplace?.company || ''}
+          currentOccupation={userProfile.occupation || ''}
+        />
+      )}
 
       {/* Badge Notification Modal */}
       <BadgeNotification badge={badgeToNotify} onClose={() => setBadgeToNotify(null)} />

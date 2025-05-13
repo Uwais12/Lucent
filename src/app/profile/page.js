@@ -21,7 +21,8 @@ import {
   MessageSquare,
   ShieldCheck,
   Star,
-  Lock
+  Lock,
+  Share2
 } from 'lucide-react';
 
 export default function ProfilePage() {
@@ -182,9 +183,15 @@ export default function ProfilePage() {
     courseId: course.courseId,
     name: course.courseId === 'ddia' ? 'Designing Data-Intensive Applications' : 
            course.courseId === 'system-design' ? 'System Design Fundamentals' : 
-           'Course ' + course.courseId,
+           course.courseTitle || 'Course ' + course.courseId,
     percentage: course.completionPercentage || 0
   }));
+  
+  const handleShareToLinkedIn = (badgeName, badgeReason) => {
+    const text = `I&#39;ve just achieved the "${badgeName}" badge (${badgeReason}) on Lucent! \nStart your streak now: https://lucentapp.io/landing-page\n#LucentLearning #AchievementUnlocked`;
+    const linkedInUrl = `https://www.linkedin.com/shareArticle?mini=true&text=${encodeURIComponent(text)}`;
+    window.open(linkedInUrl, '_blank');
+  };
   
   const renderBadgeCard = (badge, isEarned, keyPrefix = 'all') => {
     const IconFromDef = badge.icon;
@@ -193,24 +200,34 @@ export default function ProfilePage() {
     return (
       <div 
         key={`${keyPrefix}-${badge.badgeId || badge.name}`}
-        className={`bg-white shadow-lg rounded-xl p-6 flex flex-col items-center text-center transform transition-all hover:scale-105 ${!isEarned ? 'opacity-60 grayscale' : ''}`}
+        className={`bg-white shadow-lg rounded-xl p-4 flex flex-col items-center text-center transform transition-all hover:scale-105 ${!isEarned ? 'opacity-60 grayscale' : ''}`}
       >
         {/* Icon Display Logic */}
         {IconFromDef && (typeof IconFromDef === 'function' || (typeof IconFromDef === 'object' && IconFromDef !== null)) ? (
-          <IconFromDef className={`w-20 h-20 mb-4 ${isEarned ? 'text-violet-500' : 'text-gray-400'}`} />
+          <IconFromDef className={`w-16 h-16 mb-3 ${isEarned ? 'text-violet-500' : 'text-gray-400'}`} />
         ) : iconUrlFromDef ? (
-          <img src={iconUrlFromDef} alt={`${badge.name} badge`} className="w-20 h-20 mb-4 object-contain" />
+          <img src={iconUrlFromDef} alt={`${badge.name} badge`} className="w-16 h-16 mb-3 object-contain" />
         ) : (
-          <div className={`w-20 h-20 mb-4 rounded-full flex items-center justify-center text-white ${isEarned ? 'bg-gradient-to-br from-violet-500 to-fuchsia-500' : 'bg-gray-300' }`}>
-            {isEarned ? <Award className="w-10 h-10" /> : <Lock className="w-10 h-10" />}
+          <div className={`w-16 h-16 mb-3 rounded-full flex items-center justify-center text-white ${isEarned ? 'bg-gradient-to-br from-violet-500 to-fuchsia-500' : 'bg-gray-300' }`}>
+            {isEarned ? <Award className="w-8 h-8" /> : <Lock className="w-8 h-8" />}
           </div>
         )}
         <h3 className="text-lg font-semibold text-gray-800 mb-1">{badge.name}</h3>
         <p className="text-sm text-gray-600 mb-2 flex-grow">{badge.description}</p>
         {isEarned && badge.dateEarned && (
-           <p className="text-xs text-gray-400 mt-auto">Earned: {new Date(badge.dateEarned).toLocaleDateString()}</p>
+           <p className="text-xs text-gray-400 mt-auto mb-3">Earned: {new Date(badge.dateEarned).toLocaleDateString()}</p>
         )}
-        {!isEarned && <p className="text-xs text-amber-600 font-semibold mt-auto">Locked</p>}
+        {!isEarned && <p className="text-xs text-amber-600 font-semibold mt-auto mb-3">Locked</p>}
+
+        {isEarned && (
+          <button 
+            onClick={() => handleShareToLinkedIn(badge.name, badge.description)} 
+            className="w-full mt-auto flex items-center justify-center gap-2 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium rounded-lg transition-colors duration-150 ease-in-out"
+          >
+            <Share2 size={14} />
+            Share on LinkedIn
+          </button>
+        )}
       </div>
     );
   };
@@ -226,138 +243,122 @@ export default function ProfilePage() {
   const milestoneBadgesToDisplay = userData?.badges?.filter(b => b.type === 'MILESTONE_QUIZ' || b.type === 'MILESTONE_STREAK') || [];
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       <Navbar />
       
-      <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+      <main className="pt-28 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-10">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                <h1 className="text-4xl font-bold text-gray-800">
                   Your Profile
                 </h1>
-                <div className="h-1 w-20 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-full"></div>
               </div>
-              
             </div>
       </div>
       
           {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Left Sidebar */}
-            <div className="lg:col-span-1">
-              {/* Profile Sidebar Content */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="lg:col-span-4 xl:col-span-3">
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
                 {/* User Info Summary */}
                 <div className="p-6 bg-gradient-to-br from-violet-600 to-fuchsia-600 text-white">
                   <div className="flex flex-col items-center text-center">
-                    <div className="w-24 h-24 rounded-full border-4 border-white mb-4 overflow-hidden">
-                  <img 
+                    <div className="w-28 h-28 rounded-full border-4 border-white/80 shadow-md mb-4 overflow-hidden">
+                  <img
                     src={user.imageUrl}
-                    alt={user.fullName || 'User'} 
+                    alt={userData?.username || user?.fullName || 'User'}
                         className="w-full h-full object-cover"
                   />
                     </div>
-                    <h2 className="text-xl font-bold mb-1">{user.fullName}</h2>
-                    <p className="text-sm text-violet-100">{user.primaryEmailAddress?.emailAddress}</p>
+                    <h2 className="text-2xl font-semibold mb-1">{userData?.username || user?.fullName || 'User'}</h2>
+                    <p className="text-sm text-violet-200">{user.primaryEmailAddress?.emailAddress}</p>
                   </div>
                 </div>
                 
                 {/* Navigation Tabs */}
                 <nav className="p-4">
-                  <ul className="space-y-1">
+                  <ul className="space-y-2">
                     <li>
                       <button
                         onClick={() => setActiveTab('account')}
-                        className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out ${
                           activeTab === 'account' 
-                          ? 'bg-violet-50 text-violet-700' 
-                          : 'text-gray-700 hover:bg-gray-50'
+                          ? 'bg-violet-100 text-violet-700 shadow-sm' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
                         }`}
                       >
-                        <User className="w-4 h-4" />
+                        <User className="w-5 h-5" />
                         Account Details
                       </button>
                     </li>
                     <li>
                       <button
                         onClick={() => setActiveTab('subscription')}
-                        className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out ${
                           activeTab === 'subscription' 
-                          ? 'bg-violet-50 text-violet-700' 
-                          : 'text-gray-700 hover:bg-gray-50'
+                          ? 'bg-violet-100 text-violet-700 shadow-sm' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
                         }`}
                       >
-                        <CreditCard className="w-4 h-4" />
+                        <CreditCard className="w-5 h-5" />
                         Subscription
                       </button>
                     </li>
                     <li>
                       <button
                         onClick={() => setActiveTab('progress')}
-                        className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out ${
                           activeTab === 'progress' 
-                          ? 'bg-violet-50 text-violet-700' 
-                          : 'text-gray-700 hover:bg-gray-50'
+                          ? 'bg-violet-100 text-violet-700 shadow-sm' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
                         }`}
                       >
-                        <Target className="w-4 h-4" />
+                        <Target className="w-5 h-5" />
                         Learning Progress
                       </button>
                     </li>
-                    <li>
+                     <li>
                       <Link
                         href="/reviews"
-                        className="w-full flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors text-gray-700 hover:bg-gray-50 hover:text-violet-700"
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out text-gray-600 hover:bg-gray-100 hover:text-gray-800"
                       >
-                        <MessageSquare className="w-4 h-4" />
-                        Reviews
+                        <MessageSquare className="w-5 h-5" />
+                        My Reviews
                       </Link>
-                    </li>
-                    <li>
-                  {/* <button
-                        onClick={() => setActiveTab('settings')}
-                        className={`w-full flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          activeTab === 'settings' 
-                          ? 'bg-violet-50 text-violet-700' 
-                          : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                  >
-                        <Settings className="w-4 h-4" />
-                        Settings
-                  </button> */}
                     </li>
                   </ul>
                 </nav>
                 
                 {/* Account Stats */}
-                <div className="bg-gray-50 p-4 border-t border-gray-200">
-                  <h3 className="text-sm font-medium text-gray-500 mb-3">Account Stats</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-violet-600" />
-                        <span className="text-sm text-gray-600">Member since</span>
+                <div className="bg-gray-50 p-6 border-t border-gray-200">
+                  <h3 className="text-md font-semibold text-gray-700 mb-4">Account Stats</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Calendar className="w-5 h-5 text-violet-600" />
+                        <span>Member since</span>
                       </div>
-                      <span className="text-sm font-medium">
+                      <span className="font-medium text-gray-800">
                         {new Date(user.createdAt).toLocaleDateString()}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Award className="w-4 h-4 text-emerald-600" />
-                        <span className="text-sm text-gray-600">Current streak</span>
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <Award className="w-5 h-5 text-emerald-500" />
+                        <span>Current streak</span>
                       </div>
-                      <span className="text-sm font-medium">{dailyStreak} {dailyStreak === 1 ? 'day' : 'days'}</span>
+                      <span className="font-medium text-gray-800">{dailyStreak} {dailyStreak === 1 ? 'day' : 'days'}</span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <BookOpen className="w-4 h-4 text-amber-600" />
-                        <span className="text-sm text-gray-600">Courses started</span>
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 text-gray-600">
+                        <BookOpen className="w-5 h-5 text-amber-500" />
+                        <span>Courses started</span>
                       </div>
-                      <span className="text-sm font-medium">{courseStartedCount}</span>
+                      <span className="font-medium text-gray-800">{courseStartedCount}</span>
                     </div>
                   </div>
                 </div>
@@ -365,120 +366,107 @@ export default function ProfilePage() {
             </div>
           
             {/* Right Content Area */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-8 xl:col-span-9">
               {/* Tab Content */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 sm:p-8">
                 {/* Account Tab Content */}
                 {activeTab === 'account' && (
-                  <div>
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xl font-bold text-gray-900">Account Details</h2>
-                      <button className="flex items-center gap-1 text-sm text-violet-600 hover:text-violet-800">
-                        <Edit className="w-4 h-4" />
-                        Edit
-                      </button>
-                    </div>
-                    
-                    {/* Non-functional links notification
-                    <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
-                      <h3 className="text-sm font-medium text-amber-800 mb-2">Implementation Needed</h3>
-                      <p className="text-sm text-amber-700 mb-2">The following links need to be implemented:</p>
-                      <ul className="list-disc list-inside text-sm text-amber-700 space-y-1">
-                        <li>Manage Account Settings (/user/account)</li>
-                        <li>Privacy & Security (/user/security)</li>
-                        <li>Edit profile functionality</li>
-                        <li>Profile picture upload</li>
-                        <li>Learning preferences functionality</li>
-                        <li>Notification preferences functionality</li>
-                      </ul>
-                    </div> */}
-                    
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
-                          <div className="text-gray-900 font-medium">{user.fullName}</div>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-500 mb-1">Email Address</label>
-                          <div className="text-gray-900 font-medium">{user.primaryEmailAddress?.emailAddress}</div>
-                        </div>
+                  <div className="space-y-8">
+                    <div>
+                      <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-2xl font-semibold text-gray-800">Account Details</h2>
                       </div>
                       
-                      {/* Workplace Information */}
-                      <div className="pt-4 border-t border-gray-200">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-medium text-gray-900">Workplace Information</h3>
-                          <button 
-                            onClick={handleUpdateWorkplace}
-                            disabled={isUpdating}
-                            className="flex items-center gap-1 text-sm text-violet-600 hover:text-violet-800"
-                          >
-                            {isUpdating ? (
-                              <span>Updating...</span>
-                            ) : (
-                              <>
-                                <Edit className="w-4 h-4" />
-                                Update
-                              </>
-                            )}
-                          </button>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Username</label>
+                            <p className="text-gray-900 font-medium text-md">{userData?.username || user?.fullName || 'Not set'}</p>
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Email Address</label>
+                            <p className="text-gray-900 font-medium text-md">{user.primaryEmailAddress?.emailAddress}</p>
+                          </div>
                         </div>
-                        
-                        {updateMessage.text && (
-                          <div className={`mb-4 p-3 rounded-lg ${
-                            updateMessage.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 
-                            'bg-red-50 text-red-800 border border-red-200'
-                          }`}>
-                            {updateMessage.text}
-                          </div>
-                        )}
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">Company</label>
-                            <input
-                              type="text"
-                              name="company"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
-                              placeholder="Where do you work?"
-                              value={workplaceForm.company}
-                              onChange={handleWorkplaceChange}
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">Position</label>
-                            <input
-                              type="text"
-                              name="position"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
-                              placeholder="Your job title"
-                              value={workplaceForm.position}
-                              onChange={handleWorkplaceChange}
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">Industry</label>
-                            <input
-                              type="text"
-                              name="industry"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
-                              placeholder="e.g. Technology, Finance, Healthcare"
-                              value={workplaceForm.industry}
-                              onChange={handleWorkplaceChange}
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-500 mb-1">Years of Experience</label>
-                            <input
-                              type="number"
-                              name="yearsOfExperience"
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
-                              placeholder="Years in the field"
-                              value={workplaceForm.yearsOfExperience}
-                              onChange={handleWorkplaceChange}
-                            />
-                          </div>
+                      </div>
+                    </div>
+                      
+                    {/* Workplace Information */}
+                    <div className="pt-8 border-t border-gray-200">
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-xl font-semibold text-gray-800">Workplace Information</h3>
+                        <button 
+                          onClick={handleUpdateWorkplace}
+                          disabled={isUpdating}
+                          className="px-4 py-2 flex items-center gap-2 text-sm bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-70 transition-colors"
+                        >
+                          {isUpdating ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
+                              <span>Updating...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Edit className="w-4 h-4" />
+                              Save Changes
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      
+                      {updateMessage.text && (
+                        <div className={`mb-4 p-3 rounded-lg ${
+                          updateMessage.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 
+                          'bg-red-50 text-red-800 border border-red-200'
+                        }`}>
+                          {updateMessage.text}
+                        </div>
+                      )}
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500 mb-1">Company</label>
+                          <input
+                            type="text"
+                            name="company"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            placeholder="Where do you work?"
+                            value={workplaceForm.company}
+                            onChange={handleWorkplaceChange}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500 mb-1">Position</label>
+                          <input
+                            type="text"
+                            name="position"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            placeholder="Your job title"
+                            value={workplaceForm.position}
+                            onChange={handleWorkplaceChange}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500 mb-1">Industry</label>
+                          <input
+                            type="text"
+                            name="industry"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            placeholder="e.g. Technology, Finance, Healthcare"
+                            value={workplaceForm.industry}
+                            onChange={handleWorkplaceChange}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-500 mb-1">Years of Experience</label>
+                          <input
+                            type="number"
+                            name="yearsOfExperience"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                            placeholder="Years in the field"
+                            value={workplaceForm.yearsOfExperience}
+                            onChange={handleWorkplaceChange}
+                          />
                         </div>
                       </div>
                     </div>
@@ -487,50 +475,56 @@ export default function ProfilePage() {
                 
                 {/* Subscription Tab Content */}
                 {activeTab === 'subscription' && (
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Your Subscription</h2>
+                  <div className="space-y-8">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-2">Your Subscription</h2>
             
-            {subscription && (
-                      <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                        <p className="font-medium flex items-center justify-between">
-                          <span>Current Plan:</span> 
-                          <span className="text-violet-600 font-bold">{subscription.tier}</span>
-                </p>
-                {!isFreeTier && (
-                  <>
-                            <p className="text-sm text-gray-600 mt-1 flex items-center justify-between">
-                              <span>Status:</span> 
-                              <span className={subscription.status === 'ACTIVE' ? 'text-green-600 font-medium' : 'text-amber-600 font-medium'}>
-                        {subscription.status.toLowerCase()}
-                      </span>
-                    </p>
-                    {formattedExpirationDate && (
-                              <p className="text-sm text-gray-600 mt-1 flex items-center justify-between">
-                                <span>Next billing date:</span>
-                                <span className="font-medium">
-                        {willCancel 
+                    {subscription && (
+                      <div className="mb-6 p-6 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
+                        <div className="flex justify-between items-center mb-3">
+                            <span className="text-sm text-gray-500 uppercase tracking-wider">Current Plan</span> 
+                            <span className={`px-3 py-1 text-xs font-semibold rounded-full ${subscription.tier === 'PRO' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{subscription.tier}</span>
+                        </div>
+                        {!isFreeTier && (
+                          <div className="space-y-2 mt-3">
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-gray-600">Status:</span> 
+                              <span className={`font-medium ${subscription.status === 'ACTIVE' ? 'text-green-600' : 'text-amber-600'}`}>
+                                {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1).toLowerCase()}
+                              </span>
+                            </div>
+                            {formattedExpirationDate && (
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-gray-600">Next billing date:</span>
+                                <span className="font-medium text-gray-800">
+                                  {willCancel 
                                     ? `Cancels on ${formattedExpirationDate}`
                                     : formattedExpirationDate}
                                 </span>
-                      </p>
+                              </div>
+                            )}
+                            <div className="pt-4">
+                              <button
+                                onClick={handleManageBilling}
+                                className="w-full px-4 py-2 bg-violet-600 text-white rounded-lg text-sm font-medium hover:bg-violet-700 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-opacity-50"
+                              >
+                                Manage Billing & Invoices
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     )}
-                    <div className="mt-4">
-                      <button
-                        onClick={handleManageBilling}
-                                className="px-4 py-2 bg-violet-600 text-white rounded-lg text-sm hover:bg-violet-700 transition-colors"
-                      >
-                        Manage Billing
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
             
-            {isFreeTier && (
-                      // Subscription plans content will go here
-                      <div>
-                <h3 className="font-medium text-lg mb-4">Upgrade Your Plan</h3>
+                    {isFreeTier && (
+                      <div className="p-6 bg-violet-50 rounded-lg border border-violet-200 text-center">
+                        <h3 className="font-semibold text-lg text-violet-800 mb-2">You are on the Free Plan</h3>
+                        <p className="text-sm text-violet-700 mb-4">Unlock premium features and accelerate your learning by upgrading to PRO.</p>
+                        <button 
+                          onClick={() => handleSubscribe('PRO')}
+                          className="inline-block px-6 py-2 bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white rounded-lg font-medium hover:opacity-90 transition-opacity"
+                        >
+                            View PRO Plans
+                        </button>
                       </div>
                     )}
                   </div>
@@ -538,64 +532,63 @@ export default function ProfilePage() {
                 
                 {/* Progress Tab Content */}
                 {activeTab === 'progress' && (
-                  <div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Your Progress</h2>
+                  <div className="space-y-8">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Your Learning Progress</h2>
                     
                     {error && (
-                      <div className="p-4 bg-red-50 border border-red-200 rounded-lg mb-6">
-                        <div className="flex items-center gap-2 text-red-600 mb-2">
+                      <div className="p-4 bg-red-100 border border-red-300 rounded-lg mb-6 shadow-sm">
+                        <div className="flex items-center gap-2 text-red-700 mb-2">
                           <AlertCircle className="w-5 h-5" />
-                          <p className="font-medium">Error Loading Data</p>
+                          <p className="font-semibold">Error Loading Progress</p>
                         </div>
-                        <p className="text-sm text-red-600">{error}</p>
+                        <p className="text-sm text-red-700">{error}</p>
                     </div>
                     )}
                     
-                    {/* Progress content will go here */}
                     <div className="space-y-6">
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <h3 className="text-lg font-medium text-gray-900 mb-4">Courses</h3>
-                        <div className="space-y-4">
+                      <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                        <h3 className="text-lg font-semibold text-gray-700 mb-4">Course Progress</h3>
+                        <div className="space-y-5">
                           {courseCompletionData.length > 0 ? (
                             courseCompletionData.map((course, index) => (
                               <div key={index}>
-                                <div className="flex justify-between mb-2">
-                                  <span className="text-sm font-medium">{course.name}</span>
-                                  <span className="text-sm text-violet-600 font-medium">{Math.round(course.percentage)}%</span>
+                                <div className="flex justify-between items-center mb-1">
+                                  <span className="text-sm font-medium text-gray-800">{course.name}</span>
+                                  <span className="text-sm text-violet-600 font-semibold">{Math.round(course.percentage)}%</span>
                                 </div>
-                                <div className="h-2 w-full bg-gray-200 rounded-full">
-                                  <div className="h-2 bg-violet-600 rounded-full" style={{ width: `${course.percentage}%` }}></div>
+                                <div className="h-2.5 w-full bg-gray-200 rounded-full">
+                                  <div className="h-2.5 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full transition-all duration-500 ease-out" style={{ width: `${course.percentage}%` }}></div>
                                 </div>
                               </div>
                             ))
                           ) : (
-                            <p className="text-sm text-gray-500">You haven't started any courses yet.</p>
+                            <p className="text-sm text-gray-500 italic">You haven&apos;t started any courses yet. Explore our courses and begin your learning journey!</p>
                           )}
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-lg font-medium text-gray-900">Daily Streak</h3>
-                            <span className="text-xl font-bold text-violet-600">{dailyStreak}</span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm text-center sm:text-left">
+                          <div className="flex flex-col sm:flex-row justify-between items-center mb-2">
+                            <h3 className="text-lg font-semibold text-gray-700">Daily Streak</h3>
+                            <span className="text-3xl font-bold text-violet-600">{dailyStreak}</span>
                           </div>
                           <p className="text-sm text-gray-600">
                             {dailyStreak > 0 
-                              ? "Keep it going! You are building a great habit." 
-                              : "Start your learning streak today!"}
+                              ? `Keep up the great work! You\'re on a ${dailyStreak}-day streak. 🔥` 
+                              : "Start your learning streak today by completing a lesson or quiz!"}
                           </p>
-                  </div>
+                        </div>
                   
-                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                          <div className="flex justify-between items-center mb-2">
-                            <h3 className="text-lg font-medium text-gray-900">Total XP</h3>
-                            <span className="text-xl font-bold text-violet-600">{totalXp.toLocaleString()}</span>
+                        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm text-center sm:text-left">
+                          <div className="flex flex-col sm:flex-row justify-between items-center mb-2">
+                            <h3 className="text-lg font-semibold text-gray-700">Total XP</h3>
+                            <span className="text-3xl font-bold text-violet-600">{totalXp.toLocaleString()}</span>
                           </div>
                           <p className="text-sm text-gray-600">
                             {totalXp > 0 
-                              ? "You are making great progress!" 
-                              : "Complete lessons to earn XP!"}
+                              ? "Fantastic! Every point counts towards mastery." 
+                              : "Complete lessons and quizzes to earn XP and level up!"}
                           </p>
                         </div>
                       </div>
@@ -607,7 +600,7 @@ export default function ProfilePage() {
                 <section className="mb-12">
                   <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-violet-500 pl-4">Achievements Roadmap</h2>
                   {milestoneBadgesToDisplay.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                       {milestoneBadgesToDisplay.map(badgeDef => renderBadgeCard(badgeDef, earnedGlobalBadgeIds.has(badgeDef.badgeId), 'milestone'))}
                     </div>
                   ) : (
@@ -619,7 +612,7 @@ export default function ProfilePage() {
                 <section className="mb-12">
                   <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-emerald-500 pl-4">Course Mastery Badges</h2>
                   {courseProgressList.length > 0 && courseProgressList.some(cp => (cp.badges || []).length > 0) ? (
-                    <div className="space-y-8">
+                    <div className="space-y-6">
                       {courseProgressList.map(course => {
                         const courseSpecificBadges = course.badges || [];
                         if (courseSpecificBadges.length === 0) return null;
@@ -629,17 +622,22 @@ export default function ProfilePage() {
                         return (
                           <div key={course.courseId} className="bg-white p-6 rounded-xl shadow-lg">
                             <h3 className="text-xl font-semibold text-gray-700 mb-4">{courseTitle}</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                              {courseSpecificBadges.map(badge => (
-                                <div key={`${course.courseId}-${badge.name}`} className="bg-white shadow-lg rounded-xl p-6 flex flex-col items-center text-center transform transition-all hover:scale-105">
-                                  <div className={`w-20 h-20 mb-4 rounded-full flex items-center justify-center text-white bg-gradient-to-br from-emerald-500 to-green-500`}>
-                                    <BookOpen className="w-10 h-10" />
-                            </div>
-                                  <h3 className="text-lg font-semibold text-gray-800 mb-1">{badge.name}</h3>
-                                  <p className="text-sm text-gray-600 mb-2 flex-grow">{badge.description}</p>
-                                  <p className="text-xs text-gray-400 mt-auto">Earned: {new Date(badge.dateEarned).toLocaleDateString()}</p>
-                          </div>
-                              ))}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                              {courseSpecificBadges.map(badge => {
+                                // All course badges are considered "earned" as they are listed under course.badges
+                                // We need to ensure the badge object passed to renderBadgeCard has a compatible structure
+                                const badgeDef = {
+                                  badgeId: badge.badgeId || badge.name, // Ensure a unique key
+                                  name: badge.name,
+                                  description: badge.description,
+                                  dateEarned: badge.dateEarned,
+                                  // Assuming course badges might not have predefined icons like global ones
+                                  // renderBadgeCard will handle default rendering or you can specify one here
+                                  icon: BookOpen, // Defaulting to BookOpen, or can be made dynamic
+                                  iconUrl: badge.iconUrl // if your course badges have specific icon URLs
+                                };
+                                return renderBadgeCard(badgeDef, true, `course-${course.courseId}`);
+                              })}
                             </div>
                           </div>
                         );
@@ -649,7 +647,7 @@ export default function ProfilePage() {
                     <p className="text-gray-600 bg-white p-6 rounded-lg shadow">No course completion badges earned yet. Complete courses to see them here!</p>
                   )}
                 </section>
-              </div>
+          </div>
         </div>
       </div>
         </div>

@@ -157,6 +157,19 @@ const UserSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    email: { // Clerk now manages primary email, this is for local reference/search
+      type: String,
+      required: false, // Not strictly required as Clerk is the source of truth
+      unique: true,
+      sparse: true, // Allows multiple nulls if not set
+    },
+    username: { // User-chosen display name, required after initial setup
+      type: String,
+      trim: true,
+      unique: true,
+      sparse: true, // Allows nulls to not conflict with unique index before setup
+      default: null,
+    },
     role: {
       type: String,
       enum: ["USER", "ADMIN"],
@@ -203,17 +216,16 @@ const UserSchema = new mongoose.Schema(
         default: false 
       }
     },
-    email: {
-      type: String,
-      required: false,
-      unique: true,
-      sparse: true,
-    },
     workplace: {
       company: { type: String, default: null },
-      position: { type: String, default: null },
+      position: { type: String, default: null }, // For specific job title
       industry: { type: String, default: null },
       yearsOfExperience: { type: Number, default: null }
+    },
+    occupation: { // Broader field for user's occupation
+      type: String,
+      trim: true,
+      default: null,
     },
     gems: {
       type: Number,
@@ -267,6 +279,10 @@ const UserSchema = new mongoose.Schema(
       completedLessons: { type: Number, default: 0 },
       completedExercises: { type: Number, default: 0 },
       averageScore: { type: Number, default: 0 }
+    },
+    profileSetupComplete: {
+      type: Boolean,
+      default: false,
     }
   },
   {
