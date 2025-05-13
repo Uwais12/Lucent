@@ -287,7 +287,7 @@ export default function Quiz({ questions, lessonSlug, onComplete }) {
                 </div>
                 <p className="text-gray-600">
                   {quizResults.score >= 70 
-                    ? "Congratulations! You&apos;ve passed the quiz! 🎉" 
+                    ? "Congratulations! You have passed the quiz! 🎉" 
                     : "Keep practicing! You can retake the quiz to improve your score."}
                 </p>
                 {quizResults.score >= 70 && (

@@ -259,7 +259,7 @@ export default function ContactPage() {
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Implementation</h3>
                 <p className="text-gray-600">
-                  If approved, your feature will be added to our development roadmap and you&apos;ll be notified when it launches.
+                  If approved, your feature will be added to our development roadmap and you will be notified when it launches.
                 </p>
               </div>
             </div>

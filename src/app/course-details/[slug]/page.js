@@ -282,7 +282,7 @@ export default function CourseDetails() {
 
                     // Check if user can take a quiz today
                     if (!canTakeQuizToday) {
-                      toast.error(`You&apos;ve reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
+                      toast.error(`You have reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
                       return;
                     }
                     
@@ -383,7 +383,7 @@ export default function CourseDetails() {
                   {/* Learning Outcomes */}
                   <div className="card p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                      What You&apos;ll Learn
+                      What You'll Learn
                     </h3>
                     <ul className="space-y-3">
                       {course.learningOutcomes.map((outcome, index) => (
@@ -491,7 +491,7 @@ export default function CourseDetails() {
                                     onClick={(e) => {
                                       e.preventDefault();
                                       if (!canTakeQuizToday) {
-                                        toast.error(`You&apos;ve reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
+                                        toast.error(`You have reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
                                         return;
                                       }
                                       router.push(`/lesson/${lesson.slug}`);
@@ -556,7 +556,7 @@ export default function CourseDetails() {
                                   onClick={async (e) => {
                                     e.preventDefault();
                                     if (!canTakeQuizToday) {
-                                      toast.error(`You&apos;ve reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
+                                      toast.error(`You have reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
                                       return;
                                     }
                                     setIsChecking(true);
@@ -664,7 +664,7 @@ export default function CourseDetails() {
 
                         // Check if user can take a quiz today
                         if (!course.userProgress?.completed && !canTakeQuizToday) {
-                          toast.error(`You&apos;ve reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
+                          toast.error(`You have reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
                           return;
                         }
 
@@ -798,13 +798,13 @@ export default function CourseDetails() {
             Ready to start learning?
           </h3>
           <div className="space-y-4 text-gray-600">
-            <p>You&apos;re about to enroll in <strong>{course?.title}</strong>.</p>
-            <p>Here&apos;s what you need to know:</p>
+            <p>You're about to enroll in <strong>{course?.title}</strong>.</p>
+            <p>Heres what you need to know:</p>
             <ul className="list-disc pl-5 space-y-2">
               <li>You can only complete one lesson per day</li>
               <li>Each lesson includes interactive exercises and a mini quiz</li>
               <li>There will be a comprehensive course quiz at the end</li>
-              <li>Upon completion, you&apos;ll earn:
+              <li>Upon completion, you'll earn:
                 <ul className="list-disc pl-5 mt-2">
                   <li>XP points for your progress</li>
                   <li>Gems for completing exercises and quizzes</li>

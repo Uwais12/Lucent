@@ -216,7 +216,7 @@ export default function CourseDetails() {
 
                   {/* Learning Outcomes */}
                   <div className="card p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">What You&apos;ll Learn</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">What You'll Learn</h3>
                     <ul className="space-y-3">
                       {course.learningOutcomes.map((outcome, index) => (
                         <li key={index} className="flex items-start gap-3">
@@ -354,13 +354,13 @@ export default function CourseDetails() {
             Ready to start learning?
           </h3>
           <div className="space-y-4 text-gray-600">
-            <p>You&apos;re about to enroll in <strong>{course?.title}</strong>.</p>
+            <p>You're about to enroll in <strong>{course?.title}</strong>.</p>
             <p>Here&apos;s what you need to know:</p>
             <ul className="list-disc pl-5 space-y-2">
               <li>You can only complete one lesson per day</li>
               <li>Each lesson includes interactive exercises and a mini quiz</li>
               <li>There will be a comprehensive course quiz at the end</li>
-              <li>Upon completion, you&apos;ll earn:
+              <li>Upon completion, youll earn:
                 <ul className="list-disc pl-5 mt-2">
                   <li>XP points for your progress</li>
                   <li>Gems for completing exercises and quizzes</li>

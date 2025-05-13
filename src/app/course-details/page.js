@@ -151,7 +151,7 @@ export default function CourseDetails() {
 
                   {/* Learning Outcomes */}
                   <div className="card p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">What You&apos;ll Learn</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">What You'll Learn</h3>
                     <ul className="space-y-3">
                       {course.outcomes.map((outcome, index) => (
                         <li key={index} className="flex items-start gap-3">
