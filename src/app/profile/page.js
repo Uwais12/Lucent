@@ -321,6 +321,19 @@ export default function ProfilePage() {
                         Learning Progress
                       </button>
                     </li>
+                    <li>
+                      <button
+                        onClick={() => setActiveTab('achievements')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out ${
+                          activeTab === 'achievements' 
+                          ? 'bg-violet-100 text-violet-700 shadow-sm' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+                        }`}
+                      >
+                        <Award className="w-5 h-5" />
+                        Achievements
+                      </button>
+                    </li>
                      <li>
                       <Link
                         href="/reviews"
@@ -596,60 +609,63 @@ export default function ProfilePage() {
                   </div>
                 )}
                 
-                {/* Global/Milestone Badges Section - Now shows ALL possible milestone badges */}
-                <section className="mb-12">
-                  <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-violet-500 pl-4">Achievements Roadmap</h2>
-                  {milestoneBadgesToDisplay.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                      {milestoneBadgesToDisplay.map(badgeDef => renderBadgeCard(badgeDef, earnedGlobalBadgeIds.has(badgeDef.badgeId), 'milestone'))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-600 bg-white p-6 rounded-lg shadow">No milestone achievements defined yet.</p>
-                  )}
-                </section>
+                {/* Achievements Tab Content */}
+                {activeTab === 'achievements' && (
+                  <div className="space-y-8">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Your Achievements</h2>
+                    
+                    {/* Global/Milestone Badges Section */}
+                    <section className="mb-12">
+                      <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-violet-500 pl-4">Achievements Roadmap</h2>
+                      {milestoneBadgesToDisplay.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                          {milestoneBadgesToDisplay.map(badgeDef => renderBadgeCard(badgeDef, earnedGlobalBadgeIds.has(badgeDef.badgeId), 'milestone'))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-600 bg-white p-6 rounded-lg shadow">No milestone achievements defined yet.</p>
+                      )}
+                    </section>
 
-                {/* Earned Course Badges Section (remains largely the same, displays earned ones) */}
-                <section className="mb-12">
-                  <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-emerald-500 pl-4">Course Mastery Badges</h2>
-                  {courseProgressList.length > 0 && courseProgressList.some(cp => (cp.badges || []).length > 0) ? (
-                    <div className="space-y-6">
-                      {courseProgressList.map(course => {
-                        const courseSpecificBadges = course.badges || [];
-                        if (courseSpecificBadges.length === 0) return null;
-                        
-                        const courseTitle = course.courseTitle || `Course: ${course.courseId.slice(0,8)}...`;
+                    {/* Earned Course Badges Section */}
+                    <section className="mb-12">
+                      <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 border-l-4 border-emerald-500 pl-4">Course Mastery Badges</h2>
+                      {courseProgressList.length > 0 && courseProgressList.some(cp => (cp.badges || []).length > 0) ? (
+                        <div className="space-y-6">
+                          {courseProgressList.map(course => {
+                            const courseSpecificBadges = course.badges || [];
+                            if (courseSpecificBadges.length === 0) return null;
+                            
+                            const courseTitle = course.courseTitle || `Course: ${course.courseId.slice(0,8)}...`;
 
-                        return (
-                          <div key={course.courseId} className="bg-white p-6 rounded-xl shadow-lg">
-                            <h3 className="text-xl font-semibold text-gray-700 mb-4">{courseTitle}</h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                              {courseSpecificBadges.map(badge => {
-                                // All course badges are considered "earned" as they are listed under course.badges
-                                // We need to ensure the badge object passed to renderBadgeCard has a compatible structure
-                                const badgeDef = {
-                                  badgeId: badge.badgeId || badge.name, // Ensure a unique key
-                                  name: badge.name,
-                                  description: badge.description,
-                                  dateEarned: badge.dateEarned,
-                                  // Assuming course badges might not have predefined icons like global ones
-                                  // renderBadgeCard will handle default rendering or you can specify one here
-                                  icon: BookOpen, // Defaulting to BookOpen, or can be made dynamic
-                                  iconUrl: badge.iconUrl // if your course badges have specific icon URLs
-                                };
-                                return renderBadgeCard(badgeDef, true, `course-${course.courseId}`);
-                              })}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="text-gray-600 bg-white p-6 rounded-lg shadow">No course completion badges earned yet. Complete courses to see them here!</p>
-                  )}
-                </section>
+                            return (
+                              <div key={course.courseId} className="bg-white p-6 rounded-xl shadow-lg">
+                                <h3 className="text-xl font-semibold text-gray-700 mb-4">{courseTitle}</h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                  {courseSpecificBadges.map(badge => {
+                                    const badgeDef = {
+                                      badgeId: badge.badgeId || badge.name,
+                                      name: badge.name,
+                                      description: badge.description,
+                                      dateEarned: badge.dateEarned,
+                                      icon: BookOpen, 
+                                      iconUrl: badge.iconUrl 
+                                    };
+                                    return renderBadgeCard(badgeDef, true, `course-${course.courseId}`);
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <p className="text-gray-600 bg-white p-6 rounded-lg shadow">No course completion badges earned yet. Complete courses to see them here!</p>
+                      )}
+                    </section>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
         </div>
       </main>
     </div>
