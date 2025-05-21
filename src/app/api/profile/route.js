@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
+import mongoose from "mongoose";
 
 // Add a short revalidation time for profile data
 // export const revalidate = 60; // 1 minute // Removing this line
@@ -24,7 +25,10 @@ export async function GET(request) {
     
     if (!userDoc) {
       // Only create if not found
-      userDoc = new User({ clerkId: userId });
+      userDoc = new User({ 
+        clerkId: userId,
+        username: `user_${new mongoose.Types.ObjectId().toString()}`
+      });
       // Initialize default fields for a new user if necessary (e.g., streak)
       userDoc.dailyStreak = 0; 
       isNewUser = true;
