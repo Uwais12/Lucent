@@ -20,7 +20,7 @@
     "marked": "^9.0.0",
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.5",
-    "next": "15.1.6",
+    "next": "^15.5.12",
     "ngrok": "^5.0.0-beta.2",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
