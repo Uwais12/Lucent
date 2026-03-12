@@ -359,7 +359,7 @@ export const designPatternsCourse = {
             {
               title: "The Strategy Pattern Defined",
               content:
-                "**Strategy Pattern:** Defines a family of algorithms, encapsulates each one, and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.\n\n* **Benefits:**\n    * Provides an alternative to subclassing for varying behavior.\n    * Keeps algorithm logic separate from the context class (`Duck`).\n    * Allows changing algorithms dynamically at runtime.\n    * Promotes Open/Closed Principle (add new behaviors without modifying `Duck`).\n\nThis pattern is fundamental for creating flexible and maintainable systems where parts of an algorithm need to vary.",
+                "**Strategy Pattern:** Defines a family of algorithms, encapsulates each one, and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.\n\n**UML-like Structure:**\n```\n+------------------+       +--------------------+\n|     Context      |<>---->|  <<interface>>     |\n|------------------|       |    Strategy        |\n| - strategy       |       |--------------------|  \n| + performAction()|       | + algorithm()      |\n| + setStrategy()  |       +--------------------+\n+------------------+            ^          ^\n                                |          |\n                      +---------+  +-------+-------+\n                      |ConcreteA|  |ConcreteB      |\n                      +---------+  +---------------+\n```\n\n* **Benefits:**\n    * Provides an alternative to subclassing for varying behavior.\n    * Keeps algorithm logic separate from the context class.\n    * Allows changing algorithms dynamically at runtime.\n    * Promotes Open/Closed Principle (add new behaviors without modifying the context class).\n\n* **Real-World Examples:**\n    * Java's `Comparator` interface is a Strategy -- you pass different sorting strategies to `Collections.sort()`.\n    * Payment processing systems use Strategy for different payment methods (CreditCard, PayPal, Crypto).\n    * React Router uses strategy-like patterns for different routing algorithms.\n\n* **Common Pitfalls:**\n    * Over-engineering: Don't create a Strategy interface for behavior that will never vary.\n    * Too many strategies: If you have dozens of strategies, consider whether a configuration-driven approach might be simpler.\n    * Forgetting to set a default: Ensure the context has a sensible default strategy to avoid null pointer errors.\n\nThis pattern is fundamental for creating flexible and maintainable systems where parts of an algorithm need to vary.",
               order: 3,
               duration: 15,
               exercise: {
@@ -3336,109 +3336,230 @@ export const designPatternsCourse = {
   // Existing endOfCourseExam from user prompt - Needs expansion based on full course content
   endOfCourseExam: {
     title: "Design Patterns Final Exam",
-    description: "Comprehensive test of all design patterns and principles covered in the course.",
-    duration: 60, // Should likely be longer, e.g., 90
+    description: "Comprehensive test of all design patterns and principles covered in the course. Includes pattern identification, comparison, scenario-based design questions, and real-world framework recognition.",
+    duration: 90,
     passingScore: 80,
-    slug: "design-patterns-final-exam", // Updated slug
+    slug: "design-patterns-final-exam",
     questions: [
-      { // Existing Q1 - Singleton (Ch 5)
+      // --- SECTION 1: Pattern Identification ---
+      {
         type: "multiple-choice",
         question: "Which pattern ensures a class has only one instance and provides a global point of access?",
         options: ["Factory Method", "Singleton", "Decorator", "Proxy"],
         correctAnswer: "Singleton",
-        points: 10 // Adjusted points
+        points: 5
       },
-      { // New - Strategy (Ch 1)
+      {
         type: "multiple-choice",
         question: "Which pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable?",
         options: ["Observer", "Strategy", "Command", "State"],
         correctAnswer: "Strategy",
-        points: 10
+        points: 5
       },
-      { // New - Observer (Ch 2)
+      {
         type: "multiple-choice",
         question: "Which pattern defines a one-to-many dependency where objects are notified automatically of state changes?",
         options: ["Decorator", "Observer", "Adapter", "Facade"],
         correctAnswer: "Observer",
-        points: 10
+        points: 5
       },
-      { // New - Decorator (Ch 3)
+      {
         type: "multiple-choice",
         question: "Which pattern attaches additional responsibilities to an object dynamically?",
         options: ["Singleton", "Command", "Decorator", "Template Method"],
         correctAnswer: "Decorator",
-        points: 10
+        points: 5
       },
-      { // New - Factory Method (Ch 4)
+      {
         type: "multiple-choice",
         question: "Which pattern defers object instantiation to subclasses?",
         options: ["Abstract Factory", "Singleton", "Factory Method", "Builder"],
         correctAnswer: "Factory Method",
-        points: 10
+        points: 5
       },
-      { // New - Command (Ch 6)
+      {
         type: "multiple-choice",
         question: "Which pattern encapsulates a request as an object?",
         options: ["Command", "State", "Proxy", "Iterator"],
         correctAnswer: "Command",
-        points: 10
+        points: 5
       },
-      { // New - Adapter (Ch 7)
+      {
         type: "multiple-choice",
         question: "Which pattern converts an interface into another interface clients expect?",
         options: ["Facade", "Adapter", "Bridge", "Composite"],
         correctAnswer: "Adapter",
-        points: 10
+        points: 5
       },
-      { // New - Facade (Ch 7)
+      {
         type: "multiple-choice",
         question: "Which pattern provides a simplified, unified interface to a complex subsystem?",
         options: ["Adapter", "Decorator", "Proxy", "Facade"],
         correctAnswer: "Facade",
-        points: 10
+        points: 5
       },
-      { // New - Template Method (Ch 8)
+      {
         type: "multiple-choice",
         question: "Which pattern defines an algorithm's skeleton but lets subclasses override specific steps?",
         options: ["Strategy", "Template Method", "State", "Command"],
         correctAnswer: "Template Method",
-        points: 10
+        points: 5
       },
-      { // New - Iterator (Ch 9)
+      {
         type: "multiple-choice",
         question: "Which pattern provides sequential access to elements of a collection without exposing its internal structure?",
         options: ["Composite", "Iterator", "Flyweight", "Visitor"],
         correctAnswer: "Iterator",
-        points: 10
+        points: 5
       },
-       { // New - Composite (Ch 9)
+      {
         type: "multiple-choice",
         question: "Which pattern allows clients to treat individual objects and compositions of objects uniformly?",
         options: ["Composite", "Decorator", "Bridge", "Proxy"],
         correctAnswer: "Composite",
-        points: 10
+        points: 5
       },
-       { // New - State (Ch 10)
+      {
         type: "multiple-choice",
         question: "Which pattern allows an object to change its behavior when its internal state changes?",
         options: ["Strategy", "Command", "State", "Observer"],
         correctAnswer: "State",
-        points: 10
+        points: 5
       },
-       { // New - Proxy (Ch 11)
+      {
         type: "multiple-choice",
         question: "Which pattern provides a surrogate or placeholder to control access to another object?",
         options: ["Adapter", "Facade", "Decorator", "Proxy"],
         correctAnswer: "Proxy",
+        points: 5
+      },
+      // --- SECTION 2: Comparative Questions ---
+      {
+        type: "multiple-choice",
+        question: "Both Decorator and Proxy wrap another object and implement the same interface. What is the key difference in their intent?",
+        options: [
+          "A) Decorator controls access; Proxy adds behavior.",
+          "B) Decorator dynamically adds responsibilities/behavior; Proxy controls access (lazy loading, security, remote access).",
+          "C) They are interchangeable with no meaningful difference.",
+          "D) Decorator uses inheritance; Proxy uses composition."
+        ],
+        correctAnswer: "B) Decorator dynamically adds responsibilities/behavior; Proxy controls access (lazy loading, security, remote access).",
         points: 10
       },
-       { // New - MVC (Ch 12)
+      {
+        type: "multiple-choice",
+        question: "Strategy and Template Method both allow varying parts of an algorithm. How do they differ in approach?",
+        options: [
+          "A) Strategy uses composition (delegate to a separate object); Template Method uses inheritance (subclass overrides specific steps).",
+          "B) Strategy uses inheritance; Template Method uses composition.",
+          "C) Strategy can only be used with interfaces; Template Method only with abstract classes.",
+          "D) There is no meaningful difference in approach."
+        ],
+        correctAnswer: "A) Strategy uses composition (delegate to a separate object); Template Method uses inheritance (subclass overrides specific steps).",
+        points: 10
+      },
+      {
+        type: "multiple-choice",
+        question: "How does Factory Method differ from Abstract Factory?",
+        options: [
+          "A) Factory Method creates families of objects; Abstract Factory creates a single object.",
+          "B) Factory Method uses inheritance (subclass overrides a creation method for one product); Abstract Factory uses composition (an object with multiple creation methods for a family of related products).",
+          "C) They are identical patterns with different names.",
+          "D) Abstract Factory is simpler than Factory Method."
+        ],
+        correctAnswer: "B) Factory Method uses inheritance (subclass overrides a creation method for one product); Abstract Factory uses composition (an object with multiple creation methods for a family of related products).",
+        points: 10
+      },
+      // --- SECTION 3: Multi-Pattern / Scenario Questions ---
+      {
+        type: "multiple-choice",
+        question: "You are building an e-commerce system. Orders go through states (Pending, Paid, Shipped, Delivered, Cancelled). Each state has different allowed actions. Users can undo their last action. Which combination of patterns BEST addresses these requirements?",
+        options: [
+          "A) Singleton for the order + Observer for status updates.",
+          "B) State pattern for order lifecycle management + Command pattern for undoable actions.",
+          "C) Strategy for order processing + Factory for creating orders.",
+          "D) Decorator for adding order features + Iterator for processing orders."
+        ],
+        correctAnswer: "B) State pattern for order lifecycle management + Command pattern for undoable actions.",
+        points: 15,
+        explanation: "State pattern cleanly handles the different behaviors and transitions for each order state. Command pattern encapsulates actions as objects and supports undo via stored command history."
+      },
+      {
+        type: "multiple-choice",
+        question: "You are designing a document editor. Documents can contain text elements, images, and groups of elements (which themselves can contain elements). Users need to apply formatting operations (bold, resize) uniformly to single elements or groups. Which patterns work together here?",
+        options: [
+          "A) Observer + Singleton",
+          "B) Composite for the element hierarchy + Decorator for adding formatting behaviors",
+          "C) Factory Method + Adapter",
+          "D) Template Method + Iterator"
+        ],
+        correctAnswer: "B) Composite for the element hierarchy + Decorator for adding formatting behaviors",
+        points: 15,
+        explanation: "Composite lets you treat individual elements and groups uniformly through a tree structure. Decorator allows dynamically attaching formatting behaviors (bold, italic, border) to any element without modifying the element classes."
+      },
+      // --- SECTION 4: System Design Question ---
+      {
+        type: "code-challenge",
+        title: "Design a Notification System Using Compound Patterns",
+        description: "Design a notification delivery system combining multiple patterns.",
+        points: 20,
+        difficulty: "advanced",
+        content: {
+          instructions: "Design a notification system for a social media application with these requirements:\n\n1. Users can receive notifications through multiple channels: Email, SMS, Push Notification, In-App.\n2. New notification channels may be added in the future without modifying existing code.\n3. Notifications can be decorated with additional behavior: logging, rate-limiting, formatting.\n4. When a user posts content, all their followers should be notified automatically.\n5. The system should support grouping notifications (e.g., 'You have 5 new likes') as a single composite notification.\n\nIdentify which patterns you would use for each requirement and sketch the class structure.\n\nHint: Consider these mappings:\n- Requirement 1-2: Think about how to encapsulate the varying delivery mechanism.\n- Requirement 3: Think about adding behavior transparently to notification channels.\n- Requirement 4: Think about automatic updates when state changes.\n- Requirement 5: Think about treating single notifications and groups uniformly.",
+          testCases: [
+            { input: "Identify patterns", expected: "Strategy (delivery channels), Decorator (logging/rate-limiting), Observer (follower notifications), Composite (grouped notifications)" },
+            { input: "Show class relationships", expected: "NotificationChannel interface with EmailChannel, SMSChannel etc. (Strategy); ChannelDecorator wrapping channels (Decorator); User as Subject, Followers as Observers (Observer); NotificationGroup as Composite of Notification items (Composite)" }
+          ]
+        }
+      },
+      // --- SECTION 5: Real-World Framework Recognition ---
+      {
+        type: "multiple-choice",
+        question: "In React.js, components re-render when state or props change. Parent components pass data down to child components, and child components notify parents via callback functions. Which pattern does this MOST closely resemble?",
+        options: [
+          "A) Singleton -- there is one root component.",
+          "B) Observer -- state changes trigger automatic updates in dependent components.",
+          "C) Adapter -- props convert data between parent and child interfaces.",
+          "D) Factory Method -- React.createElement creates component instances."
+        ],
+        correctAnswer: "B) Observer -- state changes trigger automatic updates in dependent components.",
+        points: 10,
+        explanation: "React's reactivity model is fundamentally Observer-based: when state (the Subject) changes, all components that depend on that state (Observers) are re-rendered automatically."
+      },
+      {
+        type: "multiple-choice",
+        question: "Express.js (Node.js) uses middleware functions that process requests in sequence. Each middleware can handle the request, modify it, or pass it to the next middleware using `next()`. This is an example of which pattern?",
+        options: [
+          "A) Decorator -- middleware wraps the request handler.",
+          "B) Strategy -- each middleware is a different algorithm.",
+          "C) Chain of Responsibility -- each handler either processes the request or passes it along the chain.",
+          "D) Command -- each middleware is an encapsulated request."
+        ],
+        correctAnswer: "C) Chain of Responsibility -- each handler either processes the request or passes it along the chain.",
+        points: 10,
+        explanation: "Express middleware forms a chain where each function can handle the request or call next() to pass it to the next handler, which is the Chain of Responsibility pattern."
+      },
+      {
+        type: "multiple-choice",
+        question: "Java's `Collections.unmodifiableList()` wraps a List to throw exceptions on modification attempts, while `Collections.synchronizedList()` wraps a List to add thread safety. Both return objects implementing the same List interface. Which pattern is this?",
+        options: [
+          "A) Adapter -- converting the List interface.",
+          "B) Proxy -- controlling access to the underlying list.",
+          "C) Facade -- simplifying the List interface.",
+          "D) Strategy -- encapsulating different list behaviors."
+        ],
+        correctAnswer: "B) Proxy -- controlling access to the underlying list.",
+        points: 10,
+        explanation: "These wrappers act as Protection Proxies. They implement the same interface as the real subject (List) but control access -- unmodifiableList prevents writes, synchronizedList mediates concurrent access."
+      },
+      // --- SECTION 6: Principles ---
+      {
         type: "short-answer",
         question: "What are the three components of the Model-View-Controller (MVC) pattern?",
         correctAnswer: "Model, View, Controller",
-        points: 10
+        points: 5
       },
-       { // New - Principle (Ch 1/13)
+      {
         type: "multiple-choice",
         question: "The principle 'Favor composition over inheritance' suggests that:",
         options: [
@@ -3448,7 +3569,20 @@ export const designPatternsCourse = {
             "D) All classes should be composed of exactly five other classes."
         ],
         correctAnswer: "B) Flexibility is often better achieved by holding references to objects with the desired behavior rather than inheriting the behavior.",
-        points: 10
+        points: 5
+      },
+      {
+        type: "multiple-choice",
+        question: "Which of the following is a sign that you are OVER-applying design patterns?",
+        options: [
+          "A) Your code has clear separation of concerns.",
+          "B) Adding a simple feature requires creating 5+ new classes/interfaces for a pattern that addresses variability the system will never need.",
+          "C) Your classes have well-defined responsibilities.",
+          "D) Your code is easy to unit test."
+        ],
+        correctAnswer: "B) Adding a simple feature requires creating 5+ new classes/interfaces for a pattern that addresses variability the system will never need.",
+        points: 10,
+        explanation: "Patterns solve specific problems around flexibility and change. Applying them where no variation exists adds unnecessary complexity. Always ask: 'What specific change am I designing for?'"
       }
     ]
   },
