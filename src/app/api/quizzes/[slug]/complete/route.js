@@ -4,6 +4,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Course from "@/models/Course";
 import User from "@/models/User";
 import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
+import { calculateLevel } from "@/lib/constants";
 
 export async function POST(req, { params }) {
   try {
@@ -194,7 +195,7 @@ export async function POST(req, { params }) {
       // Update user's XP and check for level up
       const oldLevel = user.level || 1;
       user.xp = (user.xp || 0) + xpGained;
-      const newLevel = Math.floor(user.xp / 1000) + 1;
+      const newLevel = calculateLevel(user.xp);
       
       if (newLevel > oldLevel) {
         user.level = newLevel;

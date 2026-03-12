@@ -3,6 +3,7 @@ import Course from "@/models/Course";
 import User from "@/models/User";
 import { getAuth } from "@clerk/nextjs/server";
 import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
+import { calculateLevel } from "@/lib/constants";
 
 export async function GET(req) {
   try {
@@ -230,7 +231,7 @@ export async function POST(req) {
 
         // Calculate level up
         const oldLevel = user.level;
-        const newLevel = Math.floor(user.xp / 1000) + 1;
+        const newLevel = calculateLevel(user.xp);
         if (newLevel > oldLevel) {
           user.level = newLevel;
           levelUp = true;

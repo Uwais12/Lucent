@@ -8,7 +8,6 @@ import {
   BarChart,
   BookOpen,
   Trophy,
-  Code,
   Zap,
   Target,
   Clock,
@@ -19,54 +18,55 @@ import {
   Star,
   Bookmark,
   GraduationCap,
+  Gem,
+  Flame,
+  Search,
+  ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
 import Navbar from "./components/Navbar";
 import XPNotification from "./components/XPNotification";
-import { useEnrollmentCheck } from '@/hooks/useEnrollmentCheck';
+import { useEnrollmentCheck } from "@/hooks/useEnrollmentCheck";
 import BadgeNotification from "./components/BadgeNotification";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
 
-// Separate client component to handle search params
+// ─── XP Notification Handler (reads URL params) ─────────────────────────────
 function XPNotificationHandler() {
   const [showXPNotification, setShowXPNotification] = useState(false);
   const [xpNotificationData, setXPNotificationData] = useState(null);
   const router = useRouter();
-  
-  // Use URL search params safely for client-side only
+
   let searchParams;
   try {
     searchParams = new URLSearchParams(window.location.search);
   } catch (e) {
-    // Handle case where window is not available during SSR
     searchParams = { get: () => null };
   }
 
-  // Check for XP gain parameters in URL
   useEffect(() => {
-    if (searchParams.get('xpGained')) {
+    if (searchParams.get("xpGained")) {
       const notificationData = {
-        message: 'Experience Earned!',
-        courseId: searchParams.get('courseId'),
-        xpGained: parseInt(searchParams.get('xpGained') || '0'),
-        gemsGained: parseInt(searchParams.get('gemsGained') || '0'),
-        levelUp: searchParams.get('levelUp') === 'true',
-        completionPercentage: parseInt(searchParams.get('completionPercentage') || '0')
+        message: "Experience Earned!",
+        courseId: searchParams.get("courseId"),
+        xpGained: parseInt(searchParams.get("xpGained") || "0"),
+        gemsGained: parseInt(searchParams.get("gemsGained") || "0"),
+        levelUp: searchParams.get("levelUp") === "true",
+        completionPercentage: parseInt(searchParams.get("completionPercentage") || "0"),
       };
-      
+
       setXPNotificationData(notificationData);
       setShowXPNotification(true);
-      
-      // Clear the URL parameters after a delay
+
       setTimeout(() => {
-        router.replace('/');
+        router.replace("/");
       }, 500);
     }
   }, [searchParams, router]);
 
   return (
-    <XPNotification 
+    <XPNotification
       isVisible={showXPNotification}
       onClose={() => setShowXPNotification(false)}
       xpGained={xpNotificationData?.xpGained}
@@ -79,6 +79,57 @@ function XPNotificationHandler() {
   );
 }
 
+// ─── Loading Skeleton ────────────────────────────────────────────────────────
+function DashboardSkeleton() {
+  return (
+    <div className="min-h-screen bg-background pattern-bg">
+      <Navbar />
+      <div className="color-bar w-full fixed top-16 left-0" />
+      <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Welcome skeleton */}
+          <div className="mb-10">
+            <div className="shimmer h-10 w-72 rounded-lg mb-3" />
+            <div className="shimmer h-5 w-48 rounded-lg" />
+          </div>
+
+          {/* Stat cards skeleton */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-10">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-100 p-4 sm:p-5">
+                <div className="shimmer h-10 w-10 rounded-lg mb-3" />
+                <div className="shimmer h-6 w-16 rounded mb-1.5" />
+                <div className="shimmer h-3.5 w-20 rounded" />
+              </div>
+            ))}
+          </div>
+
+          {/* Course cards skeleton */}
+          <div className="mb-10">
+            <div className="shimmer h-7 w-40 rounded-lg mb-5" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="bg-white rounded-xl border border-gray-100 p-5 sm:p-6">
+                  <div className="flex gap-4 mb-4">
+                    <div className="shimmer h-12 w-12 rounded-xl flex-shrink-0" />
+                    <div className="flex-1">
+                      <div className="shimmer h-5 w-full rounded mb-2" />
+                      <div className="shimmer h-3.5 w-3/4 rounded" />
+                    </div>
+                  </div>
+                  <div className="shimmer h-2 w-full rounded-full mb-4" />
+                  <div className="shimmer h-9 w-full rounded-lg" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// ─── Main Dashboard ──────────────────────────────────────────────────────────
 export default function Home() {
   const { isLoaded, isSignedIn } = useUser();
   const router = useRouter();
@@ -95,134 +146,237 @@ export default function Home() {
   const [lastUpdate, setLastUpdate] = useState(Date.now());
   const [badgeToNotify, setBadgeToNotify] = useState(null);
   const notifiedBadgeIds = useRef(new Set());
-  // Add new state variables for pagination and filtering
   const [visibleQuizzes, setVisibleQuizzes] = useState(6);
-  const [selectedCourse, setSelectedCourse] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState("all");
+  const [selectedType, setSelectedType] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [isProfileSetupModalOpen, setIsProfileSetupModalOpen] = useState(false);
 
-  // Use useMemo for filteredQuizzes to prevent unnecessary recalculations
+  // ─── Memoized Computed Values ────────────────────────────────────────────
   const filteredQuizzes = useMemo(() => {
-    return quizzes.filter(quiz => {
-      const matchesCourse = selectedCourse === 'all' || quiz.courseSlug === selectedCourse;
-      const matchesType = selectedType === 'all' || quiz.type === selectedType;
-      const matchesSearch = quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         quiz.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return quizzes.filter((quiz) => {
+      const matchesCourse = selectedCourse === "all" || quiz.courseSlug === selectedCourse;
+      const matchesType = selectedType === "all" || quiz.type === selectedType;
+      const matchesSearch =
+        quiz.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        quiz.description.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCourse && matchesType && matchesSearch;
     });
   }, [quizzes, selectedCourse, selectedType, searchQuery]);
 
-  // IMPORTANT: Move all hooks to the top level - before any conditional returns
-  // Define memoized values that were previously after conditional returns
-  const completedLessons = useMemo(() => 
-    userProfile?.progress?.completedLessons || 0, 
+  const completedLessons = useMemo(
+    () => userProfile?.progress?.completedLessons || 0,
     [userProfile]
   );
-  
-  const completedCourses = useMemo(() => 
-    userProfile?.progress?.completedCourses || 0,
+
+  const completedCourses = useMemo(
+    () => userProfile?.progress?.completedCourses || 0,
     [userProfile]
   );
-  
-  const totalTimeSpent = useMemo(() => 
-    userProfile?.progress?.totalTimeSpent || 0,
+
+  const totalTimeSpent = useMemo(
+    () => userProfile?.progress?.totalTimeSpent || 0,
     [userProfile]
   );
-  
-  // Convert minutes to hours and minutes for display
+
   const timeDisplay = useMemo(() => {
-    const timeSpentHours = Math.floor(totalTimeSpent / 60);
-    const timeSpentMinutes = totalTimeSpent % 60;
-    return timeSpentHours > 0 
-      ? `${timeSpentHours}h ${timeSpentMinutes}m` 
-      : `${timeSpentMinutes}m`;
+    const hours = Math.floor(totalTimeSpent / 60);
+    const mins = totalTimeSpent % 60;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   }, [totalTimeSpent]);
 
-  // Filter enrolled courses - New Logic
   const enrolledCourses = useMemo(() => {
-    if (!userProfile?.progress?.courses || !dbCourses?.length) {
-      return [];
-    }
-    const userEnrolledCourseIds = new Map(userProfile.progress.courses.map(p => [p.courseId.toString(), p]));
-    
+    if (!userProfile?.progress?.courses || !dbCourses?.length) return [];
+    const userEnrolledCourseIds = new Map(
+      userProfile.progress.courses.map((p) => [p.courseId.toString(), p])
+    );
     return dbCourses
-      .filter(course => userEnrolledCourseIds.has(course._id.toString()))
-      .map(course => {
+      .filter((course) => userEnrolledCourseIds.has(course._id.toString()))
+      .map((course) => {
         const progressDetails = userEnrolledCourseIds.get(course._id.toString());
         return {
-          ...course, // Basic course details from dbCourses
-          isEnrolled: true, // Explicitly true
-          progress: progressDetails.completionPercentage || 0, // From userProfile
-          completed: progressDetails.completed || false, // From userProfile
-          // Optionally, add other specific progress fields if needed for display
-          // currentChapter: progressDetails.currentChapter,
-          // currentLesson: progressDetails.currentLesson,
-          // userProgress: progressDetails // Or even the whole progress object
+          ...course,
+          isEnrolled: true,
+          progress: progressDetails.completionPercentage || 0,
+          completed: progressDetails.completed || false,
         };
       });
   }, [dbCourses, userProfile]);
 
-  // Use useCallback for event handlers to prevent unnecessary re-renders
+  const exploreCourses = useMemo(() => {
+    if (!userProfile?.progress?.courses || !dbCourses?.length) return dbCourses;
+    const enrolledIds = new Set(
+      userProfile.progress.courses.map((p) => p.courseId.toString())
+    );
+    return dbCourses.filter((course) => !enrolledIds.has(course._id.toString()));
+  }, [dbCourses, userProfile]);
+
+  const totalBadges = useMemo(() => {
+    if (!userProfile) return 0;
+    const profileBadges = userProfile.badges?.length || 0;
+    const courseBadges =
+      userProfile.progress?.courses?.reduce(
+        (total, course) => total + (course.badges?.length || 0),
+        0
+      ) || 0;
+    return profileBadges + courseBadges;
+  }, [userProfile]);
+
+  // ─── Callbacks ───────────────────────────────────────────────────────────
   const showMoreQuizzes = useCallback(() => {
-    setVisibleQuizzes(prev => prev + 6);
+    setVisibleQuizzes((prev) => prev + 6);
   }, []);
 
+  const enrollInCourse = useCallback(
+    async (courseId) => {
+      if (enrollingCourseId) return;
+      try {
+        setEnrollingCourseId(courseId);
+        const response = await fetch("/api/courses/enroll", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ courseId }),
+        });
+        if (response.ok) {
+          const coursesRes = await fetch("/api/courses");
+          const coursesData = await coursesRes.json();
+          if (!coursesRes.ok) throw new Error("Failed to refresh courses");
+          setDbCourses(coursesData);
+          setCourses(coursesData);
+          const profileRes = await fetch("/api/profile");
+          const profileData = await profileRes.json();
+          if (profileRes.ok) setUserProfile(profileData);
+          toast.success("Successfully enrolled in course!");
+        } else {
+          const data = await response.json();
+          throw new Error(data.error || "Failed to enroll in course");
+        }
+      } catch (err) {
+        console.error("Error enrolling in course:", err);
+        toast.error(`Failed to enroll: ${err.message}`);
+      } finally {
+        setEnrollingCourseId(null);
+      }
+    },
+    [enrollingCourseId]
+  );
+
+  const getCourseStatusInfo = useCallback((course) => {
+    if (!course.isEnrolled) {
+      return {
+        text: "Enroll Now",
+        icon: <PlayCircle className="w-4 h-4" />,
+        bgColor: "bg-brand-600 hover:bg-brand-700",
+      };
+    }
+    if (course.completed) {
+      return {
+        text: "Completed",
+        icon: <CheckCircle className="w-4 h-4" />,
+        bgColor: "bg-emerald-600 hover:bg-emerald-700",
+      };
+    }
+    return {
+      text: "Continue",
+      icon: <PlayCircle className="w-4 h-4" />,
+      bgColor: "bg-brand-600 hover:bg-brand-700",
+    };
+  }, []);
+
+  const handleCourseAction = useCallback(
+    (course) => {
+      if (!course.isEnrolled) {
+        enrollInCourse(course._id);
+      } else {
+        router.push(`/course-details/${course.slug || course._id}`);
+      }
+    },
+    [enrollInCourse, router]
+  );
+
+  const handleQuizClick = useCallback(
+    async (e, quiz) => {
+      e.preventDefault();
+      if (isChecking) return;
+      if (!quiz?.slug) {
+        console.error("No quiz slug found");
+        return;
+      }
+      if (!canTakeQuizToday) {
+        toast.error("You've already completed a quiz today. Come back tomorrow for more!", {
+          duration: 5000,
+          position: "top-center",
+        });
+        return;
+      }
+      const isEnrolled = await checkEnrollment(quiz.slug, quiz.type);
+      if (isEnrolled) {
+        router.push(
+          quiz.type === "course-exam"
+            ? `/quiz/final/${quiz.slug}`
+            : quiz.type === "chapter-quiz"
+            ? `/quiz/chapter/${quiz.slug}`
+            : `/quiz/${quiz.slug}`
+        );
+      }
+    },
+    [isChecking, canTakeQuizToday, checkEnrollment, router]
+  );
+
+  const handleProfileSetupModalClose = (updatedUserData) => {
+    setIsProfileSetupModalOpen(false);
+    if (updatedUserData) {
+      setUserProfile((prev) => ({
+        ...prev,
+        ...updatedUserData,
+        workplace: updatedUserData.workplace || prev.workplace,
+      }));
+      toast.success("Profile setup complete!");
+    }
+  };
+
+  // ─── Effects ─────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isLoaded) return;
-    if (!isSignedIn) {
-      router.push("/sign-in");
-    }
+    if (!isSignedIn) router.push("/sign-in");
   }, [isLoaded, isSignedIn, router]);
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       setIsLoading(true);
 
-      // Check if we just enrolled in a course (from URL parameter)
       let justEnrolled = false;
       try {
         const searchParams = new URLSearchParams(window.location.search);
-        justEnrolled = searchParams.get('enrolled') === 'true';
-        
-        // Clear the URL parameter
-        if (justEnrolled) {
-          router.replace('/');
-        }
+        justEnrolled = searchParams.get("enrolled") === "true";
+        if (justEnrolled) router.replace("/");
       } catch (e) {
         // Ignore errors with window/searchParams
       }
 
-      // Add cache-busting parameter if just enrolled
-      const timestamp = justEnrolled ? Date.now() : '';
-      const cacheParams = justEnrolled ? `?t=${timestamp}` : '';
+      const timestamp = justEnrolled ? Date.now() : "";
+      const cacheParams = justEnrolled ? `?t=${timestamp}` : "";
 
       Promise.all([
         fetch(`/api/profile${cacheParams}`).then((res) => res.json()),
         fetch(`/api/courses${cacheParams}`).then((res) => res.json()),
-        fetch("/api/quizzes", { 
-          cache: 'no-store',
-          next: { revalidate: 3600 } // Cache for 1 hour
+        fetch("/api/quizzes", {
+          cache: "no-store",
+          next: { revalidate: 3600 },
         }).then((res) => res.json()),
       ])
         .then(([profileData, coursesData, quizzesData]) => {
-          if (profileData.error) {
-            throw new Error(profileData.error);
-          }
+          if (profileData.error) throw new Error(profileData.error);
 
           setUserProfile(profileData);
           setCourses(Array.isArray(coursesData) ? coursesData : []);
           setQuizzes(Array.isArray(quizzesData) ? quizzesData : []);
-          
-          // Use the courses data directly instead of making another call
           setDbCourses(Array.isArray(coursesData) ? coursesData : []);
-          
-          // Check if profile setup is needed
+
           if (profileData && !profileData.profileSetupComplete) {
             setIsProfileSetupModalOpen(true);
           }
-          
-          // Check for newly awarded badges from profile data (e.g., streak badges)
+
           if (profileData.awardedBadges && profileData.awardedBadges.length > 0) {
             const firstNewBadge = profileData.awardedBadges[0];
             if (!notifiedBadgeIds.current.has(firstNewBadge.id)) {
@@ -230,38 +384,29 @@ export default function Home() {
               notifiedBadgeIds.current.add(firstNewBadge.id);
             }
           }
-          
-          // Check if user can take a quiz today
+
           if (profileData.lastQuizCompletion) {
-            const lastQuizDate = new Date(profileData.lastQuizCompletion);
-            const today = new Date();
-            const isSameDay = lastQuizDate.toDateString() === today.toDateString();
-            
-            const isPro = profileData.subscription?.tier === 'PRO' || profileData.subscription?.tier === 'ENTERPRISE';
+            const isPro =
+              profileData.subscription?.tier === "PRO" ||
+              profileData.subscription?.tier === "ENTERPRISE";
             const maxDailyQuizzes = isPro ? 5 : 1;
             const dailyQuizCount = profileData.dailyQuizCount || 0;
-            
-            // User can take a quiz if their count is less than the max allowed for their tier
             setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
-
           } else {
-            // If they haven't completed any quiz ever, they can take one
             setCanTakeQuizToday(true);
           }
-          
-          // Show streak broken notification if applicable
+
           if (profileData.streakStatus?.broken) {
-            toast.error(`Your ${profileData.streakStatus.previousStreak}-day streak was broken! Start a new one today!`, {
-              duration: 5000,
-              position: 'top-center'
-            });
+            toast.error(
+              `Your ${profileData.streakStatus.previousStreak}-day streak was broken! Start a new one today!`,
+              { duration: 5000, position: "top-center" }
+            );
           }
-          
-          // Show success toast if just enrolled
+
           if (justEnrolled) {
             toast.success("Course added to your dashboard!");
           }
-          
+
           setIsLoading(false);
         })
         .catch((err) => {
@@ -272,268 +417,165 @@ export default function Home() {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  // Remove redundant fetch in separate useEffect hooks
-  // Instead, refresh data only when needed
+  // Refresh profile when lastUpdate changes (e.g. after quiz completion)
   useEffect(() => {
     if (isSignedIn && lastUpdate && !isLoading) {
-      // Only refresh the profile data when lastUpdate changes
-      fetch('/api/profile')
-        .then(response => {
-          if (!response.ok) throw new Error('Failed to fetch profile');
+      fetch("/api/profile")
+        .then((response) => {
+          if (!response.ok) throw new Error("Failed to fetch profile");
           return response.json();
         })
-        .then(data => {
+        .then((data) => {
           setUserProfile(data);
-          
-          // Check for newly awarded badges from profile data (e.g., streak badges) - also here for updates
+
           if (data.awardedBadges && data.awardedBadges.length > 0) {
             const firstNewBadge = data.awardedBadges[0];
-            // Avoid showing notification if it was *just* shown by the initial load logic
             if (!badgeToNotify && !notifiedBadgeIds.current.has(firstNewBadge.id)) {
               setBadgeToNotify(firstNewBadge);
               notifiedBadgeIds.current.add(firstNewBadge.id);
-            } else if (badgeToNotify && firstNewBadge.id !== badgeToNotify.id && !notifiedBadgeIds.current.has(firstNewBadge.id)) {
-              // If a different badge notification is pending, prioritize the new one if not shown
+            } else if (
+              badgeToNotify &&
+              firstNewBadge.id !== badgeToNotify.id &&
+              !notifiedBadgeIds.current.has(firstNewBadge.id)
+            ) {
               setBadgeToNotify(firstNewBadge);
               notifiedBadgeIds.current.add(firstNewBadge.id);
             }
           }
 
-          // Determine max quizzes based on subscription tier
-          const isPro = data.subscription?.tier === 'PRO' || data.subscription?.tier === 'ENTERPRISE';
+          const isPro =
+            data.subscription?.tier === "PRO" || data.subscription?.tier === "ENTERPRISE";
           const maxDailyQuizzes = isPro ? 5 : 1;
           const dailyQuizCount = data.dailyQuizCount || 0;
-          
-          // User can take a quiz if their count is less than the max allowed for their tier
           setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
         })
-        .catch(error => {
-          console.error('Error fetching user profile:', error);
+        .catch((error) => {
+          console.error("Error fetching user profile:", error);
         });
     }
   }, [isSignedIn, lastUpdate, isLoading]);
 
   // Listen for quiz completion events
   useEffect(() => {
-    const handleQuizComplete = () => {
-      setLastUpdate(Date.now());
-    };
-
-    window.addEventListener('quizCompleted', handleQuizComplete);
-
-    return () => {
-      window.removeEventListener('quizCompleted', handleQuizComplete);
-    };
+    const handleQuizComplete = () => setLastUpdate(Date.now());
+    window.addEventListener("quizCompleted", handleQuizComplete);
+    return () => window.removeEventListener("quizCompleted", handleQuizComplete);
   }, []);
 
-  useEffect(() => {
-    // const seedDatabase = async () => {
-    //   try {
-    //     // First, clean up existing courses
-    //     const cleanupResponse = await fetch("/api/cleanup", { 
-    //       method: "POST",
-    //       cache: 'no-store'
-    //     });
-    //     const cleanupData = await cleanupResponse.json();
-    //     console.log("Cleanup response:", cleanupData);
+  // ─── Conditional Returns ─────────────────────────────────────────────────
+  if (!isLoaded || isLoading) return <DashboardSkeleton />;
 
-    //     // Then seed the courses
-    //     const response = await fetch("/api/seed", { 
-    //       method: "POST",
-    //       cache: 'no-store'
-    //     });
-    //     const data = await response.json();
-    //     console.log("Seeding response:", data);
-        
-    //     // Refresh courses after seeding
-    //     const coursesRes = await fetch("/api/courses", { cache: 'no-store' });
-    //     const coursesData = await coursesRes.json();
-    //     setDbCourses(coursesData);
-    //   } catch (error) {
-    //     console.error("Error seeding database:", error);
-    //   }
-    // };
-
-    // if (isLoaded && isSignedIn) {
-    //   seedDatabase();
-    // }
-  }, [isLoaded, isSignedIn]);
-
-  // Optimize enrollInCourse with useCallback
-  const enrollInCourse = useCallback(async (courseId) => {
-    if (enrollingCourseId) return; // Prevent multiple enrollments at once
-    
-    try {
-      setEnrollingCourseId(courseId);
-      
-      const response = await fetch('/api/courses/enroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseId })
-      });
-      
-      if (response.ok) {
-        // Fetch all data at once
-        const coursesRes = await fetch("/api/courses");
-        const coursesData = await coursesRes.json();
-        
-        if (!coursesRes.ok) {
-          throw new Error('Failed to refresh courses');
-        }
-        
-        setDbCourses(coursesData);
-        setCourses(coursesData);
-        
-        // Also refresh user profile
-        const profileRes = await fetch("/api/profile");
-        const profileData = await profileRes.json();
-        if (profileRes.ok) {
-          setUserProfile(profileData);
-        }
-        
-        toast.success("Successfully enrolled in course!");
-      } else {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to enroll in course');
-      }
-    } catch (err) {
-      console.error('Error enrolling in course:', err);
-      toast.error(`Failed to enroll: ${err.message}`);
-    } finally {
-      setEnrollingCourseId(null);
-    }
-  }, [enrollingCourseId]);
-
-  // Optimize getCourseStatusInfo with useMemo
-  const getCourseStatusInfo = useCallback((course) => {
-    if (!course.isEnrolled) {
-      return {
-        text: "Enroll Now",
-        icon: <PlayCircle className="w-4 h-4" />,
-        bgColor: "bg-violet-600 hover:bg-violet-700"
-      };
-    }
-    
-    if (course.completed) {
-      return {
-        text: "Completed",
-        icon: <CheckCircle className="w-4 h-4" />,
-        bgColor: "bg-emerald-600 hover:bg-emerald-700"
-      };
-    }
-    
-    return {
-      text: "Continue Learning",
-      icon: <PlayCircle className="w-4 h-4" />,
-      bgColor: "bg-blue-600 hover:bg-blue-700"
-    };
-  }, []);
-
-  // Optimize handleCourseAction with useCallback
-  const handleCourseAction = useCallback((course) => {
-    if (!course.isEnrolled) {
-      enrollInCourse(course._id);
-    } else {
-      // If enrolled, navigate to the course or lesson
-      if (course.completed) {
-        router.push(`/course-details/${course.slug}`);
-      } else {
-        // Simplified navigation logic - always go to course details
-        router.push(`/course-details/${course.slug || course._id}`);
-      }
-    }
-  }, [enrollInCourse, router]);
-
-  // Optimize handleQuizClick with useCallback
-  const handleQuizClick = useCallback(async (e, quiz) => {
-    e.preventDefault();
-    
-    if (isChecking) return;
-
-    if (!quiz?.slug) {
-      console.error("No quiz slug found");
-      return;
-    }
-
-    if (!canTakeQuizToday) {
-      toast.error("You've already completed a quiz today. Come back tomorrow for more!", {
-        duration: 5000,
-        position: 'top-center'
-      });
-      return;
-    }
-
-    const isEnrolled = await checkEnrollment(quiz.slug, quiz.type);
-    if (isEnrolled) {
-      router.push(
-        quiz.type === 'course-exam' 
-          ? `/quiz/final/${quiz.slug}`
-          : quiz.type === 'chapter-quiz'
-          ? `/quiz/chapter/${quiz.slug}`
-          : `/quiz/${quiz.slug}`
-      );
-    }
-  }, [isChecking, canTakeQuizToday, checkEnrollment, router]);
-
-  const handleProfileSetupModalClose = (updatedUserData) => {
-    setIsProfileSetupModalOpen(false);
-    if (updatedUserData) {
-      setUserProfile(prev => ({ 
-        ...prev, 
-        ...updatedUserData, 
-        // Ensure workplace is properly merged if it's nested in updatedUserData.user
-        workplace: updatedUserData.workplace || prev.workplace 
-      }));
-      // Optionally, trigger a toast or other UI update
-      toast.success("Profile setup complete!");
-    }
-  };
-
-  // Instead of using useMemo after conditional checks, use regular variables
-  if (!isLoaded || isLoading) {
+  if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-secondary">Loading your dashboard...</p>
+      <div className="min-h-screen bg-background pattern-bg flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Target className="w-8 h-8 text-red-500" />
+          </div>
+          <h2 className="text-xl font-bold text-foreground mb-2">Something went wrong</h2>
+          <p className="text-surface-500 mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="btn-primary"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return <div className="text-center mt-6 text-red-500">{error}</div>;
-  }
-
   if (!userProfile) {
     return (
-      <div className="text-center mt-6">
-        No user profile data found. Please refresh or contact support.
+      <div className="min-h-screen bg-background pattern-bg flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="w-16 h-16 bg-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-8 h-8 text-brand-500" />
+          </div>
+          <h2 className="text-xl font-bold text-foreground mb-2">No profile found</h2>
+          <p className="text-surface-500">Please refresh the page or contact support.</p>
+        </div>
       </div>
     );
   }
 
-  // Extract basic values without useMemo
+  // ─── Derived Values ──────────────────────────────────────────────────────
   const { xp = 0, gems = 0, dailyStreak = 0 } = userProfile || {};
-  const isPro = userProfile?.subscription?.tier === 'PRO' || userProfile?.subscription?.tier === 'ENTERPRISE';
+  const isPro =
+    userProfile?.subscription?.tier === "PRO" ||
+    userProfile?.subscription?.tier === "ENTERPRISE";
   const maxDailyQuizzes = isPro ? 5 : 1;
   const dailyQuizCount = userProfile?.dailyQuizCount || 0;
   const quizzesRemaining = Math.max(0, maxDailyQuizzes - dailyQuizCount);
-  const canTakeAnyQuiz = quizzesRemaining > 0; // Renamed for clarity
+  const canTakeAnyQuiz = quizzesRemaining > 0;
+  const level = userProfile?.level || 1;
 
+  // ─── Stat Card Config ────────────────────────────────────────────────────
+  const statCards = [
+    {
+      label: "XP",
+      value: xp.toLocaleString(),
+      icon: Star,
+      gradient: "from-brand-500 to-brand-600",
+      bg: "bg-brand-50",
+      text: "text-brand-600",
+    },
+    {
+      label: "Gems",
+      value: gems.toLocaleString(),
+      icon: Gem,
+      gradient: "from-sky-500 to-cyan-500",
+      bg: "bg-sky-50",
+      text: "text-sky-600",
+    },
+    {
+      label: "Level",
+      value: level,
+      icon: Trophy,
+      gradient: "from-amber-500 to-orange-500",
+      bg: "bg-amber-50",
+      text: "text-amber-600",
+    },
+    {
+      label: "Streak",
+      value: `${dailyStreak}d`,
+      icon: Flame,
+      gradient: "from-rose-500 to-pink-500",
+      bg: "bg-rose-50",
+      text: "text-rose-600",
+    },
+    {
+      label: "Badges",
+      value: totalBadges,
+      icon: Award,
+      gradient: "from-accent-500 to-accent-600",
+      bg: "bg-accent-50",
+      text: "text-accent-600",
+    },
+    {
+      label: "Lessons",
+      value: completedLessons,
+      icon: CheckCircle,
+      gradient: "from-emerald-500 to-teal-500",
+      bg: "bg-emerald-50",
+      text: "text-emerald-600",
+    },
+  ];
+
+  // ─── Render ──────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background pattern-bg">
       <Navbar />
-      <div className="color-bar w-full fixed top-16 left-0"></div>
+      <div className="color-bar w-full fixed top-16 left-0" />
 
       {/* Profile Setup Modal */}
       {userProfile && (
         <ProfileSetupModal
           isOpen={isProfileSetupModalOpen}
           onClose={handleProfileSetupModalClose}
-          currentUsername={userProfile.username || ''}
-          currentCompanyName={userProfile.workplace?.company || ''}
-          currentOccupation={userProfile.occupation || ''}
+          currentUsername={userProfile.username || ""}
+          currentCompanyName={userProfile.workplace?.company || ""}
+          currentOccupation={userProfile.occupation || ""}
         />
       )}
 
@@ -546,191 +588,179 @@ export default function Home() {
 
       <main className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-8 sm:mb-12">
-            <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-foreground">
-              Welcome back, Developer
-            </h1>
-            <div className="accent-bar"></div>
-            <p className="text-lg sm:text-xl text-secondary">
-              Your journey to mastery continues
-            </p>
-            
-            {/* Daily Quiz Status */}
-            <div className="mt-8">
-              <div className={`p-4 sm:p-6 rounded-2xl ${canTakeAnyQuiz ? 'bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200' : 'bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200'}`}>
-                <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-xl ${canTakeAnyQuiz ? 'bg-emerald-100' : 'bg-amber-100'}`}>
-                    <Target className={`w-6 h-6 ${canTakeAnyQuiz ? 'text-emerald-600' : 'text-amber-600'}`} />
-                  </div>
-                  <div>
-                    <h3 className={`text-lg font-semibold ${canTakeAnyQuiz ? 'text-emerald-800' : 'text-amber-800'}`}>
-                      {canTakeAnyQuiz 
-                        ? (isPro ? `${quizzesRemaining} / ${maxDailyQuizzes} Daily Quizzes Available` : 'Daily Quiz Available!') 
-                        : (isPro ? 'Daily Quiz Limit Reached' : 'Daily Quiz Completed')}
-                    </h3>
-                    <p className={`text-sm ${canTakeAnyQuiz ? 'text-emerald-700' : 'text-amber-700'}`}>
-                      {canTakeAnyQuiz 
-                        ? (isPro ? `You can take ${quizzesRemaining} more ${quizzesRemaining === 1 ? 'quiz' : 'quizzes'} today.` : 'Take a quiz to earn rewards and maintain your streak!') 
-                        : 'Great job! Come back tomorrow for more lessons and quizzes.'}
-                    </p>
-                  </div>
-                </div>
+
+          {/* ── Welcome Section ─────────────────────────────────────────── */}
+          <div className="mb-8 sm:mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-1">
+                  Welcome back,{" "}
+                  <span className="text-gradient">
+                    {userProfile.username || "Developer"}
+                  </span>
+                </h1>
+                <div className="accent-bar mb-3" />
+                <p className="text-surface-500 text-base sm:text-lg">
+                  Your journey to mastery continues
+                </p>
+              </div>
+
+              {/* Daily Quiz Status - compact pill */}
+              <div
+                className={`inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl border ${
+                  canTakeAnyQuiz
+                    ? "bg-emerald-50 border-emerald-200"
+                    : "bg-amber-50 border-amber-200"
+                }`}
+              >
+                <Target
+                  className={`w-4 h-4 flex-shrink-0 ${
+                    canTakeAnyQuiz ? "text-emerald-600" : "text-amber-600"
+                  }`}
+                />
+                <span
+                  className={`text-sm font-medium ${
+                    canTakeAnyQuiz ? "text-emerald-700" : "text-amber-700"
+                  }`}
+                >
+                  {canTakeAnyQuiz
+                    ? isPro
+                      ? `${quizzesRemaining}/${maxDailyQuizzes} quizzes left`
+                      : "Daily quiz available"
+                    : "Quiz limit reached"}
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Stats Overview */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="p-2 sm:p-3 bg-violet-100 text-violet-600 rounded-lg">
-                  <Award className="w-5 h-5 sm:w-6 sm:h-6" />
+          {/* ── Stat Cards ──────────────────────────────────────────────── */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-10">
+            {statCards.map((stat) => (
+              <div
+                key={stat.label}
+                className="group card-elevated p-4 sm:p-5 relative overflow-hidden"
+              >
+                {/* Subtle gradient accent top */}
+                <div
+                  className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${stat.gradient} opacity-0 group-hover:opacity-100 transition-opacity`}
+                />
+                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg ${stat.bg} flex items-center justify-center mb-3`}>
+                  <stat.icon className={`w-4.5 h-4.5 sm:w-5 sm:h-5 ${stat.text}`} />
                 </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                    {(userProfile?.badges?.length || 0) + (userProfile?.progress?.courses?.reduce((total, course) => total + (course.badges?.length || 0), 0) || 0)}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-600">Badges Earned</p>
+                <div className="text-xl sm:text-2xl font-bold text-foreground leading-none mb-1">
+                  {stat.value}
                 </div>
+                <div className="text-xs sm:text-sm text-surface-500">{stat.label}</div>
               </div>
-            </div>
-
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="p-2 sm:p-3 bg-amber-100 text-amber-600 rounded-lg">
-                  <Zap className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                    {userProfile?.dailyStreak || 0}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-600">Day Streak</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-sm">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="p-2 sm:p-3 bg-emerald-100 text-emerald-600 rounded-lg">
-                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">
-                    {userProfile?.progress?.completedLessons || 0}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-600">Lessons Completed</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
 
-          {/* My Courses Section */}
-          <div className="mb-8 sm:mb-12">
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-                <div className="flex items-center gap-2">
-                  <Bookmark className="w-5 h-5 text-violet-600" />
-                  <span>My Courses</span>
-                </div>
-              </h2>
+          {/* ── My Courses ──────────────────────────────────────────────── */}
+          <section className="mb-10 sm:mb-14">
+            <div className="flex items-center gap-2.5 mb-5 sm:mb-6">
+              <Bookmark className="w-5 h-5 text-brand-500" />
+              <h2 className="section-title">My Courses</h2>
             </div>
-            
+
             {enrolledCourses.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {enrolledCourses.map((course) => {
                   const statusInfo = getCourseStatusInfo(course);
-                  
                   return (
                     <div
                       key={course._id}
-                      className="card hover-lift overflow-hidden group h-full border-l-4 border-violet-500"
+                      className="card-elevated overflow-hidden group h-full"
                     >
-                      <div className="p-4 sm:p-6 bg-gradient-to-br from-violet-50 to-fuchsia-50 h-full flex flex-col">
-                        <div className="mb-4 sm:mb-6 flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                          <span className="px-2 sm:px-3 py-1 bg-violet-100 text-violet-600 rounded-full">
+                      {/* Top gradient bar */}
+                      <div className="h-1 bg-gradient-to-r from-brand-500 to-accent-500" />
+
+                      <div className="p-5 sm:p-6 flex flex-col h-full">
+                        {/* Tags */}
+                        <div className="flex flex-wrap items-center gap-2 mb-4 text-xs">
+                          <span className="badge badge-brand">
                             {course.chapters?.length || 0} Chapters
                           </span>
-                          <span className="px-2 sm:px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full">
+                          <span className="badge badge-success">
                             {course.difficulty || "Beginner"}
                           </span>
                           {course.completed && (
-                            <span className="px-2 sm:px-3 py-1 bg-green-100 text-green-600 rounded-full">
+                            <span className="badge bg-emerald-100 text-emerald-700">
+                              <CheckCircle className="w-3 h-3" />
                               Completed
                             </span>
                           )}
                         </div>
-                        <div className="flex items-start gap-3 sm:gap-5">
-                          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white flex items-center justify-center transform -rotate-6 shadow-sm transition-transform group-hover:rotate-0">
-                            <BookOpen
-                              className="w-6 h-6 sm:w-7 sm:h-7"
-                              style={{ color: "#8B5CF6" }}
-                            />
-                          </div>
 
-                          <div className="flex-1 min-w-0">
-                            <Link 
+                        {/* Title & Description */}
+                        <div className="flex items-start gap-4 mb-4">
+                          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-brand-100 to-accent-100 flex items-center justify-center flex-shrink-0 transform -rotate-3 transition-transform group-hover:rotate-0">
+                            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-brand-600" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <Link
                               href={`/course-details/${course.slug}`}
                               className="block hover:opacity-80 transition-opacity"
                             >
-                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
+                              <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 truncate">
                                 {course.title}
                               </h3>
-                              <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+                              <p className="text-sm text-surface-500 line-clamp-2">
                                 {course.description}
                               </p>
                             </Link>
                           </div>
                         </div>
 
-                        {/* Book Section */}
-                        <div className="mt-4 sm:mt-6 flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-white/60 rounded-lg border border-violet-100">
-                          <div className="w-8 h-10 sm:w-10 sm:h-12 bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded flex items-center justify-center">
-                            <svg
-                              className="w-5 h-5 sm:w-6 sm:h-6 text-violet-500"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                            >
-                              <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-                            </svg>
-                          </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-medium text-violet-600 mb-0.5">
-                              Based on the book
+                        {/* Book info */}
+                        {course.book?.title && (
+                          <div className="flex items-center gap-2.5 p-2.5 bg-brand-50/50 rounded-lg border border-brand-100 mb-4">
+                            <div className="w-8 h-10 bg-gradient-to-br from-brand-100 to-accent-100 rounded flex items-center justify-center flex-shrink-0">
+                              <BookOpen className="w-4 h-4 text-brand-500" />
                             </div>
-                            <div className="text-xs sm:text-sm font-medium text-gray-900 truncate">
-                              {course.book?.title || "Course Book Title"}
-                            </div>
-                            <div className="text-xs text-gray-500 mt-0.5">
-                              by {course.book?.author || "Author Name"}
+                            <div className="min-w-0">
+                              <div className="text-[11px] font-medium text-brand-600 uppercase tracking-wider">
+                                Based on
+                              </div>
+                              <div className="text-xs sm:text-sm font-medium text-foreground truncate">
+                                {course.book.title}
+                              </div>
+                              {course.book.author && (
+                                <div className="text-[11px] text-surface-400">
+                                  by {course.book.author}
+                                </div>
+                              )}
                             </div>
                           </div>
-                        </div>
-                        
-                        <div className="mt-4 flex-1 flex flex-col justify-end space-y-3">
-                          <div className="space-y-1 sm:space-y-2">
-                            <div className="flex justify-between text-xs sm:text-sm">
-                              <span className="text-gray-600">Progress</span>
-                              <span className="text-violet-600 font-medium">{course.progress || 0}%</span>
+                        )}
+
+                        {/* Progress & Actions */}
+                        <div className="mt-auto space-y-3">
+                          <div>
+                            <div className="flex justify-between text-xs sm:text-sm mb-1.5">
+                              <span className="text-surface-500">Progress</span>
+                              <span className="font-semibold text-brand-600">
+                                {course.progress || 0}%
+                              </span>
                             </div>
-                            <div className="h-1.5 sm:h-2 bg-violet-100 rounded-full overflow-hidden">
+                            <div className="progress-bar">
                               <div
-                                className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"
+                                className="progress-bar-fill"
                                 style={{ width: `${course.progress || 0}%` }}
-                              ></div>
+                              />
                             </div>
                           </div>
-                          <div className="flex items-center justify-between">
+
+                          <div className="flex items-center justify-between pt-1">
                             <Link
                               href={`/course-details/${course.slug}`}
-                              className="text-violet-600 hover:text-violet-700 text-xs sm:text-sm font-medium flex items-center gap-1"
+                              className="text-brand-600 hover:text-brand-700 text-sm font-medium flex items-center gap-1 transition-colors"
                             >
-                              View Details
+                              Details
+                              <ArrowRight className="w-3.5 h-3.5" />
                             </Link>
                             <button
                               onClick={() => handleCourseAction(course)}
-                              className={`px-3 sm:px-4 py-1.5 sm:py-2 ${statusInfo.bgColor} text-white rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-1 sm:gap-2`}
+                              className={`px-3.5 py-2 ${statusInfo.bgColor} text-white rounded-lg text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5`}
                             >
                               {statusInfo.icon}
                               {statusInfo.text}
@@ -743,138 +773,121 @@ export default function Home() {
                 })}
               </div>
             ) : (
-              <div className="card p-6 sm:p-8 text-center">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-violet-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Bookmark className="w-6 h-6 sm:w-8 sm:h-8 text-violet-500" />
+              <div className="card-elevated p-8 sm:p-12 text-center">
+                <div className="w-14 h-14 bg-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Bookmark className="w-7 h-7 text-brand-500" />
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No courses enrolled yet</h3>
-                <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Explore our courses below and enroll to start your learning journey</p>
-                <div className="flex justify-center">
-                  <a href="#all-courses" className="px-3 sm:px-4 py-1.5 sm:py-2 bg-violet-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors hover:bg-violet-700 flex items-center gap-1 sm:gap-2">
-                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
-                    Browse Courses
-                  </a>
-                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  No courses enrolled yet
+                </h3>
+                <p className="text-surface-500 mb-6 max-w-sm mx-auto">
+                  Explore our courses below and enroll to start your learning journey.
+                </p>
+                <a href="#explore-courses" className="btn-primary">
+                  <ArrowRight className="w-4 h-4" />
+                  Browse Courses
+                </a>
               </div>
             )}
-          </div>
+          </section>
 
-          {/* All Courses Section */}
-          <div className="mb-8 sm:mb-12" id="all-courses">
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">All Courses</h2>
+          {/* ── Explore Courses ──────────────────────────────────────────── */}
+          <section className="mb-10 sm:mb-14" id="explore-courses">
+            <div className="flex items-center gap-2.5 mb-5 sm:mb-6">
+              <Sparkles className="w-5 h-5 text-accent-500" />
+              <h2 className="section-title">Explore Courses</h2>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {dbCourses.map((course) => {
-                const statusInfo = getCourseStatusInfo(course);
-                
-                return (
+
+            {exploreCourses.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {exploreCourses.map((course) => (
                   <div
                     key={course._id}
-                    className="card hover-lift overflow-hidden group h-full"
+                    className="card-elevated overflow-hidden group h-full"
                   >
-                    <div className="p-4 sm:p-6 bg-gradient-to-br from-violet-50 to-fuchsia-50 h-full flex flex-col">
-                      <div className="mb-4 sm:mb-6 flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
-                        <span className="px-2 sm:px-3 py-1 bg-violet-100 text-violet-600 rounded-full">
+                    <div className="h-1 bg-gradient-to-r from-accent-400 to-brand-400 opacity-60" />
+
+                    <div className="p-5 sm:p-6 flex flex-col h-full">
+                      {/* Tags */}
+                      <div className="flex flex-wrap items-center gap-2 mb-4 text-xs">
+                        <span className="badge badge-brand">
                           {course.chapters?.length || 0} Chapters
                         </span>
-                        <span className="px-2 sm:px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full">
+                        <span className="badge badge-success">
                           {course.difficulty || "Beginner"}
                         </span>
-                        {course.completed && (
-                          <span className="px-2 sm:px-3 py-1 bg-green-100 text-green-600 rounded-full">
-                            Completed
-                          </span>
-                        )}
                       </div>
-                      <div className="flex items-start gap-3 sm:gap-5">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white flex items-center justify-center transform -rotate-6 shadow-sm transition-transform group-hover:rotate-0">
-                          <BookOpen
-                            className="w-6 h-6 sm:w-7 sm:h-7"
-                            style={{ color: "#8B5CF6" }}
-                          />
-                        </div>
 
-                        <div className="flex-1 min-w-0">
-                          <Link 
+                      {/* Title & Description */}
+                      <div className="flex items-start gap-4 mb-4">
+                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-accent-100 to-brand-100 flex items-center justify-center flex-shrink-0 transform rotate-3 transition-transform group-hover:rotate-0">
+                          <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-accent-600" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <Link
                             href={`/course-details/${course.slug}`}
                             className="block hover:opacity-80 transition-opacity"
                           >
-                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
+                            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 truncate">
                               {course.title}
                             </h3>
-                            <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
+                            <p className="text-sm text-surface-500 line-clamp-2">
                               {course.description}
                             </p>
                           </Link>
                         </div>
                       </div>
 
-                      {/* Book Section */}
-                      <div className="mt-4 sm:mt-6 flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-white/60 rounded-lg border border-violet-100">
-                        <div className="w-8 h-10 sm:w-10 sm:h-12 bg-gradient-to-br from-violet-100 to-fuchsia-100 rounded flex items-center justify-center">
-                          <svg
-                            className="w-5 h-5 sm:w-6 sm:h-6 text-violet-500"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-                          </svg>
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-xs font-medium text-violet-600 mb-0.5">
-                            Based on the book
+                      {/* Book info */}
+                      {course.book?.title && (
+                        <div className="flex items-center gap-2.5 p-2.5 bg-accent-50/50 rounded-lg border border-accent-100 mb-4">
+                          <div className="w-8 h-10 bg-gradient-to-br from-accent-100 to-brand-100 rounded flex items-center justify-center flex-shrink-0">
+                            <BookOpen className="w-4 h-4 text-accent-500" />
                           </div>
-                          <div className="text-xs sm:text-sm font-medium text-gray-900 truncate">
-                            {course.book?.title || "Course Book Title"}
-                          </div>
-                          <div className="text-xs text-gray-500 mt-0.5">
-                            by {course.book?.author || "Author Name"}
+                          <div className="min-w-0">
+                            <div className="text-[11px] font-medium text-accent-600 uppercase tracking-wider">
+                              Based on
+                            </div>
+                            <div className="text-xs sm:text-sm font-medium text-foreground truncate">
+                              {course.book.title}
+                            </div>
+                            {course.book.author && (
+                              <div className="text-[11px] text-surface-400">
+                                by {course.book.author}
+                              </div>
+                            )}
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center justify-between text-xs sm:text-sm text-gray-600 mt-4">
-                        <span>{course.duration || "4 hours"}</span>
-                        <span>Certificate</span>
-                      </div>
-                      <div className="mt-auto pt-4 sm:pt-6 space-y-3 sm:space-y-4">
-                        {course.isEnrolled && (
-                          <div className="space-y-1 sm:space-y-2">
-                            <div className="flex justify-between text-xs sm:text-sm">
-                              <span className="text-gray-600">Progress</span>
-                              <span className="text-violet-600 font-medium">{course.progress || 0}%</span>
-                            </div>
-                            <div className="h-1.5 sm:h-2 bg-violet-100 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full"
-                                style={{ width: `${course.progress || 0}%` }}
-                              ></div>
-                            </div>
-                          </div>
-                        )}
-                        <div className="flex items-center justify-between">
+                      )}
+
+                      {/* Meta & Enroll */}
+                      <div className="mt-auto space-y-3">
+                        <div className="flex items-center justify-between text-xs text-surface-500">
+                          <span>{course.duration || "4 hours"}</span>
+                          <span>Certificate</span>
+                        </div>
+                        <div className="flex items-center justify-between pt-1">
                           <Link
                             href={`/course-details/${course.slug}`}
-                            className="text-violet-600 hover:text-violet-700 text-xs sm:text-sm font-medium flex items-center gap-1"
+                            className="text-brand-600 hover:text-brand-700 text-sm font-medium flex items-center gap-1 transition-colors"
                           >
-                            View Details
+                            Details
+                            <ArrowRight className="w-3.5 h-3.5" />
                           </Link>
                           <button
-                            onClick={() => handleCourseAction(course)}
+                            onClick={() => enrollInCourse(course._id)}
                             disabled={enrollingCourseId === course._id}
-                            className={`px-3 sm:px-4 py-1.5 sm:py-2 ${statusInfo.bgColor} text-white rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center gap-1 sm:gap-2 disabled:opacity-70`}
+                            className="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5 disabled:opacity-70"
                           >
                             {enrollingCourseId === course._id ? (
                               <>
-                                <div className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                <span>Enrolling...</span>
+                                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                Enrolling...
                               </>
                             ) : (
                               <>
-                                {statusInfo.icon}
-                                {statusInfo.text}
+                                <PlayCircle className="w-4 h-4" />
+                                Enroll Now
                               </>
                             )}
                           </button>
@@ -882,160 +895,181 @@ export default function Home() {
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
+                ))}
+              </div>
+            ) : (
+              <div className="card-elevated p-8 text-center">
+                <div className="w-14 h-14 bg-accent-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-7 h-7 text-accent-500" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  You are enrolled in all courses
+                </h3>
+                <p className="text-surface-500 max-w-sm mx-auto">
+                  Great job! Keep learning and completing your enrolled courses.
+                </p>
+              </div>
+            )}
+          </section>
 
-          {/* Available Quizzes */}
-          <div>
-            <div className="mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Challenge Yourself</h2>
+          {/* ── Quiz Section ─────────────────────────────────────────────── */}
+          <section>
+            <div className="flex items-center gap-2.5 mb-5 sm:mb-6">
+              <Target className="w-5 h-5 text-accent-500" />
+              <h2 className="section-title">Challenge Yourself</h2>
             </div>
 
             {/* Filters */}
-            <div className="mb-6">
-              <div className="bg-white p-4 rounded-xl shadow-sm">
-                <div className="flex flex-col gap-4">
-                  <div className="w-full">
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Search quizzes..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50"
-                      />
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="relative">
-                      <select
-                        value={selectedCourse}
-                        onChange={(e) => setSelectedCourse(e.target.value)}
-                        className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50 pr-8"
-                      >
-                        <option value="all">All Courses</option>
-                        {dbCourses.map(course => (
-                          <option key={course.slug} value={course.slug}>{course.title}</option>
-                        ))}
-                      </select>
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <select
-                        value={selectedType}
-                        onChange={(e) => setSelectedType(e.target.value)}
-                        className="w-full appearance-none px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 bg-gray-50 pr-8"
-                      >
-                        <option value="all">All Types</option>
-                        <option value="course-exam">Final Exam</option>
-                        <option value="chapter-quiz">Chapter Quiz</option>
-                        <option value="lesson-quiz">Lesson Quiz</option>
-                      </select>
-                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
+            <div className="card-elevated p-4 sm:p-5 mb-6">
+              <div className="flex flex-col sm:flex-row gap-3">
+                {/* Search */}
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="Search quizzes..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 bg-surface-50 border border-surface-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-400 transition-all"
+                  />
+                </div>
+
+                {/* Course filter */}
+                <div className="relative">
+                  <select
+                    value={selectedCourse}
+                    onChange={(e) => setSelectedCourse(e.target.value)}
+                    className="w-full sm:w-48 appearance-none pl-4 pr-9 py-2.5 bg-surface-50 border border-surface-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-400 transition-all"
+                  >
+                    <option value="all">All Courses</option>
+                    {dbCourses.map((course) => (
+                      <option key={course.slug} value={course.slug}>
+                        {course.title}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 pointer-events-none" />
+                </div>
+
+                {/* Type filter */}
+                <div className="relative">
+                  <select
+                    value={selectedType}
+                    onChange={(e) => setSelectedType(e.target.value)}
+                    className="w-full sm:w-44 appearance-none pl-4 pr-9 py-2.5 bg-surface-50 border border-surface-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-400 transition-all"
+                  >
+                    <option value="all">All Types</option>
+                    <option value="course-exam">Final Exam</option>
+                    <option value="chapter-quiz">Chapter Quiz</option>
+                    <option value="lesson-quiz">Lesson Quiz</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-surface-400 pointer-events-none" />
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {filteredQuizzes.slice(0, visibleQuizzes).map((quiz) => (
-                <div
-                  key={quiz.id}
-                  className="card hover-lift overflow-hidden group h-full"
-                >
-                  <div className="p-6 sm:p-8 bg-gradient-to-br from-fuchsia-50 to-pink-50 h-full flex flex-col">
-                    <div className="flex items-start gap-3 sm:gap-5">
-                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-white flex items-center justify-center transform rotate-6 shadow-sm transition-transform group-hover:rotate-0">
-                        {quiz.type === 'course-exam' ? (
-                          <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 text-fuchsia-600" />
-                        ) : quiz.type === 'chapter-quiz' ? (
-                          <BookOpen className="w-6 h-6 sm:w-7 sm:h-7 text-fuchsia-600" />
-                        ) : (
-                          <BarChart className="w-6 h-6 sm:w-7 sm:h-7 text-fuchsia-600" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2 truncate">
-                          {quiz.title}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-gray-600 line-clamp-2">
-                          {quiz.description}
-                        </p>
+            {/* Quiz Grid */}
+            {filteredQuizzes.length > 0 ? (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  {filteredQuizzes.slice(0, visibleQuizzes).map((quiz) => (
+                    <div
+                      key={quiz.id}
+                      className="card-elevated overflow-hidden group h-full"
+                    >
+                      <div className="h-1 bg-gradient-to-r from-accent-400 to-pink-400 opacity-60" />
+
+                      <div className="p-5 sm:p-6 flex flex-col h-full">
+                        <div className="flex items-start gap-4">
+                          <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-accent-100 to-pink-100 flex items-center justify-center flex-shrink-0 transform rotate-3 transition-transform group-hover:rotate-0">
+                            {quiz.type === "course-exam" ? (
+                              <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-accent-600" />
+                            ) : quiz.type === "chapter-quiz" ? (
+                              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-accent-600" />
+                            ) : (
+                              <BarChart className="w-5 h-5 sm:w-6 sm:h-6 text-accent-600" />
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 truncate">
+                              {quiz.title}
+                            </h3>
+                            <p className="text-sm text-surface-500 line-clamp-2">
+                              {quiz.description}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-auto pt-5 space-y-3">
+                          <div className="flex items-center gap-4 text-xs sm:text-sm text-surface-500">
+                            <span className="flex items-center gap-1.5">
+                              <Clock className="w-3.5 h-3.5" />
+                              {quiz.duration} min
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                              <Target className="w-3.5 h-3.5" />
+                              {quiz.questionCount} Qs
+                            </span>
+                          </div>
+
+                          <div className="section-divider" />
+
+                          <div className="flex items-center justify-between">
+                            <span className="badge badge-info">
+                              {quiz.type === "course-exam"
+                                ? "Final Exam"
+                                : quiz.type === "chapter-quiz"
+                                ? "Chapter Quiz"
+                                : "Lesson Quiz"}
+                            </span>
+                            <Link
+                              href="#"
+                              onClick={(e) => handleQuizClick(e, quiz)}
+                              className="px-3.5 py-2 bg-accent-600 hover:bg-accent-700 text-white rounded-lg text-xs sm:text-sm font-medium transition-all flex items-center gap-1.5"
+                            >
+                              {isChecking ? (
+                                <>
+                                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                  Checking...
+                                </>
+                              ) : (
+                                <>
+                                  <Zap className="w-3.5 h-3.5" />
+                                  Take Quiz
+                                </>
+                              )}
+                            </Link>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                  ))}
+                </div>
 
-                    <div className="mt-auto pt-6 sm:pt-8 space-y-3 sm:space-y-4">
-                      <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-gray-600">
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                          <span>{quiz.duration} min</span>
-                        </div>
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <Target className="w-3 h-3 sm:w-4 sm:h-4" />
-                          <span>{quiz.questionCount} Questions</span>
-                        </div>
-                      </div>
-
-                      <div className="h-px bg-gray-100"></div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></div>
-                          <span className="text-xs sm:text-sm text-gray-600">
-                            {quiz.type === 'course-exam' ? 'Final Exam' : quiz.type === 'chapter-quiz' ? 'Chapter Quiz' : 'Lesson Quiz'}
-                          </span>
-                        </div>
-                        <Link 
-                          href="#"
-                          onClick={(e) => handleQuizClick(e, quiz)}
-                          className="px-3 sm:px-4 py-1.5 sm:py-2 bg-fuchsia-600 text-white rounded-lg text-xs sm:text-sm font-medium hover:bg-fuchsia-700 transition-colors"
-                        >
-                          {isChecking ? 'Checking...' : 'Take Quiz'}
-                        </Link>
-                      </div>
-                    </div>
+                {/* Show More */}
+                {filteredQuizzes.length > visibleQuizzes && (
+                  <div className="mt-8 text-center">
+                    <button onClick={showMoreQuizzes} className="btn-secondary">
+                      Show More Quizzes
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
                   </div>
+                )}
+              </>
+            ) : (
+              <div className="card-elevated p-8 sm:p-12 text-center">
+                <div className="w-14 h-14 bg-surface-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-7 h-7 text-surface-400" />
                 </div>
-              ))}
-            </div>
-
-            {filteredQuizzes.length > visibleQuizzes && (
-              <div className="mt-8 text-center">
-                <button
-                  onClick={showMoreQuizzes}
-                  className="px-6 py-3 bg-violet-600 text-white rounded-lg font-medium hover:bg-violet-700 transition-colors flex items-center gap-2 mx-auto"
-                >
-                  Show More Quizzes
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <h3 className="text-lg font-semibold text-foreground mb-2">
+                  No quizzes found
+                </h3>
+                <p className="text-surface-500 max-w-sm mx-auto">
+                  Try adjusting your filters or search to find what you are looking for.
+                </p>
               </div>
             )}
-
-            {filteredQuizzes.length === 0 && (
-              <div className="text-center py-8 bg-white rounded-xl shadow-sm">
-                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BookOpen className="w-6 h-6 text-gray-400" />
-                </div>
-                <p className="text-gray-600">No quizzes found matching your criteria.</p>
-              </div>
-            )}
-          </div>
+          </section>
         </div>
       </main>
     </div>

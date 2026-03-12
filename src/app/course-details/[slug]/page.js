@@ -165,11 +165,10 @@ export default function CourseDetails() {
   const handleEnrollConfirm = async () => {
     try {
       setEnrolling(true);
-      // Add timestamp to prevent caching
-      const timestamp = Date.now();
-      const response = await fetch(`/api/courses/enroll?t=${timestamp}`, {
+      const response = await fetch(`/api/courses/enroll`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        cache: "no-store",
         body: JSON.stringify({ courseId: course._id }),
       });
 
@@ -226,28 +225,58 @@ export default function CourseDetails() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-secondary">Loading course details...</p>
+      <div className="min-h-screen bg-gray-50 pattern-bg">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="w-12 h-12 mx-auto mb-4">
+              <div className="w-full h-full border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin" />
+            </div>
+            <p className="text-gray-500 font-medium">Loading course details...</p>
+          </div>
         </div>
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-center mt-6 text-red-500">{error}</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 pattern-bg">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center max-w-md mx-auto p-8">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-2xl flex items-center justify-center">
+              <Zap className="w-8 h-8 text-red-500" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
+            <p className="text-gray-600">{error}</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!course) {
-    return <div className="text-center mt-6">Course not found. It might be an invalid link or the course hasn&apos;t been published yet.</div>;
+    return (
+      <div className="min-h-screen bg-gray-50 pattern-bg">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center max-w-md mx-auto p-8">
+            <div className="w-16 h-16 mx-auto mb-4 bg-violet-100 rounded-2xl flex items-center justify-center">
+              <BookOpen className="w-8 h-8 text-violet-500" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Course not found</h2>
+            <p className="text-gray-600">This course may have been removed or the link is invalid.</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const { title, description, chapters, difficulty, duration, book, endOfCourseExam, prerequisites, learningOutcomes, completionBadge, slug: courseSlug, enrolledUsersCount } = course;
   
   // Default to empty array if prerequisites or learningOutcomes are undefined
   const safePrerequisites = prerequisites || [];
-  console.log(" LO -- ",course.learningOutcomes);
   const safelearningOutcomes = learningOutcomes || [];
 
   const toggleChapter = (chapterId) => {
@@ -771,13 +800,11 @@ export default function CourseDetails() {
                           setIsChecking(false);
                         }
                       }}
-                      className={`w-full px-4 py-2 ${
-                        course.userProgress?.completed 
+                      className={`w-full px-4 py-3 ${
+                        course.userProgress?.completed
                           ? 'bg-emerald-600 hover:bg-emerald-700'
-                          : course.userProgress?.completionPercentage >= 100 
-                            ? 'bg-violet-600 hover:bg-violet-700' 
-                            : 'bg-violet-500 hover:bg-violet-600'
-                      } text-white rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                          : 'bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700'
+                      } text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2 hover:shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)] ${
                         (!course.userProgress?.completed && !canTakeQuizToday) ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                       disabled={isChecking || (!course.userProgress?.completed && !canTakeQuizToday)}
@@ -798,30 +825,42 @@ export default function CourseDetails() {
             {/* Right Column - Course Info */}
             <div className="space-y-6">
               {/* Course Stats */}
-              <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Course Stats</h3>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-                  <div className="text-center">
-                    <div className="text-sm text-gray-600">Chapters</div>
-                    <div className="font-semibold text-gray-900">{chapters?.length || 0}</div>
+              <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Course Stats</h3>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <BookOpen className="w-4 h-4 text-violet-500" />
+                      <span className="text-sm">Chapters</span>
+                    </div>
+                    <span className="font-bold text-gray-900">{chapters?.length || 0}</span>
                   </div>
-                  <div className="text-center">
-                    <div className="text-sm text-gray-600">Lessons</div>
-                    <div className="font-semibold text-gray-900">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <PlayCircle className="w-4 h-4 text-violet-500" />
+                      <span className="text-sm">Lessons</span>
+                    </div>
+                    <span className="font-bold text-gray-900">
                       {chapters?.reduce((acc, chapter) => acc + (chapter.lessons?.length || 0), 0) || 0}
-                    </div>
+                    </span>
                   </div>
-                  <div className="text-center">
-                    <div className="text-sm text-gray-600">End of Course Quizzes</div>
-                    <div className="font-semibold text-gray-900">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Trophy className="w-4 h-4 text-violet-500" />
+                      <span className="text-sm">Quizzes</span>
+                    </div>
+                    <span className="font-bold text-gray-900">
                       {chapters?.reduce((acc, chapter) => acc + (chapter.quizzes?.length || 0), 0) + (endOfCourseExam ? 1 : 0)}
-                    </div>
+                    </span>
                   </div>
-                  <div className="text-center">
-                    <div className="text-sm text-gray-600">Enrolled</div>
-                    <div className="font-semibold text-gray-900">
-                      {course.enrolledUsersCount || 0}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Users className="w-4 h-4 text-violet-500" />
+                      <span className="text-sm">Enrolled</span>
                     </div>
+                    <span className="font-bold text-gray-900">
+                      {course.enrolledUsersCount || 0}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -885,19 +924,29 @@ export default function CourseDetails() {
         title="Confirm Enrollment"
         description={`Are you sure you want to enroll in "${course?.title}"?`}
       >
-        <div className="mt-4 flex justify-end space-x-2">
+        <div className="mt-6 flex justify-end gap-3">
           <button
             onClick={() => setIsEnrollDialogOpen(false)}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+            className="px-5 py-2.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl font-medium transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleEnrollConfirm}
             disabled={enrolling}
-            className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 disabled:opacity-50"
+            className="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-medium hover:from-violet-700 hover:to-fuchsia-700 disabled:opacity-70 transition-all flex items-center gap-2"
           >
-            {enrolling ? "Enrolling..." : "Confirm Enrollment"}
+            {enrolling ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Enrolling...
+              </>
+            ) : (
+              <>
+                <CheckCircle className="w-4 h-4" />
+                Confirm Enrollment
+              </>
+            )}
           </button>
         </div>
       </Dialog>

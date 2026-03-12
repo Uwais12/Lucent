@@ -6,6 +6,7 @@ import User from "@/models/User";
 import { calculateXP } from "@/lib/rewards";
 import { calculateGems } from "@/lib/rewards";
 import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
+import { calculateLevel } from "@/lib/constants";
 
 export async function POST(req, { params }) {
   try {
@@ -209,7 +210,7 @@ export async function POST(req, { params }) {
 
       // Check for level up
       const oldLevel = user.level || 1;
-      const newLevel = Math.floor(Math.sqrt(user.xp / 100)) + 1;
+      const newLevel = calculateLevel(user.xp);
       levelUp = newLevel > oldLevel;
       if (levelUp) {
         user.level = newLevel;

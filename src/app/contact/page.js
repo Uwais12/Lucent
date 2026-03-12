@@ -6,7 +6,11 @@ import {
   Mail,
   Send,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  MessageSquare,
+  Lightbulb,
+  HeadphonesIcon,
+  ArrowRight
 } from 'lucide-react';
 
 export default function ContactPage() {
@@ -15,257 +19,244 @@ export default function ContactPage() {
     email: '',
     subject: '',
     message: '',
-    type: 'general' // general, feature, support
+    type: 'general'
   });
-  
+
   const [status, setStatus] = useState({
     submitted: false,
     success: false,
     message: ''
   });
-  
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     try {
-      // Send email to uwais_i@outlook.com
       const response = await fetch('/api/contact', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
           recipient: 'uwais_i@outlook.com'
         }),
       });
-      
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
-      
-      // Success
+
+      if (!response.ok) throw new Error('Failed to send message');
+
       setStatus({
         submitted: true,
         success: true,
-        message: 'Your message has been sent successfully! We will get back to you soon.'
+        message: 'Your message has been sent successfully! We\'ll get back to you soon.'
       });
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-        type: 'general'
-      });
+
+      setFormData({ name: '', email: '', subject: '', message: '', type: 'general' });
     } catch (error) {
       setStatus({
         submitted: true,
         success: false,
-        message: 'There was an error submitting your message. Please try again.'
+        message: 'There was an error sending your message. Please try again.'
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
+  const contactTypes = [
+    {
+      icon: MessageSquare,
+      title: 'General Inquiry',
+      description: 'Questions about Lucent, our courses, or how things work.',
+      value: 'general',
+    },
+    {
+      icon: Lightbulb,
+      title: 'Feature Request',
+      description: 'Have an idea to make Lucent better? We\'d love to hear it.',
+      value: 'feature',
+    },
+    {
+      icon: HeadphonesIcon,
+      title: 'Support',
+      description: 'Having trouble with something? Let us help you out.',
+      value: 'support',
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pattern-bg">
       <Navbar />
-      
+      <div className="color-bar w-full fixed top-16 left-0" />
+
       <main className="pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-100 text-violet-700 mb-4">
-              <Mail className="w-4 h-4" />
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-violet-100 text-violet-700 mb-4">
+              <Mail className="w-3.5 h-3.5" />
               <span className="text-sm font-medium">Get in Touch</span>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Contact Us
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We&apos;d love to hear from you. Whether you have a question, feedback, or want to request a feature, our team is here to help.
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Questions, feedback, or feature requests — we&apos;re here to help you get the most out of Lucent.
             </p>
           </div>
-          
-          <div className="max-w-3xl mx-auto mb-16">
-            {/* Contact Form */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
-              
-              {status.submitted && (
-                <div className={`mb-6 p-4 rounded-lg ${status.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-                  <div className="flex items-center gap-2 mb-1">
-                    {status.success ? (
-                      <CheckCircle className={`w-5 h-5 ${status.success ? 'text-green-600' : 'text-red-600'}`} />
-                    ) : (
-                      <AlertCircle className="w-5 h-5 text-red-600" />
-                    )}
-                    <p className={`font-medium ${status.success ? 'text-green-800' : 'text-red-800'}`}>
-                      {status.success ? 'Message Sent' : 'Error'}
-                    </p>
+
+          {/* Contact type cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+            {contactTypes.map((type) => {
+              const Icon = type.icon;
+              const isSelected = formData.type === type.value;
+              return (
+                <button
+                  key={type.value}
+                  onClick={() => setFormData(prev => ({ ...prev, type: type.value }))}
+                  className={`p-5 rounded-xl border-2 text-left transition-all duration-200 ${
+                    isSelected
+                      ? 'border-violet-600 bg-violet-50 shadow-[0_0_20px_-5px_rgba(139,92,246,0.2)]'
+                      : 'border-gray-200 bg-white hover:border-violet-300 hover:bg-violet-50/30'
+                  }`}
+                >
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${
+                    isSelected ? 'bg-violet-600 text-white' : 'bg-gray-100 text-gray-500'
+                  }`}>
+                    <Icon className="w-5 h-5" />
                   </div>
-                  <p className={status.success ? 'text-green-700' : 'text-red-700'}>
+                  <h3 className={`font-semibold mb-1 ${isSelected ? 'text-violet-900' : 'text-gray-900'}`}>
+                    {type.title}
+                  </h3>
+                  <p className="text-sm text-gray-500">{type.description}</p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Form */}
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+            {status.submitted && (
+              <div className={`mb-6 p-4 rounded-xl flex items-start gap-3 ${
+                status.success
+                  ? 'bg-emerald-50 border border-emerald-200'
+                  : 'bg-red-50 border border-red-200'
+              }`}>
+                {status.success ? (
+                  <CheckCircle className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" />
+                ) : (
+                  <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 shrink-0" />
+                )}
+                <div>
+                  <p className={`font-medium ${status.success ? 'text-emerald-800' : 'text-red-800'}`}>
+                    {status.success ? 'Message Sent!' : 'Something went wrong'}
+                  </p>
+                  <p className={`text-sm mt-0.5 ${status.success ? 'text-emerald-700' : 'text-red-700'}`}>
                     {status.message}
                   </p>
                 </div>
-              )}
-              
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-                      placeholder="John Doe"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Your Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                </div>
-                
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-                    Subject
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Your Name
                   </label>
                   <input
                     type="text"
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
+                    id="name"
+                    name="name"
+                    value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-                    placeholder="How can we help you?"
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all"
+                    placeholder="John Doe"
                   />
                 </div>
-                
+
                 <div>
-                  <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
-                    Message Type
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Email Address
                   </label>
-                  <select
-                    id="type"
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
-                  >
-                    <option value="general">General Inquiry</option>
-                    <option value="feature">Feature Request</option>
-                    <option value="support">Support</option>
-                    <option value="feedback">Feedback</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                    Your Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows="6"
-                    value={formData.message}
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none"
-                    placeholder="Write your message here..."
-                  ></textarea>
+                    className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all"
+                    placeholder="john@example.com"
+                  />
                 </div>
-                
-                <div>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-lg font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    {isSubmitting ? 'Sending...' : 'Send Message'}
-                    <Send className="w-4 h-4" />
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-          
-          {/* Feature Request Info */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8 max-w-5xl mx-auto">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-3">Feature Requests</h2>
-              <p className="text-gray-600 max-w-3xl mx-auto">
-                We&apos;re constantly improving Lucent based on your feedback. Have an idea for a feature that would enhance your learning experience? Let us know!
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="p-5 border border-gray-200 rounded-lg bg-gray-50">
-                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center mb-4">
-                  <span className="text-violet-600 font-bold">1</span>
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Submit Your Idea</h3>
-                <p className="text-gray-600">
-                  Use the contact form to send us your feature request with as much detail as possible.
-                </p>
               </div>
-              
-              <div className="p-5 border border-gray-200 rounded-lg bg-gray-50">
-                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center mb-4">
-                  <span className="text-violet-600 font-bold">2</span>
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Review Process</h3>
-                <p className="text-gray-600">
-                  Our product team reviews all requests and evaluates them based on user need and feasibility.
-                </p>
+
+              <div>
+                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Subject
+                </label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 transition-all"
+                  placeholder="How can we help?"
+                />
               </div>
-              
-              <div className="p-5 border border-gray-200 rounded-lg bg-gray-50">
-                <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center mb-4">
-                  <span className="text-violet-600 font-bold">3</span>
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Implementation</h3>
-                <p className="text-gray-600">
-                  If approved, your feature will be added to our development roadmap and you will be notified when it launches.
-                </p>
+
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="5"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 resize-none transition-all"
+                  placeholder="Tell us what's on your mind..."
+                />
               </div>
-            </div>
+
+              <div className="flex items-center justify-between pt-2">
+                <p className="text-sm text-gray-500">
+                  We typically respond within 24 hours.
+                </p>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm hover:shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)]"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </main>
     </div>
   );
-} 
+}

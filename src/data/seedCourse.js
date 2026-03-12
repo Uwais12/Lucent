@@ -51,19 +51,25 @@ export const ddiaCourse = {
               order: 1,
               duration: 15,
               exercise: {
-                type: "fill-in-blanks",
-                title: "Mini Exercise: Data-Intensive Definition",
+                type: "multiple-choice",
+                title: "Mini Exercise: Why Data-Intensive Matters",
                 description:
-                  "Fill in the key characteristics defining data-intensive applications.",
+                  "Think critically about what makes data-intensive applications fundamentally different from compute-intensive ones.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  text: "Applications where the primary challenge relates to the [1], [2], or [3] of data are called data-intensive applications.",
-                  blanks: [
-                    { id: "1", answer: "volume" },
-                    { id: "2", answer: "complexity" },
-                    { id: "3", answer: "rate of change" } // or velocity
-                  ]
+                  question:
+                    "A video streaming service like Netflix must store petabytes of content, serve millions of concurrent users, and update recommendations in near real-time. Why is this considered a data-intensive challenge rather than a compute-intensive one?",
+                  options: [
+                    "A) Because video encoding requires significant CPU power for each request.",
+                    "B) Because the primary bottleneck is managing the volume, variety, and velocity of data across storage, caching, and delivery systems.",
+                    "C) Because the service uses GPUs for machine learning recommendations.",
+                    "D) Because serving static video files is computationally trivial and requires no engineering effort."
+                  ],
+                  correctAnswer:
+                    "B) Because the primary bottleneck is managing the volume, variety, and velocity of data across storage, caching, and delivery systems.",
+                  explanation:
+                    "While compute matters (e.g., encoding), the core engineering challenge is orchestrating massive data across distributed storage, CDNs, caches, and recommendation engines -- making it data-intensive."
                 }
               }
             },
@@ -454,23 +460,23 @@ export const ddiaCourse = {
               duration: 20, // Increased duration
               exercise: {
                 type: "multiple-choice",
-                title: "Mini Exercise: Understanding Percentiles",
-                description: "Explain what the p95 response time represents.",
+                title: "Mini Exercise: Percentiles in Practice",
+                description: "Apply your understanding of percentiles and tail latency amplification to a real-world scenario.",
                 points: 10,
-                difficulty: "beginner",
+                difficulty: "intermediate",
                 content: {
                   question:
-                    "If the p95 response time for a service is 800ms, what does this mean?",
+                    "An e-commerce checkout page makes parallel requests to 5 backend services (inventory, pricing, tax, shipping, payment). Each service has a p99 latency of 500ms. The checkout page must wait for ALL services to respond. Why might the p99 latency of the checkout page be significantly WORSE than 500ms, even though each individual service meets its SLA?",
                   options: [
-                    "A) 95% of requests take exactly 800ms.",
-                    "B) The average response time is 800ms.",
-                    "C) 95% of requests are faster than 800ms (and 5% are slower).",
-                    "D) The fastest 5% of requests are faster than 800ms."
+                    "A) Because the latencies of the 5 services are added together sequentially, resulting in 2500ms.",
+                    "B) Because of tail latency amplification: with 5 parallel calls, the probability of at least one hitting its slow tail is much higher than 1%.",
+                    "C) Because the checkout page adds its own constant processing overhead of 500ms.",
+                    "D) Because p99 measurements are unreliable and don't reflect actual performance."
                   ],
                   correctAnswer:
-                    "C) 95% of requests are faster than 800ms (and 5% are slower).",
+                    "B) Because of tail latency amplification: with 5 parallel calls, the probability of at least one hitting its slow tail is much higher than 1%.",
                   explanation:
-                    "The pXX percentile indicates the value below which XX% of observations fall. p95 measures the upper end of performance, indicating tail latency."
+                    "With 5 independent services each having a 1% chance of being slow, the probability of the checkout experiencing at least one slow call is approximately 1 - (0.99)^5 = ~5%. This means the effective p99 of the composite page is much worse than any individual service's p99."
                 }
               }
             }
@@ -804,6 +810,38 @@ export const ddiaCourse = {
              points: 10,
              explanation:
                "System design involves trade-offs. The optimal architecture depends heavily on the specific needs (read/write patterns, consistency requirements, scale, etc.) of the application."
+           },
+           {
+             type: "multiple-choice",
+             question:
+               "Scenario: An online retailer normally handles 10,000 requests/second but expects 200,000 requests/second during a Black Friday sale. The spike lasts ~6 hours. Their current system uses 4 application servers behind a load balancer with a single primary database. Which strategy BEST addresses this temporary but massive load increase?",
+             options: [
+               "A) Vertically scale the database server permanently to handle 200K req/s, since the spike will happen again next year.",
+               "B) Use elastic horizontal scaling for the stateless application tier (auto-scaling groups), add read replicas for the database, and implement aggressive caching (e.g., Redis) to absorb read traffic.",
+               "C) Rewrite the entire application to use a NoSQL database that handles high write throughput better.",
+               "D) Simply increase database connection pool sizes and hope the existing hardware can handle the load."
+             ],
+             correctAnswer:
+               "B) Use elastic horizontal scaling for the stateless application tier (auto-scaling groups), add read replicas for the database, and implement aggressive caching (e.g., Redis) to absorb read traffic.",
+             points: 15,
+             explanation:
+               "This combines horizontal scaling (easy for stateless tiers), read replicas (to distribute read load), and caching (to reduce database pressure). Elastic scaling handles the temporary nature of the spike cost-effectively. Vertical scaling alone is expensive and wasteful for temporary spikes."
+           },
+           {
+             type: "multiple-choice",
+             question:
+               "When comparing eventual consistency with strong consistency, which statement is most accurate?",
+             options: [
+               "A) Strong consistency is always preferred because it prevents all data anomalies.",
+               "B) Eventual consistency means data will never converge to a consistent state.",
+               "C) Eventual consistency trades immediate consistency for higher availability and lower latency, while strong consistency guarantees all reads see the most recent write but may require coordination that reduces availability.",
+               "D) The choice between them has no practical impact on application design."
+             ],
+             correctAnswer:
+               "C) Eventual consistency trades immediate consistency for higher availability and lower latency, while strong consistency guarantees all reads see the most recent write but may require coordination that reduces availability.",
+             points: 10,
+             explanation:
+               "This is a fundamental trade-off in distributed systems. Strong consistency requires coordination (reducing availability during partitions), while eventual consistency allows systems to remain available at the cost of temporarily stale reads."
            }
         ]
       }
@@ -1590,7 +1628,7 @@ export const ddiaCourse = {
             {
               title: "SSTables and LSM-Trees",
               content:
-                "Log-Structured Merge-Trees (LSM-trees) are the foundation for many modern NoSQL databases (e.g., Cassandra, HBase, RocksDB). They combine several ideas:\n\n1.  **Sorted String Tables (SSTables):** Log segments where key-value pairs are sorted *by key*. This allows efficient merging (like mergesort) and efficient lookups (keys within a segment can be found quickly). A sparse in-memory index can point to key ranges within the SSTable.\n2.  **Memtable:** Incoming writes go to an in-memory balanced tree structure (e.g., AVL tree, Red-Black tree), called the **memtable**, which keeps keys sorted.\n3.  **Flushing:** When the memtable reaches a certain size, it's written out to disk as a new SSTable segment.\n4.  **Compaction:** Background processes merge older SSTable segments and discard overwritten/deleted values.\n5.  **Write-Ahead Log (WAL):** To prevent data loss if the memtable crashes before being flushed, writes are typically first appended to an on-disk WAL.\n6.  **Bloom Filters:** Often used to quickly determine if a key *might* exist in an SSTable segment, avoiding unnecessary disk reads for non-existent keys.\n\nLSM-trees provide excellent write performance because writes are mostly sequential appends (to WAL and memtable, then sequential SSTable writes). Reads might need to check the memtable and multiple SSTable segments.",
+                "Log-Structured Merge-Trees (LSM-trees) are the foundation for many modern databases and storage systems. **Real-world examples include:** Apache Cassandra (used by Netflix, Discord), Google Bigtable, RocksDB (used by Meta's MySQL variant, CockroachDB), LevelDB, and InfluxDB.\n\n**When to use LSM-trees:** Choose LSM-tree based storage when your workload is write-heavy (logging, time-series, IoT ingestion), when you need high write throughput with good compression, or when your data naturally arrives in append-only patterns.\n\nThey combine several ideas:\n\n1.  **Sorted String Tables (SSTables):** Log segments where key-value pairs are sorted *by key*. This allows efficient merging (like mergesort) and efficient lookups (keys within a segment can be found quickly). A sparse in-memory index can point to key ranges within the SSTable.\n2.  **Memtable:** Incoming writes go to an in-memory balanced tree structure (e.g., AVL tree, Red-Black tree), called the **memtable**, which keeps keys sorted.\n3.  **Flushing:** When the memtable reaches a certain size, it's written out to disk as a new SSTable segment.\n4.  **Compaction:** Background processes merge older SSTable segments and discard overwritten/deleted values.\n5.  **Write-Ahead Log (WAL):** To prevent data loss if the memtable crashes before being flushed, writes are typically first appended to an on-disk WAL.\n6.  **Bloom Filters:** Often used to quickly determine if a key *might* exist in an SSTable segment, avoiding unnecessary disk reads for non-existent keys.\n\nLSM-trees provide excellent write performance because writes are mostly sequential appends (to WAL and memtable, then sequential SSTable writes). Reads might need to check the memtable and multiple SSTable segments.",
               order: 2,
               duration: 25, // Increased duration
               exercise: {
@@ -1613,7 +1651,7 @@ export const ddiaCourse = {
             {
               title: "B-Trees: The Relational Workhorse",
               content:
-                "**B-trees** are the dominant indexing structure in traditional relational databases (and many others).\n\n* **Structure:** A balanced tree where data is stored in fixed-size **pages** or **blocks** (typically 4KB or larger). Each page contains sorted keys and pointers to child pages (or data locations for leaf pages).\n* **Reads:** Start at the root page, follow pointers down the tree based on key ranges until the relevant leaf page is found.\n* **Writes/Updates:** Find the relevant leaf page, modify the value *in-place*. If a page becomes full, it's **split** into two, and the parent page is updated. If a deletion makes a page too empty, it might be merged with a sibling.\n* **Durability:** Typically use a WAL to log changes before modifying pages on disk, ensuring atomicity and durability.\n\nB-trees offer good performance for both reads and writes and provide strong guarantees on query times due to their balanced structure. However, writes require reading and overwriting pages, which can involve random I/O.",
+                "**B-trees** are the dominant indexing structure in traditional relational databases and many others. **Real-world examples:** PostgreSQL, MySQL (InnoDB), Oracle, SQL Server, and SQLite all use B-tree variants as their primary index structure.\n\n**When to use B-trees:** Choose B-tree based storage when your workload requires a balance of reads and writes, when you need predictable read latency (e.g., user-facing OLTP), or when strong transactional guarantees are essential.\n\n* **Structure:** A balanced tree where data is stored in fixed-size **pages** or **blocks** (typically 4KB or larger). Each page contains sorted keys and pointers to child pages (or data locations for leaf pages).\n* **Reads:** Start at the root page, follow pointers down the tree based on key ranges until the relevant leaf page is found.\n* **Writes/Updates:** Find the relevant leaf page, modify the value *in-place*. If a page becomes full, it's **split** into two, and the parent page is updated. If a deletion makes a page too empty, it might be merged with a sibling.\n* **Durability:** Typically use a WAL to log changes before modifying pages on disk, ensuring atomicity and durability.\n\nB-trees offer good performance for both reads and writes and provide strong guarantees on query times due to their balanced structure. However, writes require reading and overwriting pages, which can involve random I/O.",
               order: 3,
               duration: 15,
               exercise: {
@@ -2242,7 +2280,39 @@ export const ddiaCourse = {
              points: 10,
              explanation:
                "Bitmap indexes work best when there are few unique values, as each distinct value requires its own bitmap."
-           }
+           },
+          {
+            type: "multiple-choice",
+            question:
+              "Scenario: You are building a full-text search engine (like Elasticsearch) that ingests millions of new documents per hour from web crawlers, while simultaneously serving search queries. The write pattern is append-heavy with rare updates. Which storage engine architecture would be most suitable and why?",
+            options: [
+              "A) B-tree based engine, because B-trees provide consistent read latency which is critical for search queries.",
+              "B) LSM-tree based engine, because LSM-trees excel at high write throughput with sequential I/O, and the append-heavy workload with infrequent updates aligns perfectly with their design. Background compaction keeps read performance acceptable.",
+              "C) A simple hash index, because hash lookups are O(1) and would make search queries extremely fast.",
+              "D) Column-oriented storage, because search queries typically scan large datasets like OLAP workloads."
+            ],
+            correctAnswer:
+              "B) LSM-tree based engine, because LSM-trees excel at high write throughput with sequential I/O, and the append-heavy workload with infrequent updates aligns perfectly with their design. Background compaction keeps read performance acceptable.",
+            points: 15,
+            explanation:
+              "This is exactly why Elasticsearch (via Lucene) and many search/logging systems use LSM-tree-like structures. The write pattern (high-volume appends) plays to LSM-tree strengths: fast sequential writes to memtables, then flushing to sorted SSTables. B-trees would struggle with the write volume due to random I/O. Real-world examples: Apache Cassandra, RocksDB, and LevelDB all use LSM-trees for write-heavy workloads."
+          },
+          {
+            type: "multiple-choice",
+            question:
+              "When comparing OLTP and OLAP workloads, which pair of characteristics correctly distinguishes them?",
+            options: [
+              "A) OLTP reads many rows per query; OLAP reads few rows per query.",
+              "B) OLTP handles many short transactions touching few rows; OLAP handles fewer but much larger analytical queries scanning many rows.",
+              "C) OLTP always uses column-oriented storage; OLAP always uses row-oriented storage.",
+              "D) OLTP is only used for batch processing; OLAP is only used for real-time processing."
+            ],
+            correctAnswer:
+              "B) OLTP handles many short transactions touching few rows; OLAP handles fewer but much larger analytical queries scanning many rows.",
+            points: 10,
+            explanation:
+              "OLTP workloads are characterized by high-frequency, low-latency operations on small amounts of data (e.g., placing an order). OLAP workloads involve complex queries scanning millions of rows for aggregations and reports (e.g., total revenue by region last quarter)."
+          }
         ]
       }
     },
@@ -2470,7 +2540,7 @@ export const ddiaCourse = {
               {
                 title: "Binary Encoding Formats (Protobuf, Thrift, Avro)",
                 content:
-                  "These formats prioritize compactness, speed, and explicit schemas:\n\n* **Protocol Buffers (Protobuf):** Developed by Google. Uses an Interface Definition Language (.proto files) to define schemas. Encodes data using numeric field tags. Generates efficient serialization/deserialization code in many languages.\n* **Apache Thrift:** Developed by Facebook (now Apache). Similar to Protobuf, uses an IDL (.thrift files) and numeric field tags. Supports more complex container types and has built-in RPC framework support.\n* **Apache Avro:** Designed with Hadoop ecosystem in mind. Schemas (defined in JSON) are required for both writing and reading data. Does *not* use field tags in the encoded data; relies on schema resolution at read time. Particularly good for evolving schemas in data pipelines and storage.\n* **MessagePack:** A binary format aiming to be like 'binary JSON' - more compact and faster than JSON but retains similar data model simplicity.\n\n*Pros:* Compact size (less bandwidth/storage), faster encoding/decoding, explicit schemas enable better validation and evolution.\n*Cons:* Not human-readable without schema and decoding tools.",
+                  "These formats prioritize compactness, speed, and explicit schemas:\n\n* **Protocol Buffers (Protobuf):** Developed by Google. Uses an Interface Definition Language (.proto files) to define schemas. Encodes data using numeric field tags. Generates efficient serialization/deserialization code in many languages.\n* **Apache Thrift:** Developed by Facebook (now Apache). Similar to Protobuf, uses an IDL (.thrift files) and numeric field tags. Supports more complex container types and has built-in RPC framework support.\n* **Apache Avro:** Designed with Hadoop ecosystem in mind. Schemas (defined in JSON) are required for both writing and reading data. Does *not* use field tags in the encoded data; relies on schema resolution at read time. Particularly good for evolving schemas in data pipelines and storage.\n* **MessagePack:** A binary format aiming to be like 'binary JSON' - more compact and faster than JSON but retains similar data model simplicity.\n\n*Pros:* Compact size (less bandwidth/storage), faster encoding/decoding, explicit schemas enable better validation and evolution.\n*Cons:* Not human-readable without schema and decoding tools.\n\n**Real-world usage:** Google uses Protocol Buffers extensively for internal service communication (gRPC). Apache Kafka uses Avro with a Schema Registry for event streaming at LinkedIn, Uber, and many others. Facebook (Meta) originally created Thrift for internal RPC. **When to use which:** Choose Protobuf/gRPC for service-to-service APIs with strong typing. Choose Avro for data pipelines and storage where schema evolution is frequent (e.g., Hadoop, Kafka). Choose JSON for public APIs where human readability matters.",
                 order: 2,
                 duration: 20, // Increased duration
                 exercise: {
@@ -2969,7 +3039,7 @@ export const ddiaCourse = {
             {
               title: "Synchronous vs. Asynchronous Replication",
               content:
-                "When the leader sends changes to followers, it can wait for confirmation:\n\n* **Synchronous Replication:** The leader waits until at least one (or sometimes all) followers confirm they have received and applied the write before reporting success to the client. \n    * *Pros:* Stronger durability guarantee (write confirmed on multiple nodes).\n    * *Cons:* Higher write latency (waits for follower response); If the synchronous follower is slow or unavailable, the leader cannot process writes.\n* **Asynchronous Replication:** The leader sends the change and immediately reports success to the client without waiting for follower confirmation.\n    * *Pros:* Lower write latency, higher availability (leader not blocked by slow/failed followers).\n    * *Cons:* Weaker durability; if the leader fails before changes reach followers, recent writes may be lost (**replication lag**).\n* **Semi-Synchronous:** A compromise where the leader waits for *at least one* follower to confirm synchronously, while others replicate asynchronously. Provides better durability than async without the full availability risk of fully sync.",
+                "When the leader sends changes to followers, it can wait for confirmation:\n\n* **Synchronous Replication:** The leader waits until at least one (or sometimes all) followers confirm they have received and applied the write before reporting success to the client. \n    * *Pros:* Stronger durability guarantee (write confirmed on multiple nodes).\n    * *Cons:* Higher write latency (waits for follower response); If the synchronous follower is slow or unavailable, the leader cannot process writes.\n* **Asynchronous Replication:** The leader sends the change and immediately reports success to the client without waiting for follower confirmation.\n    * *Pros:* Lower write latency, higher availability (leader not blocked by slow/failed followers).\n    * *Cons:* Weaker durability; if the leader fails before changes reach followers, recent writes may be lost (**replication lag**).\n* **Semi-Synchronous:** A compromise where the leader waits for *at least one* follower to confirm synchronously, while others replicate asynchronously. Provides better durability than async without the full availability risk of fully sync.\n\n**Real-world examples:** PostgreSQL uses streaming replication (configurable sync/async). MySQL defaults to async replication but supports semi-synchronous mode. Amazon Aurora uses a quorum-based approach where writes are acknowledged after 4 of 6 storage nodes confirm, achieving both durability and low latency.",
               order: 3,
               duration: 20, // Increased duration
               exercise: {
@@ -3280,7 +3350,7 @@ export const ddiaCourse = {
             {
               title: "Multi-Leader Replication",
               content:
-                "Allows more than one node to accept writes. Changes are replicated asynchronously between leaders.\n\n* **Use Cases:**\n    * **Multi-Datacenter Operation:** Each DC has a leader, reducing cross-DC write latency for local users.\n    * **Offline Client Operation:** Devices (e.g., calendar apps) act as leaders while offline, syncing changes when reconnected.\n    * **Collaborative Editing:** Multiple users editing the same document concurrently (though often uses specialized CRDTs).\n* **Challenges:** The main problem is **write conflicts**. If the same data is modified concurrently on different leaders, the system needs a way to resolve the conflict when changes are replicated.",
+                "Allows more than one node to accept writes. Changes are replicated asynchronously between leaders.\n\n* **Use Cases:**\n    * **Multi-Datacenter Operation:** Each DC has a leader, reducing cross-DC write latency for local users.\n    * **Offline Client Operation:** Devices (e.g., calendar apps) act as leaders while offline, syncing changes when reconnected.\n    * **Collaborative Editing:** Multiple users editing the same document concurrently (though often uses specialized CRDTs).\n* **Challenges:** The main problem is **write conflicts**. If the same data is modified concurrently on different leaders, the system needs a way to resolve the conflict when changes are replicated.\n\n**Real-world examples:** CouchDB uses multi-leader replication for offline-first mobile apps. Google Docs uses a variant of multi-leader with Operational Transformation (OT) for collaborative editing. MySQL Group Replication and PostgreSQL BDR support multi-leader setups for multi-datacenter deployments.",
               order: 2,
               duration: 15,
               exercise: { // From original, rephrased
@@ -3421,7 +3491,7 @@ export const ddiaCourse = {
             {
               title: "Leaderless Replication Basics (Dynamo-Style)",
               content:
-                "In **leaderless replication** (popularized by Amazon's Dynamo paper, used in Riak, Cassandra, Voldemort), there is no designated leader node. Any replica can accept write requests directly from clients.\n\n* **Write Path:** A client (or a coordinator node acting on its behalf) sends the write request to multiple (often N) replicas in parallel.\n* **Read Path:** The client/coordinator sends read requests to multiple replicas in parallel.\n\nThis approach is designed for high availability for writes (as long as *some* replicas are up) but requires mechanisms to handle potential inconsistencies and ensure data eventually converges.",
+                "In **leaderless replication** (popularized by Amazon's Dynamo paper), there is no designated leader node. Any replica can accept write requests directly from clients.\n\n* **Write Path:** A client (or a coordinator node acting on its behalf) sends the write request to multiple (often N) replicas in parallel.\n* **Read Path:** The client/coordinator sends read requests to multiple replicas in parallel.\n\nThis approach is designed for high availability for writes (as long as *some* replicas are up) but requires mechanisms to handle potential inconsistencies and ensure data eventually converges.\n\n**Real-world examples:** Amazon DynamoDB, Apache Cassandra (used by Apple, Netflix, and Uber for high-availability workloads), and Riak all use Dynamo-style leaderless replication. These systems prioritize availability and partition tolerance, making them ideal for use cases where brief inconsistency is acceptable (e.g., shopping carts, user activity tracking).",
               order: 1,
               duration: 15,
               exercise: { // From original, rephrased
@@ -3699,6 +3769,38 @@ export const ddiaCourse = {
             points: 10,
             explanation:
               "LWW is simple but notoriously unsafe, as it can easily discard concurrent writes based on potentially inaccurate timestamps, leading to data loss."
+          },
+          {
+            type: "multiple-choice",
+            question:
+              "Scenario: A global social media company operates datacenters in North America, Europe, and Asia. Users post content and expect to see their posts immediately, while followers in other regions can tolerate a few seconds of delay. The company needs high write availability even if one datacenter goes offline. Which replication strategy best fits these requirements?",
+            options: [
+              "A) Single-leader replication with the leader in North America, since most users are there.",
+              "B) Multi-leader replication with a leader in each datacenter, using asynchronous replication between datacenters and conflict resolution for concurrent edits.",
+              "C) Leaderless replication with strict quorums (W=N, R=1) across all three datacenters.",
+              "D) Synchronous single-leader replication to guarantee all regions see writes instantly."
+            ],
+            correctAnswer:
+              "B) Multi-leader replication with a leader in each datacenter, using asynchronous replication between datacenters and conflict resolution for concurrent edits.",
+            points: 15,
+            explanation:
+              "Multi-leader replication allows each datacenter to accept writes locally (low latency, high availability even during datacenter outages), while asynchronous cross-datacenter replication keeps regions eventually consistent. This is the approach used by systems like Google Docs and CockroachDB's multi-region deployments. Single-leader would create high latency for remote writes and a single point of failure."
+          },
+          {
+            type: "multiple-choice",
+            question:
+              "When comparing synchronous and asynchronous replication in a leader-based system, which trade-off is most accurate?",
+            options: [
+              "A) Synchronous replication provides faster writes but weaker durability guarantees.",
+              "B) Asynchronous replication guarantees no data loss on leader failure but has higher write latency.",
+              "C) Synchronous replication guarantees the follower has an up-to-date copy (stronger durability) but increases write latency and reduces availability if the follower is slow or down. Asynchronous replication has faster writes but risks data loss if the leader fails before replication completes.",
+              "D) There is no meaningful difference between synchronous and asynchronous replication in practice."
+            ],
+            correctAnswer:
+              "C) Synchronous replication guarantees the follower has an up-to-date copy (stronger durability) but increases write latency and reduces availability if the follower is slow or down. Asynchronous replication has faster writes but risks data loss if the leader fails before replication completes.",
+            points: 10,
+            explanation:
+              "This is a classic durability vs. performance/availability trade-off. In practice, most systems use 'semi-synchronous' replication: one synchronous follower for durability, with the rest asynchronous for performance."
           }
         ]
       }
@@ -3732,7 +3834,7 @@ export const ddiaCourse = {
             {
               title: "Why Partition Data? (Scaling Out)",
               content:
-                "For very large datasets or very high query throughput, scaling a single machine (**scaling up** / vertical scaling) eventually hits limits (cost, physical constraints). **Partitioning** (also called **sharding**) is the primary way to **scale out** (horizontal scaling).\n\nIt involves splitting a large database into smaller, more manageable pieces called **partitions** (or shards) and distributing these partitions across multiple nodes (machines) in a cluster. Each node becomes responsible for only a subset of the data.\n\n* **Benefits:** Increases total storage capacity, distributes read/write load across multiple machines, improving overall throughput.",
+                "For very large datasets or very high query throughput, scaling a single machine (**scaling up** / vertical scaling) eventually hits limits (cost, physical constraints). **Partitioning** (also called **sharding**) is the primary way to **scale out** (horizontal scaling).\n\nIt involves splitting a large database into smaller, more manageable pieces called **partitions** (or shards) and distributing these partitions across multiple nodes (machines) in a cluster. Each node becomes responsible for only a subset of the data.\n\n* **Benefits:** Increases total storage capacity, distributes read/write load across multiple machines, improving overall throughput.\n\n**Real-world examples:** MongoDB calls partitions 'shards'. Cassandra and DynamoDB use 'partitions' based on partition keys. Elasticsearch distributes data across 'shards' within an index. Vitess (used by YouTube) adds sharding to MySQL. Each system uses different partitioning strategies suited to its data model and access patterns.",
               order: 1,
               duration: 15,
               exercise: { // From original, slightly rephrased
@@ -4715,7 +4817,7 @@ export const ddiaCourse = {
             {
               title: "The Purpose of Transactions",
               content:
-                "Applications often need to perform several separate read and write operations as part of one logical action (e.g., transferring funds requires debiting one account AND crediting another). **Transactions** group multiple operations into a single unit of execution.\n\nThe database guarantees that within a transaction, all operations complete successfully (**commit**), or if any operation fails (due to constraint violation, network error, crash, etc.), all operations performed so far within that transaction are undone (**abort** or **rollback**).\n\nThis **all-or-nothing** property greatly simplifies application error handling; the application doesn't need complex logic to manually undo partial changes if something goes wrong mid-way through a multi-step process.",
+                "Applications often need to perform several separate read and write operations as part of one logical action (e.g., transferring funds requires debiting one account AND crediting another). **Transactions** group multiple operations into a single unit of execution.\n\nThe database guarantees that within a transaction, all operations complete successfully (**commit**), or if any operation fails (due to constraint violation, network error, crash, etc.), all operations performed so far within that transaction are undone (**abort** or **rollback**).\n\nThis **all-or-nothing** property greatly simplifies application error handling; the application doesn't need complex logic to manually undo partial changes if something goes wrong mid-way through a multi-step process.\n\n**When to use transactions:** Transactions are essential when your application requires multi-step operations that must be atomic (banking transfers, order placement with inventory updates, user registration with profile creation). They are critical in systems where data correctness is non-negotiable (financial systems, healthcare, booking systems). However, transactions come with performance costs -- strong isolation levels reduce concurrency. For read-heavy analytics or eventual-consistency-tolerant workloads, you may intentionally choose weaker guarantees for better performance.",
               order: 1,
               duration: 15,
               exercise: { // From original, rephrased
@@ -5506,6 +5608,38 @@ export const ddiaCourse = {
             correctAnswer: "C) Adding mechanisms to detect and abort transactions that would violate serializability (e.g., detecting write skew).",
             points: 10,
             explanation: "SSI builds upon MVCC snapshots but adds conflict detection at commit time to achieve true serializability."
+          },
+          {
+            type: "multiple-choice",
+            question:
+              "Scenario: An airline booking system allows passengers to select seats. Two users (Alice and Bob) simultaneously try to book the last available seat (14A) on a flight. Both transactions: (1) read the seat status and see it as 'available', (2) proceed to write 'booked' with their name. Under Snapshot Isolation, what concurrency anomaly could occur, and how would you prevent it?",
+            options: [
+              "A) This is a dirty read problem. Read Committed isolation would prevent it.",
+              "B) This is a write skew anomaly. Both transactions read the same snapshot showing the seat available, then both write to the same row. You need Serializable isolation (e.g., SSI or 2PL) or an explicit SELECT FOR UPDATE lock on the seat row.",
+              "C) This is a phantom read. Adding an index on the seat column would prevent it.",
+              "D) This cannot happen because Snapshot Isolation already prevents all write conflicts."
+            ],
+            correctAnswer:
+              "B) This is a write skew anomaly. Both transactions read the same snapshot showing the seat available, then both write to the same row. You need Serializable isolation (e.g., SSI or 2PL) or an explicit SELECT FOR UPDATE lock on the seat row.",
+            points: 15,
+            explanation:
+              "Under Snapshot Isolation, both transactions see the seat as available (from their snapshots) and proceed to book it. Since they're writing to the same row, some databases detect this as a write conflict, but the general pattern (read a condition, then write based on it) is write skew. Explicit locking (SELECT FOR UPDATE) or Serializable isolation prevents this by ensuring only one transaction can proceed. This is a common real-world pattern in booking, inventory, and reservation systems."
+          },
+          {
+            type: "multiple-choice",
+            question:
+              "When comparing optimistic concurrency control (like SSI) with pessimistic concurrency control (like 2PL), which statement best describes their trade-offs?",
+            options: [
+              "A) Optimistic control is always faster because it never blocks transactions.",
+              "B) Pessimistic control (2PL) prevents conflicts upfront using locks, providing predictability but risking deadlocks and reduced throughput under contention. Optimistic control (SSI) allows transactions to proceed without blocking, achieving higher throughput when conflicts are rare, but must abort and retry transactions when conflicts are detected at commit time.",
+              "C) Pessimistic control is obsolete and no production database uses it anymore.",
+              "D) Optimistic control guarantees no transaction will ever be aborted."
+            ],
+            correctAnswer:
+              "B) Pessimistic control (2PL) prevents conflicts upfront using locks, providing predictability but risking deadlocks and reduced throughput under contention. Optimistic control (SSI) allows transactions to proceed without blocking, achieving higher throughput when conflicts are rare, but must abort and retry transactions when conflicts are detected at commit time.",
+            points: 10,
+            explanation:
+              "The key insight is that the best choice depends on workload characteristics. High-contention workloads may benefit from pessimistic control (fewer wasted retries), while low-contention workloads benefit from optimistic control (no blocking overhead). PostgreSQL's Serializable level uses SSI (optimistic), while MySQL's uses 2PL (pessimistic)."
           }
         ]
       }
@@ -7787,7 +7921,7 @@ export const ddiaCourse = {
             { // Original L1 P1
               title: "Understanding Event Streams",
               content:
-                "Unlike batch processing which deals with large, finite (**bounded**) datasets, **stream processing** deals with data that is continuous and potentially infinite (**unbounded**). Data arrives as a sequence of **events** over time.\n\n* **Event:** A small, immutable record representing something that happened at a specific point in time (e.g., a user click, a sensor reading, an order placement). Events are facts about the past.\n* **Stream:** An ongoing, potentially never-ending sequence of events.\n\nStream processing systems are designed to react to events shortly after they occur, enabling real-time analytics, monitoring, and application responsiveness.",
+                "Unlike batch processing which deals with large, finite (**bounded**) datasets, **stream processing** deals with data that is continuous and potentially infinite (**unbounded**). Data arrives as a sequence of **events** over time.\n\n* **Event:** A small, immutable record representing something that happened at a specific point in time (e.g., a user click, a sensor reading, an order placement). Events are facts about the past.\n* **Stream:** An ongoing, potentially never-ending sequence of events.\n\nStream processing systems are designed to react to events shortly after they occur, enabling real-time analytics, monitoring, and application responsiveness.\n\n**Real-world examples:** Apache Kafka (used by LinkedIn, Uber, Netflix) is the most widely adopted event streaming platform. Apache Flink powers real-time processing at Alibaba and Spotify. Amazon Kinesis provides managed streaming on AWS. Google Cloud Dataflow (based on Apache Beam) handles stream processing at Google scale.\n\n**When to use stream processing:** Choose stream processing when you need low-latency reactions to events (fraud detection, real-time dashboards, alerting), continuous data integration (CDC pipelines), or when data naturally arrives as an unbounded sequence (IoT sensors, user activity logs, financial market data).",
               order: 1,
               duration: 15,
               exercise: { // Original L1 E1
@@ -8783,8 +8917,8 @@ export const ddiaCourse = {
   endOfCourseExam: {
     title: "Final Exam: Designing Data-Intensive Applications Concepts",
     description:
-      "A comprehensive test covering data models, storage, encoding, replication, partitioning, transactions, consistency, consensus, batch processing, stream processing, integration, and ethical considerations.",
-    duration: 90, // Increased duration for more questions
+      "A comprehensive test covering data models, storage, encoding, replication, partitioning, transactions, consistency, consensus, batch processing, stream processing, and cross-chapter system design scenarios.",
+    duration: 120, // Increased duration for additional integration questions
     passingScore: 75, // Adjusted passing score slightly
     slug: "final-exam",
     questions: [
@@ -8967,6 +9101,89 @@ export const ddiaCourse = {
         correctAnswer: "D) Apache Avro",
         points: 10,
         explanation: "Avro's schema resolution mechanism allows for more flexibility, especially with dynamically generated schemas, by decoupling the schema from the binary data."
+      },
+      // ========================================
+      // CROSS-CHAPTER INTEGRATION QUESTIONS
+      // ========================================
+      { // Integration Q1 - Social Media Feed Design (Ch2, Ch3, Ch5, Ch6, Ch11)
+        type: "multiple-choice",
+        question:
+          "You are designing the backend for a social media news feed (like Twitter/X). Users follow others and see a timeline of recent posts. The system must handle 500M users, with celebrities having 50M+ followers. Which combination of strategies would BEST serve this use case?",
+        options: [
+          "A) Store all posts in a single relational table, join with followers table at read time, use B-tree indexes on user_id and timestamp.",
+          "B) Use a fan-out-on-write approach (pre-compute timelines into per-user caches) for most users, but fan-out-on-read for celebrities with millions of followers. Partition user timelines by user_id. Use a stream processing system (like Kafka) to distribute new posts to follower timelines asynchronously.",
+          "C) Use a single graph database to model all relationships and traverse follower edges at read time for every timeline request.",
+          "D) Store all posts in a column-oriented data warehouse and run analytical queries to generate timelines on demand."
+        ],
+        correctAnswer:
+          "B) Use a fan-out-on-write approach (pre-compute timelines into per-user caches) for most users, but fan-out-on-read for celebrities with millions of followers. Partition user timelines by user_id. Use a stream processing system (like Kafka) to distribute new posts to follower timelines asynchronously.",
+        points: 15,
+        explanation:
+          "This mirrors Twitter's actual architecture. Fan-out-on-write keeps read latency low for most users (Ch3: pre-computed caches), but celebrities use fan-out-on-read to avoid writing to millions of timelines (Ch1: load parameters). Kafka handles the async distribution (Ch11: stream processing), and partitioning by user_id ensures timeline data locality (Ch6: partitioning). This question integrates concepts from data models, storage, replication, partitioning, and stream processing."
+      },
+      { // Integration Q2 - Payment System Consistency (Ch5, Ch7, Ch9)
+        type: "multiple-choice",
+        question:
+          "A global payment processing system must ensure that a customer is charged exactly once for each purchase, even in the presence of network failures and retries. The system spans multiple datacenters. Which combination of guarantees and techniques is MOST critical?",
+        options: [
+          "A) Eventual consistency with Last-Write-Wins conflict resolution, since payments just need to eventually be processed.",
+          "B) Idempotent payment operations (using unique transaction IDs), serializable transactions for balance updates, and consensus-based coordination (e.g., Raft/Paxos) for cross-datacenter consistency of critical financial state.",
+          "C) Multi-leader replication with automatic conflict resolution, since this maximizes write availability across datacenters.",
+          "D) Snapshot Isolation for all transactions, with asynchronous replication between datacenters."
+        ],
+        correctAnswer:
+          "B) Idempotent payment operations (using unique transaction IDs), serializable transactions for balance updates, and consensus-based coordination (e.g., Raft/Paxos) for cross-datacenter consistency of critical financial state.",
+        points: 15,
+        explanation:
+          "Financial systems cannot tolerate lost updates or double-charges. Idempotency keys prevent duplicate processing on retries (Ch11: exactly-once semantics). Serializable transactions prevent race conditions on balance updates (Ch7: write skew prevention). Consensus protocols ensure cross-datacenter agreement on critical state (Ch9: consensus). This is why systems like Google Spanner use TrueTime + 2PC for globally consistent transactions."
+      },
+      { // Integration Q3 - Database Workload Selection (Ch2, Ch3, Ch4)
+        type: "multiple-choice",
+        question:
+          "A startup is building an IoT platform that ingests sensor readings from 100,000 devices (each sending data every second), stores time-series data for 1 year, and serves both real-time dashboards and monthly analytical reports. Which database architecture would you recommend?",
+        options: [
+          "A) A traditional relational database (PostgreSQL) with B-tree indexes on device_id and timestamp, using JSON columns for sensor data.",
+          "B) A time-series database with LSM-tree storage (like TimescaleDB or InfluxDB) for high write throughput ingestion, combined with column-oriented storage or materialized views for efficient analytical queries. Use Avro or Protocol Buffers for compact encoding of sensor readings.",
+          "C) A document database (MongoDB) storing each reading as a JSON document, with a separate data warehouse loaded nightly via batch ETL.",
+          "D) A graph database to model the relationships between devices, readings, and alerts."
+        ],
+        correctAnswer:
+          "B) A time-series database with LSM-tree storage (like TimescaleDB or InfluxDB) for high write throughput ingestion, combined with column-oriented storage or materialized views for efficient analytical queries. Use Avro or Protocol Buffers for compact encoding of sensor readings.",
+        points: 15,
+        explanation:
+          "100K devices * 1 reading/sec = 100K writes/sec -- this requires LSM-tree architecture for write throughput (Ch3). Time-series data is naturally ordered and compresses well in columnar format for analytics (Ch3: column stores). Compact binary encoding (Avro/Protobuf) reduces storage and network costs at this scale (Ch4). This integrates storage engine selection, data model choice, and encoding format decisions."
+      },
+      { // Integration Q4 - E-commerce Event Processing Pipeline (Ch10, Ch11, Ch3, Ch5)
+        type: "multiple-choice",
+        question:
+          "An e-commerce platform wants to build a unified data pipeline that: (1) captures every user action (views, clicks, purchases) in real-time, (2) updates product recommendation models, (3) maintains accurate inventory counts, and (4) generates daily business reports. Which architecture best addresses all four requirements?",
+        options: [
+          "A) Write all events directly to a relational database, run recommendation model training as stored procedures, and generate reports with SQL queries.",
+          "B) Use an event log (like Apache Kafka) as the central backbone. Stream processors consume events for real-time recommendations and inventory updates (using exactly-once processing with idempotent writes). A separate batch pipeline (e.g., Spark) reads from the same log for daily reports into a data warehouse.",
+          "C) Use a single NoSQL database with change data capture to trigger all downstream processing.",
+          "D) Build four separate, independent systems for each requirement with no shared data infrastructure."
+        ],
+        correctAnswer:
+          "B) Use an event log (like Apache Kafka) as the central backbone. Stream processors consume events for real-time recommendations and inventory updates (using exactly-once processing with idempotent writes). A separate batch pipeline (e.g., Spark) reads from the same log for daily reports into a data warehouse.",
+        points: 15,
+        explanation:
+          "This is the 'log-centric' architecture described in the book. Kafka acts as a durable, replayable event log (Ch11: event streams). Stream processors handle real-time needs (Ch11: stream processing). Batch processing generates reports (Ch10: MapReduce/Spark). The event log decouples producers from consumers, allowing each to scale independently. Inventory updates require exactly-once semantics to prevent overselling (Ch7: transactions + Ch11: idempotency)."
+      },
+      { // Integration Q5 - Global Database Migration (Ch2, Ch4, Ch5, Ch6, Ch9)
+        type: "multiple-choice",
+        question:
+          "A company is migrating from a monolithic PostgreSQL database to a distributed architecture to serve users globally with low latency. Their data includes user profiles (document-like, read-heavy), financial transactions (relational, strong consistency needed), and social connections (graph-like). What is the MOST architecturally sound approach?",
+        options: [
+          "A) Migrate everything to a single distributed SQL database like CockroachDB, since it handles all data models equally well.",
+          "B) Use polyglot persistence: a document store (e.g., MongoDB with multi-region replication) for user profiles, a distributed SQL database with serializable transactions (e.g., Spanner or CockroachDB) for financial data, and a graph database (e.g., Neo4j) for social connections. Use schema evolution (Avro) for data encoding between services, and partition each system appropriately for its access patterns.",
+          "C) Keep PostgreSQL but add read replicas in each region with synchronous replication for consistency.",
+          "D) Move all data to a key-value store (DynamoDB) for maximum scalability, handling all relationships in application code."
+        ],
+        correctAnswer:
+          "B) Use polyglot persistence: a document store (e.g., MongoDB with multi-region replication) for user profiles, a distributed SQL database with serializable transactions (e.g., Spanner or CockroachDB) for financial data, and a graph database (e.g., Neo4j) for social connections. Use schema evolution (Avro) for data encoding between services, and partition each system appropriately for its access patterns.",
+        points: 15,
+        explanation:
+          "Different data types have fundamentally different access patterns and consistency requirements (Ch2: data models). Financial data needs strong consistency and serializable transactions (Ch7, Ch9: consensus). User profiles benefit from document model flexibility and eventual consistency (Ch2, Ch5: replication). Social graphs need efficient traversal (Ch2: graph models). Schema evolution enables independent service deployment (Ch4: encoding). Partitioning strategies differ by data type (Ch6). This question tests the ability to synthesize concepts across nearly every chapter."
       }
     ]
   }

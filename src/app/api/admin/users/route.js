@@ -2,6 +2,9 @@ import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
 import { getAuth } from '@clerk/nextjs/server';
 
+// Escape special regex characters to prevent ReDoS
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 // Helper function to check if user is admin
 async function isAdmin(userId) {
   try {
@@ -48,7 +51,7 @@ export async function GET(req) {
     const query = {};
     if (search) {
       query.$or = [
-        { email: { $regex: search, $options: 'i' } },
+        { email: { $regex: escapeRegex(search), $options: 'i' } },
       ];
     }
     if (role) {

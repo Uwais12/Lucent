@@ -6,6 +6,25 @@ import Course from "@/models/Course";
 // Cache for quiz data
 const quizCache = new Map();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_MAX_SIZE = 100;
+
+// Evict expired entries and enforce max size
+function cleanCache() {
+  const now = Date.now();
+  for (const [key, value] of quizCache) {
+    if (now - value.timestamp >= CACHE_TTL) {
+      quizCache.delete(key);
+    }
+  }
+  // If still over limit, remove oldest entries
+  if (quizCache.size > CACHE_MAX_SIZE) {
+    const entries = [...quizCache.entries()].sort((a, b) => a[1].timestamp - b[1].timestamp);
+    const toRemove = entries.slice(0, quizCache.size - CACHE_MAX_SIZE);
+    for (const [key] of toRemove) {
+      quizCache.delete(key);
+    }
+  }
+}
 
 export async function GET(req, { params }) {
   try {
@@ -60,7 +79,8 @@ export async function GET(req, { params }) {
       return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
     }
 
-    // Cache the quiz data
+    // Cache the quiz data (with cleanup)
+    cleanCache();
     quizCache.set(cacheKey, {
       quiz: {
         ...quiz.toObject(),

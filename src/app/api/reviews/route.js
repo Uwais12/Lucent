@@ -3,6 +3,9 @@ import { getAuth } from '@clerk/nextjs/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import Review from '@/models/Review';
 
+// Strip HTML tags to prevent XSS
+const sanitize = (str) => str.replace(/<[^>]*>/g, '');
+
 export async function GET() {
   try {
     await connectToDatabase();
@@ -57,13 +60,13 @@ export async function POST(request) {
     // Connect to database
     await connectToDatabase();
     
-    // Create new review
+    // Create new review with sanitized inputs
     const review = new Review({
       userId,
       userName,
       rating,
-      title,
-      content,
+      title: sanitize(title),
+      content: sanitize(content),
       userWorkplace: userWorkplace || '',
       userRole: userRole || 'Student'
     });

@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Course from "@/models/Course";
 import User from "@/models/User";
 import { getAuth } from "@clerk/nextjs/server";
+import { calculateLevel } from "@/lib/constants";
 
 export async function POST(req, { params }) {
   try {
@@ -111,7 +112,7 @@ export async function POST(req, { params }) {
 
       // Calculate and update level (every 1000 XP = 1 level)
       const oldLevel = user.level;
-      const newLevel = Math.floor(user.xp / 1000) + 1;
+      const newLevel = calculateLevel(user.xp);
       if (newLevel > oldLevel) {
         user.level = newLevel;
         levelUp = true;

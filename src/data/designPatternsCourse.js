@@ -61,20 +61,20 @@ export const designPatternsCourse = {
               duration: 10,
               exercise: {
                  type: "multiple-choice",
-                 title: "Mini Exercise: Communication Benefit",
-                 description: "How do patterns aid team communication?",
+                 title: "Mini Exercise: Patterns and Maintenance",
+                 description: "Understand the deeper impact of patterns on software maintenance.",
                  points: 10,
-                 difficulty: "beginner",
+                 difficulty: "intermediate",
                  content: {
-                   question: "How do design patterns primarily improve communication among developers?",
+                   question: "A team inherits a large codebase with no documentation. They discover the original developers used well-known design patterns throughout. How does this MOST help the new team?",
                    options: [
-                     "A) By enforcing a specific coding style.",
-                     "B) By reducing the amount of code written.",
-                     "C) By providing a shared vocabulary and understanding of common design solutions.",
-                     "D) By automatically generating documentation."
+                     "A) The code will automatically run faster because patterns are optimized.",
+                     "B) The team can infer the architecture and intent of the code by recognizing the pattern structures, even without documentation.",
+                     "C) The team can skip code reviews since patterns guarantee correctness.",
+                     "D) The team no longer needs to write unit tests for pattern-based code."
                    ],
-                   correctAnswer: "C) By providing a shared vocabulary and understanding of common design solutions.",
-                   explanation: "Using pattern names allows developers to convey complex design ideas concisely and accurately."
+                   correctAnswer: "B) The team can infer the architecture and intent of the code by recognizing the pattern structures, even without documentation.",
+                   explanation: "Patterns encode design intent in their structure. Recognizing a pattern tells you not just what the code does, but WHY it was structured that way, making unfamiliar codebases easier to understand."
                  }
               }
             },
@@ -342,14 +342,17 @@ export const designPatternsCourse = {
               duration: 25, // Increased
                exercise: {
                  type: "code-challenge",
-                 title: "Implement Strategy (Conceptual)",
-                 description: "Refactor a simple Duck class to use Strategy for flying.",
+                 title: "Implement Strategy: Refactor Duck Flying",
+                 description: "Refactor a monolithic Duck class to use Strategy for flying behavior.",
                  points: 15,
                  difficulty: "intermediate",
                  content: {
-                   instructions: "Given a basic `Duck` class with a `fly()` method, refactor it using the Strategy pattern principles: Define a `FlyBehavior` interface, create `FlyWithWings` and `FlyNoWay` implementations, modify `Duck` to hold a `FlyBehavior` reference and delegate `performFly()` to it. Show the structure in pseudocode or your preferred language.",
-                   // No automated test cases possible without actual code execution environment
-                   testCases: [ { input: "Conceptual Implementation", expected: "Duck class delegates flying to a separate FlyBehavior object."}]
+                   instructions: "Refactor the following badly-designed code using the Strategy pattern:\n\n```java\n// BEFORE: Problematic code\nclass Duck {\n  String type;\n  Duck(String type) { this.type = type; }\n  void fly() {\n    if (type.equals(\"mallard\")) { System.out.println(\"Flying with wings!\"); }\n    else if (type.equals(\"rubber\")) { System.out.println(\"I can't fly!\"); }\n    else if (type.equals(\"rocket\")) { System.out.println(\"Flying with a rocket!\"); }\n  }\n}\n```\n\nYour refactored code should:\n1. Define a `FlyBehavior` interface with a `fly()` method\n2. Create `FlyWithWings`, `FlyNoWay`, and `FlyWithRocket` implementations\n3. Modify `Duck` to hold a `FlyBehavior` reference and delegate `performFly()` to it\n4. Include a `setFlyBehavior()` method to allow runtime changes\n\nHint: The key insight is that the `if/else` chain is the smell -- each branch becomes its own class implementing the interface.",
+                   testCases: [
+                     { input: "MallardDuck with FlyWithWings", expected: "performFly() outputs 'Flying with wings!'" },
+                     { input: "RubberDuck with FlyNoWay", expected: "performFly() outputs 'I can't fly!'" },
+                     { input: "MallardDuck.setFlyBehavior(new FlyWithRocket())", expected: "performFly() now outputs 'Flying with a rocket!'" }
+                   ]
                  }
                }
             },
@@ -381,7 +384,7 @@ export const designPatternsCourse = {
           ],
           endOfLessonQuiz: {
             title: "Strategy Pattern Quiz",
-            description: "Test your understanding of the Strategy pattern's intent, structure, and benefits, using the Duck example.",
+            description: "Test your understanding of the Strategy pattern's intent, structure, and benefits.",
             duration: 15,
             passingScore: 75,
             questions: [
@@ -418,13 +421,20 @@ export const designPatternsCourse = {
                 correctAnswer: "true",
                 points: 10,
                 explanation: "By changing the behavior object the Duck holds (e.g., via `setFlyBehavior`), its behavior can be altered dynamically."
+              },
+              {
+                type: "multiple-choice",
+                question: "You encounter this code in a codebase:\n\n```\nfunction calculateShipping(type, weight) {\n  switch(type) {\n    case 'ground': return weight * 1.5;\n    case 'air': return weight * 3.0 + 10;\n    case 'freight': return weight * 0.8 + 50;\n    case 'express': return weight * 5.0 + 20;\n    // ... 15 more cases added over time\n  }\n}\n```\n\nWhich design pattern would best improve this code, and why?",
+                options: [
+                  "A) Observer -- notify each shipping type when weight changes.",
+                  "B) Strategy -- encapsulate each shipping calculation into its own class implementing a common ShippingStrategy interface.",
+                  "C) Singleton -- ensure only one shipping calculator exists.",
+                  "D) Decorator -- wrap the shipping calculation with additional costs."
+                ],
+                correctAnswer: "B) Strategy -- encapsulate each shipping calculation into its own class implementing a common ShippingStrategy interface.",
+                points: 10,
+                explanation: "The growing switch statement is a code smell indicating that the algorithm varies by type. Strategy pattern encapsulates each algorithm, making it easy to add new shipping types without modifying the existing function."
               }
-              //  {
-              //    type: "short-answer",
-              //    question: "What is the general intent of the Strategy pattern?",
-              //    correctAnswer: "Define a family of algorithms, encapsulate each one, and make them interchangeable.", // Variations acceptable
-              //    points: 10
-              //  }
             ]
           }
         }
@@ -474,6 +484,19 @@ export const designPatternsCourse = {
              question: "What OO principle allows objects of different types (like `MallardDuck` and `RubberDuck`) to be treated uniformly through a common supertype (`Duck`)?",
              correctAnswer: "Polymorphism", // Case-insensitive
              points: 10
+           },
+           {
+             type: "multiple-choice",
+             question: "What problem arises from overusing inheritance instead of composition when designing behavior variations?",
+             options: [
+               "A) The code becomes too fast to debug.",
+               "B) Rigid class hierarchies emerge where changes to the superclass cascade unpredictably to subclasses, and behavior cannot be changed at runtime.",
+               "C) The compiler rejects deep inheritance hierarchies.",
+               "D) Memory usage is reduced to dangerous levels."
+             ],
+             correctAnswer: "B) Rigid class hierarchies emerge where changes to the superclass cascade unpredictably to subclasses, and behavior cannot be changed at runtime.",
+             points: 10,
+             explanation: "Deep inheritance creates fragile base class problems -- a change in the superclass can break subclasses in unexpected ways. Composition allows swapping behavior objects at runtime and avoids tight parent-child coupling."
            }
         ]
       }
@@ -497,26 +520,26 @@ export const designPatternsCourse = {
 
           parts: [
             {
-              title: "Problem: The Weather Station",
+              title: "Problem: The Stock Price Notification System",
               content:
-                "Imagine a `WeatherData` object that gets updated sensor readings (temperature, humidity, pressure). Multiple display elements (Current Conditions, Statistics, Forecast) need to be updated whenever the `WeatherData` changes.\n\nA naive approach might have the `WeatherData` object directly call update methods on each display object. \n\n* **Problems:**\n    * Tight coupling: `WeatherData` needs to know about specific display classes.\n    * Violates Open/Closed Principle: Adding a new display requires modifying `WeatherData`.\n    * Difficult to manage dependencies.",
+                "Imagine a `StockTicker` object that receives real-time price updates for various stocks. Multiple components need to react when prices change: a `PriceChartDisplay` updates a graph, an `AlertPanel` checks price thresholds and triggers alerts, and a `PortfolioSummary` recalculates total portfolio value.\n\nA naive approach might have the `StockTicker` object directly call update methods on each component. \n\n* **Problems:**\n    * Tight coupling: `StockTicker` needs to know about specific component classes.\n    * Violates Open/Closed Principle: Adding a new component (e.g., a `NewsCorrelationEngine`) requires modifying `StockTicker`.\n    * Difficult to manage dependencies.",
               order: 1,
               duration: 10,
               exercise: {
                 type: "multiple-choice",
                 title: "Mini Exercise: Tight Coupling Issue",
-                description: "Why is it bad if WeatherData knows about specific display types?",
+                description: "Why is it bad if StockTicker knows about specific component types?",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  question: "What is the main disadvantage if the `WeatherData` object directly calls methods on concrete display classes like `CurrentConditionsDisplay`?",
+                  question: "What is the main disadvantage if the `StockTicker` object directly calls methods on concrete classes like `PriceChartDisplay` and `AlertPanel`?",
                   options: [
                     "A) It improves performance.",
-                    "B) It creates tight coupling, making it hard to add new display types without changing `WeatherData`.",
+                    "B) It creates tight coupling, making it hard to add new components without changing `StockTicker`.",
                     "C) It simplifies the design.",
                     "D) It ensures data consistency."
                   ],
-                  correctAnswer: "B) It creates tight coupling, making it hard to add new display types without changing `WeatherData`.",
+                  correctAnswer: "B) It creates tight coupling, making it hard to add new components without changing `StockTicker`.",
                   explanation: "Direct dependencies make the system rigid and hard to extend."
                 }
               }
@@ -524,19 +547,21 @@ export const designPatternsCourse = {
             {
               title: "Solution: The Observer Pattern Structure",
               content:
-                "The Observer pattern introduces loose coupling:\n\n1.  **Subject Interface:** Defines methods for registering (`registerObserver`), removing (`removeObserver`), and notifying observers (`notifyObservers`).\n2.  **Observer Interface:** Defines the update method (`update`) that observers must implement, which the Subject calls during notification.\n3.  **Concrete Subject (`WeatherData`):** Implements the Subject interface. Holds a list of registered Observers. When its state changes (e.g., `setMeasurements`), it calls `notifyObservers`.\n4.  **Concrete Observers (Displays):** Implement the Observer interface. Register themselves with the Subject. Their `update` method pulls the data they need from the Subject when notified.\n\n```java\n// Example structure (pseudo-code)\ninterface Subject { registerObserver(o); removeObserver(o); notifyObservers(); }\ninterface Observer { update(subjectState); }\n\nclass WeatherData implements Subject {\n  List<Observer> observers;\n  float temp, humidity, pressure;\n\n  registerObserver(o) { observers.add(o); }\n  removeObserver(o) { observers.remove(o); }\n  notifyObservers() {\n    for (o in observers) { o.update(this.getState()); }\n  }\n\n  setMeasurements(t, h, p) {\n    this.temp = t; this.humidity = h; this.pressure = p;\n    measurementsChanged();\n  }\n  measurementsChanged() { notifyObservers(); }\n  // getState() method to provide state to observers\n}\n\nclass CurrentConditionsDisplay implements Observer {\n  Subject weatherData;\n  CurrentConditionsDisplay(s) { this.weatherData = s; s.registerObserver(this); }\n  update(state) { /* Get temp/humidity from state and display */ }\n}\n```\nThis decouples the Subject from Concrete Observers.",
+                "The Observer pattern introduces loose coupling:\n\n1.  **Subject Interface:** Defines methods for registering (`registerObserver`), removing (`removeObserver`), and notifying observers (`notifyObservers`).\n2.  **Observer Interface:** Defines the update method (`update`) that observers must implement, which the Subject calls during notification.\n3.  **Concrete Subject (`StockTicker`):** Implements the Subject interface. Holds a list of registered Observers. When its state changes (e.g., `updatePrice`), it calls `notifyObservers`.\n4.  **Concrete Observers (Components):** Implement the Observer interface. Register themselves with the Subject. Their `update` method pulls the data they need from the Subject when notified.\n\n**UML-like Structure:**\n```\n+-----------------+         +------------------+\n|   <<interface>> |         |   <<interface>>  |\n|     Subject     |<>------>|     Observer     |\n+-----------------+         +------------------+\n| registerObserver|         | update(state)    |\n| removeObserver  |         +------------------+\n| notifyObservers |              ^        ^        ^\n+-----------------+              |        |        |\n        ^               +--------+ +------+ +----------+\n        |               |PriceChart| |Alert | |Portfolio |\n+---------------+       |Display   | |Panel | |Summary   |\n| StockTicker   |       +----------+ +------+ +----------+\n+---------------+\n```\n\n```java\n// Example structure (pseudo-code)\ninterface Subject { registerObserver(o); removeObserver(o); notifyObservers(); }\ninterface Observer { update(subjectState); }\n\nclass StockTicker implements Subject {\n  List<Observer> observers;\n  Map<String, Double> stockPrices;\n\n  registerObserver(o) { observers.add(o); }\n  removeObserver(o) { observers.remove(o); }\n  notifyObservers() {\n    for (o in observers) { o.update(this.getState()); }\n  }\n\n  updatePrice(symbol, price) {\n    this.stockPrices.put(symbol, price);\n    priceChanged();\n  }\n  priceChanged() { notifyObservers(); }\n  // getState() method to provide state to observers\n}\n\nclass PriceChartDisplay implements Observer {\n  Subject stockTicker;\n  PriceChartDisplay(s) { this.stockTicker = s; s.registerObserver(this); }\n  update(state) { /* Get prices from state and update chart */ }\n}\n\nclass AlertPanel implements Observer {\n  Subject stockTicker;\n  double threshold;\n  AlertPanel(s, threshold) { this.stockTicker = s; this.threshold = threshold; s.registerObserver(this); }\n  update(state) { /* Check if any price crossed threshold, trigger alert */ }\n}\n```\nThis decouples the Subject from Concrete Observers.\n\n**Common Pitfalls:**\n* Forgetting to unregister observers can cause memory leaks (observers kept alive by the Subject's reference list).\n* Notification order should not be relied upon -- observers should be independent of each other.\n* Cascading updates: if an observer modifies the subject in its update method, infinite loops can occur.",
               order: 2,
               duration: 25, // Increased
               exercise: {
                 type: "code-challenge",
-                title: "Implement Observer (Conceptual)",
-                description: "Outline the Weather Station Observer pattern implementation.",
+                title: "Implement Observer: Stock Price System",
+                description: "Build a stock price notification system using the Observer pattern.",
                 points: 15,
                 difficulty: "intermediate",
                 content: {
-                  instructions: "Define the `Subject` and `Observer` interfaces. Show the structure of the `WeatherData` (ConcreteSubject) including registration/notification methods, and a `CurrentConditionsDisplay` (ConcreteObserver) including its `update` method. Use pseudocode or your preferred language.",
-                  // No automated test cases possible without actual code execution environment
-                  testCases: [{ input: "Conceptual Implementation", expected: "Subject notifies Observers via update method without knowing concrete Observer types."}]
+                  instructions: "Define the `Subject` and `Observer` interfaces. Implement a `StockTicker` (ConcreteSubject) that tracks stock prices and notifies observers when prices change. Implement two ConcreteObservers: `PriceChartDisplay` that logs price updates, and `AlertPanel` that prints a warning when a stock price exceeds a given threshold. Show the registration and notification flow.\n\nHint: Start with the interfaces, then build StockTicker with an internal observer list. Each observer should register itself with the Subject in its constructor.",
+                  testCases: [
+                    { input: "ticker.updatePrice('AAPL', 150.0) with PriceChartDisplay registered", expected: "PriceChartDisplay.update() is called with current stock state." },
+                    { input: "ticker.updatePrice('AAPL', 200.0) with AlertPanel(threshold=180) registered", expected: "AlertPanel.update() triggers a threshold alert for AAPL." }
+                  ]
                 }
               }
             },
@@ -574,16 +599,16 @@ export const designPatternsCourse = {
             questions: [
               {
                 type: "multiple-choice",
-                question: "In the Observer pattern, who initiates the notification process?",
+                question: "A stock trading app has a StockTicker object that tracks price changes. Multiple UI components (PriceChart, AlertPanel, PortfolioSummary) need to update when prices change. A new developer adds a NewsTickerPanel. Using the Observer pattern, what must the new developer do?",
                 options: [
-                  "A) The Observer",
-                  "B) The Subject",
-                  "C) An external coordinator",
-                  "D) The client code"
+                  "A) Modify the StockTicker class to add a direct reference to NewsTickerPanel and call its update method.",
+                  "B) Have NewsTickerPanel implement the Observer interface and register itself with the StockTicker Subject.",
+                  "C) Create a new StockTicker subclass that knows about NewsTickerPanel.",
+                  "D) Modify all existing panels (PriceChart, AlertPanel, PortfolioSummary) to forward updates to NewsTickerPanel."
                   ],
-                correctAnswer: "B) The Subject",
+                correctAnswer: "B) Have NewsTickerPanel implement the Observer interface and register itself with the StockTicker Subject.",
                 points: 10,
-                explanation: "The Subject notifies its registered Observers when its state changes."
+                explanation: "The Observer pattern allows new observers to be added without modifying the Subject or existing observers. The new panel just implements the Observer interface and registers itself."
               },
               {
                 type: "multiple-choice",
@@ -628,11 +653,11 @@ export const designPatternsCourse = {
            },
            { // New
              type: "multiple-choice",
-             question: "In the Weather Station example, the `WeatherData` object plays the role of the:",
+             question: "In the Stock Price example, the `StockTicker` object plays the role of the:",
              options: ["A) Concrete Observer", "B) Concrete Subject", "C) Client", "D) Decorator"],
              correctAnswer: "B) Concrete Subject",
              points: 10,
-             explanation: "It's the object whose state changes and notifies observers."
+             explanation: "It's the object whose state changes (stock prices update) and notifies observers (chart displays, alert panels)."
            },
             { // New
              type: "multiple-choice",
@@ -702,13 +727,17 @@ export const designPatternsCourse = {
               duration: 25, // Increased
               exercise: {
                 type: "code-challenge",
-                title: "Implement Decorator (Conceptual)",
-                description: "Outline the classes needed for a 'DarkRoast with Soy and Whip' using the Decorator pattern.",
+                title: "Implement Decorator: Coffee Shop Pricing",
+                description: "Build a working decorator chain for a coffee shop order system.",
                 points: 15,
                 difficulty: "intermediate",
                 content: {
-                  instructions: "Define the abstract `Beverage` and `CondimentDecorator` classes/interfaces. Show concrete classes `DarkRoast`, `Soy`, and `Whip`, demonstrating how they extend/implement the abstracts and how `Soy` and `Whip` wrap a Beverage. Finally, show how you'd instantiate the final decorated object. Use pseudocode or your preferred language.",
-                  testCases: [{ input: "Conceptual Implementation", expected: "Demonstrates wrapping a DarkRoast with Soy, then Whip, and calling cost()/getDescription()."}]
+                  instructions: "Implement the Decorator pattern for a coffee shop:\n\n```java\n// Starting point -- fill in the implementations:\nabstract class Beverage {\n  String description = \"Unknown Beverage\";\n  abstract double cost();\n  String getDescription() { return description; }\n}\n\n// TODO: Implement DarkRoast (cost: $1.29)\n// TODO: Implement Espresso (cost: $1.99)\n// TODO: Implement abstract CondimentDecorator extends Beverage\n// TODO: Implement Soy decorator (adds $0.35)\n// TODO: Implement Whip decorator (adds $0.25)\n// TODO: Implement Mocha decorator (adds $0.40)\n```\n\nYour implementation should support this usage:\n```java\nBeverage order = new DarkRoast();       // $1.29\norder = new Soy(order);                  // $1.64\norder = new Whip(order);                 // $1.89\nSystem.out.println(order.getDescription()); // 'Dark Roast, Soy, Whip'\nSystem.out.println(order.cost());            // 1.89\n```\n\nHint: Each decorator's `cost()` calls `beverage.cost()` on its wrapped object and adds its own price. The same delegation pattern applies to `getDescription()`.",
+                  testCases: [
+                    { input: "new DarkRoast()", expected: "cost() returns 1.29, getDescription() returns 'Dark Roast'" },
+                    { input: "new Mocha(new Mocha(new Espresso()))", expected: "cost() returns 2.79, getDescription() returns 'Espresso, Mocha, Mocha'" },
+                    { input: "new Whip(new Soy(new DarkRoast()))", expected: "cost() returns 1.89, getDescription() returns 'Dark Roast, Soy, Whip'" }
+                  ]
                 }
               }
             },
@@ -817,6 +846,19 @@ export const designPatternsCourse = {
              correctAnswer: "false",
              points: 10,
              explanation: "A key aspect is that decorators conform to the *same* interface as the component they wrap, allowing transparency."
+           },
+           {
+             type: "multiple-choice",
+             question: "When would using the Decorator pattern be a BAD idea?",
+             options: [
+               "A) When you need to add optional behaviors to objects at runtime.",
+               "B) When client code relies heavily on checking the concrete type of a component (e.g., using instanceof), because wrapping objects in decorators changes their runtime type identity.",
+               "C) When you want to avoid a class explosion from subclassing every combination of features.",
+               "D) When you want to follow the Open/Closed Principle."
+             ],
+             correctAnswer: "B) When client code relies heavily on checking the concrete type of a component (e.g., using instanceof), because wrapping objects in decorators changes their runtime type identity.",
+             points: 10,
+             explanation: "Decorators wrap objects, so instanceof checks against the original concrete type will fail. If your code depends on type identity, the Decorator pattern breaks assumptions. This is a key limitation to consider."
            }
         ]
       }
@@ -892,16 +934,16 @@ export const designPatternsCourse = {
             questions: [
                {
                  type: "multiple-choice",
-                 question: "What is the primary goal of the Simple Factory idiom?",
+                 question: "In which scenario would introducing a Factory pattern be UNNECESSARY and add unjustified complexity?",
                  options: [
-                     "A) To ensure only one instance of a factory exists.",
-                     "B) To allow subclasses to decide which class to instantiate.",
-                     "C) To encapsulate and centralize object creation logic in one place.",
-                     "D) To create families of related objects."
+                     "A) When multiple classes need to create the same family of related objects.",
+                     "B) When the application only ever creates a single, well-known concrete type that is unlikely to change.",
+                     "C) When you want to decouple client code from specific product implementations.",
+                     "D) When new product types are frequently added to the system."
                      ],
-                 correctAnswer: "C) To encapsulate and centralize object creation logic in one place.",
+                 correctAnswer: "B) When the application only ever creates a single, well-known concrete type that is unlikely to change.",
                  points: 10,
-                 explanation: "It moves the `new ConcreteProduct()` calls out of the client code into the factory."
+                 explanation: "Factories shine when creation logic varies or needs to be decoupled. If there is only one concrete type and no foreseeable variation, a factory adds indirection without benefit (YAGNI)."
                },
                 {
                  type: "true-false",
@@ -1183,9 +1225,22 @@ export const designPatternsCourse = {
             type: "multiple-choice",
             question: "Factory patterns primarily help achieve which design principle?",
             options: ["Favor Composition over Inheritance", "Program to an Interface, Not an Implementation", "Strive for Loosely Coupled Designs", "All of the above"],
-            correctAnswer: "All of the above", // Factories encapsulate implementation details, promoting interface use and loose coupling. Factory Method uses inheritance, but Abstract Factory uses composition. Overall they strongly support B and C.
+            correctAnswer: "All of the above",
             points: 10,
             explanation: "Factories encapsulate object creation (implementation details), allowing clients to program to product interfaces, thus promoting loose coupling."
+          },
+          {
+            type: "multiple-choice",
+            question: "How does Factory Method differ from Abstract Factory?",
+            options: [
+              "A) Factory Method creates families of objects; Abstract Factory creates a single object.",
+              "B) Factory Method uses inheritance (subclass overrides a creation method); Abstract Factory uses composition (an object with multiple creation methods for a family of products).",
+              "C) They are exactly the same pattern with different names.",
+              "D) Factory Method is a structural pattern; Abstract Factory is a behavioral pattern."
+            ],
+            correctAnswer: "B) Factory Method uses inheritance (subclass overrides a creation method); Abstract Factory uses composition (an object with multiple creation methods for a family of products).",
+            points: 10,
+            explanation: "Factory Method relies on subclass inheritance to decide which single product to create. Abstract Factory provides an interface with multiple factory methods to create a whole family of related products, and uses object composition."
           }
         ]
       }
@@ -1367,6 +1422,19 @@ export const designPatternsCourse = {
              correctAnswer: "volatile",
              points: 10,
              explanation: "Volatile ensures visibility of writes across threads and prevents certain harmful compiler reorderings with DCL."
+           },
+           {
+             type: "multiple-choice",
+             question: "Which of the following is a common MISUSE of the Singleton pattern?",
+             options: [
+               "A) Using Singleton for a logging framework that needs a single, consistent output stream.",
+               "B) Using Singleton for a database connection pool that must be shared application-wide.",
+               "C) Using Singleton as a convenient way to store and share mutable global state across unrelated parts of the application, replacing proper dependency injection.",
+               "D) Using Singleton for a hardware interface manager where only one instance can communicate with the device."
+             ],
+             correctAnswer: "C) Using Singleton as a convenient way to store and share mutable global state across unrelated parts of the application, replacing proper dependency injection.",
+             points: 10,
+             explanation: "Using Singleton as a 'global variable bag' creates hidden dependencies, makes unit testing nearly impossible, and tightly couples unrelated components. Legitimate uses involve resources that are inherently singular (hardware, connection pools, loggers)."
            }
         ]
       }
@@ -1427,13 +1495,17 @@ export const designPatternsCourse = {
               duration: 25, // Increased
                exercise: {
                  type: "code-challenge",
-                 title: "Implement Command Pattern (Conceptual)",
-                 description: "Outline the classes for turning a Stereo on using the Command pattern.",
+                 title: "Implement Command Pattern: Smart Home Remote",
+                 description: "Build a remote control system with undo support using the Command pattern.",
                  points: 15,
                  difficulty: "intermediate",
                  content: {
-                   instructions: "Define the `Command` interface (with `execute` and `undo`). Create a `Stereo` class (Receiver) with `on()` and `off()` methods. Create a `StereoOnCommand` (ConcreteCommand) that holds a `Stereo` reference and calls `stereo.on()` in `execute()`. Show how a client would create these objects and associate the command with an invoker slot. Use pseudocode or your preferred language.",
-                   testCases: [{ input: "Conceptual Implementation", expected: "Shows Command interface, Stereo receiver, StereoOnCommand, and client setup linking them."}]
+                   instructions: "Implement a smart home remote control with undo support:\n\n```java\n// Starting point:\ninterface Command {\n  void execute();\n  void undo();\n}\n\nclass Stereo { // Receiver\n  int volume = 0;\n  void on() { /* turn on */ }\n  void off() { /* turn off */ }\n  void setVolume(int v) { this.volume = v; }\n}\n\n// TODO: Implement StereoOnWithVolumeCommand\n//   - execute(): calls stereo.on() then stereo.setVolume(11)\n//   - undo(): calls stereo.setVolume(previousVolume) then stereo.off()\n\n// TODO: Implement RemoteControl (Invoker) with:\n//   - setCommand(slot, Command onCmd, Command offCmd)\n//   - onButtonPressed(slot)\n//   - offButtonPressed(slot)\n//   - undoButtonPressed() -- undoes the last command\n```\n\nDemonstrate this scenario:\n1. Set slot 0 to Stereo on/off commands\n2. Press on button -> stereo turns on, volume set to 11\n3. Press undo -> stereo volume restored, stereo turns off\n\nHint: The undo method needs to store the previous state BEFORE execute() changes it. The RemoteControl should track the last executed command for undo support.",
+                   testCases: [
+                     { input: "remoteControl.onButtonPressed(0)", expected: "Stereo turns on, volume set to 11" },
+                     { input: "remoteControl.undoButtonPressed()", expected: "Stereo volume restored to previous value, stereo turns off" },
+                     { input: "remoteControl.offButtonPressed(0) then undoButtonPressed()", expected: "Stereo turns off, then undo turns it back on with previous volume" }
+                   ]
                  }
                }
             },
@@ -1825,6 +1897,19 @@ export const designPatternsCourse = {
              correctAnswer: "false",
              points: 10,
              explanation: "Facade provides a *new*, simpler interface but doesn't alter the underlying subsystem's interfaces."
+           },
+           {
+             type: "multiple-choice",
+             question: "When would you choose Adapter over Facade?",
+             options: [
+               "A) When you want to simplify a complex subsystem with many classes into a single easy-to-use interface.",
+               "B) When you have an existing class with an incompatible interface that you need to make work with client code expecting a different interface.",
+               "C) When you need to add new behavior to an object dynamically.",
+               "D) When you need to ensure only one instance of a subsystem exists."
+             ],
+             correctAnswer: "B) When you have an existing class with an incompatible interface that you need to make work with client code expecting a different interface.",
+             points: 10,
+             explanation: "Adapter converts one interface to another for compatibility. Facade creates a new, simplified interface over a complex subsystem. Choose Adapter for interface mismatch; choose Facade for complexity reduction."
            }
         ]
       }
@@ -2425,6 +2510,19 @@ export const designPatternsCourse = {
              correctAnswer: "false",
              points: 10,
              explanation: "Adding new states typically involves creating a new state class and updating transitions in existing states, often adhering well to the Open/Closed Principle."
+           },
+           {
+             type: "multiple-choice",
+             question: "Compare Strategy and State patterns -- what is the key difference?",
+             options: [
+               "A) Strategy uses interfaces; State uses abstract classes.",
+               "B) In Strategy, the client typically selects and sets the algorithm; in State, transitions between behaviors happen internally based on the object's state.",
+               "C) Strategy is for behavioral patterns; State is for structural patterns.",
+               "D) There is no meaningful difference; they are the same pattern."
+             ],
+             correctAnswer: "B) In Strategy, the client typically selects and sets the algorithm; in State, transitions between behaviors happen internally based on the object's state.",
+             points: 10,
+             explanation: "Both delegate behavior to encapsulated objects, but the key distinction is WHO drives the change: the client (Strategy) vs. the object's own internal state transitions (State). State objects often know about and trigger transitions to other states."
            }
         ]
       }
@@ -2644,32 +2742,32 @@ export const designPatternsCourse = {
               }
             },
             {
-              title: "Case Study: Duck Simulator Revisited (MVC Style)",
+              title: "Case Study: Task Management App (Compound Patterns in Action)",
               content:
-                "Let's revisit the Duck simulator and make it interactive, track goose honks, and manage flocks using patterns:\n\n* **Adapter:** Adapt a `Goose` (with `honk()`) to the `Quackable` interface using a `GooseAdapter`.\n* **Decorator:** Add a `QuackCounter` decorator to count quacks without modifying duck classes.\n* **Abstract Factory:** Create duck families (`DuckFactory`) or specific ducks, possibly hiding implementation details.\n* **Composite:** Manage flocks of ducks (or geese adapters) using the Composite pattern. A `Flock` acts as a `Quackable` composite, delegating `quack()` to all ducks in the flock.\n* **Observer:** Allow external objects (`Quackologist`) to observe individual `Quackable` objects or entire `Flocks`. The `Quackable` objects become the Subjects.\n\nThis combination shows how patterns build upon each other to create a flexible and extensible system.",
+                "Let's build a task management application and see how multiple patterns collaborate:\n\n* **Adapter:** Integrate tasks from an external calendar API (with `getEvent()` and `getDeadline()`) into our `Task` interface using a `CalendarEventAdapter`.\n* **Decorator:** Add a `PriorityDecorator` and `LoggingDecorator` to tasks without modifying the base task classes -- track execution time, add priority labels, etc.\n* **Abstract Factory:** Create task families (`WorkTaskFactory`, `PersonalTaskFactory`) that produce related objects (Task, Label, Reminder) appropriate for each context.\n* **Composite:** Manage task groups and sub-tasks using the Composite pattern. A `TaskGroup` acts as a `Task` composite, delegating `complete()` to all tasks in the group.\n* **Observer:** Allow dashboard components (`ProgressBar`, `NotificationCenter`, `StatisticsPanel`) to observe task state changes. When a task is marked complete, all registered observers update automatically.\n\nThis combination shows how patterns build upon each other to create a flexible and extensible system.\n\n**Real-World Parallel:** Tools like Jira, Trello, and Asana use similar pattern combinations internally -- composite for epic/story/subtask hierarchies, observer for real-time updates, adapter for third-party integrations.",
               order: 2,
-              duration: 25, // Increased
+              duration: 25,
               exercise: {
                 type: "drag-and-drop",
-                title: "Mini Exercise: Duck Simulator Patterns",
-                description: "Match the pattern to its role in the enhanced Duck simulator.",
-                points: 15, // Increased points
+                title: "Mini Exercise: Task Management Patterns",
+                description: "Match the pattern to its role in the task management app.",
+                points: 15,
                 difficulty: "intermediate",
                 content: {
                   items: ["Adapter", "Decorator", "Composite", "Observer", "Abstract Factory"],
                   targets: [
-                    "[Make a Goose usable as a Duck]",
-                    "[Count quacks without changing Ducks]",
-                    "[Manage flocks containing individual Ducks or other Flocks]",
-                    "[Notify a Quackologist when any Duck quacks]",
-                    "[Create different types of ducks or duck families]"
+                    "[Integrate external calendar events as Tasks]",
+                    "[Add logging/priority to tasks without changing Task classes]",
+                    "[Manage task groups containing sub-tasks or other groups]",
+                    "[Notify dashboard components when tasks change state]",
+                    "[Create families of related objects (Task, Label, Reminder) for different contexts]"
                     ],
                   correctPairs: [
-                    ["Adapter", "[Make a Goose usable as a Duck]"],
-                    ["Decorator", "[Count quacks without changing Ducks]"],
-                    ["Composite", "[Manage flocks containing individual Ducks or other Flocks]"],
-                    ["Observer", "[Notify a Quackologist when any Duck quacks]"],
-                    ["Abstract Factory", "[Create different types of ducks or duck families]"]
+                    ["Adapter", "[Integrate external calendar events as Tasks]"],
+                    ["Decorator", "[Add logging/priority to tasks without changing Task classes]"],
+                    ["Composite", "[Manage task groups containing sub-tasks or other groups]"],
+                    ["Observer", "[Notify dashboard components when tasks change state]"],
+                    ["Abstract Factory", "[Create families of related objects (Task, Label, Reminder) for different contexts]"]
                   ]
                 }
               }
@@ -2720,11 +2818,11 @@ export const designPatternsCourse = {
                },
               {
                  type: "multiple-choice",
-                 question: "In the enhanced Duck Simulator example, which pattern was used to count quacks without modifying the Duck classes?",
+                 question: "In the Task Management App example, which pattern was used to add logging and priority tracking to tasks without modifying the base Task classes?",
                  options: ["Adapter", "Composite", "Decorator", "Observer"],
                  correctAnswer: "Decorator",
                  points: 10,
-                 explanation: "The QuackCounter wrapped existing Quackable objects to add counting behavior."
+                 explanation: "The LoggingDecorator and PriorityDecorator wrapped existing Task objects to add behavior transparently."
                },
                {
                  type: "short-answer",
@@ -3150,6 +3248,19 @@ export const designPatternsCourse = {
                  question: "What term describes a commonly used but counterproductive solution to a problem?",
                  correctAnswer: "Anti-Pattern",
                  points: 10
+               },
+               {
+                 type: "multiple-choice",
+                 question: "You find this code handling support ticket escalation:\n\n```\nfunction handleTicket(ticket) {\n  if (ticket.severity === 'low' && ticket.type === 'billing') {\n    billingTeam.handle(ticket);\n  } else if (ticket.severity === 'low' && ticket.type === 'technical') {\n    techSupport.handle(ticket);\n  } else if (ticket.severity === 'medium' && ticket.type === 'billing') {\n    seniorBilling.handle(ticket);\n  } else if (ticket.severity === 'medium' && ticket.type === 'technical') {\n    seniorTech.handle(ticket);\n  } else if (ticket.severity === 'high') {\n    manager.handle(ticket);\n  } else if (ticket.severity === 'critical') {\n    director.handle(ticket);\n  }\n  // ... many more nested conditions\n}\n```\n\nWhich pattern would best replace this deeply nested conditional logic?",
+                 options: [
+                   "A) Singleton -- ensure one ticket handler.",
+                   "B) Chain of Responsibility -- create a chain of handler objects where each handler either processes the ticket or passes it to the next handler.",
+                   "C) Factory Method -- create tickets using a factory.",
+                   "D) Decorator -- wrap tickets with additional metadata."
+                 ],
+                 correctAnswer: "B) Chain of Responsibility -- create a chain of handler objects where each handler either processes the ticket or passes it to the next handler.",
+                 points: 10,
+                 explanation: "Chain of Responsibility decouples the sender (ticket) from receivers (handlers). Each handler in the chain decides whether to process the request or pass it along, eliminating deeply nested conditionals."
                }
             ]
           }
