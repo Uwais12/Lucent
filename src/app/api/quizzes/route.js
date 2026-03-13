@@ -4,8 +4,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Course from "@/models/Course";
 import { getAuth } from "@clerk/nextjs/server";
 
-// Add Next.js caching - 15 minutes
-export const revalidate = 900;
+export const dynamic = 'force-dynamic';
 
 export async function GET(req) {
   try {

@@ -23,9 +23,9 @@ export async function GET(request) {
     let userDoc = await User.findOne({ clerkId: userId });
     let isNewUser = false;
     
-    // Fetch email from Clerk for new users or users missing email
-    let clerkEmail = null;
-    if (!userDoc || !userDoc.email) {
+    if (!userDoc) {
+      // Fetch email from Clerk for new users
+      let clerkEmail = null;
       try {
         const client = await clerkClient();
         const clerkUser = await client.users.getUser(userId);
@@ -33,9 +33,6 @@ export async function GET(request) {
       } catch (e) {
         console.error("Error fetching Clerk user email:", e);
       }
-    }
-
-    if (!userDoc) {
       userDoc = new User({
         clerkId: userId,
         username: `user_${new mongoose.Types.ObjectId().toString()}`,
@@ -43,11 +40,25 @@ export async function GET(request) {
       });
       userDoc.dailyStreak = 0;
       isNewUser = true;
-    } else if (clerkEmail && !userDoc.email) {
-      userDoc.email = clerkEmail;
+    } else if (!userDoc.email) {
+      // Backfill email for existing users — do it separately to avoid crashing profile load
+      try {
+        const client = await clerkClient();
+        const clerkUser = await client.users.getUser(userId);
+        const clerkEmail = clerkUser.emailAddresses?.[0]?.emailAddress || null;
+        if (clerkEmail) {
+          await User.updateOne(
+            { _id: userDoc._id, email: { $exists: false } },
+            { $set: { email: clerkEmail } }
+          ).catch(() => {}); // Ignore duplicate key errors
+          userDoc.email = clerkEmail;
+        }
+      } catch (e) {
+        // Non-critical — don't crash profile load for email sync
+      }
     }
 
-    let needsSave = !!(clerkEmail && !isNewUser);
+    let needsSave = false;
 
     // --- Daily Quiz Count Reset Logic ---
     const today = new Date();

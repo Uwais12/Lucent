@@ -3,8 +3,7 @@ import Course from "@/models/Course";
 import User from "@/models/User";
 import { getAuth } from "@clerk/nextjs/server";
 
-// Add Next.js caching
-export const revalidate = 900; // 15 minutes
+export const dynamic = 'force-dynamic';
 
 export async function GET(req) {
   try {
