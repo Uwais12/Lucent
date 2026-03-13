@@ -72,6 +72,11 @@ export function levelProgress(currentXp) {
   return Math.round((xpInCurrentLevel / XP_PER_LEVEL) * 100);
 }
 
+// Check if a tier has unlimited access (Pro/Enterprise)
+export function isUnlimitedTier(tier) {
+  return tier === TIERS.PRO || tier === TIERS.ENTERPRISE;
+}
+
 // Get daily quiz limit for a tier
 export function getDailyQuizLimit(tier) {
   return DAILY_LIMITS[tier]?.quizzes ?? DAILY_LIMITS[TIERS.FREE].quizzes;

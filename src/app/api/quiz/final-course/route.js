@@ -3,7 +3,7 @@ import Course from "@/models/Course";
 import User from "@/models/User";
 import { getAuth } from "@clerk/nextjs/server";
 import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
-import { calculateLevel, getDailyQuizLimit } from "@/lib/constants";
+import { calculateLevel, getDailyQuizLimit, isUnlimitedTier } from "@/lib/constants";
 
 export async function GET(req) {
   try {
@@ -155,23 +155,22 @@ export async function POST(req) {
     const courseProgress = user.progress.courses[courseProgressIndex];
 
     // --- Daily Quiz Limit Check ---
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
-      user.dailyQuizCount = 0;
-      // user.lastQuizDate = today; // Will be set if quiz is passed
-    }
-
-    const maxDailyQuizzes = getDailyQuizLimit(user.subscription?.tier || 'FREE');
-
-    if (user.dailyQuizCount >= maxDailyQuizzes) {
-      return new Response(JSON.stringify({
-        error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
-        dailyLimitReached: true,
-        quizzesTakenToday: user.dailyQuizCount,
-        maxQuizzesToday: maxDailyQuizzes
-      }), { status: 403, headers: { 'Content-Type': 'application/json' } });
+    const userTier = user.subscription?.tier || 'FREE';
+    if (!isUnlimitedTier(userTier)) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
+        user.dailyQuizCount = 0;
+      }
+      const maxDailyQuizzes = getDailyQuizLimit(userTier);
+      if (user.dailyQuizCount >= maxDailyQuizzes) {
+        return new Response(JSON.stringify({
+          error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
+          dailyLimitReached: true,
+          quizzesTakenToday: user.dailyQuizCount,
+          maxQuizzesToday: maxDailyQuizzes
+        }), { status: 403, headers: { 'Content-Type': 'application/json' } });
+      }
     }
     // --- End Daily Quiz Limit Check ---
 

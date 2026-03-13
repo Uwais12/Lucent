@@ -31,7 +31,7 @@ import XPNotification from "./components/XPNotification";
 import { useEnrollmentCheck } from "@/hooks/useEnrollmentCheck";
 import BadgeNotification from "./components/BadgeNotification";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
-import { getDailyQuizLimit } from "@/lib/constants";
+import { getDailyQuizLimit, isUnlimitedTier } from "@/lib/constants";
 
 // ─── XP Notification Handler (reads URL params) ─────────────────────────────
 function XPNotificationHandler() {
@@ -386,7 +386,9 @@ export default function Home() {
             }
           }
 
-          if (profileData.lastQuizCompletion) {
+          if (isUnlimitedTier(profileData.subscription?.tier)) {
+            setCanTakeQuizToday(true);
+          } else if (profileData.lastQuizCompletion) {
             const maxDailyQuizzes = getDailyQuizLimit(profileData.subscription?.tier || 'FREE');
             const dailyQuizCount = profileData.dailyQuizCount || 0;
             setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
@@ -441,9 +443,13 @@ export default function Home() {
             }
           }
 
-          const maxDailyQuizzes = getDailyQuizLimit(data.subscription?.tier || 'FREE');
-          const dailyQuizCount = data.dailyQuizCount || 0;
-          setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
+          if (isUnlimitedTier(data.subscription?.tier)) {
+            setCanTakeQuizToday(true);
+          } else {
+            const maxDailyQuizzes = getDailyQuizLimit(data.subscription?.tier || 'FREE');
+            const dailyQuizCount = data.dailyQuizCount || 0;
+            setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
+          }
         })
         .catch((error) => {
           console.error("Error fetching user profile:", error);

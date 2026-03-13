@@ -3,7 +3,7 @@ import { getAuth } from "@clerk/nextjs/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import Course from "@/models/Course";
 import User from "@/models/User";
-import { getDailyQuizLimit } from "@/lib/constants";
+import { getDailyQuizLimit, isUnlimitedTier } from "@/lib/constants";
 
 export async function GET(req, { params }) {
   try {
@@ -90,26 +90,23 @@ export async function POST(req, { params }) {
     }
 
     // --- Daily Quiz Limit Check ---
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize to start of day
-
-    // Reset count if last quiz was before today
-    if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
-      user.dailyQuizCount = 0;
-      user.lastQuizDate = today;
-    }
-
-    // Determine max quizzes based on subscription
-    const maxDailyQuizzes = getDailyQuizLimit(user.subscription?.tier || 'FREE');
-
-    // Check limit
-    if (user.dailyQuizCount >= maxDailyQuizzes) {
-      return NextResponse.json({
-        error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
-        dailyLimitReached: true,
-        quizzesTakenToday: user.dailyQuizCount,
-        maxQuizzesToday: maxDailyQuizzes
-      }, { status: 403 });
+    const userTier = user.subscription?.tier || 'FREE';
+    if (!isUnlimitedTier(userTier)) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
+        user.dailyQuizCount = 0;
+        user.lastQuizDate = today;
+      }
+      const maxDailyQuizzes = getDailyQuizLimit(userTier);
+      if (user.dailyQuizCount >= maxDailyQuizzes) {
+        return NextResponse.json({
+          error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
+          dailyLimitReached: true,
+          quizzesTakenToday: user.dailyQuizCount,
+          maxQuizzesToday: maxDailyQuizzes
+        }, { status: 403 });
+      }
     }
     // --- End Daily Quiz Limit Check ---
 

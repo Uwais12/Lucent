@@ -6,7 +6,7 @@ import User from "@/models/User";
 import { calculateXP } from "@/lib/rewards";
 import { calculateGems } from "@/lib/rewards";
 import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
-import { calculateLevel, getDailyQuizLimit } from "@/lib/constants";
+import { calculateLevel, getDailyQuizLimit, isUnlimitedTier } from "@/lib/constants";
 
 export async function POST(req, { params }) {
   try {
@@ -52,25 +52,22 @@ export async function POST(req, { params }) {
     }
 
     // --- Daily Quiz Limit Check ---
+    const userTier = user.subscription?.tier || 'FREE';
+    if (!isUnlimitedTier(userTier)) {
       const today = new Date();
-    today.setHours(0, 0, 0, 0); // Normalize to start of day
-      
-    // Reset count if last quiz was before today
-    if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
-      user.dailyQuizCount = 0;
-      user.lastQuizDate = today; 
-    }
-    
-    // Determine max quizzes based on subscription
-    const maxDailyQuizzes = getDailyQuizLimit(user.subscription?.tier || 'FREE');
-    
-    // Check limit
-    if (user.dailyQuizCount >= maxDailyQuizzes) {
-        return NextResponse.json({ 
-        error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
+      today.setHours(0, 0, 0, 0);
+      if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
+        user.dailyQuizCount = 0;
+        user.lastQuizDate = today;
+      }
+      const maxDailyQuizzes = getDailyQuizLimit(userTier);
+      if (user.dailyQuizCount >= maxDailyQuizzes) {
+        return NextResponse.json({
+          error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
           dailyLimitReached: true
         }, { status: 403 });
       }
+    }
     // --- End Daily Quiz Limit Check ---
 
     // Determine if score is passing

@@ -23,7 +23,7 @@ import Dialog from "@/components/Dialog";
 import XPNotification from "../../components/XPNotification";
 import { toast } from "react-hot-toast";
 import { clearGlobalEnrollmentCache } from '@/hooks/useEnrollmentCheck';
-import { getDailyQuizLimit } from "@/lib/constants";
+import { getDailyQuizLimit, isUnlimitedTier } from "@/lib/constants";
 
 // Separate client component for handling XP notifications
 function XPNotificationHandler({ params }) {
@@ -90,6 +90,7 @@ export default function CourseDetails() {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
   const [canTakeQuizToday, setCanTakeQuizToday] = useState(true);
+  const [userIsPro, setUserIsPro] = useState(false);
   const [expandedChapters, setExpandedChapters] = useState(new Set());
   const [maxQuizzes, setMaxQuizzes] = useState(0);
 
@@ -115,16 +116,20 @@ export default function CourseDetails() {
             
             setIsEnrolled(!!enrolledCourse);
             
-            // --- Corrected Daily Quiz Limit Check ---
-            // Use dailyQuizCount and subscription tier from profile data
-            const maxDailyQuizzes = getDailyQuizLimit(userData.subscription?.tier || 'FREE');
-            const dailyQuizCount = userData.dailyQuizCount || 0;
-
-            // User can take a quiz if their count is less than the max allowed for their tier
-            setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
-            // Pass max limit to state for use in UI messages
-            setMaxQuizzes(maxDailyQuizzes); 
-            // --- End Corrected Daily Quiz Limit Check ---
+            // --- Daily Quiz Limit Check ---
+            const tier = userData.subscription?.tier || 'FREE';
+            const unlimited = isUnlimitedTier(tier);
+            setUserIsPro(unlimited);
+            if (unlimited) {
+              setCanTakeQuizToday(true);
+              setMaxQuizzes(null);
+            } else {
+              const maxDailyQuizzes = getDailyQuizLimit(tier);
+              const dailyQuizCount = userData.dailyQuizCount || 0;
+              setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
+              setMaxQuizzes(maxDailyQuizzes);
+            }
+            // --- End Daily Quiz Limit Check ---
             
             // If we have enrollment data but the course data doesn't have user progress
             if (enrolledCourse) {
@@ -334,17 +339,20 @@ export default function CourseDetails() {
   const isCourseCompleted = course.userProgress?.completionPercentage >= 100;
 
   // Find the current lesson to resume, if any
+  // Note: currentChapter and currentLesson are numeric indices (0, 1, 2...), NOT ObjectIds
   let resumeLessonSlug = null;
   let resumeChapterSlug = null;
-  if (course.userProgress && course.userProgress.currentLesson && course.userProgress.currentChapter) {
-    const currentChapterData = chapters.find(ch => ch._id.toString() === course.userProgress.currentChapter.toString());
+  if (course.userProgress && course.userProgress.isEnrolled) {
+    const chapterIdx = course.userProgress.currentChapter || 0;
+    const lessonIdx = course.userProgress.currentLesson || 0;
+    const currentChapterData = chapters[chapterIdx];
     if (currentChapterData) {
-      const currentLessonData = currentChapterData.lessons.find(l => l._id.toString() === course.userProgress.currentLesson.toString());
+      const currentLessonData = currentChapterData.lessons?.[lessonIdx];
       if (currentLessonData) {
-        // Check completion from userProgress, not from course lesson data
+        // Check completion from userProgress
         const lessonProgress = course.userProgress?.chapters
           ?.find(chProg => chProg.chapterId.toString() === currentChapterData._id.toString())
-          ?.lessons?.find(lProg => lProg.lessonId.toString() === course.userProgress.currentLesson.toString());
+          ?.lessons?.find(lProg => lProg.lessonId.toString() === currentLessonData._id.toString());
         if (!lessonProgress?.completed) {
           resumeLessonSlug = currentLessonData.slug;
           resumeChapterSlug = currentChapterData.slug;
@@ -613,6 +621,10 @@ export default function CourseDetails() {
                                     href="#"
                                     onClick={(e) => {
                                       e.preventDefault();
+                                      if (!userIsPro && !canTakeQuizToday) {
+                                        toast.error(`You have reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
+                                        return;
+                                      }
                                       router.push(`/lesson/${lesson.slug}`);
                                     }}
                                     className="block"
