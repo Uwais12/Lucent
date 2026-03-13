@@ -19,36 +19,73 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Lucent - Master Advanced Software Concepts",
-  description: "Break down complex engineering books into 15-minute interactive lessons. Build lasting knowledge, one small challenge at a time.",
-  keywords: "software engineering, system design, distributed systems, daily learning, interactive courses",
+  metadataBase: new URL("https://lucentapp.io"),
+  title: {
+    default: "Lucent - Master Advanced Software Concepts",
+    template: "%s | Lucent",
+  },
+  description:
+    "Break down complex engineering books into 15-minute interactive lessons with quizzes and exercises. Master system design, design patterns, clean code and more.",
+  keywords: [
+    "software engineering",
+    "system design",
+    "design patterns",
+    "clean code",
+    "software architecture",
+    "distributed systems",
+    "interactive learning",
+    "coding exercises",
+    "engineering courses",
+    "learn programming",
+  ],
+  authors: [{ name: "Lucent" }],
+  creator: "Lucent",
+  publisher: "Lucent",
   icons: {
     icon: [
       {
         url: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14'>✨</text></svg>",
         sizes: "16x16",
-        type: "image/svg+xml"
-      }
+        type: "image/svg+xml",
+      },
     ],
     shortcut: ["/favicon.ico"],
     apple: [
       {
         url: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text x='0' y='14'>✨</text></svg>",
         sizes: "16x16",
-        type: "image/svg+xml"
-      }
-    ]
+        type: "image/svg+xml",
+      },
+    ],
   },
   openGraph: {
     title: "Lucent - Master Advanced Software Concepts",
-    description: "Break down complex engineering books into 15-minute interactive lessons. Build lasting knowledge, one small challenge at a time.",
+    description:
+      "Break down complex engineering books into 15-minute interactive lessons with quizzes and exercises. Master system design, design patterns, clean code and more.",
     type: "website",
-    url: "https://lucent.app",
+    url: "https://lucentapp.io",
+    siteName: "Lucent",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
     title: "Lucent - Master Advanced Software Concepts",
-    description: "Break down complex engineering books into 15-minute interactive lessons. Build lasting knowledge, one small challenge at a time.",
+    description:
+      "Break down complex engineering books into 15-minute interactive lessons with quizzes and exercises.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://lucentapp.io",
   },
 };
 
