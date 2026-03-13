@@ -1,4 +1,6 @@
 import { designPatternsCourse } from './designPatternsCourse.js';
+import { cleanCodeCourse } from './cleanCodeCourse.js';
+import { softwareArchitectureCourse } from './softwareArchitectureCourse.js';
 
 export const ddiaCourse = {
   title: "Designing Data-Intensive Applications",
@@ -9188,7 +9190,7 @@ export const ddiaCourse = {
     ]
   }
 };
-export const courses = [ddiaCourse, designPatternsCourse];
+export const courses = [ddiaCourse, designPatternsCourse, cleanCodeCourse, softwareArchitectureCourse];
 
-export { designPatternsCourse };
+export { designPatternsCourse, cleanCodeCourse, softwareArchitectureCourse };
 export default courses;
