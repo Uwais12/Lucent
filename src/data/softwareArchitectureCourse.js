@@ -158,13 +158,15 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 14,
               exercise: {
-                type: "short-answer",
+                type: "fill-in-blanks",
                 title: "Breadth vs. Depth",
                 description: "Complete the statement about architect knowledge.",
                 points: 10,
                 difficulty: "intermediate",
-                question: "Developers should focus on technical _____, while architects should focus on technical _____. What is the anti-pattern where an architect clings to outdated deep knowledge called?",
-                correctAnswer: "depth, breadth, Frozen Caveman"
+                content: {
+                  text: "Developers should focus on technical {{blank}}, while architects should focus on technical {{blank}}. The anti-pattern where an architect clings to outdated deep knowledge is called the {{blank}} anti-pattern.",
+                  blanks: ["depth", "breadth", "Frozen Caveman"]
+                }
               }
             },
             {
@@ -669,13 +671,15 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 14,
               exercise: {
-                type: "short-answer",
+                type: "fill-in-blanks",
                 title: "Characteristic Categories",
                 description: "Classify architecture characteristics into their categories.",
                 points: 10,
                 difficulty: "intermediate",
-                question: "Scalability and availability are _____ characteristics, while maintainability and testability are _____ characteristics. Security and observability are _____ characteristics. Name the three categories.",
-                correctAnswer: "operational, structural, cross-cutting"
+                content: {
+                  text: "Scalability and availability are {{blank}} characteristics, while maintainability and testability are {{blank}} characteristics. Security and observability are {{blank}} characteristics.",
+                  blanks: ["operational", "structural", "cross-cutting"]
+                }
               }
             },
             {
@@ -1185,13 +1189,15 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 12,
               exercise: {
-                type: "short-answer",
+                type: "fill-in-blanks",
                 title: "Layered Architecture Layers",
                 description: "Identify the standard four layers in order.",
                 points: 10,
                 difficulty: "beginner",
-                question: "What are the standard four layers in layered architecture from top to bottom?",
-                correctAnswer: "Presentation, Business, Persistence, Database"
+                content: {
+                  text: "The standard four layers from top to bottom are: {{blank}}, {{blank}}, {{blank}}, and {{blank}}.",
+                  blanks: ["Presentation", "Business", "Persistence", "Database"]
+                }
               }
             },
             {
