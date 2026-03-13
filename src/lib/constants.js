@@ -38,7 +38,7 @@ export const DAILY_LIMITS = {
     courses: Infinity,
     lessons: Infinity,
     exercises: Infinity,
-    quizzes: 5,
+    quizzes: Infinity,
   },
   [TIERS.ENTERPRISE]: {
     courses: Infinity,

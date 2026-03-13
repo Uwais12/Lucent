@@ -3,6 +3,7 @@ import Course from '@/models/Course';
 import User from '@/models/User';
 import { getAuth } from '@clerk/nextjs/server';
 import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
+import { getDailyQuizLimit } from "@/lib/constants";
 
 export async function POST(req, { params }) {
   try {
@@ -98,8 +99,7 @@ export async function POST(req, { params }) {
       // user.lastQuizDate = today; // Will be set if quiz is passed
     }
     
-    const isPro = user.subscription?.tier === 'PRO' || user.subscription?.tier === 'ENTERPRISE';
-    const maxDailyQuizzes = isPro ? 5 : 1;
+    const maxDailyQuizzes = getDailyQuizLimit(user.subscription?.tier || 'FREE');
     
     if (user.dailyQuizCount >= maxDailyQuizzes) {
         return new Response(JSON.stringify({ 

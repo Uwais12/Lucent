@@ -4,7 +4,7 @@ import { connectToDatabase } from "@/lib/mongodb";
 import Course from "@/models/Course";
 import User from "@/models/User";
 import { badgeDefinitions } from "@/lib/badgeDefinitions.js";
-import { calculateLevel } from "@/lib/constants";
+import { calculateLevel, getDailyQuizLimit } from "@/lib/constants";
 
 export async function POST(req, { params }) {
   try {
@@ -88,8 +88,7 @@ export async function POST(req, { params }) {
     }
     
     // Determine max quizzes based on subscription
-    const isPro = user.subscription?.tier === 'PRO' || user.subscription?.tier === 'ENTERPRISE';
-    const maxDailyQuizzes = isPro ? 5 : 1;
+    const maxDailyQuizzes = getDailyQuizLimit(user.subscription?.tier || 'FREE');
     
     // Check limit
     if (user.dailyQuizCount >= maxDailyQuizzes) {

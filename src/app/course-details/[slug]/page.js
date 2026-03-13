@@ -23,6 +23,7 @@ import Dialog from "@/components/Dialog";
 import XPNotification from "../../components/XPNotification";
 import { toast } from "react-hot-toast";
 import { clearGlobalEnrollmentCache } from '@/hooks/useEnrollmentCheck';
+import { getDailyQuizLimit } from "@/lib/constants";
 
 // Separate client component for handling XP notifications
 function XPNotificationHandler({ params }) {
@@ -116,8 +117,7 @@ export default function CourseDetails() {
             
             // --- Corrected Daily Quiz Limit Check ---
             // Use dailyQuizCount and subscription tier from profile data
-            const isPro = userData.subscription?.tier === 'PRO' || userData.subscription?.tier === 'ENTERPRISE';
-            const maxDailyQuizzes = isPro ? 5 : 1;
+            const maxDailyQuizzes = getDailyQuizLimit(userData.subscription?.tier || 'FREE');
             const dailyQuizCount = userData.dailyQuizCount || 0;
 
             // User can take a quiz if their count is less than the max allowed for their tier

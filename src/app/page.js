@@ -31,6 +31,7 @@ import XPNotification from "./components/XPNotification";
 import { useEnrollmentCheck } from "@/hooks/useEnrollmentCheck";
 import BadgeNotification from "./components/BadgeNotification";
 import ProfileSetupModal from "@/components/ProfileSetupModal";
+import { getDailyQuizLimit } from "@/lib/constants";
 
 // ─── XP Notification Handler (reads URL params) ─────────────────────────────
 function XPNotificationHandler() {
@@ -386,10 +387,7 @@ export default function Home() {
           }
 
           if (profileData.lastQuizCompletion) {
-            const isPro =
-              profileData.subscription?.tier === "PRO" ||
-              profileData.subscription?.tier === "ENTERPRISE";
-            const maxDailyQuizzes = isPro ? 5 : 1;
+            const maxDailyQuizzes = getDailyQuizLimit(profileData.subscription?.tier || 'FREE');
             const dailyQuizCount = profileData.dailyQuizCount || 0;
             setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
           } else {
@@ -443,9 +441,7 @@ export default function Home() {
             }
           }
 
-          const isPro =
-            data.subscription?.tier === "PRO" || data.subscription?.tier === "ENTERPRISE";
-          const maxDailyQuizzes = isPro ? 5 : 1;
+          const maxDailyQuizzes = getDailyQuizLimit(data.subscription?.tier || 'FREE');
           const dailyQuizCount = data.dailyQuizCount || 0;
           setCanTakeQuizToday(dailyQuizCount < maxDailyQuizzes);
         })
@@ -504,7 +500,7 @@ export default function Home() {
   const isPro =
     userProfile?.subscription?.tier === "PRO" ||
     userProfile?.subscription?.tier === "ENTERPRISE";
-  const maxDailyQuizzes = isPro ? 5 : 1;
+  const maxDailyQuizzes = getDailyQuizLimit(userProfile?.subscription?.tier || 'FREE');
   const dailyQuizCount = userProfile?.dailyQuizCount || 0;
   const quizzesRemaining = Math.max(0, maxDailyQuizzes - dailyQuizCount);
   const canTakeAnyQuiz = quizzesRemaining > 0;
