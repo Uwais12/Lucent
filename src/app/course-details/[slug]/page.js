@@ -371,12 +371,12 @@ export default function CourseDetails() {
     : "Start Learning";
 
   const startOrContinuePath = isCourseCompleted
-    ? `/course-details/${courseSlug}` // Or maybe first lesson? For now, details.
-    : resumeLessonSlug && resumeChapterSlug
-    ? `/courses/${courseSlug}/chapters/${resumeChapterSlug}/lessons/${resumeLessonSlug}`
+    ? `/course-details/${courseSlug}`
+    : resumeLessonSlug
+    ? `/lesson/${resumeLessonSlug}`
     : (chapters && chapters.length > 0 && chapters[0].lessons && chapters[0].lessons.length > 0)
-    ? `/courses/${courseSlug}/chapters/${chapters[0].slug}/lessons/${chapters[0].lessons[0].slug}`
-    : `/course-details/${courseSlug}`; // Fallback if no lessons
+    ? `/lesson/${chapters[0].lessons[0].slug}`
+    : `/course-details/${courseSlug}`;
 
   return (
     <div className="min-h-screen bg-background pattern-bg">
