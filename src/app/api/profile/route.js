@@ -1,6 +1,6 @@
 // /src/app/api/profile/route.js
 import { NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
+import { getAuth, clerkClient } from "@clerk/nextjs/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
 import mongoose from "mongoose";
@@ -23,21 +23,31 @@ export async function GET(request) {
     let userDoc = await User.findOne({ clerkId: userId });
     let isNewUser = false;
     
-    if (!userDoc) {
-      // Only create if not found
-      userDoc = new User({ 
-        clerkId: userId,
-        username: `user_${new mongoose.Types.ObjectId().toString()}`
-      });
-      // Initialize default fields for a new user if necessary (e.g., streak)
-      userDoc.dailyStreak = 0; 
-      isNewUser = true;
-      // Save immediately to have an _id and other defaults for subsequent operations
-      // Or, ensure updateDailyStreak and other logic correctly initializes for a brand new doc
-      // For simplicity, we can let updateDailyStreak handle first-time setup.
+    // Fetch email from Clerk for new users or users missing email
+    let clerkEmail = null;
+    if (!userDoc || !userDoc.email) {
+      try {
+        const client = await clerkClient();
+        const clerkUser = await client.users.getUser(userId);
+        clerkEmail = clerkUser.emailAddresses?.[0]?.emailAddress || null;
+      } catch (e) {
+        console.error("Error fetching Clerk user email:", e);
+      }
     }
 
-    let needsSave = false;
+    if (!userDoc) {
+      userDoc = new User({
+        clerkId: userId,
+        username: `user_${new mongoose.Types.ObjectId().toString()}`,
+        ...(clerkEmail && { email: clerkEmail }),
+      });
+      userDoc.dailyStreak = 0;
+      isNewUser = true;
+    } else if (clerkEmail && !userDoc.email) {
+      userDoc.email = clerkEmail;
+    }
+
+    let needsSave = !!(clerkEmail && !isNewUser);
 
     // --- Daily Quiz Count Reset Logic ---
     const today = new Date();
