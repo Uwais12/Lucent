@@ -57,14 +57,15 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 10,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Structure Equals Architecture?",
                 description: "Evaluate whether knowing the architecture style is sufficient to understand the full architecture.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  statement: "Two systems using the same architecture style (e.g., microservices) necessarily have the same software architecture.",
-                  correctAnswer: false,
+                  question: "True or False: Two systems using the same architecture style (e.g., microservices) necessarily have the same software architecture.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Architecture encompasses more than structure. Two microservices systems can have vastly different architecture characteristics, decisions, and design principles, making them architecturally very different."
                 }
               }
@@ -99,15 +100,21 @@ export const softwareArchitectureCourse = {
               order: 4,
               duration: 11,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Architecture Evolution Drivers",
                 description: "Identify a key driver of architecture evolution.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  question: "Name two technological shifts that made microservices architecture practically viable in the 2010s.",
-                  sampleAnswer: "Containers (Docker) and orchestration (Kubernetes), along with DevOps and CI/CD practices, made microservices practical by enabling teams to deploy and manage many independent services.",
-                  keywords: ["containers", "docker", "kubernetes", "devops", "CI/CD", "cloud", "orchestration"]
+                  question: "Which two technological shifts were most critical in making microservices architecture practically viable in the 2010s?",
+                  options: [
+                    "A) Waterfall methodology and manual testing",
+                    "B) Containers (Docker/Kubernetes) and DevOps/CI/CD practices",
+                    "C) Relational databases and stored procedures",
+                    "D) Desktop applications and thick clients"
+                  ],
+                  correctAnswer: "B) Containers (Docker/Kubernetes) and DevOps/CI/CD practices",
+                  explanation: "Containers and orchestration (Docker, Kubernetes) made it practical to deploy and manage many independent services, while DevOps and CI/CD enabled the rapid, safe deployments that microservices demand."
                 }
               }
             }
@@ -151,7 +158,7 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 14,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "Breadth vs. Depth",
                 description: "Complete the statement about architect knowledge.",
                 points: 10,
@@ -202,15 +209,21 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 12,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Trade-Off Analysis",
                 description: "Apply trade-off thinking to a real scenario.",
                 points: 15,
                 difficulty: "intermediate",
                 content: {
-                  question: "A 10-person startup is building an e-commerce platform. They are debating between a modular monolith and microservices. Identify two reasons why the modular monolith might be the better trade-off for their current context.",
-                  sampleAnswer: "A modular monolith would be better because: (1) With only 10 developers, the operational overhead of microservices (deployment pipelines, service mesh, distributed tracing) would consume a disproportionate amount of engineering effort. (2) A monolith allows faster initial development since all code is in one place, avoiding the complexity of inter-service communication and distributed data management.",
-                  keywords: ["operational overhead", "team size", "complexity", "development speed", "deployment", "distributed"]
+                  question: "A 10-person startup is building an e-commerce platform. They are debating between a modular monolith and microservices. Which best describes why the modular monolith is the better trade-off?",
+                  options: [
+                    "A) Microservices are always better because they provide scalability",
+                    "B) The small team would be overwhelmed by microservices operational overhead, and a monolith enables faster initial development",
+                    "C) Modular monoliths are always better than microservices regardless of context",
+                    "D) The choice doesn't matter because both architectures perform identically"
+                  ],
+                  correctAnswer: "B) The small team would be overwhelmed by microservices operational overhead, and a monolith enables faster initial development",
+                  explanation: "With only 10 developers, the operational overhead of microservices (deployment pipelines, service mesh, distributed tracing) would consume a disproportionate amount of engineering effort. A monolith allows faster initial development since all code is in one place."
                 }
               }
             },
@@ -244,14 +257,15 @@ export const softwareArchitectureCourse = {
               order: 3,
               duration: 11,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Architectural Thinking",
                 description: "Evaluate a statement about the architect's mindset.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  statement: "An architect should always choose the objectively 'best' technology for each problem, regardless of team expertise or organizational constraints.",
-                  correctAnswer: false,
+                  question: "True or False: An architect should always choose the objectively 'best' technology for each problem, regardless of team expertise or organizational constraints.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Architectural thinking recognizes that there is no objectively 'best' technology. Decisions must account for trade-offs including team expertise, organizational constraints, maintenance burden, and specific business context."
                 }
               }
@@ -373,14 +387,15 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 12,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Architecture and Design Boundary",
                 description: "Evaluate the relationship between architecture and design.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  statement: "There is a clear, well-defined boundary where architecture decisions end and design decisions begin.",
-                  correctAnswer: false,
+                  question: "True or False: There is a clear, well-defined boundary where architecture decisions end and design decisions begin.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Architecture and design exist on a continuum. Many decisions have both architectural and design implications. The traditional separation into distinct activities is a false dichotomy."
                 }
               }
@@ -449,15 +464,21 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 15,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Trade-Off Analysis in Practice",
                 description: "Apply the trade-off analysis framework to a real scenario.",
                 points: 15,
                 difficulty: "advanced",
                 content: {
-                  question: "A healthcare system needs to process patient records. The team is debating between synchronous REST calls and asynchronous messaging for communication between the Patient Service and the Billing Service. Given that healthcare requires strong data consistency for patient records, which approach would you recommend and why?",
-                  sampleAnswer: "Synchronous REST calls would be more appropriate for critical patient-to-billing workflows because healthcare systems require strong consistency — you cannot bill for a procedure that hasn't been confirmed, and patient record errors can have serious consequences. The trade-off of lower throughput and temporal coupling is acceptable because data correctness is non-negotiable in healthcare. However, non-critical notifications (e.g., appointment reminders) could still use async messaging.",
-                  keywords: ["consistency", "synchronous", "healthcare", "patient safety", "data correctness", "critical"]
+                  question: "A healthcare system needs to process patient records. The team is debating between synchronous REST calls and asynchronous messaging for communication between the Patient Service and the Billing Service. Given that healthcare requires strong data consistency, which approach is most appropriate?",
+                  options: [
+                    "A) Asynchronous messaging for all communication — higher throughput is always better",
+                    "B) Synchronous REST for critical patient-billing workflows (consistency is non-negotiable), with async for non-critical notifications",
+                    "C) Neither — healthcare systems should avoid inter-service communication entirely",
+                    "D) Use eventual consistency for all workflows since it scales better"
+                  ],
+                  correctAnswer: "B) Synchronous REST for critical patient-billing workflows (consistency is non-negotiable), with async for non-critical notifications",
+                  explanation: "Healthcare requires strong consistency — you cannot bill for a procedure that hasn't been confirmed. The trade-off of lower throughput and temporal coupling is acceptable because data correctness is non-negotiable. Non-critical notifications can still use async messaging."
                 }
               }
             },
@@ -650,7 +671,7 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 14,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "Characteristic Categories",
                 description: "Classify architecture characteristics into their categories.",
                 points: 10,
@@ -701,15 +722,21 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 15,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Defining Measurable Characteristics",
                 description: "Convert a vague requirement into a measurable architecture characteristic.",
                 points: 15,
                 difficulty: "intermediate",
                 content: {
-                  question: "A product owner says 'the system needs to be reliable.' Convert this into a measurable architecture characteristic with specific metrics.",
-                  sampleAnswer: "Reliability: The system must maintain a Mean Time Between Failures (MTBF) of at least 720 hours (30 days). When failures occur, Mean Time To Recovery (MTTR) must be less than 15 minutes. Error rate must stay below 0.1% of all requests. This should be monitored via automated alerting with SLA dashboards.",
-                  keywords: ["MTBF", "MTTR", "error rate", "uptime", "SLA", "measurable", "specific"]
+                  question: "A product owner says 'the system needs to be reliable.' Which is the best way to convert this into a measurable architecture characteristic?",
+                  options: [
+                    "A) 'The system should be very reliable and never go down'",
+                    "B) 'MTBF >= 720 hours, MTTR < 15 minutes, error rate < 0.1%, monitored via automated alerting'",
+                    "C) 'Run extra tests before each deployment'",
+                    "D) 'Use a cloud provider that guarantees reliability'"
+                  ],
+                  correctAnswer: "B) 'MTBF >= 720 hours, MTTR < 15 minutes, error rate < 0.1%, monitored via automated alerting'",
+                  explanation: "Measurable architecture characteristics require specific, quantifiable metrics like MTBF, MTTR, and error rates with concrete thresholds. Vague statements like 'very reliable' are not actionable."
                 }
               }
             },
@@ -921,14 +948,15 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 14,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Domain vs. Technical Partitioning",
                 description: "Evaluate partitioning approaches for modern systems.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "Technical partitioning (layering by technical concern like UI, business logic, data access) is generally preferred over domain partitioning for modern distributed systems.",
-                  correctAnswer: false,
+                  question: "True or False: Technical partitioning (layering by technical concern like UI, business logic, data access) is generally preferred over domain partitioning for modern distributed systems.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Domain partitioning is generally preferred because it aligns components with business capabilities, enables independent deployment, and supports team autonomy. Technical partitioning creates cross-domain dependencies that make independent changes difficult."
                 }
               }
@@ -972,15 +1000,21 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 14,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Actor/Actions Exercise",
                 description: "Apply the Actor/Actions approach to identify components.",
                 points: 15,
                 difficulty: "intermediate",
                 content: {
-                  question: "You are designing a ride-sharing application like Uber. Identify at least 3 actors and 2 actions each, then suggest 4 components that would emerge from this analysis.",
-                  sampleAnswer: "Actors: (1) Rider — request ride, track driver, rate driver, make payment. (2) Driver — accept ride, navigate to pickup, complete ride, view earnings. (3) Admin — monitor fleet, handle disputes, view analytics. Components: Ride Management (request, accept, complete), Location/Mapping Service (track, navigate), Payment Service (process payments, view earnings), Rating/Review Service (rate, review, handle disputes).",
-                  keywords: ["rider", "driver", "ride", "payment", "location", "tracking", "rating"]
+                  question: "You are designing a ride-sharing application. Using the Actor/Actions approach with actors Rider, Driver, and Admin, which set of components best reflects domain-aligned decomposition?",
+                  options: [
+                    "A) Database Layer, Business Logic Layer, Presentation Layer, API Layer",
+                    "B) Ride Management, Location/Mapping Service, Payment Service, Rating/Review Service",
+                    "C) UserController, RideController, PaymentController, AdminController",
+                    "D) Frontend, Backend, Mobile App, Analytics Dashboard"
+                  ],
+                  correctAnswer: "B) Ride Management, Location/Mapping Service, Payment Service, Rating/Review Service",
+                  explanation: "The Actor/Actions approach groups related actions into domain-aligned components. Rider and Driver actions around rides map to Ride Management, location actions to a Location Service, payment actions to a Payment Service, and rating actions to a Rating Service."
                 }
               }
             },
@@ -1014,14 +1048,15 @@ export const softwareArchitectureCourse = {
               order: 3,
               duration: 12,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Architecture Quantum",
                 description: "Evaluate statements about architecture quanta.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "A microservice that shares a database with another microservice constitutes a single architecture quantum with that other service, not an independent quantum.",
-                  correctAnswer: true,
+                  question: "True or False: A microservice that shares a database with another microservice constitutes a single architecture quantum with that other service, not an independent quantum.",
+                  options: ["True", "False"],
+                  correctAnswer: "True",
                   explanation: "An architecture quantum includes all structural elements required for independent deployment. If two services share a database, they cannot be independently deployed, so they form a single quantum."
                 }
               }
@@ -1154,7 +1189,7 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 12,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "Layered Architecture Layers",
                 description: "Identify the standard four layers in order.",
                 points: 10,
@@ -1252,14 +1287,15 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 14,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Hexagonal Architecture Dependencies",
                 description: "Evaluate dependency direction in hexagonal architecture.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "In hexagonal architecture, the domain layer depends on the database adapter to function.",
-                  correctAnswer: false,
+                  question: "True or False: In hexagonal architecture, the domain layer depends on the database adapter to function.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "In hexagonal architecture, dependencies point INWARD. The domain defines ports (interfaces), and adapters implement them. The domain never depends on infrastructure."
                 }
               }
@@ -1428,15 +1464,21 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 14,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Pipeline Bottleneck Analysis",
                 description: "Identify and address performance bottlenecks in pipelines.",
                 points: 15,
                 difficulty: "intermediate",
                 content: {
                   question: "A data pipeline has 5 filters processing 1000, 500, 2000, 100, and 800 records/sec respectively. What is the overall throughput and how would you improve it?",
-                  sampleAnswer: "The pipeline throughput is 100 records/sec (Filter 4 is the bottleneck). To improve: optimize Filter 4's logic, parallelize it with multiple instances, add a buffer before it, or split it into smaller sub-filters.",
-                  keywords: ["bottleneck", "100", "slowest", "parallelize", "optimize", "buffer"]
+                  options: [
+                    "A) 2000 records/sec — optimize the slowest filters to match the fastest",
+                    "B) 100 records/sec — parallelize or optimize Filter 4 (the bottleneck), add a buffer before it",
+                    "C) 4900 records/sec — sum of all filter throughputs",
+                    "D) 800 records/sec — average of all filter throughputs"
+                  ],
+                  correctAnswer: "B) 100 records/sec — parallelize or optimize Filter 4 (the bottleneck), add a buffer before it",
+                  explanation: "A pipeline's throughput is limited by its slowest filter (100 records/sec). To improve, you can parallelize Filter 4, optimize its logic, add a buffer before it, or split it into smaller sub-filters."
                 }
               }
             },
@@ -1446,14 +1488,15 @@ export const softwareArchitectureCourse = {
               order: 3,
               duration: 12,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Pipeline Design Principles",
                 description: "Evaluate a pipeline design decision.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "In a well-designed pipeline, filters should maintain state between invocations to improve performance.",
-                  correctAnswer: false,
+                  question: "True or False: In a well-designed pipeline, filters should maintain state between invocations to improve performance.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Filters should be stateless. Stateless filters are easier to test, parallelize, replace, and scale."
                 }
               }
@@ -1521,15 +1564,21 @@ export const softwareArchitectureCourse = {
               order: 3,
               duration: 15,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Microkernel Architecture Application",
                 description: "Design a microkernel solution for a real-world problem.",
                 points: 15,
                 difficulty: "advanced",
                 content: {
                   question: "An insurance company processes claims differently based on type (auto, home, health, life). The core workflow is the same but rules differ by type. How would you apply microkernel architecture?",
-                  sampleAnswer: "The core system implements the universal claims workflow (receive, validate, process, pay out) with extension points. Each insurance type is a plug-in implementing a ClaimsRulePlugin interface with methods like validateClaim(), calculatePayout(), and checkFraud(). The core uses a plugin registry to load the appropriate rule plugin based on claim type. New insurance types are added as new plug-ins without modifying the core.",
-                  keywords: ["core workflow", "plug-in", "rules", "interface", "registry", "independent", "extend"]
+                  options: [
+                    "A) Create separate applications for each insurance type with duplicated workflow logic",
+                    "B) Core system implements the universal claims workflow with extension points; each insurance type is a plug-in implementing a ClaimsRulePlugin interface",
+                    "C) Use a single monolithic application with if/else branches for each insurance type",
+                    "D) Deploy separate microservices for each insurance type with no shared workflow"
+                  ],
+                  correctAnswer: "B) Core system implements the universal claims workflow with extension points; each insurance type is a plug-in implementing a ClaimsRulePlugin interface",
+                  explanation: "The microkernel pattern keeps the universal claims workflow in the core system and makes each insurance type a plug-in. The core uses a plugin registry to load the appropriate rule plugin based on claim type. New insurance types are added as plug-ins without modifying the core."
                 }
               }
             }
@@ -1685,14 +1734,15 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 15,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Database Trade-Off",
                 description: "Evaluate the shared database trade-off in service-based architecture.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "The shared database in service-based architecture is purely a disadvantage compared to the database-per-service approach in microservices.",
-                  correctAnswer: false,
+                  question: "True or False: The shared database in service-based architecture is purely a disadvantage compared to the database-per-service approach in microservices.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "The shared database is a trade-off, not purely a disadvantage. It enables ACID transactions across domains, which eliminates the need for complex distributed saga patterns. The trade-off is reduced independence and potential schema coupling."
                 }
               }
@@ -1736,15 +1786,21 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 14,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Service Boundary Design",
                 description: "Apply service boundary design principles.",
                 points: 15,
                 difficulty: "intermediate",
                 content: {
-                  question: "A healthcare system needs service-based architecture. Suggest 4-6 appropriate service boundaries and briefly justify each.",
-                  sampleAnswer: "1. Patient Service — patient demographics, medical history, insurance info. 2. Appointment Service — scheduling, availability, reminders. 3. Clinical Service — diagnoses, treatments, prescriptions, lab orders. 4. Billing Service — claims, payments, insurance processing. 5. Notification Service — patient communications, alerts, reminders. Each maps to a distinct healthcare domain with different data ownership and change frequencies.",
-                  keywords: ["patient", "appointment", "clinical", "billing", "domain", "independent"]
+                  question: "A healthcare system needs service-based architecture. Which set of service boundaries best follows domain-aligned decomposition?",
+                  options: [
+                    "A) Frontend Service, Backend Service, Database Service, API Gateway Service",
+                    "B) Patient Service, Appointment Service, Clinical Service, Billing Service, Notification Service",
+                    "C) Create Service, Read Service, Update Service, Delete Service",
+                    "D) Java Service, Python Service, Node Service, Go Service"
+                  ],
+                  correctAnswer: "B) Patient Service, Appointment Service, Clinical Service, Billing Service, Notification Service",
+                  explanation: "Each service maps to a distinct healthcare domain (patient management, scheduling, clinical care, billing, communications) with different data ownership and change frequencies. This follows domain-aligned decomposition rather than technical partitioning."
                 }
               }
             },
@@ -1936,15 +1992,21 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 15,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Broker Topology Analysis",
                 description: "Analyze when broker topology is appropriate.",
                 points: 15,
                 difficulty: "intermediate",
                 content: {
-                  question: "A real-time analytics system needs to process website click events. Each event triggers independent processing: update page view counts, feed the recommendation engine, and log for compliance. Would broker or mediator topology be more appropriate and why?",
-                  sampleAnswer: "Broker topology is more appropriate because: (1) Each processor (analytics, recommendations, compliance) is independent and does not need to coordinate with others. (2) Processing is fire-and-forget — if one processor fails, others should continue. (3) No complex workflow orchestration is needed. (4) High throughput is required for click streams, and broker topology excels at this.",
-                  keywords: ["broker", "independent", "fire-and-forget", "throughput", "no coordination", "parallel"]
+                  question: "A real-time analytics system processes website click events. Each event triggers independent processing: update page view counts, feed the recommendation engine, and log for compliance. Which topology is more appropriate?",
+                  options: [
+                    "A) Mediator topology — a central coordinator should manage the workflow",
+                    "B) Broker topology — processors are independent, fire-and-forget, need high throughput",
+                    "C) Request-response — synchronous calls to each processor in sequence",
+                    "D) Neither — event-driven architecture is not suitable for analytics"
+                  ],
+                  correctAnswer: "B) Broker topology — processors are independent, fire-and-forget, need high throughput",
+                  explanation: "Broker topology is ideal because each processor (analytics, recommendations, compliance) is independent and does not need to coordinate with others. Processing is fire-and-forget, no orchestration is needed, and broker topology provides the high throughput required for click streams."
                 }
               }
             },
@@ -1987,14 +2049,15 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 15,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Event Sourcing Fundamentals",
                 description: "Evaluate statements about event sourcing.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "In event sourcing, the current state of an entity is stored directly in the database, and events are logged separately for audit purposes only.",
-                  correctAnswer: false,
+                  question: "True or False: In event sourcing, the current state of an entity is stored directly in the database, and events are logged separately for audit purposes only.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "In event sourcing, events ARE the source of truth. The current state is derived by replaying all events. There is no separate 'current state' table — the event log IS the database."
                 }
               }
@@ -2029,7 +2092,7 @@ export const softwareArchitectureCourse = {
               order: 3,
               duration: 15,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "EDA Error Handling",
                 description: "Complete the description of EDA error handling patterns.",
                 points: 10,
@@ -2228,15 +2291,21 @@ export const softwareArchitectureCourse = {
               order: 3,
               duration: 15,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Saga Pattern Application",
                 description: "Design a saga for a real-world scenario.",
                 points: 15,
                 difficulty: "advanced",
                 content: {
-                  question: "Design a saga for a hotel booking system where: (1) Room must be reserved, (2) Payment must be processed, (3) Confirmation email must be sent. Include the compensating transactions if payment fails.",
-                  sampleAnswer: "Saga steps: (1) Reserve Room (Room Service) -> RoomReserved event. (2) Process Payment (Payment Service) -> PaymentProcessed event. (3) Send Confirmation (Notification Service) -> ConfirmationSent event. Compensating transactions if payment fails: Release Room reservation (Room Service compensates Step 1). If confirmation fails: Refund Payment (compensate Step 2), Release Room (compensate Step 1).",
-                  keywords: ["reserve", "payment", "compensat", "rollback", "event", "release", "refund"]
+                  question: "A hotel booking saga has steps: (1) Reserve Room, (2) Process Payment, (3) Send Confirmation. If payment fails at step 2, what are the correct compensating transactions?",
+                  options: [
+                    "A) Retry the payment indefinitely until it succeeds",
+                    "B) Release the room reservation (compensate step 1) — no payment compensation needed since it failed",
+                    "C) Send a cancellation email only — keep the room reserved",
+                    "D) Do nothing — the system will eventually become consistent"
+                  ],
+                  correctAnswer: "B) Release the room reservation (compensate step 1) — no payment compensation needed since it failed",
+                  explanation: "Compensating transactions undo completed steps in reverse order. Since payment failed at step 2, only step 1 (room reservation) needs compensation by releasing the reservation. Step 2 itself doesn't need compensation since it never completed."
                 }
               }
             }
@@ -2303,14 +2372,15 @@ export const softwareArchitectureCourse = {
               order: 3,
               duration: 15,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Microservices Decision",
                 description: "Evaluate the microservices decision for a real scenario.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "Starting with microservices from day one is the best approach because it avoids a costly migration later.",
-                  correctAnswer: false,
+                  question: "True or False: Starting with microservices from day one is the best approach because it avoids a costly migration later.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Starting with microservices before understanding the domain leads to premature decomposition and wrong boundaries. The evolutionary approach (monolith -> modular monolith -> services as needed) is lower risk and allows boundaries to emerge from real understanding."
                 }
               }
@@ -2455,15 +2525,21 @@ export const softwareArchitectureCourse = {
               order: 1,
               duration: 15,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Writing an ADR",
                 description: "Practice writing a concise ADR.",
                 points: 15,
                 difficulty: "intermediate",
                 content: {
-                  question: "Write a brief ADR for the decision to use PostgreSQL over MongoDB for a new banking application. Include Context, Decision, and at least 2 positive and 2 negative consequences.",
-                  sampleAnswer: "ADR-001: Use PostgreSQL for Banking Application. Context: Building a banking app requiring ACID transactions, complex relational queries, and regulatory compliance. Team has strong SQL experience. Decision: Use PostgreSQL 15 as the primary database. Consequences: (+) ACID transactions ensure financial data integrity. (+) Team expertise reduces ramp-up time. (-) Horizontal scaling is more complex than MongoDB. (-) Schema migrations require more planning than a schema-less approach.",
-                  keywords: ["ACID", "transaction", "relational", "consistency", "banking", "compliance", "trade-off"]
+                  question: "When writing an ADR for choosing PostgreSQL over MongoDB for a banking application, which set of consequences best demonstrates proper trade-off documentation?",
+                  options: [
+                    "A) (+) PostgreSQL is popular. (-) MongoDB is newer.",
+                    "B) (+) ACID transactions ensure financial data integrity. (+) Team has SQL expertise. (-) Horizontal scaling is more complex than MongoDB. (-) Schema migrations require more planning.",
+                    "C) (+) PostgreSQL is free. (-) It uses SQL.",
+                    "D) (+) Everyone uses PostgreSQL. (-) No downsides."
+                  ],
+                  correctAnswer: "B) (+) ACID transactions ensure financial data integrity. (+) Team has SQL expertise. (-) Horizontal scaling is more complex than MongoDB. (-) Schema migrations require more planning.",
+                  explanation: "Good ADR consequences are specific, contextual, and honest about trade-offs. They connect the decision to business needs (ACID for banking), acknowledge team factors (SQL expertise), and document genuine downsides (scaling complexity, schema rigidity)."
                 }
               }
             },
@@ -2554,15 +2630,21 @@ export const softwareArchitectureCourse = {
               order: 2,
               duration: 15,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Handling Resistance",
                 description: "Apply negotiation skills to a real scenario.",
                 points: 15,
                 difficulty: "advanced",
                 content: {
-                  question: "A senior development team strongly opposes your decision to adopt event-driven architecture, citing complexity concerns. They prefer keeping synchronous REST calls. How would you handle this situation?",
-                  sampleAnswer: "First, listen to their specific concerns — they may have valid points about complexity for their context. Understand if the resistance is technical (legitimate complexity concerns) or cultural (fear of change). Then, acknowledge their concerns honestly ('You are right that EDA adds complexity'). Present the specific problems that EDA solves for your system (e.g., cascading failures, scaling bottlenecks). Offer a proof-of-concept: implement EDA for one non-critical workflow and measure the results. Be willing to compromise — maybe a hybrid approach (sync for simple queries, async for events) addresses both concerns.",
-                  keywords: ["listen", "understand", "acknowledge", "proof of concept", "compromise", "trade-off", "hybrid"]
+                  question: "A senior development team strongly opposes your decision to adopt event-driven architecture, citing complexity concerns. They prefer keeping synchronous REST calls. What is the best approach?",
+                  options: [
+                    "A) Override their objections using your authority as architect — you know best",
+                    "B) Listen to their concerns, acknowledge the complexity trade-off, propose a proof-of-concept on a non-critical workflow, and be open to a hybrid approach",
+                    "C) Abandon EDA entirely since the team opposes it",
+                    "D) Escalate immediately to management to force the decision"
+                  ],
+                  correctAnswer: "B) Listen to their concerns, acknowledge the complexity trade-off, propose a proof-of-concept on a non-critical workflow, and be open to a hybrid approach",
+                  explanation: "Effective architects lead through influence. Listen first (they may have valid points), acknowledge trade-offs honestly, demonstrate viability through a PoC, and be willing to compromise with a hybrid approach that addresses both concerns."
                 }
               }
             },

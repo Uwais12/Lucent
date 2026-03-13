@@ -56,14 +56,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 7,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Spotting Disinformation",
                 description: "Determine if the naming choice introduces disinformation.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  statement: "Naming a variable 'userArray' when it is actually a Set is acceptable because both are collections.",
-                  correctAnswer: false,
+                  question: "True or False: Naming a variable 'userArray' when it is actually a Set is acceptable because both are collections.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "This introduces disinformation. The suffix 'Array' implies a specific data structure (ordered, indexed). If the variable is actually a Set (unordered, unique), the name lies to the reader. A better name would be 'uniqueUsers' or 'userSet'."
                 }
               }
@@ -74,7 +75,7 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 7,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "Removing Noise Words",
                 description: "Replace the noisy parameter names with meaningful ones.",
                 points: 10,
@@ -91,15 +92,21 @@ export const cleanCodeCourse = {
               order: 4,
               duration: 8,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Making Names Pronounceable",
                 description: "Suggest a clean replacement for a cryptic name.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
                   question: "A function is named `calcRvnPrdPrcPctDsc`. What would be a clean, pronounceable replacement?",
-                  sampleAnswer: "calculateRevenueProductPricePercentDiscount",
-                  keywords: ["calculate", "revenue", "price", "discount", "percent"]
+                  options: [
+                    "A) calcRevPriceDsc",
+                    "B) calculateRevenueProductPricePercentDiscount",
+                    "C) c_r_p_p_d",
+                    "D) discountCalc"
+                  ],
+                  correctAnswer: "B) calculateRevenueProductPricePercentDiscount",
+                  explanation: "The full, pronounceable name clearly communicates what the function does. The other options are still cryptic or lose important meaning."
                 }
               }
             }
@@ -143,14 +150,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 7,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Type Encoding",
                 description: "Evaluate whether type encoding in names is beneficial.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "In a modern TypeScript project, prefixing all interface names with 'I' (e.g., IUserService) makes the codebase cleaner and easier to navigate.",
-                  correctAnswer: false,
+                  question: "True or False: In a modern TypeScript project, prefixing all interface names with 'I' (e.g., IUserService) makes the codebase cleaner and easier to navigate.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "The 'I' prefix is a form of encoding that adds noise. Modern IDEs clearly distinguish interfaces from classes. The 'I' prefix forces readers to mentally filter out meaningless characters and leaks implementation details into names."
                 }
               }
@@ -219,7 +227,7 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "Context in Names",
                 description: "Apply the context principle.",
                 points: 10,
@@ -236,14 +244,15 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 7,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Consistent Naming",
                 description: "Evaluate naming consistency.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  statement: "Using 'fetch' in UserService, 'get' in OrderService, and 'retrieve' in ProductService for the same type of database lookup operation is acceptable because the methods are in different classes.",
-                  correctAnswer: false,
+                  question: "True or False: Using 'fetch' in UserService, 'get' in OrderService, and 'retrieve' in ProductService for the same type of database lookup operation is acceptable because the methods are in different classes.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Same concept should use the same word across the codebase. Using different words for the same operation forces developers to remember which word goes with which class, increasing cognitive load."
                 }
               }
@@ -292,9 +301,14 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "short-answer",
+            type: "fill-in-blanks",
             question: "What should method names for boolean-returning functions typically start with?",
-            correctAnswer: "is",
+            content: {
+              text: "Boolean-returning method names should typically start with ___BLANK___.",
+              blanks: [
+                { id: "blank1", answer: "is", acceptableAnswers: ["is", "has", "should"] }
+              ]
+            },
             points: 10
           },
           {
@@ -330,10 +344,14 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blank",
+            type: "fill-in-blanks",
             question: "Complete the principle: The length of a name should correspond to the size of its ___.",
-            text: "The length of a name should correspond to the size of its {{blank}}.",
-            blanks: ["scope"],
+            content: {
+              text: "The length of a name should correspond to the size of its ___BLANK___.",
+              blanks: [
+                { id: "blank1", answer: "scope", acceptableAnswers: ["scope"] }
+              ]
+            },
             points: 10
           }
         ]
@@ -384,14 +402,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Abstraction Levels",
                 description: "Evaluate whether a function maintains consistent abstraction levels.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "A function that calls `getUser()`, then manually parses a JSON string with `JSON.parse(response.body.split('\\n')[0])`, then calls `updateDashboard(user)` maintains a consistent level of abstraction.",
-                  correctAnswer: false,
+                  question: "True or False: A function that calls `getUser()`, then manually parses a JSON string with `JSON.parse(response.body.split('\\n')[0])`, then calls `updateDashboard(user)` maintains a consistent level of abstraction.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "The function mixes high-level operations (getUser, updateDashboard) with low-level string manipulation (split, JSON.parse). The parsing should be extracted into its own function like `parseUserResponse(response)` to maintain consistent abstraction."
                 }
               }
@@ -426,15 +445,21 @@ export const cleanCodeCourse = {
               order: 4,
               duration: 8,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Descriptive Function Naming",
                 description: "Provide a clean name for a function.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  question: "A function takes an order and checks if all items are in stock, returning true or false. Suggest a clean, descriptive name.",
-                  sampleAnswer: "areAllItemsInStock",
-                  keywords: ["items", "stock", "all", "are", "is", "check", "available"]
+                  question: "A function takes an order and checks if all items are in stock, returning true or false. Which is the cleanest, most descriptive name?",
+                  options: [
+                    "A) check(order)",
+                    "B) processOrder(order)",
+                    "C) areAllItemsInStock(order)",
+                    "D) validateOrderItems(order)"
+                  ],
+                  correctAnswer: "C) areAllItemsInStock(order)",
+                  explanation: "This name is a predicate (returns boolean), describes exactly what it checks (all items in stock), and reads naturally. The other options are vague or don't indicate the boolean return type."
                 }
               }
             }
@@ -478,14 +503,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Identifying Side Effects",
                 description: "Determine if a function has a hidden side effect.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "A function called `validateEmail(email)` that returns true/false AND adds valid emails to a global mailing list has no side effects because adding to the list is part of validation.",
-                  correctAnswer: false,
+                  question: "True or False: A function called `validateEmail(email)` that returns true/false AND adds valid emails to a global mailing list has no side effects because adding to the list is part of validation.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Adding to a global mailing list is a hidden side effect. The function name promises only to validate. A caller expecting pure validation would unknowingly trigger subscriptions. This violates the principle of least surprise."
                 }
               }
@@ -530,15 +556,21 @@ export const cleanCodeCourse = {
               order: 1,
               duration: 10,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Extraction Practice",
                 description: "Identify what to extract from a large function.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  question: "A function validates input, queries a database, transforms the results, and sends an email. How many functions should this be extracted into, and what would you name the top-level function?",
-                  sampleAnswer: "At least 4 functions: validateInput, queryDatabase, transformResults, sendNotification. The top-level function ties them together with a name like processAndNotify or handleRequest.",
-                  keywords: ["validate", "query", "transform", "send", "4", "four"]
+                  question: "A function validates input, queries a database, transforms the results, and sends an email. How many functions should this be extracted into?",
+                  options: [
+                    "A) 1 — keep it all together since it's one workflow",
+                    "B) 2 — separate validation from the rest",
+                    "C) 4 — validateInput, queryDatabase, transformResults, sendNotification, with a top-level orchestrator",
+                    "D) 6 — each line should be its own function"
+                  ],
+                  correctAnswer: "C) 4 — validateInput, queryDatabase, transformResults, sendNotification, with a top-level orchestrator",
+                  explanation: "Each step is a distinct responsibility. The top-level function ties them together (like processAndNotify), and each extracted function does one thing. This follows the single responsibility principle."
                 }
               }
             },
@@ -548,14 +580,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "DRY Principles",
                 description: "Evaluate a DRY refactoring decision.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "Two functions that both contain the line `const timestamp = new Date().toISOString();` are duplicated and should always share a `getTimestamp()` function.",
-                  correctAnswer: false,
+                  question: "True or False: Two functions that both contain the line `const timestamp = new Date().toISOString();` are duplicated and should always share a `getTimestamp()` function.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Not all textual duplication is meaningful duplication. A one-liner that's clear and unlikely to change may not warrant extraction. DRY is about duplicated knowledge and business rules, not duplicated characters. Extract when the logic is complex or likely to change."
                 }
               }
@@ -623,9 +656,19 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "short-answer",
+            type: "multiple-choice",
             question: "What technique does Clean Code recommend to replace switch statements that appear in multiple functions?",
-            correctAnswer: "Polymorphism",
+            content: {
+              question: "What technique does Clean Code recommend to replace switch statements that appear in multiple functions?",
+              options: [
+                "A) Lookup tables",
+                "B) Polymorphism",
+                "C) If-else chains",
+                "D) Strategy pattern only"
+              ],
+              correctAnswer: "B) Polymorphism",
+              explanation: "Clean Code recommends burying switch statements in an Abstract Factory and using polymorphism to eliminate repeated switch logic."
+            },
             points: 10
           },
           {
@@ -661,10 +704,14 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blank",
-            question: "Complete the rule: Functions should do {{blank}} thing.",
-            text: "Functions should do {{blank}} thing.",
-            blanks: ["one"],
+            type: "fill-in-blanks",
+            question: "Complete the rule: Functions should do ___ thing.",
+            content: {
+              text: "Functions should do ___BLANK___ thing.",
+              blanks: [
+                { id: "blank1", answer: "one", acceptableAnswers: ["one", "1"] }
+              ]
+            },
             points: 10
           }
         ]
@@ -739,14 +786,15 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Spotting Bad Comments",
                 description: "Evaluate whether a commenting practice is clean.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  statement: "Keeping commented-out code in the codebase is good practice because it preserves history that might be useful later.",
-                  correctAnswer: false,
+                  question: "True or False: Keeping commented-out code in the codebase is good practice because it preserves history that might be useful later.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Version control systems (Git) preserve all history. Commented-out code clutters the codebase, confuses readers who wonder why it's there, and slowly rots as surrounding code changes. Delete it — you can always find it in the commit history."
                 }
               }
@@ -757,15 +805,21 @@ export const cleanCodeCourse = {
               order: 4,
               duration: 6,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Code Over Comments",
                 description: "Replace a comment with self-documenting code.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  question: "You see `// Check if user is an admin` followed by `if (user.role === 3)`. What named constant or method would eliminate the need for this comment?",
-                  sampleAnswer: "user.isAdmin() or const ADMIN_ROLE = 3",
-                  keywords: ["isAdmin", "ADMIN", "role", "constant", "method"]
+                  question: "You see `// Check if user is an admin` followed by `if (user.role === 3)`. What is the best way to eliminate the need for this comment?",
+                  options: [
+                    "A) Improve the comment to say `// role 3 = admin`",
+                    "B) Use `user.isAdmin()` method or a named constant `const ADMIN_ROLE = 3`",
+                    "C) Remove the comment and leave the magic number",
+                    "D) Add a JSDoc comment to the function"
+                  ],
+                  correctAnswer: "B) Use `user.isAdmin()` method or a named constant `const ADMIN_ROLE = 3`",
+                  explanation: "A well-named method or constant makes the comment unnecessary. The code itself communicates intent, eliminating the risk of the comment becoming stale."
                 }
               }
             }
@@ -809,14 +863,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 9,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Comment Value",
                 description: "Evaluate whether a specific comment adds value.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "The comment `// We use a LinkedList instead of ArrayList because elements are frequently inserted and removed from the middle of the collection` is a good comment that should be kept.",
-                  correctAnswer: true,
+                  question: "True or False: The comment `// We use a LinkedList instead of ArrayList because elements are frequently inserted and removed from the middle of the collection` is a good comment that should be kept.",
+                  options: ["True", "False"],
+                  correctAnswer: "True",
                   explanation: "This comment explains the WHY behind a design decision that cannot be inferred from the code alone. A future developer might otherwise 'optimize' it to an ArrayList, not knowing why LinkedList was chosen."
                 }
               }
@@ -827,15 +882,21 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 8,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Handling Old Code",
                 description: "Explain how to handle code you might need again.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
                   question: "A teammate says 'I don't want to delete this code because we might need it later.' What is the Clean Code response?",
-                  sampleAnswer: "Delete it. Version control (Git) preserves all history. You can always recover the code from a previous commit if needed.",
-                  keywords: ["delete", "version control", "git", "history", "commit", "previous"]
+                  options: [
+                    "A) Comment it out so it's preserved in the file",
+                    "B) Move it to a 'deprecated' folder",
+                    "C) Delete it — version control (Git) preserves all history and you can recover it from a previous commit",
+                    "D) Keep it but add a TODO comment"
+                  ],
+                  correctAnswer: "C) Delete it — version control (Git) preserves all history and you can recover it from a previous commit",
+                  explanation: "Version control never forgets. Commented-out code clutters the codebase and confuses readers. Delete it confidently knowing Git has the history."
                 }
               }
             }
@@ -883,9 +944,19 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "short-answer",
+            type: "multiple-choice",
             question: "Instead of commenting `// 604800 seconds = 1 week`, what clean code technique should you use?",
-            correctAnswer: "A named constant like ONE_WEEK_IN_SECONDS = 604800",
+            content: {
+              question: "Instead of commenting `// 604800 seconds = 1 week`, what clean code technique should you use?",
+              options: [
+                "A) A more detailed comment explaining the calculation",
+                "B) A named constant like ONE_WEEK_IN_SECONDS = 604800",
+                "C) A helper function that returns 604800",
+                "D) An inline annotation"
+              ],
+              correctAnswer: "B) A named constant like ONE_WEEK_IN_SECONDS = 604800",
+              explanation: "Named constants replace magic numbers and make comments unnecessary by expressing intent directly in the code."
+            },
             points: 10
           },
           {
@@ -921,10 +992,14 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blank",
+            type: "fill-in-blanks",
             question: "Complete: Truth can only be found in one place: the ___.",
-            text: "Truth can only be found in one place: the {{blank}}.",
-            blanks: ["code"],
+            content: {
+              text: "Truth can only be found in one place: the ___BLANK___.",
+              blanks: [
+                { id: "blank1", answer: "code", acceptableAnswers: ["code"] }
+              ]
+            },
             points: 10
           }
         ]
@@ -975,14 +1050,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Vertical Formatting",
                 description: "Evaluate a vertical formatting choice.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  statement: "Adding a blank line between every single line of code improves readability because it gives the code room to breathe.",
-                  correctAnswer: false,
+                  question: "True or False: Adding a blank line between every single line of code improves readability because it gives the code room to breathe.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Too many blank lines destroy the visual grouping of related statements. Blank lines should separate CONCEPTS, not individual lines. Tightly related lines should be vertically dense."
                 }
               }
@@ -1017,7 +1093,7 @@ export const cleanCodeCourse = {
               order: 4,
               duration: 7,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "Formatting Principles",
                 description: "Complete the formatting rule.",
                 points: 10,
@@ -1068,7 +1144,7 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 9,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "Team Standards",
                 description: "Complete the formatting principle.",
                 points: 10,
@@ -1085,14 +1161,15 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "The Boy Scout Rule",
                 description: "Apply the Boy Scout Rule principle.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  statement: "When fixing a bug in a poorly formatted file, you should only fix the bug and leave the formatting alone to minimize the diff in the pull request.",
-                  correctAnswer: false,
+                  question: "True or False: When fixing a bug in a poorly formatted file, you should only fix the bug and leave the formatting alone to minimize the diff in the pull request.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "The Boy Scout Rule says to leave the code cleaner than you found it. While massive reformatting may warrant a separate commit, cleaning up the immediate area around your change is expected of a professional developer."
                 }
               }
@@ -1141,9 +1218,19 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "short-answer",
+            type: "multiple-choice",
             question: "What should blank lines between code sections represent?",
-            correctAnswer: "Separate concepts or complete thoughts",
+            content: {
+              question: "What should blank lines between code sections represent?",
+              options: [
+                "A) The end of a function",
+                "B) Separate concepts or complete thoughts",
+                "C) A pause for the compiler",
+                "D) Required formatting by the linter"
+              ],
+              correctAnswer: "B) Separate concepts or complete thoughts",
+              explanation: "Blank lines act as visual separators between distinct concepts, like paragraph breaks in prose."
+            },
             points: 10
           },
           {
@@ -1179,10 +1266,14 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blank",
-            question: "A source file is a {{blank}}. We indent lines to show their position in that structure.",
-            text: "A source file is a {{blank}}. We indent lines to show their position in that structure.",
-            blanks: ["hierarchy"],
+            type: "fill-in-blanks",
+            question: "A source file is a ___. We indent lines to show their position in that structure.",
+            content: {
+              text: "A source file is a ___BLANK___. We indent lines to show their position in that structure.",
+              blanks: [
+                { id: "blank1", answer: "hierarchy", acceptableAnswers: ["hierarchy"] }
+              ]
+            },
             points: 10
           }
         ]
@@ -1233,14 +1324,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 10,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Law of Demeter",
                 description: "Evaluate a Law of Demeter violation.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "The code `user.getAddress().getCity().getZipCode()` is acceptable because each method returns a well-defined object.",
-                  correctAnswer: false,
+                  question: "True or False: The code `user.getAddress().getCity().getZipCode()` is acceptable because each method returns a well-defined object.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "This is a train wreck that violates the Law of Demeter. The calling code is coupled to the internal structure of User, Address, and City. If any of these structures change, the caller breaks. Better: user.getZipCode() or expose only what the caller truly needs."
                 }
               }
@@ -1309,15 +1401,21 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Choosing the Right Approach",
                 description: "Explain when to choose data structures over objects.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  question: "You're building a reporting system where new report types (PDF, CSV, HTML, Excel) need to be added frequently, but the data model rarely changes. Should you use objects or data structures for the data model?",
-                  sampleAnswer: "Use data structures for the data model because the data types are stable. Use objects (polymorphism) for the report generators since new types are added frequently.",
-                  keywords: ["data structure", "stable", "object", "polymorphism", "types", "change"]
+                  question: "You're building a reporting system where new report types (PDF, CSV, HTML, Excel) need to be added frequently, but the data model rarely changes. What is the best approach?",
+                  options: [
+                    "A) Use objects for everything — data model and report generators",
+                    "B) Use data structures for the stable data model and objects (polymorphism) for the report generators",
+                    "C) Use data structures for everything",
+                    "D) Use a single ReportManager class with switch statements"
+                  ],
+                  correctAnswer: "B) Use data structures for the stable data model and objects (polymorphism) for the report generators",
+                  explanation: "Data structures work well for stable types where new operations are added. Objects with polymorphism work well for report generators where new types (PDF, CSV, etc.) are added frequently without changing existing code."
                 }
               }
             },
@@ -1327,14 +1425,15 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Coupling and Structure",
                 description: "Evaluate coupling through data access.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "Accessing `order.customer.addresses[0].city` is acceptable because each accessor returns a well-typed object with a clear API.",
-                  correctAnswer: false,
+                  question: "True or False: Accessing `order.customer.addresses[0].city` is acceptable because each accessor returns a well-typed object with a clear API.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "This chain couples your code to Order's internal customer field, Customer's internal addresses array, the fact that index 0 is meaningful, and Address's city field. Any structural change breaks the caller. Use `order.getShippingCity()` instead."
                 }
               }
@@ -1371,9 +1470,19 @@ export const cleanCodeCourse = {
             explanation: "The idea that everything is an object is a myth. Sometimes simple data structures with procedural code are the cleaner solution."
           },
           {
-            type: "short-answer",
+            type: "multiple-choice",
             question: "What is the name for code like `a.getB().getC().doSomething()` that violates the Law of Demeter?",
-            correctAnswer: "Train wreck",
+            content: {
+              question: "What is the name for code like `a.getB().getC().doSomething()` that violates the Law of Demeter?",
+              options: [
+                "A) Spaghetti code",
+                "B) Train wreck",
+                "C) God object",
+                "D) Shotgun surgery"
+              ],
+              correctAnswer: "B) Train wreck",
+              explanation: "A chain of method calls like a.getB().getC().doSomething() is called a 'train wreck' because it looks like a line of coupled train cars reaching through multiple objects."
+            },
             points: 10
           },
           {
@@ -1409,10 +1518,14 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blank",
-            question: "A class that has both public data and business logic methods is called a {{blank}}.",
-            text: "A class that has both public data and business logic methods is called a {{blank}}.",
-            blanks: ["hybrid"],
+            type: "fill-in-blanks",
+            question: "A class that has both public data and business logic methods is called a ___.",
+            content: {
+              text: "A class that has both public data and business logic methods is called a ___BLANK___.",
+              blanks: [
+                { id: "blank1", answer: "hybrid", acceptableAnswers: ["hybrid"] }
+              ]
+            },
             points: 10
           },
           {
@@ -1475,14 +1588,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Try-Catch First",
                 description: "Evaluate the try-catch-first approach.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "When writing code that could throw exceptions, you should write the try-catch-finally structure first because it helps you define the scope and expected behavior of that code.",
-                  correctAnswer: true,
+                  question: "True or False: When writing code that could throw exceptions, you should write the try-catch-finally structure first because it helps you define the scope and expected behavior of that code.",
+                  options: ["True", "False"],
+                  correctAnswer: "True",
                   explanation: "Starting with try-catch-finally helps you think about what can go wrong, what state needs to be maintained, and what the caller should expect. It's like defining a transaction boundary."
                 }
               }
@@ -1517,15 +1631,21 @@ export const cleanCodeCourse = {
               order: 4,
               duration: 6,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Exception Class Design",
                 description: "Explain the principle of defining exceptions.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
                   question: "When designing exception classes, what should be the primary concern according to Clean Code?",
-                  sampleAnswer: "How they are caught by the caller — define exceptions based on the caller's needs, not on the source of the error.",
-                  keywords: ["caller", "caught", "needs", "how"]
+                  options: [
+                    "A) The source of the error — where it originated",
+                    "B) How they are caught — define exceptions based on the caller's needs",
+                    "C) The severity of the error — critical vs. warning",
+                    "D) The HTTP status code the error maps to"
+                  ],
+                  correctAnswer: "B) How they are caught — define exceptions based on the caller's needs",
+                  explanation: "The most important concern is how exceptions are caught by the caller. Define exceptions that make the catch blocks clean and meaningful for the code that handles them."
                 }
               }
             }
@@ -1569,15 +1689,21 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "API Wrapping Benefits",
                 description: "Explain why wrapping third-party APIs improves error handling.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  question: "List two key benefits of wrapping a third-party API's error handling in your own service layer.",
-                  sampleAnswer: "1. Single point of change when the API updates its error types. 2. Your codebase uses your own domain-specific error types instead of being coupled to the third party's exceptions.",
-                  keywords: ["single", "point", "change", "domain", "error", "coupled", "mock", "test", "swap"]
+                  question: "What are the key benefits of wrapping a third-party API's error handling in your own service layer?",
+                  options: [
+                    "A) It makes the API faster and reduces network latency",
+                    "B) Single point of change when the API updates, domain-specific error types, and easier testing with mocks",
+                    "C) It eliminates all possible errors from the third party",
+                    "D) It allows you to avoid try-catch blocks entirely"
+                  ],
+                  correctAnswer: "B) Single point of change when the API updates, domain-specific error types, and easier testing with mocks",
+                  explanation: "Wrapping provides a single point of change, lets you use your own domain-specific error types, makes it easy to mock for testing, and makes it easy to swap providers later."
                 }
               }
             },
@@ -1649,9 +1775,19 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "short-answer",
+            type: "multiple-choice",
             question: "What pattern can you use instead of returning null for an empty result from a list query?",
-            correctAnswer: "Return an empty list or empty collection",
+            content: {
+              question: "What pattern can you use instead of returning null for an empty result from a list query?",
+              options: [
+                "A) Throw an exception",
+                "B) Return undefined",
+                "C) Return an empty list or empty collection",
+                "D) Return a special sentinel value like -1"
+              ],
+              correctAnswer: "C) Return an empty list or empty collection",
+              explanation: "Returning an empty collection instead of null eliminates the need for null checks and prevents NullPointerExceptions."
+            },
             points: 10
           },
           {
@@ -1675,10 +1811,14 @@ export const cleanCodeCourse = {
             explanation: "The most important concern is how exceptions are caught. Define them based on the caller's needs."
           },
           {
-            type: "fill-in-blank",
-            question: "Error handling is important, but if it obscures {{blank}}, it's wrong.",
-            text: "Error handling is important, but if it obscures {{blank}}, it's wrong.",
-            blanks: ["logic"],
+            type: "fill-in-blanks",
+            question: "Error handling is important, but if it obscures ___, it's wrong.",
+            content: {
+              text: "Error handling is important, but if it obscures ___BLANK___, it's wrong.",
+              blanks: [
+                { id: "blank1", answer: "logic", acceptableAnswers: ["logic", "business logic"] }
+              ]
+            },
             points: 10
           },
           {
@@ -1741,7 +1881,7 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 10,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "Clean Test Pattern",
                 description: "Name the three phases of clean test structure.",
                 points: 10,
@@ -1758,14 +1898,15 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 10,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Single Concept Tests",
                 description: "Evaluate test organization.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "A test called 'testUserModule' that tests creation, validation, deletion, and serialization of users follows clean test practices.",
-                  correctAnswer: false,
+                  question: "True or False: A test called 'testUserModule' that tests creation, validation, deletion, and serialization of users follows clean test practices.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "This test covers at least four separate concepts. When it fails, you won't know which concept broke without reading the entire test. Each concept should be its own test with a descriptive name."
                 }
               }
@@ -1810,15 +1951,21 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Self-Validating Tests",
                 description: "Explain what makes a test self-validating.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
                   question: "What does it mean for a test to be 'self-validating'?",
-                  sampleAnswer: "The test has a boolean output — it either passes or fails automatically without requiring manual inspection of output.",
-                  keywords: ["pass", "fail", "boolean", "automatic", "manual"]
+                  options: [
+                    "A) The test validates its own source code for syntax errors",
+                    "B) The test has a boolean output — it either passes or fails automatically without requiring manual inspection",
+                    "C) The test checks that other tests have run correctly",
+                    "D) The test validates the test framework is working"
+                  ],
+                  correctAnswer: "B) The test has a boolean output — it either passes or fails automatically without requiring manual inspection",
+                  explanation: "Self-validating means the test determines pass/fail on its own. You should not have to read log files or manually compare outputs to determine if a test passed."
                 }
               }
             },
@@ -1852,15 +1999,21 @@ export const cleanCodeCourse = {
               order: 4,
               duration: 7,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Test Naming",
                 description: "Write a clean test name.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  question: "Write a clean test name for: a test that verifies a shopping cart applies a 10% discount when the total exceeds $100.",
-                  sampleAnswer: "applies 10 percent discount when cart total exceeds 100 dollars",
-                  keywords: ["discount", "total", "exceeds", "100", "applies", "cart"]
+                  question: "Which is the cleanest test name for: a test that verifies a shopping cart applies a 10% discount when the total exceeds $100?",
+                  options: [
+                    "A) testDiscount",
+                    "B) test_cart_1",
+                    "C) applies 10 percent discount when cart total exceeds 100 dollars",
+                    "D) discountTest100"
+                  ],
+                  correctAnswer: "C) applies 10 percent discount when cart total exceeds 100 dollars",
+                  explanation: "This name follows the pattern [action] [expected result] [condition], reading like a sentence that describes the behavior being tested. The other options are cryptic or non-descriptive."
                 }
               }
             }
@@ -1876,10 +2029,14 @@ export const cleanCodeCourse = {
         slug: "clean-code-chapter-7-quiz",
         questions: [
           {
-            type: "fill-in-blank",
-            question: "The three laws of TDD: 1) Don't write production code until you have a failing test. 2) Don't write more of a test than is sufficient to {{blank}}. 3) Don't write more production code than is sufficient to pass the test.",
-            text: "Don't write more of a test than is sufficient to {{blank}}.",
-            blanks: ["fail"],
+            type: "fill-in-blanks",
+            question: "The three laws of TDD: 1) Don't write production code until you have a failing test. 2) Don't write more of a test than is sufficient to ___. 3) Don't write more production code than is sufficient to pass the test.",
+            content: {
+              text: "The three laws of TDD: 1) Don't write production code until you have a failing test. 2) Don't write more of a test than is sufficient to ___BLANK___. 3) Don't write more production code than is sufficient to pass the test.",
+              blanks: [
+                { id: "blank1", answer: "fail", acceptableAnswers: ["fail"] }
+              ]
+            },
             points: 10
           },
           {
@@ -1915,9 +2072,19 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "short-answer",
+            type: "multiple-choice",
             question: "Why should each test function test only a single concept?",
-            correctAnswer: "So that when a test fails, the name tells you exactly which concept broke.",
+            content: {
+              question: "Why should each test function test only a single concept?",
+              options: [
+                "A) To reduce test file size",
+                "B) So that when a test fails, the name tells you exactly which concept broke",
+                "C) Because testing frameworks only support one assertion per test",
+                "D) To make tests run faster"
+              ],
+              correctAnswer: "B) So that when a test fails, the name tells you exactly which concept broke",
+              explanation: "Single-concept tests provide precise failure diagnostics. When a test fails, its name immediately identifies what broke."
+            },
             points: 10
           },
           {
@@ -2000,14 +2167,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 10,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Single Responsibility Principle",
                 description: "Evaluate SRP compliance.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "A UserService class that handles user authentication, sends welcome emails, and generates usage reports follows the Single Responsibility Principle because all operations are 'user-related'.",
-                  correctAnswer: false,
+                  question: "True or False: A UserService class that handles user authentication, sends welcome emails, and generates usage reports follows the Single Responsibility Principle because all operations are 'user-related'.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Having 'user' in all the operations doesn't make them a single responsibility. Authentication, email, and reporting are three separate concerns that change for different reasons. Each should be its own class."
                 }
               }
@@ -2018,15 +2186,21 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 10,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Cohesion",
                 description: "Explain what makes a class highly cohesive.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
                   question: "What makes a class 'maximally cohesive'?",
-                  sampleAnswer: "A class is maximally cohesive when each method uses every instance variable — all the methods and variables are tightly related and form a single logical unit.",
-                  keywords: ["variable", "method", "uses", "every", "related"]
+                  options: [
+                    "A) The class has the maximum number of methods possible",
+                    "B) Each method uses every instance variable — all methods and variables are tightly related",
+                    "C) The class inherits from multiple base classes",
+                    "D) The class has no dependencies on other classes"
+                  ],
+                  correctAnswer: "B) Each method uses every instance variable — all methods and variables are tightly related",
+                  explanation: "Maximum cohesion means every method manipulates every instance variable. All parts of the class form a single logical unit. When cohesion is low, the class should be split."
                 }
               }
             }
@@ -2070,7 +2244,7 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 9,
               exercise: {
-                type: "fill-in-blank",
+                type: "fill-in-blanks",
                 title: "Dependency Inversion",
                 description: "Complete the DIP definition.",
                 points: 10,
@@ -2087,14 +2261,15 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Class Size",
                 description: "Evaluate class size principles.",
                 points: 10,
                 difficulty: "beginner",
                 content: {
-                  statement: "A class with 20 methods is acceptable as long as all the methods relate to the same domain entity (e.g., all methods deal with 'User').",
-                  correctAnswer: false,
+                  question: "True or False: A class with 20 methods is acceptable as long as all the methods relate to the same domain entity (e.g., all methods deal with 'User').",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Relating to the same entity doesn't mean single responsibility. A User class handling creation, authentication, reporting, and email has multiple reasons to change. Break it into smaller classes each with one responsibility."
                 }
               }
@@ -2143,9 +2318,19 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "short-answer",
+            type: "multiple-choice",
             question: "What design principle says classes should depend on abstractions rather than concrete details?",
-            correctAnswer: "Dependency Inversion Principle",
+            content: {
+              question: "What design principle says classes should depend on abstractions rather than concrete details?",
+              options: [
+                "A) Single Responsibility Principle",
+                "B) Open-Closed Principle",
+                "C) Liskov Substitution Principle",
+                "D) Dependency Inversion Principle"
+              ],
+              correctAnswer: "D) Dependency Inversion Principle",
+              explanation: "The Dependency Inversion Principle (DIP) states that high-level modules should not depend on low-level modules — both should depend on abstractions."
+            },
             points: 10
           },
           {
@@ -2161,10 +2346,15 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blank",
-            question: "The Open-Closed Principle says classes should be open for {{blank}} but closed for {{blank}}.",
-            text: "The Open-Closed Principle says classes should be open for {{blank}} but closed for {{blank}}.",
-            blanks: ["extension", "modification"],
+            type: "fill-in-blanks",
+            question: "The Open-Closed Principle says classes should be open for ___ but closed for ___.",
+            content: {
+              text: "The Open-Closed Principle says classes should be open for ___BLANK___ but closed for ___BLANK___.",
+              blanks: [
+                { id: "blank1", answer: "extension", acceptableAnswers: ["extension"] },
+                { id: "blank2", answer: "modification", acceptableAnswers: ["modification"] }
+              ]
+            },
             points: 10
           },
           {
@@ -2235,15 +2425,21 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 10,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Cross-Cutting Concerns",
                 description: "Identify cross-cutting concerns.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  question: "Name three common cross-cutting concerns that tend to tangle with business logic.",
-                  sampleAnswer: "Logging, security/authentication, and transaction management.",
-                  keywords: ["logging", "security", "transaction", "caching", "authentication", "authorization"]
+                  question: "Which of the following are all cross-cutting concerns that tend to tangle with business logic?",
+                  options: [
+                    "A) Logging, security/authentication, and transaction management",
+                    "B) User registration, order processing, and payment",
+                    "C) HTML rendering, CSS styling, and JavaScript events",
+                    "D) Database schemas, API routes, and UI components"
+                  ],
+                  correctAnswer: "A) Logging, security/authentication, and transaction management",
+                  explanation: "Cross-cutting concerns are aspects that affect many parts of the system and cut across natural object boundaries. Logging, security, and transactions are classic examples that should be separated from business logic."
                 }
               }
             },
@@ -2253,14 +2449,15 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 10,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "System Simplicity",
                 description: "Evaluate architectural decisions.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "Building a full event-driven microservice architecture from day one for a new CRUD application follows clean code principles because it prepares for future growth.",
-                  correctAnswer: false,
+                  question: "True or False: Building a full event-driven microservice architecture from day one for a new CRUD application follows clean code principles because it prepares for future growth.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Clean Code advocates for appropriate complexity. Over-engineering for imaginary future needs adds unnecessary complexity. Start simple and evolve the architecture as real requirements emerge."
                 }
               }
@@ -2305,14 +2502,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 8,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Incremental Architecture",
                 description: "Evaluate an architectural decision.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "For a new project with 3 users, building a microservice architecture with message queues, API gateways, and distributed caching from day one is a responsible engineering decision because it 'prepares for scale'.",
-                  correctAnswer: false,
+                  question: "True or False: For a new project with 3 users, building a microservice architecture with message queues, API gateways, and distributed caching from day one is a responsible engineering decision because it 'prepares for scale'.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "This is over-architecture. Start with the simplest thing that works and evolve as real requirements emerge. Most systems never need microservices. The complexity cost of premature architecture far outweighs the cost of refactoring later."
                 }
               }
@@ -2323,15 +2521,21 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 8,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Domain Organization",
                 description: "Explain domain-driven code organization.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
                   question: "Why is organizing code by domain (users/, orders/, products/) better than by technical layer (controllers/, services/, repositories/)?",
-                  sampleAnswer: "Domain organization keeps related code together, making it easier to find and modify features. Adding a new feature means adding a new folder instead of modifying every layer folder.",
-                  keywords: ["related", "together", "feature", "adding", "folder", "find", "modify"]
+                  options: [
+                    "A) It reduces the total number of files in the project",
+                    "B) Related code stays together — adding a new feature means adding a new folder instead of modifying every layer folder",
+                    "C) It makes the code run faster at runtime",
+                    "D) It is required by all modern frameworks"
+                  ],
+                  correctAnswer: "B) Related code stays together — adding a new feature means adding a new folder instead of modifying every layer folder",
+                  explanation: "Domain organization keeps related code together, making features easier to find, understand, and modify. Adding a new feature is additive (new folder) rather than invasive (touching every existing folder)."
                 }
               }
             }
@@ -2367,9 +2571,19 @@ export const cleanCodeCourse = {
             explanation: "Cross-cutting concerns should be separated from business logic using decorators, middleware, or aspect-oriented approaches."
           },
           {
-            type: "short-answer",
+            type: "multiple-choice",
             question: "What is the clean code philosophy about system complexity?",
-            correctAnswer: "Use the simplest thing that can possibly work. Systems should only be as complex as current needs require.",
+            content: {
+              question: "What is the clean code philosophy about system complexity?",
+              options: [
+                "A) Plan for every possible future requirement upfront",
+                "B) Use the simplest thing that can possibly work — only as complex as current needs require",
+                "C) Always use the most advanced design patterns available",
+                "D) Complexity is acceptable if it improves performance"
+              ],
+              correctAnswer: "B) Use the simplest thing that can possibly work — only as complex as current needs require",
+              explanation: "Clean Code advocates for simplicity. Systems should only be as complex as their current requirements demand, not speculative future needs."
+            },
             points: 10
           },
           {
@@ -2385,10 +2599,14 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blank",
-            question: "Software systems should separate the {{blank}} process from the runtime logic.",
-            text: "Software systems should separate the {{blank}} process from the runtime logic.",
-            blanks: ["startup"],
+            type: "fill-in-blanks",
+            question: "Software systems should separate the ___ process from the runtime logic.",
+            content: {
+              text: "Software systems should separate the ___BLANK___ process from the runtime logic.",
+              blanks: [
+                { id: "blank1", answer: "startup", acceptableAnswers: ["startup", "construction", "initialization"] }
+              ]
+            },
             points: 10
           },
           {
@@ -2471,14 +2689,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 10,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Duplication",
                 description: "Evaluate a duplication scenario.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "Two functions that have different names but contain the same three lines for disposing an old image and replacing it with a new one are not really duplicated because they serve different purposes (scaling vs rotating).",
-                  correctAnswer: false,
+                  question: "True or False: Two functions that have different names but contain the same three lines for disposing an old image and replacing it with a new one are not really duplicated because they serve different purposes (scaling vs rotating).",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "The image replacement logic is duplicated regardless of the calling context. The common pattern (dispose old, assign new) should be extracted into a shared function like `replaceImage()`. Duplication is about the code, not the business purpose."
                 }
               }
@@ -2547,14 +2766,15 @@ export const cleanCodeCourse = {
               order: 2,
               duration: 10,
               exercise: {
-                type: "true/false",
+                type: "multiple-choice",
                 title: "Function Smells",
                 description: "Identify a function smell.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
-                  statement: "A function `render(page, isTestMode)` that takes a boolean flag to change its rendering behavior is clean code because it keeps related logic together.",
-                  correctAnswer: false,
+                  question: "True or False: A function `render(page, isTestMode)` that takes a boolean flag to change its rendering behavior is clean code because it keeps related logic together.",
+                  options: ["True", "False"],
+                  correctAnswer: "False",
                   explanation: "Boolean flag arguments are a smell — they loudly declare the function does more than one thing. Split into `renderPage(page)` and `renderTestPage(page)`, or better yet, use polymorphism."
                 }
               }
@@ -2565,15 +2785,21 @@ export const cleanCodeCourse = {
               order: 3,
               duration: 7,
               exercise: {
-                type: "short-answer",
+                type: "multiple-choice",
                 title: "Code Smell Recognition",
                 description: "Name the code smell.",
                 points: 10,
                 difficulty: "intermediate",
                 content: {
                   question: "A method in class A accesses five properties of class B and only one of its own. What code smell is this?",
-                  sampleAnswer: "Feature Envy — the method is more interested in class B than its own class and probably belongs in class B.",
-                  keywords: ["feature", "envy"]
+                  options: [
+                    "A) God Class",
+                    "B) Feature Envy",
+                    "C) Shotgun Surgery",
+                    "D) Dead Code"
+                  ],
+                  correctAnswer: "B) Feature Envy",
+                  explanation: "Feature Envy occurs when a method is more interested in another class than its own. This method probably belongs in class B since it uses more of B's data."
                 }
               }
             },
@@ -2645,9 +2871,19 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "short-answer",
+            type: "multiple-choice",
             question: "Why are boolean flag arguments a code smell?",
-            correctAnswer: "They indicate the function does more than one thing — it has different behavior paths based on the flag.",
+            content: {
+              question: "Why are boolean flag arguments a code smell?",
+              options: [
+                "A) Booleans use more memory than other types",
+                "B) They indicate the function does more than one thing — it has different behavior paths based on the flag",
+                "C) They make the function name longer",
+                "D) They are not supported in all languages"
+              ],
+              correctAnswer: "B) They indicate the function does more than one thing — it has different behavior paths based on the flag",
+              explanation: "A boolean flag argument loudly proclaims that the function does two things: one when the flag is true and another when it is false."
+            },
             points: 10
           },
           {
@@ -2671,10 +2907,14 @@ export const cleanCodeCourse = {
             explanation: "Trivial tests are easy to write and their documentary value is higher than the cost to produce them. Don't skip them."
           },
           {
-            type: "fill-in-blank",
-            question: "Duplication is the primary {{blank}} of a well-designed system.",
-            text: "Duplication is the primary {{blank}} of a well-designed system.",
-            blanks: ["enemy"],
+            type: "fill-in-blanks",
+            question: "Duplication is the primary ___ of a well-designed system.",
+            content: {
+              text: "Duplication is the primary ___BLANK___ of a well-designed system.",
+              blanks: [
+                { id: "blank1", answer: "enemy", acceptableAnswers: ["enemy"] }
+              ]
+            },
             points: 10
           },
           {
@@ -2796,9 +3036,19 @@ export const cleanCodeCourse = {
         points: 5
       },
       {
-        type: "short-answer",
+        type: "multiple-choice",
         question: "What pattern separates a test into three distinct phases?",
-        correctAnswer: "Arrange-Act-Assert (or Build-Operate-Check)",
+        content: {
+          question: "What pattern separates a test into three distinct phases?",
+          options: [
+            "A) Given-When-Then",
+            "B) Arrange-Act-Assert",
+            "C) Setup-Execute-Verify",
+            "D) Red-Green-Refactor"
+          ],
+          correctAnswer: "B) Arrange-Act-Assert",
+          explanation: "The Arrange-Act-Assert (also called Build-Operate-Check) pattern separates tests into three clear phases: setup, execution, and verification."
+        },
         points: 5
       },
       {
@@ -2834,10 +3084,14 @@ export const cleanCodeCourse = {
         points: 5
       },
       {
-        type: "fill-in-blank",
-        question: "The SRP states that a class should have one, and only one, reason to {{blank}}.",
-        text: "The SRP states that a class should have one, and only one, reason to {{blank}}.",
-        blanks: ["change"],
+        type: "fill-in-blanks",
+        question: "The SRP states that a class should have one, and only one, reason to ___.",
+        content: {
+          text: "The SRP states that a class should have one, and only one, reason to ___BLANK___.",
+          blanks: [
+            { id: "blank1", answer: "change", acceptableAnswers: ["change"] }
+          ]
+        },
         points: 5
       },
       {
@@ -2885,9 +3139,19 @@ export const cleanCodeCourse = {
         points: 5
       },
       {
-        type: "short-answer",
+        type: "multiple-choice",
         question: "What is a 'train wreck' in the context of the Law of Demeter?",
-        correctAnswer: "A chain of method calls like a.getB().getC().doSomething() that reaches through multiple objects.",
+        content: {
+          question: "What is a 'train wreck' in the context of the Law of Demeter?",
+          options: [
+            "A) A function that modifies global state",
+            "B) A chain of method calls like a.getB().getC().doSomething() that reaches through multiple objects",
+            "C) A class with too many constructors",
+            "D) A deeply nested if-else structure"
+          ],
+          correctAnswer: "B) A chain of method calls like a.getB().getC().doSomething() that reaches through multiple objects",
+          explanation: "Train wrecks are chains of method calls that violate the Law of Demeter by reaching through objects to access their internals."
+        },
         points: 5
       },
       {
@@ -2935,10 +3199,14 @@ export const cleanCodeCourse = {
         points: 5
       },
       {
-        type: "fill-in-blank",
-        question: "Duplication is the primary {{blank}} of a well-designed system.",
-        text: "Duplication is the primary {{blank}} of a well-designed system.",
-        blanks: ["enemy"],
+        type: "fill-in-blanks",
+        question: "Duplication is the primary ___ of a well-designed system.",
+        content: {
+          text: "Duplication is the primary ___BLANK___ of a well-designed system.",
+          blanks: [
+            { id: "blank1", answer: "enemy", acceptableAnswers: ["enemy"] }
+          ]
+        },
         points: 5
       },
       {
@@ -2986,9 +3254,19 @@ export const cleanCodeCourse = {
         points: 5
       },
       {
-        type: "short-answer",
+        type: "multiple-choice",
         question: "What principle states that classes should be open for extension but closed for modification?",
-        correctAnswer: "Open-Closed Principle (OCP)",
+        content: {
+          question: "What principle states that classes should be open for extension but closed for modification?",
+          options: [
+            "A) Single Responsibility Principle (SRP)",
+            "B) Liskov Substitution Principle (LSP)",
+            "C) Open-Closed Principle (OCP)",
+            "D) Dependency Inversion Principle (DIP)"
+          ],
+          correctAnswer: "C) Open-Closed Principle (OCP)",
+          explanation: "The Open-Closed Principle states that software entities should be open for extension but closed for modification, allowing new behavior without changing existing code."
+        },
         points: 5
       },
       {
