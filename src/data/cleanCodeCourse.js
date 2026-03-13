@@ -648,17 +648,14 @@ export const cleanCodeCourse = {
           {
             type: "multiple-choice",
             question: "What technique does Clean Code recommend to replace switch statements that appear in multiple functions?",
-            content: {
-              question: "What technique does Clean Code recommend to replace switch statements that appear in multiple functions?",
-              options: [
+            options: [
                 "A) Lookup tables",
                 "B) Polymorphism",
                 "C) If-else chains",
                 "D) Strategy pattern only"
               ],
-              correctAnswer: "B) Polymorphism",
-              explanation: "Clean Code recommends burying switch statements in an Abstract Factory and using polymorphism to eliminate repeated switch logic."
-            },
+            correctAnswer: "B) Polymorphism",
+              explanation: "Clean Code recommends burying switch statements in an Abstract Factory and using polymorphism to eliminate repeated switch logic.",
             points: 10
           },
           {
@@ -931,17 +928,14 @@ export const cleanCodeCourse = {
           {
             type: "multiple-choice",
             question: "Instead of commenting `// 604800 seconds = 1 week`, what clean code technique should you use?",
-            content: {
-              question: "Instead of commenting `// 604800 seconds = 1 week`, what clean code technique should you use?",
-              options: [
+            options: [
                 "A) A more detailed comment explaining the calculation",
                 "B) A named constant like ONE_WEEK_IN_SECONDS = 604800",
                 "C) A helper function that returns 604800",
                 "D) An inline annotation"
               ],
-              correctAnswer: "B) A named constant like ONE_WEEK_IN_SECONDS = 604800",
-              explanation: "Named constants replace magic numbers and make comments unnecessary by expressing intent directly in the code."
-            },
+            correctAnswer: "B) A named constant like ONE_WEEK_IN_SECONDS = 604800",
+              explanation: "Named constants replace magic numbers and make comments unnecessary by expressing intent directly in the code.",
             points: 10
           },
           {
@@ -1200,17 +1194,14 @@ export const cleanCodeCourse = {
           {
             type: "multiple-choice",
             question: "What should blank lines between code sections represent?",
-            content: {
-              question: "What should blank lines between code sections represent?",
-              options: [
+            options: [
                 "A) The end of a function",
                 "B) Separate concepts or complete thoughts",
                 "C) A pause for the compiler",
                 "D) Required formatting by the linter"
               ],
-              correctAnswer: "B) Separate concepts or complete thoughts",
-              explanation: "Blank lines act as visual separators between distinct concepts, like paragraph breaks in prose."
-            },
+            correctAnswer: "B) Separate concepts or complete thoughts",
+              explanation: "Blank lines act as visual separators between distinct concepts, like paragraph breaks in prose.",
             points: 10
           },
           {
@@ -1447,17 +1438,14 @@ export const cleanCodeCourse = {
           {
             type: "multiple-choice",
             question: "What is the name for code like `a.getB().getC().doSomething()` that violates the Law of Demeter?",
-            content: {
-              question: "What is the name for code like `a.getB().getC().doSomething()` that violates the Law of Demeter?",
-              options: [
+            options: [
                 "A) Spaghetti code",
                 "B) Train wreck",
                 "C) God object",
                 "D) Shotgun surgery"
               ],
-              correctAnswer: "B) Train wreck",
-              explanation: "A chain of method calls like a.getB().getC().doSomething() is called a 'train wreck' because it looks like a line of coupled train cars reaching through multiple objects."
-            },
+            correctAnswer: "B) Train wreck",
+              explanation: "A chain of method calls like a.getB().getC().doSomething() is called a 'train wreck' because it looks like a line of coupled train cars reaching through multiple objects.",
             points: 10
           },
           {
@@ -1747,17 +1735,14 @@ export const cleanCodeCourse = {
           {
             type: "multiple-choice",
             question: "What pattern can you use instead of returning null for an empty result from a list query?",
-            content: {
-              question: "What pattern can you use instead of returning null for an empty result from a list query?",
-              options: [
+            options: [
                 "A) Throw an exception",
                 "B) Return undefined",
                 "C) Return an empty list or empty collection",
                 "D) Return a special sentinel value like -1"
               ],
-              correctAnswer: "C) Return an empty list or empty collection",
-              explanation: "Returning an empty collection instead of null eliminates the need for null checks and prevents NullPointerExceptions."
-            },
+            correctAnswer: "C) Return an empty list or empty collection",
+              explanation: "Returning an empty collection instead of null eliminates the need for null checks and prevents NullPointerExceptions.",
             points: 10
           },
           {
@@ -2034,17 +2019,14 @@ export const cleanCodeCourse = {
           {
             type: "multiple-choice",
             question: "Why should each test function test only a single concept?",
-            content: {
-              question: "Why should each test function test only a single concept?",
-              options: [
+            options: [
                 "A) To reduce test file size",
                 "B) So that when a test fails, the name tells you exactly which concept broke",
                 "C) Because testing frameworks only support one assertion per test",
                 "D) To make tests run faster"
               ],
-              correctAnswer: "B) So that when a test fails, the name tells you exactly which concept broke",
-              explanation: "Single-concept tests provide precise failure diagnostics. When a test fails, its name immediately identifies what broke."
-            },
+            correctAnswer: "B) So that when a test fails, the name tells you exactly which concept broke",
+              explanation: "Single-concept tests provide precise failure diagnostics. When a test fails, its name immediately identifies what broke.",
             points: 10
           },
           {
@@ -2280,17 +2262,14 @@ export const cleanCodeCourse = {
           {
             type: "multiple-choice",
             question: "What design principle says classes should depend on abstractions rather than concrete details?",
-            content: {
-              question: "What design principle says classes should depend on abstractions rather than concrete details?",
-              options: [
+            options: [
                 "A) Single Responsibility Principle",
                 "B) Open-Closed Principle",
                 "C) Liskov Substitution Principle",
                 "D) Dependency Inversion Principle"
               ],
-              correctAnswer: "D) Dependency Inversion Principle",
-              explanation: "The Dependency Inversion Principle (DIP) states that high-level modules should not depend on low-level modules — both should depend on abstractions."
-            },
+            correctAnswer: "D) Dependency Inversion Principle",
+              explanation: "The Dependency Inversion Principle (DIP) states that high-level modules should not depend on low-level modules — both should depend on abstractions.",
             points: 10
           },
           {
@@ -2527,17 +2506,14 @@ export const cleanCodeCourse = {
           {
             type: "multiple-choice",
             question: "What is the clean code philosophy about system complexity?",
-            content: {
-              question: "What is the clean code philosophy about system complexity?",
-              options: [
+            options: [
                 "A) Plan for every possible future requirement upfront",
                 "B) Use the simplest thing that can possibly work — only as complex as current needs require",
                 "C) Always use the most advanced design patterns available",
                 "D) Complexity is acceptable if it improves performance"
               ],
-              correctAnswer: "B) Use the simplest thing that can possibly work — only as complex as current needs require",
-              explanation: "Clean Code advocates for simplicity. Systems should only be as complex as their current requirements demand, not speculative future needs."
-            },
+            correctAnswer: "B) Use the simplest thing that can possibly work — only as complex as current needs require",
+              explanation: "Clean Code advocates for simplicity. Systems should only be as complex as their current requirements demand, not speculative future needs.",
             points: 10
           },
           {
@@ -2822,17 +2798,14 @@ export const cleanCodeCourse = {
           {
             type: "multiple-choice",
             question: "Why are boolean flag arguments a code smell?",
-            content: {
-              question: "Why are boolean flag arguments a code smell?",
-              options: [
+            options: [
                 "A) Booleans use more memory than other types",
                 "B) They indicate the function does more than one thing — it has different behavior paths based on the flag",
                 "C) They make the function name longer",
                 "D) They are not supported in all languages"
               ],
-              correctAnswer: "B) They indicate the function does more than one thing — it has different behavior paths based on the flag",
-              explanation: "A boolean flag argument loudly proclaims that the function does two things: one when the flag is true and another when it is false."
-            },
+            correctAnswer: "B) They indicate the function does more than one thing — it has different behavior paths based on the flag",
+              explanation: "A boolean flag argument loudly proclaims that the function does two things: one when the flag is true and another when it is false.",
             points: 10
           },
           {
@@ -2982,17 +2955,14 @@ export const cleanCodeCourse = {
       {
         type: "multiple-choice",
         question: "What pattern separates a test into three distinct phases?",
-        content: {
-          question: "What pattern separates a test into three distinct phases?",
-          options: [
+            options: [
             "A) Given-When-Then",
             "B) Arrange-Act-Assert",
             "C) Setup-Execute-Verify",
             "D) Red-Green-Refactor"
           ],
-          correctAnswer: "B) Arrange-Act-Assert",
-          explanation: "The Arrange-Act-Assert (also called Build-Operate-Check) pattern separates tests into three clear phases: setup, execution, and verification."
-        },
+            correctAnswer: "B) Arrange-Act-Assert",
+          explanation: "The Arrange-Act-Assert (also called Build-Operate-Check) pattern separates tests into three clear phases: setup, execution, and verification.",
         points: 5
       },
       {
@@ -3080,17 +3050,14 @@ export const cleanCodeCourse = {
       {
         type: "multiple-choice",
         question: "What is a 'train wreck' in the context of the Law of Demeter?",
-        content: {
-          question: "What is a 'train wreck' in the context of the Law of Demeter?",
-          options: [
+            options: [
             "A) A function that modifies global state",
             "B) A chain of method calls like a.getB().getC().doSomething() that reaches through multiple objects",
             "C) A class with too many constructors",
             "D) A deeply nested if-else structure"
           ],
-          correctAnswer: "B) A chain of method calls like a.getB().getC().doSomething() that reaches through multiple objects",
-          explanation: "Train wrecks are chains of method calls that violate the Law of Demeter by reaching through objects to access their internals."
-        },
+            correctAnswer: "B) A chain of method calls like a.getB().getC().doSomething() that reaches through multiple objects",
+          explanation: "Train wrecks are chains of method calls that violate the Law of Demeter by reaching through objects to access their internals.",
         points: 5
       },
       {
@@ -3190,17 +3157,14 @@ export const cleanCodeCourse = {
       {
         type: "multiple-choice",
         question: "What principle states that classes should be open for extension but closed for modification?",
-        content: {
-          question: "What principle states that classes should be open for extension but closed for modification?",
-          options: [
+            options: [
             "A) Single Responsibility Principle (SRP)",
             "B) Liskov Substitution Principle (LSP)",
             "C) Open-Closed Principle (OCP)",
             "D) Dependency Inversion Principle (DIP)"
           ],
-          correctAnswer: "C) Open-Closed Principle (OCP)",
-          explanation: "The Open-Closed Principle states that software entities should be open for extension but closed for modification, allowing new behavior without changing existing code."
-        },
+            correctAnswer: "C) Open-Closed Principle (OCP)",
+          explanation: "The Open-Closed Principle states that software entities should be open for extension but closed for modification, allowing new behavior without changing existing code.",
         points: 5
       },
       {
