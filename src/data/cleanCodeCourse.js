@@ -301,14 +301,9 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "What should method names for boolean-returning functions typically start with?",
-            content: {
-              text: "Boolean-returning method names should typically start with ___BLANK___.",
-              blanks: [
-                { id: "blank1", answer: "is", acceptableAnswers: ["is", "has", "should"] }
-              ]
-            },
+            correctAnswer: "is",
             points: 10
           },
           {
@@ -344,14 +339,9 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "Complete the principle: The length of a name should correspond to the size of its ___.",
-            content: {
-              text: "The length of a name should correspond to the size of its ___BLANK___.",
-              blanks: [
-                { id: "blank1", answer: "scope", acceptableAnswers: ["scope"] }
-              ]
-            },
+            correctAnswer: "scope",
             points: 10
           }
         ]
@@ -704,14 +694,9 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "Complete the rule: Functions should do ___ thing.",
-            content: {
-              text: "Functions should do ___BLANK___ thing.",
-              blanks: [
-                { id: "blank1", answer: "one", acceptableAnswers: ["one", "1"] }
-              ]
-            },
+            correctAnswer: "one",
             points: 10
           }
         ]
@@ -992,14 +977,9 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "Complete: Truth can only be found in one place: the ___.",
-            content: {
-              text: "Truth can only be found in one place: the ___BLANK___.",
-              blanks: [
-                { id: "blank1", answer: "code", acceptableAnswers: ["code"] }
-              ]
-            },
+            correctAnswer: "code",
             points: 10
           }
         ]
@@ -1266,14 +1246,9 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "A source file is a ___. We indent lines to show their position in that structure.",
-            content: {
-              text: "A source file is a ___BLANK___. We indent lines to show their position in that structure.",
-              blanks: [
-                { id: "blank1", answer: "hierarchy", acceptableAnswers: ["hierarchy"] }
-              ]
-            },
+            correctAnswer: "hierarchy",
             points: 10
           }
         ]
@@ -1518,14 +1493,9 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "A class that has both public data and business logic methods is called a ___.",
-            content: {
-              text: "A class that has both public data and business logic methods is called a ___BLANK___.",
-              blanks: [
-                { id: "blank1", answer: "hybrid", acceptableAnswers: ["hybrid"] }
-              ]
-            },
+            correctAnswer: "hybrid",
             points: 10
           },
           {
@@ -1811,14 +1781,9 @@ export const cleanCodeCourse = {
             explanation: "The most important concern is how exceptions are caught. Define them based on the caller's needs."
           },
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "Error handling is important, but if it obscures ___, it's wrong.",
-            content: {
-              text: "Error handling is important, but if it obscures ___BLANK___, it's wrong.",
-              blanks: [
-                { id: "blank1", answer: "logic", acceptableAnswers: ["logic", "business logic"] }
-              ]
-            },
+            correctAnswer: "logic",
             points: 10
           },
           {
@@ -2029,14 +1994,9 @@ export const cleanCodeCourse = {
         slug: "clean-code-chapter-7-quiz",
         questions: [
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "The three laws of TDD: 1) Don't write production code until you have a failing test. 2) Don't write more of a test than is sufficient to ___. 3) Don't write more production code than is sufficient to pass the test.",
-            content: {
-              text: "The three laws of TDD: 1) Don't write production code until you have a failing test. 2) Don't write more of a test than is sufficient to ___BLANK___. 3) Don't write more production code than is sufficient to pass the test.",
-              blanks: [
-                { id: "blank1", answer: "fail", acceptableAnswers: ["fail"] }
-              ]
-            },
+            correctAnswer: "fail",
             points: 10
           },
           {
@@ -2346,15 +2306,9 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blanks",
-            question: "The Open-Closed Principle says classes should be open for ___ but closed for ___.",
-            content: {
-              text: "The Open-Closed Principle says classes should be open for ___BLANK___ but closed for ___BLANK___.",
-              blanks: [
-                { id: "blank1", answer: "extension", acceptableAnswers: ["extension"] },
-                { id: "blank2", answer: "modification", acceptableAnswers: ["modification"] }
-              ]
-            },
+            type: "short-answer",
+            question: "The Open-Closed Principle says classes should be open for ___ but closed for ___. What fills the first blank?",
+            correctAnswer: "extension",
             points: 10
           },
           {
@@ -2599,14 +2553,9 @@ export const cleanCodeCourse = {
             points: 10
           },
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "Software systems should separate the ___ process from the runtime logic.",
-            content: {
-              text: "Software systems should separate the ___BLANK___ process from the runtime logic.",
-              blanks: [
-                { id: "blank1", answer: "startup", acceptableAnswers: ["startup", "construction", "initialization"] }
-              ]
-            },
+            correctAnswer: "startup",
             points: 10
           },
           {
@@ -2907,14 +2856,9 @@ export const cleanCodeCourse = {
             explanation: "Trivial tests are easy to write and their documentary value is higher than the cost to produce them. Don't skip them."
           },
           {
-            type: "fill-in-blanks",
+            type: "short-answer",
             question: "Duplication is the primary ___ of a well-designed system.",
-            content: {
-              text: "Duplication is the primary ___BLANK___ of a well-designed system.",
-              blanks: [
-                { id: "blank1", answer: "enemy", acceptableAnswers: ["enemy"] }
-              ]
-            },
+            correctAnswer: "enemy",
             points: 10
           },
           {
@@ -3084,16 +3028,11 @@ export const cleanCodeCourse = {
         points: 5
       },
       {
-        type: "fill-in-blanks",
-        question: "The SRP states that a class should have one, and only one, reason to ___.",
-        content: {
-          text: "The SRP states that a class should have one, and only one, reason to ___BLANK___.",
-          blanks: [
-            { id: "blank1", answer: "change", acceptableAnswers: ["change"] }
-          ]
-        },
-        points: 5
-      },
+            type: "short-answer",
+            question: "The SRP states that a class should have one, and only one, reason to ___.",
+            correctAnswer: "change",
+            points: 5
+          },
       {
         type: "multiple-choice",
         question: "A class named `DataManager` that handles validation, persistence, caching, and logging violates which principle?",
@@ -3199,16 +3138,11 @@ export const cleanCodeCourse = {
         points: 5
       },
       {
-        type: "fill-in-blanks",
-        question: "Duplication is the primary ___ of a well-designed system.",
-        content: {
-          text: "Duplication is the primary ___BLANK___ of a well-designed system.",
-          blanks: [
-            { id: "blank1", answer: "enemy", acceptableAnswers: ["enemy"] }
-          ]
-        },
-        points: 5
-      },
+            type: "short-answer",
+            question: "Duplication is the primary ___ of a well-designed system.",
+            correctAnswer: "enemy",
+            points: 5
+          },
       {
         type: "multiple-choice",
         question: "Which approach does Clean Code recommend for handling switch statements that appear in multiple functions?",
