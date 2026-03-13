@@ -3499,18 +3499,17 @@ export const designPatternsCourse = {
       },
       // --- SECTION 4: System Design Question ---
       {
-        type: "code-challenge",
-        title: "Design a Notification System Using Compound Patterns",
-        description: "Design a notification delivery system combining multiple patterns.",
+        type: "multiple-choice",
+        question: "You are designing a notification system for a social media app. Users receive notifications via Email, SMS, Push, and In-App. New channels may be added later. Notifications can be decorated with logging and rate-limiting. When a user posts, all followers are notified. Notifications can be grouped. Which combination of patterns best addresses ALL these requirements?",
+        options: [
+          "A) Strategy (delivery channels), Decorator (logging/rate-limiting), Observer (follower notifications), Composite (grouped notifications)",
+          "B) Factory (delivery channels), Adapter (logging), Mediator (follower notifications), Iterator (grouped notifications)",
+          "C) Template Method (delivery channels), Proxy (logging), Command (follower notifications), Builder (grouped notifications)",
+          "D) Singleton (delivery channels), Facade (logging), Chain of Responsibility (follower notifications), Flyweight (grouped notifications)"
+        ],
+        correctAnswer: "A) Strategy (delivery channels), Decorator (logging/rate-limiting), Observer (follower notifications), Composite (grouped notifications)",
         points: 20,
-        difficulty: "advanced",
-        content: {
-          instructions: "Design a notification system for a social media application with these requirements:\n\n1. Users can receive notifications through multiple channels: Email, SMS, Push Notification, In-App.\n2. New notification channels may be added in the future without modifying existing code.\n3. Notifications can be decorated with additional behavior: logging, rate-limiting, formatting.\n4. When a user posts content, all their followers should be notified automatically.\n5. The system should support grouping notifications (e.g., 'You have 5 new likes') as a single composite notification.\n\nIdentify which patterns you would use for each requirement and sketch the class structure.\n\nHint: Consider these mappings:\n- Requirement 1-2: Think about how to encapsulate the varying delivery mechanism.\n- Requirement 3: Think about adding behavior transparently to notification channels.\n- Requirement 4: Think about automatic updates when state changes.\n- Requirement 5: Think about treating single notifications and groups uniformly.",
-          testCases: [
-            { input: "Identify patterns", expected: "Strategy (delivery channels), Decorator (logging/rate-limiting), Observer (follower notifications), Composite (grouped notifications)" },
-            { input: "Show class relationships", expected: "NotificationChannel interface with EmailChannel, SMSChannel etc. (Strategy); ChannelDecorator wrapping channels (Decorator); User as Subject, Followers as Observers (Observer); NotificationGroup as Composite of Notification items (Composite)" }
-          ]
-        }
+        explanation: "Strategy encapsulates interchangeable delivery algorithms. Decorator transparently adds behaviors like logging. Observer enables automatic follower notifications when state changes. Composite treats single notifications and groups uniformly."
       },
       // --- SECTION 5: Real-World Framework Recognition ---
       {
