@@ -621,7 +621,7 @@ export default function Home() {
                 >
                   {canTakeAnyQuiz
                     ? isPro
-                      ? `${quizzesRemaining}/${maxDailyQuizzes} quizzes left`
+                      ? "Unlimited quizzes"
                       : "Daily quiz available"
                     : "Quiz limit reached"}
                 </span>

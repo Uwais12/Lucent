@@ -35,16 +35,16 @@ export const DAILY_LIMITS = {
     quizzes: 1,
   },
   [TIERS.PRO]: {
-    courses: Infinity,
-    lessons: Infinity,
-    exercises: Infinity,
-    quizzes: Infinity,
+    courses: Number.MAX_SAFE_INTEGER,
+    lessons: Number.MAX_SAFE_INTEGER,
+    exercises: Number.MAX_SAFE_INTEGER,
+    quizzes: Number.MAX_SAFE_INTEGER,
   },
   [TIERS.ENTERPRISE]: {
-    courses: Infinity,
-    lessons: Infinity,
-    exercises: Infinity,
-    quizzes: Infinity,
+    courses: Number.MAX_SAFE_INTEGER,
+    lessons: Number.MAX_SAFE_INTEGER,
+    exercises: Number.MAX_SAFE_INTEGER,
+    quizzes: Number.MAX_SAFE_INTEGER,
   },
 };
 

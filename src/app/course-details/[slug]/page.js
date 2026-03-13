@@ -340,9 +340,15 @@ export default function CourseDetails() {
     const currentChapterData = chapters.find(ch => ch._id.toString() === course.userProgress.currentChapter.toString());
     if (currentChapterData) {
       const currentLessonData = currentChapterData.lessons.find(l => l._id.toString() === course.userProgress.currentLesson.toString());
-      if (currentLessonData && !currentLessonData.completed) { // Only if not completed
-        resumeLessonSlug = currentLessonData.slug;
-        resumeChapterSlug = currentChapterData.slug;
+      if (currentLessonData) {
+        // Check completion from userProgress, not from course lesson data
+        const lessonProgress = course.userProgress?.chapters
+          ?.find(chProg => chProg.chapterId.toString() === currentChapterData._id.toString())
+          ?.lessons?.find(lProg => lProg.lessonId.toString() === course.userProgress.currentLesson.toString());
+        if (!lessonProgress?.completed) {
+          resumeLessonSlug = currentLessonData.slug;
+          resumeChapterSlug = currentChapterData.slug;
+        }
       }
     }
   }
@@ -607,10 +613,6 @@ export default function CourseDetails() {
                                     href="#"
                                     onClick={(e) => {
                                       e.preventDefault();
-                                      if (!canTakeQuizToday) {
-                                        toast.error(`You have reached your daily limit of ${maxQuizzes} ${maxQuizzes === 1 ? 'quiz' : 'quizzes'}. Come back tomorrow!`);
-                                        return;
-                                      }
                                       router.push(`/lesson/${lesson.slug}`);
                                     }}
                                     className="block"
