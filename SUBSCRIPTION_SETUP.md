@@ -69,8 +69,8 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 1. **Create Products and Prices in Stripe Dashboard**:
    - Create a "Pro" product with two price points:
-     - Monthly: £20/month
-     - Yearly: £200/year
+     - Monthly: £5/month
+     - Yearly: £50/year
    - Create an "Enterprise" product
    - Take note of the price IDs and add them to your `.env.local` file
 

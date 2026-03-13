@@ -158,9 +158,9 @@ export default function LandingPage() {
     }
   };
 
-  const proPrice = selectedInterval === "month" ? "£20" : "£200";
+  const proPrice = selectedInterval === "month" ? "£5" : "£50";
   const proLabel = selectedInterval === "month" ? "/mo" : "/yr";
-  const savingsLabel = selectedInterval === "year" ? "Save £40/yr" : null;
+  const savingsLabel = selectedInterval === "year" ? "Save £10/yr" : null;
 
   return (
     <div className="relative min-h-screen bg-gray-50 text-gray-900 antialiased selection:bg-brand-500/30">
@@ -558,7 +558,7 @@ export default function LandingPage() {
                   {interval === "month" ? "Monthly" : "Yearly"}
                   {interval === "year" && selectedInterval === "year" && (
                     <span className="ml-2 text-xs text-brand-200">
-                      Save £40
+                      Save £10
                     </span>
                   )}
                 </button>
