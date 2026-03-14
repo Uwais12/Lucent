@@ -27,12 +27,12 @@ export async function POST(request) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const userTier = user.subscription?.tier || 'FREE';
+    const maxDailyQuizzes = getDailyQuizLimit(userTier);
     if (!isUnlimitedTier(userTier)) {
       if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
         user.dailyQuizCount = 0;
         user.lastQuizDate = today;
       }
-      const maxDailyQuizzes = getDailyQuizLimit(userTier);
       if (user.dailyQuizCount >= maxDailyQuizzes) {
         return NextResponse.json({
           error: `Daily quiz limit of ${maxDailyQuizzes} reached. You can take another quiz tomorrow.`,
