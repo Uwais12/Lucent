@@ -422,36 +422,43 @@ export default function CourseDetails() {
                 </p>
               </div>
               <div>
-                <Link
-                  href={startOrContinuePath}
-                  className={`px-6 py-3 bg-gradient-to-r ${
-                    !isEnrolled
-                      ? "from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700"
-                      : (course.userProgress?.completed || course.userProgress?.completionPercentage >= 100)
-                      ? "from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600"
-                      : "from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                  } text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-md shadow-violet-200`}
-                  disabled={enrolling}
-                >
-                  {enrolling ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white" />
-                  ) : (
-                    <>
-                      {!isEnrolled ? (
+                {!isEnrolled ? (
+                  <button
+                    onClick={handleEnrollClick}
+                    className="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-700 hover:to-fuchsia-700 text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-md shadow-violet-200"
+                    disabled={enrolling}
+                  >
+                    {enrolling ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white" />
+                    ) : (
+                      <>
                         <PlayCircle className="w-5 h-5" />
-                      ) : (course.userProgress?.completed || course.userProgress?.completionPercentage >= 100) ? (
+                        Enroll Now
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <Link
+                    href={startOrContinuePath}
+                    className={`px-6 py-3 bg-gradient-to-r ${
+                      isCourseCompleted
+                        ? "from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600"
+                        : "from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                    } text-white rounded-xl font-medium transition-all duration-200 flex items-center gap-2 shadow-md shadow-violet-200`}
+                  >
+                    {isCourseCompleted ? (
+                      <>
                         <CheckCircle className="w-5 h-5" />
-                      ) : (
+                        Completed
+                      </>
+                    ) : (
+                      <>
                         <PlayCircle className="w-5 h-5" />
-                      )}
-                      {!isEnrolled 
-                        ? "Start Learning" 
-                        : (course.userProgress?.completed || course.userProgress?.completionPercentage >= 100)
-                        ? "Completed" 
-                        : "Continue Learning"}
-                    </>
-                  )}
-                </Link>
+                        Continue Learning
+                      </>
+                    )}
+                  </Link>
+                )}
               </div>
             </div>
           </div>
