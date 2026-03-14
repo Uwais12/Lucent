@@ -24,10 +24,10 @@ export async function POST(request) {
     const { quizId, score, totalQuestions, quizType } = await request.json();
 
     // --- Daily Quiz Limit Check ---
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const userTier = user.subscription?.tier || 'FREE';
     if (!isUnlimitedTier(userTier)) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
       if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
         user.dailyQuizCount = 0;
         user.lastQuizDate = today;

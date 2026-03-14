@@ -91,10 +91,10 @@ export async function POST(req, { params }) {
     let newlyAwardedBadges = [];
 
     // --- Daily Quiz Limit Check ---
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const userTier = user.subscription?.tier || 'FREE';
     if (!isUnlimitedTier(userTier)) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
       if (!user.lastQuizDate || new Date(user.lastQuizDate) < today) {
         user.dailyQuizCount = 0;
       }
