@@ -1,26 +1,31 @@
 export const metadata = {
-  title: "Lucent - Interactive Software Engineering Courses",
+  title: "Learn System Design, Design Patterns & Clean Code - Interactive Courses | Lucent",
   description:
-    "Master system design, design patterns, clean code, and software architecture through bite-sized interactive lessons, quizzes, and hands-on exercises. Start learning for free.",
+    "Master software engineering through 15-minute interactive lessons with hands-on exercises, quizzes, and coding challenges. Courses on system design (DDIA), design patterns, clean code, and software architecture. Start free.",
   keywords: [
     "learn software engineering",
     "system design course",
+    "system design course online",
     "design patterns tutorial",
+    "design patterns course",
     "clean code course",
-    "software architecture learning",
+    "clean code course online",
+    "software architecture course",
     "interactive coding lessons",
-    "engineering book summaries",
     "DDIA course",
-    "programming exercises",
-    "free software engineering courses",
+    "learn system design",
+    "learn design patterns",
+    "software engineering courses free",
+    "coding exercises online",
+    "programming quizzes",
   ],
   alternates: {
     canonical: "https://lucentapp.io/landing-page",
   },
   openGraph: {
-    title: "Lucent - Interactive Software Engineering Courses",
+    title: "Learn System Design, Design Patterns & Clean Code | Lucent",
     description:
-      "Master system design, design patterns, clean code, and software architecture through bite-sized interactive lessons. Start learning for free.",
+      "Interactive software engineering courses with hands-on exercises and quizzes. Master system design, design patterns, clean code, and architecture. Start free.",
     url: "https://lucentapp.io/landing-page",
   },
 };
