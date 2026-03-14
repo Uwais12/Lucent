@@ -47,11 +47,14 @@ export async function GET(request) {
         const clerkUser = await client.users.getUser(userId);
         const clerkEmail = clerkUser.emailAddresses?.[0]?.emailAddress || null;
         if (clerkEmail) {
-          await User.updateOne(
-            { _id: userDoc._id, email: { $exists: false } },
+          const result = await User.updateOne(
+            { _id: userDoc._id, $or: [{ email: null }, { email: { $exists: false } }, { email: "" }] },
             { $set: { email: clerkEmail } }
-          ).catch(() => {}); // Ignore duplicate key errors
-          userDoc.email = clerkEmail;
+          ).catch(() => ({ modifiedCount: 0 }));
+          // Only update local doc if DB update succeeded (avoids duplicate key on save)
+          if (result?.modifiedCount > 0) {
+            userDoc.email = clerkEmail;
+          }
         }
       } catch (e) {
         // Non-critical — don't crash profile load for email sync
