@@ -7,6 +7,7 @@ import DndProviderWrapper from "./components/DndProviderWrapper";
 import { Toaster } from 'react-hot-toast';
 import { EnrollmentCheckProvider } from './contexts/EnrollmentCheckContext';
 import GlobalNotificationHandler from './components/GlobalNotificationHandler';
+import { Analytics } from "@vercel/analytics/next";
 
 // These font imports are still valid in a server component
 const geistSans = Geist({
@@ -128,6 +129,7 @@ export default function RootLayout({ children }) {
             />
             <GlobalNotificationHandler />
           </EnrollmentCheckProvider>
+          <Analytics />
         </body>
       </ClerkProvider>
     </html>

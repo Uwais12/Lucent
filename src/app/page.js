@@ -95,7 +95,7 @@ function DashboardSkeleton() {
           </div>
 
           {/* Stat cards skeleton */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-10">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-10">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="bg-white rounded-xl border border-gray-100 p-4 sm:p-5">
                 <div className="shimmer h-10 w-10 rounded-lg mb-3" />
@@ -523,14 +523,6 @@ export default function Home() {
       text: "text-brand-600",
     },
     {
-      label: "Gems",
-      value: gems.toLocaleString(),
-      icon: Gem,
-      gradient: "from-sky-500 to-cyan-500",
-      bg: "bg-sky-50",
-      text: "text-sky-600",
-    },
-    {
       label: "Level",
       value: level,
       icon: Trophy,
@@ -545,14 +537,6 @@ export default function Home() {
       gradient: "from-rose-500 to-pink-500",
       bg: "bg-rose-50",
       text: "text-rose-600",
-    },
-    {
-      label: "Badges",
-      value: totalBadges,
-      icon: Award,
-      gradient: "from-accent-500 to-accent-600",
-      bg: "bg-accent-50",
-      text: "text-accent-600",
     },
     {
       label: "Lessons",
@@ -636,7 +620,7 @@ export default function Home() {
           </div>
 
           {/* ── Stat Cards ──────────────────────────────────────────────── */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-10">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-10">
             {statCards.map((stat) => (
               <div
                 key={stat.label}
