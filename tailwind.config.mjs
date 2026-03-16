@@ -78,6 +78,9 @@ export default {
         'shimmer': 'shimmer 2s linear infinite',
         'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
         'gradient-shift': 'gradientShift 8s ease infinite',
+        'gradient-border': 'gradientBorder 4s ease infinite',
+        'glow-pulse': 'glowPulse 3s ease-in-out infinite',
+        'timeline-pulse': 'timelinePulse 2s ease-in-out infinite',
       },
       keyframes: {
         float: {
@@ -128,6 +131,18 @@ export default {
         gradientShift: {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' },
+        },
+        gradientBorder: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+        },
+        glowPulse: {
+          '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+          '50%': { opacity: '0.8', transform: 'scale(1.05)' },
+        },
+        timelinePulse: {
+          '0%': { backgroundPosition: '0% 0%' },
+          '100%': { backgroundPosition: '0% 200%' },
         },
       },
       backgroundImage: {
