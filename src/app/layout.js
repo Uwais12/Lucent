@@ -21,6 +21,9 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   metadataBase: new URL("https://lucentapp.io"),
+  verification: {
+    google: "geyNzhjaZmXizHN71U35OmY67V68krwQ7JW4OMUM8TE",
+  },
   title: {
     default: "Lucent - Master Advanced Software Concepts",
     template: "%s | Lucent",
