@@ -237,6 +237,13 @@ export default function LandingPage() {
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
+              href="/create-course"
+              className="group inline-flex items-center gap-2 rounded-xl border-2 border-brand-600 bg-white px-7 py-3.5 text-sm font-semibold text-brand-700 transition-all hover:bg-brand-50"
+            >
+              <Sparkles className="h-4 w-4" />
+              Create Your Own Course
+            </Link>
+            <Link
               href="#how-it-works"
               className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-7 py-3.5 text-sm font-semibold text-gray-700 backdrop-blur transition-colors hover:border-gray-400 hover:text-gray-900"
             >

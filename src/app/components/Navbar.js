@@ -24,6 +24,7 @@ import {
   MessageSquare,
   Sparkles,
   ChevronRight,
+  PlusCircle,
 } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -161,6 +162,7 @@ const Navbar = () => {
   // Navigation link definitions
   const appNavLinks = [
     { name: "Dashboard", href: "/", icon: Layout },
+    { name: "Create Course", href: "/create-course", icon: PlusCircle, highlight: true },
     { name: "Profile", href: "/profile", icon: User },
     { name: "About", href: "/landing-page", icon: Lightbulb },
     ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Settings }] : []),
@@ -170,7 +172,7 @@ const Navbar = () => {
     { name: "Home", href: "/landing-page#", icon: Layout, section: "home" },
     { name: "Courses", href: "/landing-page#courses", icon: BookOpen, section: "courses" },
     { name: "Features", href: "/landing-page#features", icon: Code, section: "features" },
-    { name: "Create", href: "/create-course", icon: CreditCard, section: "create" },
+    { name: "Create Course", href: "/create-course", icon: PlusCircle, section: "create", highlight: true },
     { name: "Roadmap", href: "/landing-page#roadmap", icon: Calendar, section: "roadmap" },
     { name: "Contact", href: "/contact", icon: MessageSquare },
   ];
@@ -205,6 +207,19 @@ const Navbar = () => {
                 {navLinks.map((item) => {
                   const Icon = item.icon;
                   const active = isActiveLink(item);
+
+                  if (item.highlight) {
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className="relative ml-1 px-3.5 py-1.5 text-sm font-semibold rounded-lg flex items-center gap-1.5 text-white bg-gradient-to-r from-brand-600 to-accent-600 hover:brightness-110 hover:shadow-glow transition-all duration-200"
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        {item.name}
+                      </Link>
+                    );
+                  }
 
                   return (
                     <Link
@@ -362,6 +377,29 @@ const Navbar = () => {
                   {navLinks.map((item, index) => {
                     const Icon = item.icon;
                     const active = isActiveLink(item);
+
+                    if (item.highlight) {
+                      return (
+                        <motion.div
+                          key={item.name}
+                          initial={{ opacity: 0, x: -12 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.04 }}
+                        >
+                          <Link
+                            href={item.href}
+                            onClick={() => setIsMenuOpen(false)}
+                            className="flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-brand-600 to-accent-600 hover:brightness-110 transition-all duration-150"
+                          >
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/20 text-white">
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            <span className="flex-1">{item.name}</span>
+                            <ChevronRight className="w-4 h-4 text-white/80" />
+                          </Link>
+                        </motion.div>
+                      );
+                    }
 
                     return (
                       <motion.div
