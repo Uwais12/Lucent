@@ -196,7 +196,7 @@ export default function LandingPage() {
           >
             <Badge>
               <Sparkles className="h-3 w-3" />
-              Now in Early Access
+              Free for everyone
             </Badge>
           </motion.div>
 
@@ -206,9 +206,9 @@ export default function LandingPage() {
             transition={{ duration: 0.7, delay: 0.1 }}
             className="mt-8 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
           >
-            Master Complex Engineering{" "}
+            Learn anything.{" "}
             <span className="bg-gradient-to-r from-brand-400 via-brand-300 to-accent-400 bg-clip-text text-transparent">
-              Concepts
+              Taught by anyone.
             </span>
           </motion.h1>
 
@@ -218,9 +218,9 @@ export default function LandingPage() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-gray-500 sm:text-xl"
           >
-            We break down dense engineering books into bite-sized, 15-minute
-            interactive lessons so you can learn at your own pace — and actually
-            retain what you read.
+            Lucent is an interactive course platform — like Duolingo, but for any
+            topic. Anyone can publish a course. Anyone can take one. Bite-sized
+            lessons, auto-graded exercises, real progress. Completely free.
           </motion.p>
 
           <motion.div
@@ -313,9 +313,9 @@ export default function LandingPage() {
               {
                 step: "01",
                 icon: BookOpen,
-                title: "Pick a Course",
+                title: "Pick a Course — or Build One",
                 description:
-                  "Choose from our curated library of engineering courses based on industry-defining textbooks.",
+                  "Browse the curated catalog of software-engineering courses, or publish your own on any topic in minutes.",
               },
               {
                 step: "02",
@@ -680,11 +680,11 @@ export default function LandingPage() {
             </div>
 
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Ready to level up your engineering skills?
+              Learn it. Or teach it.
             </h2>
             <p className="mx-auto mt-4 max-w-lg text-gray-500">
-              Join hundreds of engineers who are mastering complex concepts — 15
-              minutes at a time.
+              Take a course in 15-minute bites — or publish your own in an
+              afternoon. Either way, it&apos;s free.
             </p>
 
             {/* Newsletter form */}
@@ -752,8 +752,8 @@ export default function LandingPage() {
                 Lucent
               </Link>
               <p className="mt-3 text-sm leading-relaxed text-gray-500">
-                Breaking down complex engineering books into 15-minute
-                interactive lessons.
+                An interactive course platform — anyone can publish, anyone can
+                learn. Bite-sized lessons with auto-graded exercises. Free.
               </p>
             </div>
 

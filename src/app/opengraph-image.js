@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Lucent - Master Advanced Software Concepts";
+export const alt = "Lucent — Learn anything, taught by anyone. Free.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -81,16 +81,16 @@ export default async function Image() {
         {/* Tagline */}
         <div
           style={{
-            fontSize: 36,
-            fontWeight: 600,
+            fontSize: 44,
+            fontWeight: 700,
             color: "#1e293b",
             textAlign: "center",
-            maxWidth: 800,
-            lineHeight: 1.3,
+            maxWidth: 900,
+            lineHeight: 1.2,
             display: "flex",
           }}
         >
-          Master Advanced Software Concepts
+          Learn anything. Teach anything.
         </div>
 
         {/* Description */}
@@ -99,16 +99,16 @@ export default async function Image() {
             fontSize: 22,
             color: "#64748b",
             textAlign: "center",
-            maxWidth: 700,
-            marginTop: 16,
+            maxWidth: 760,
+            marginTop: 18,
             lineHeight: 1.5,
             display: "flex",
           }}
         >
-          15-minute interactive lessons with quizzes & exercises
+          Interactive courses with auto-graded exercises. Anyone can publish, anyone can learn. Free.
         </div>
 
-        {/* Course pills */}
+        {/* Pills */}
         <div
           style={{
             display: "flex",
@@ -116,10 +116,10 @@ export default async function Image() {
             marginTop: 32,
           }}
         >
-          {["System Design", "Design Patterns", "Clean Code", "Software Architecture"].map(
-            (course) => (
+          {["Take a course", "Build your own", "Auto-graded exercises", "Free, forever"].map(
+            (label) => (
               <div
-                key={course}
+                key={label}
                 style={{
                   padding: "10px 20px",
                   borderRadius: 24,
@@ -130,7 +130,7 @@ export default async function Image() {
                   display: "flex",
                 }}
               >
-                {course}
+                {label}
               </div>
             )
           )}

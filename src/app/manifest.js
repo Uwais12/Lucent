@@ -1,9 +1,9 @@
 export default function manifest() {
   return {
-    name: "Lucent - Master Advanced Software Concepts",
+    name: "Lucent — Learn anything, taught by anyone",
     short_name: "Lucent",
     description:
-      "Interactive software engineering courses with bite-sized lessons, quizzes, and exercises.",
+      "An interactive course platform — anyone can publish, anyone can take. Bite-sized lessons with auto-graded exercises. Free for everyone.",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

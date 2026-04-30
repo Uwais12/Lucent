@@ -580,7 +580,7 @@ export default function ReviewsPage() {
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">What Our Users Are Saying</h1>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Hear from people who are using Lucent to enhance their learning journey and build engineering expertise.
+              Hear from people who are using Lucent to learn — and to teach.
             </p>
           </div>
           
