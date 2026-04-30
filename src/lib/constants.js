@@ -26,26 +26,18 @@ export const TIERS = {
   ENTERPRISE: 'ENTERPRISE',
 };
 
-// Daily Limits by Tier
+// Lucent is fully free — every tier gets unlimited access.
+const UNLIMITED = {
+  courses: Number.MAX_SAFE_INTEGER,
+  lessons: Number.MAX_SAFE_INTEGER,
+  exercises: Number.MAX_SAFE_INTEGER,
+  quizzes: Number.MAX_SAFE_INTEGER,
+};
+
 export const DAILY_LIMITS = {
-  [TIERS.FREE]: {
-    courses: 2,
-    lessons: 3,
-    exercises: 5,
-    quizzes: 1,
-  },
-  [TIERS.PRO]: {
-    courses: Number.MAX_SAFE_INTEGER,
-    lessons: Number.MAX_SAFE_INTEGER,
-    exercises: Number.MAX_SAFE_INTEGER,
-    quizzes: Number.MAX_SAFE_INTEGER,
-  },
-  [TIERS.ENTERPRISE]: {
-    courses: Number.MAX_SAFE_INTEGER,
-    lessons: Number.MAX_SAFE_INTEGER,
-    exercises: Number.MAX_SAFE_INTEGER,
-    quizzes: Number.MAX_SAFE_INTEGER,
-  },
+  [TIERS.FREE]: UNLIMITED,
+  [TIERS.PRO]: UNLIMITED,
+  [TIERS.ENTERPRISE]: UNLIMITED,
 };
 
 // User Roles
@@ -72,12 +64,11 @@ export function levelProgress(currentXp) {
   return Math.round((xpInCurrentLevel / XP_PER_LEVEL) * 100);
 }
 
-// Check if a tier has unlimited access (Pro/Enterprise)
-export function isUnlimitedTier(tier) {
-  return tier === TIERS.PRO || tier === TIERS.ENTERPRISE;
+// Every user has unlimited access now.
+export function isUnlimitedTier() {
+  return true;
 }
 
-// Get daily quiz limit for a tier
-export function getDailyQuizLimit(tier) {
-  return DAILY_LIMITS[tier]?.quizzes ?? DAILY_LIMITS[TIERS.FREE].quizzes;
+export function getDailyQuizLimit() {
+  return Number.MAX_SAFE_INTEGER;
 }

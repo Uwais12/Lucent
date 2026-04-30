@@ -27,9 +27,38 @@ export default function CodeChallenge({ exercise, onComplete }) {
     }
   }, [code]);
 
+  // Build a callable from the user's code that works whether they:
+  //   (a) write `function solution(...) { ... }` or `const solution = (...) => ...`
+  //   (b) write expression-style body that uses passed-in args
+  // We expose `args` inside the user code, then try to detect a top-level function
+  // they declared and call it with the test inputs.
+  const buildRunner = useCallback(() => {
+    const fnName = exercise.content?.functionName;
+    const wrapped = `
+      "use strict";
+      ${code}
+      // Try common function names, then any function declared at top level.
+      const __candidates = [
+        ${fnName ? `typeof ${fnName} === 'function' ? ${fnName} : null,` : ''}
+        typeof solution === 'function' ? solution : null,
+        typeof solve === 'function' ? solve : null,
+        typeof main === 'function' ? main : null
+      ].filter(Boolean);
+      if (__candidates.length > 0) return __candidates[0].apply(null, args);
+      return undefined;
+    `;
+    return new Function('args', wrapped);
+  }, [code, exercise]);
+
   const runTests = async () => {
     if (!validateCode()) {
       setFeedback('Please fix the syntax errors before running the tests.');
+      return;
+    }
+
+    const testCases = Array.isArray(exercise?.content?.testCases) ? exercise.content.testCases : [];
+    if (testCases.length === 0) {
+      setFeedback('This challenge has no test cases configured.');
       return;
     }
 
@@ -38,13 +67,12 @@ export default function CodeChallenge({ exercise, onComplete }) {
     setAttempts(prev => prev + 1);
 
     try {
-      // Create a function from the user's code
-      const userFunction = new Function(code);
-      
-      // Run test cases
-      const testResults = exercise.content.testCases.map(testCase => {
+      const runner = buildRunner();
+
+      const testResults = testCases.map(testCase => {
         try {
-          const result = userFunction(...testCase.input);
+          const inputArr = Array.isArray(testCase.input) ? testCase.input : [testCase.input];
+          const result = runner(inputArr);
           return {
             passed: JSON.stringify(result) === JSON.stringify(testCase.expectedOutput),
             input: testCase.input,
@@ -175,7 +203,7 @@ export default function CodeChallenge({ exercise, onComplete }) {
         <div>
           <h4 className="text-sm font-medium text-gray-700 mb-3">Test Cases</h4>
           <div className="space-y-2">
-            {exercise.content.testCases.map((testCase, index) => (
+            {(exercise.content.testCases || []).map((testCase, index) => (
               <div
                 key={index}
                 className={`p-3 border rounded-lg text-sm transition-colors ${

@@ -308,64 +308,63 @@ export default function DragAndDrop({ exercise, onComplete }) {
     return `You have ${correctCount} out of ${totalCount} correct matches. Review the highlighted pairs and try again.`;
   };
 
+  // Returns true if a correctPair matches a given (item, target) — supports
+  // id-based pairs ([itemId, targetId]) and text-based pairs ([itemText, targetText]).
+  const isPairMatch = useCallback((pair, item, target) => {
+    if (!pair || !item || !target) return false;
+    const [a, b] = pair;
+    return (
+      (a === item.id || a === item.text) &&
+      (b === target.id || b === target.text)
+    );
+  }, []);
+
   const checkAnswer = useCallback(() => {
     if (!exercise?.content?.correctPairs || !exercise.content.correctPairs.length) {
       setFeedback("Cannot check answer: exercise data is incomplete");
       return;
     }
-    
+
     setAttempts(prev => prev + 1);
-    
-    // Check each match and track correctness
+
     const newMatchStatuses = {};
     let correctCount = 0;
     const totalCount = exercise.content.correctPairs.length;
-    
-    // First, evaluate each matched target
-    for (const [targetId, itemId] of Object.entries(matches)) {
-      const target = targets.find(t => t.id === targetId);
-      if (!target) continue;
-      
-      // Find the correct pair for this target
-      const correctPair = exercise.content.correctPairs.find(([_, targetText]) => 
-        targetText === target.text
-      );
-      
-      if (!correctPair) continue;
-      
-      // Check if the matched item is correct
-      const correctItemText = correctPair[0];
+
+    for (const target of targets) {
+      const itemId = matches[target.id];
+      if (!itemId) continue;
+
       const matchedItem = items.find(item => item.id === itemId);
-      
-      const isCorrectMatch = matchedItem && 
-        (matchedItem.text === correctItemText || matchedItem.id === correctItemText);
-      
-      newMatchStatuses[targetId] = isCorrectMatch ? 'correct' : 'incorrect';
-      
-      if (isCorrectMatch) {
-        correctCount++;
-      }
+      if (!matchedItem) continue;
+
+      const isCorrectMatch = exercise.content.correctPairs.some(pair =>
+        isPairMatch(pair, matchedItem, target)
+      );
+
+      newMatchStatuses[target.id] = isCorrectMatch ? 'correct' : 'incorrect';
+      if (isCorrectMatch) correctCount++;
     }
-    
-    // Update match statuses
+
     setMatchStatuses(newMatchStatuses);
-    
-    // Check if all matches are correct and all targets have matches
-    const allCorrect = correctCount === totalCount && 
-      Object.keys(matches).length === totalCount;
-    
+
+    const allMatched = Object.keys(matches).length >= totalCount;
+    const allCorrect = correctCount === totalCount && allMatched;
+
     setIsCorrect(allCorrect);
-    
+
     if (allCorrect) {
       setFeedback(getSuccessFeedback(attempts));
       if (onComplete) {
-      const score = Math.max(exercise.points - (hintsUsed * 2), Math.floor(exercise.points * 0.6));
-      onComplete(score);
-    }
+        const score = Math.max(exercise.points - (hintsUsed * 2), Math.floor(exercise.points * 0.6));
+        onComplete(score);
+      }
+    } else if (!allMatched) {
+      setFeedback(`Match all ${totalCount} pairs before checking. So far: ${correctCount} correct, ${Object.keys(newMatchStatuses).length - correctCount} incorrect.`);
     } else {
       setFeedback(getIncorrectFeedback(attempts, correctCount, totalCount));
     }
-  }, [exercise, matches, onComplete, attempts, hintsUsed, items, targets]);
+  }, [exercise, matches, onComplete, attempts, hintsUsed, items, targets, isPairMatch]);
 
   const resetExercise = useCallback(() => {
     if (!items.length) return;
@@ -388,62 +387,50 @@ export default function DragAndDrop({ exercise, onComplete }) {
     
     setHintsUsed(prev => prev + 1);
     setShowHint(true);
-    
-    // Find first incorrect match or unmatched target
+
+    // Find first unmatched target and suggest its correct item.
     const unmatched = targets.find(target => !matches[target.id]);
-    
     if (unmatched) {
-      // Find the correct item for this target
-      const correctPair = exercise.content.correctPairs.find(([_, targetText]) => 
-        targetText === unmatched.text
+      const correctPair = exercise.content.correctPairs.find(pair =>
+        items.some(item => isPairMatch(pair, item, unmatched))
       );
-      
       if (correctPair) {
-        const correctItemText = correctPair[0];
-        const correctItem = items.find(item => 
-          item.text === correctItemText || item.id === correctItemText
-        );
-        
+        const correctItem = items.find(item => isPairMatch(correctPair, item, unmatched));
         if (correctItem) {
           setFeedback(`Hint: Try matching "${correctItem.text}" with "${unmatched.text}".`);
           return;
         }
       }
     }
-    
-    // If we got here, look for incorrectly matched targets
-    for (const [itemText, targetText] of exercise.content.correctPairs) {
-      const target = targets.find(t => t.text === targetText);
-      if (!target) continue;
-      
+
+    // Otherwise, point out a wrong existing match.
+    for (const target of targets) {
       const matchedItemId = matches[target.id];
       if (!matchedItemId) continue;
-      
-      const matchedItem = items.find(item => item.id === matchedItemId);
-      const isCorrect = matchedItem && (matchedItem.text === itemText || matchedItem.id === itemText);
-      
+      const matchedItem = items.find(i => i.id === matchedItemId);
+      const isCorrect = exercise.content.correctPairs.some(pair =>
+        isPairMatch(pair, matchedItem, target)
+      );
       if (!isCorrect) {
         setFeedback(`Hint: The match for "${target.text}" is incorrect. Try a different item.`);
         return;
       }
     }
-    
+
     setFeedback("Keep going, you're on the right track!");
-  }, [exercise, matches, items, targets]);
+  }, [exercise, matches, items, targets, isPairMatch]);
 
   // Function to show correct answers
   const revealCorrectAnswers = useCallback(() => {
     const newMatches = {};
     const newMatchStatuses = {};
-    
-    // Create correct matches based on correctPairs
-    exercise.content.correctPairs.forEach(([itemText, targetText]) => {
-      const target = targets.find(t => t.text === targetText);
+
+    exercise.content.correctPairs.forEach(pair => {
+      const target = targets.find(t => pair[1] === t.id || pair[1] === t.text);
       if (!target) return;
-      
-      const item = items.find(i => i.text === itemText || i.id === itemText);
+      const item = items.find(i => pair[0] === i.id || pair[0] === i.text);
       if (!item) return;
-      
+
       newMatches[target.id] = item.id;
       newMatchStatuses[target.id] = 'correct';
     });

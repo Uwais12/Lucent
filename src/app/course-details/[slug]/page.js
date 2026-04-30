@@ -417,6 +417,12 @@ export default function CourseDetails() {
                 <h1 className="text-4xl font-bold text-gray-900 mb-4">
                   {course.title}
                 </h1>
+                {course.isUserCreated && course.createdBy?.displayName && (
+                  <div className="mb-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-sm">
+                    <Users className="w-4 h-4" />
+                    Community course by {course.createdBy.displayName}
+                  </div>
+                )}
                 <p className="text-lg text-gray-600 max-w-3xl">
                   {course.description}
                 </p>

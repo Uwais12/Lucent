@@ -16,6 +16,13 @@ export default function ExerciseWrapper({ exercise, onComplete }) {
       </div>
     );
   }
+  if (!exercise.content || typeof exercise.content !== 'object') {
+    return (
+      <div className="p-6 bg-white rounded-xl shadow-sm">
+        <p className="text-amber-600">This exercise is missing content and cannot be displayed.</p>
+      </div>
+    );
+  }
 
   // Handle completion with better error handling
   const handleComplete = (score) => {

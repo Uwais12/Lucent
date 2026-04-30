@@ -280,7 +280,6 @@ export default function ProfilePage() {
 
   const tabs = [
     { id: 'account', label: 'Account', icon: User },
-    { id: 'subscription', label: 'Subscription', icon: CreditCard },
     { id: 'progress', label: 'Progress', icon: Target },
     { id: 'achievements', label: 'Achievements', icon: Award },
   ];
@@ -549,83 +548,6 @@ export default function ProfilePage() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-
-                {/* Subscription Tab */}
-                {activeTab === 'subscription' && (
-                  <div className="space-y-6">
-                    <h2 className="text-xl font-bold text-gray-900">Your Subscription</h2>
-
-                    {subscription && (
-                      <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
-                        <div className="flex justify-between items-center mb-4">
-                          <span className="text-sm text-gray-500 uppercase tracking-wider font-medium">Current Plan</span>
-                          <span className={`px-3 py-1 text-xs font-bold rounded-full ${
-                            subscription.tier === 'PRO'
-                              ? 'bg-gradient-to-r from-violet-100 to-fuchsia-100 text-violet-700 border border-violet-200'
-                              : subscription.tier === 'ENTERPRISE'
-                              ? 'bg-gradient-to-r from-amber-100 to-orange-100 text-amber-700 border border-amber-200'
-                              : 'bg-gray-100 text-gray-600 border border-gray-200'
-                          }`}>
-                            {subscription.tier === 'PRO' && <Crown className="w-3 h-3 inline mr-1" />}
-                            {subscription.tier}
-                          </span>
-                        </div>
-                        {!isFreeTier && (
-                          <div className="space-y-3 mt-3">
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-gray-600">Status</span>
-                              <span className={`font-medium flex items-center gap-1.5 ${
-                                subscription.status === 'ACTIVE' ? 'text-emerald-600' : 'text-amber-600'
-                              }`}>
-                                <div className={`w-2 h-2 rounded-full ${
-                                  subscription.status === 'ACTIVE' ? 'bg-emerald-500' : 'bg-amber-500'
-                                }`} />
-                                {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1).toLowerCase()}
-                              </span>
-                            </div>
-                            {formattedExpirationDate && (
-                              <div className="flex justify-between items-center text-sm">
-                                <span className="text-gray-600">Next billing date</span>
-                                <span className="font-medium text-gray-800">
-                                  {willCancel
-                                    ? `Cancels on ${formattedExpirationDate}`
-                                    : formattedExpirationDate}
-                                </span>
-                              </div>
-                            )}
-                            <div className="pt-4">
-                              <button
-                                onClick={handleManageBilling}
-                                className="w-full px-4 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors"
-                              >
-                                Manage Billing & Invoices
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {isFreeTier && (
-                      <div className="p-8 bg-gradient-to-br from-violet-50 to-fuchsia-50 rounded-2xl border border-violet-200 text-center">
-                        <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-                          <Crown className="w-7 h-7 text-white" />
-                        </div>
-                        <h3 className="font-bold text-xl text-gray-900 mb-2">Upgrade to PRO</h3>
-                        <p className="text-sm text-gray-600 mb-6 max-w-md mx-auto">
-                          Unlock unlimited quizzes, advanced exercises, and premium course content to accelerate your learning.
-                        </p>
-                        <button
-                          onClick={() => handleSubscribe('PRO')}
-                          className="px-8 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-medium hover:from-violet-700 hover:to-fuchsia-700 transition-all hover:shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)] flex items-center gap-2 mx-auto"
-                        >
-                          <Sparkles className="w-4 h-4" />
-                          View PRO Plans
-                        </button>
-                      </div>
-                    )}
                   </div>
                 )}
 

@@ -42,17 +42,17 @@ export default function FillInBlanks({ exercise, onComplete }) {
   const checkAnswers = () => {
     let allCorrect = true;
     const newBlankStatuses = {};
-    
-    // Check each blank and set individual status
+
+    const norm = (v) => (typeof v === 'string' ? v.trim().toLowerCase() : '');
+
     exercise.content.blanks.forEach(blank => {
-      const isCorrect = answers[blank.id]?.toLowerCase() === blank.answer.toLowerCase();
+      const userVal = norm(answers[blank.id]);
+      const correctVal = norm(blank.answer);
+      const isCorrect = userVal !== '' && userVal === correctVal;
       newBlankStatuses[blank.id] = isCorrect;
-      
-      if (!isCorrect) {
-        allCorrect = false;
-      }
+      if (!isCorrect) allCorrect = false;
     });
-    
+
     setBlankStatuses(newBlankStatuses);
 
     if (allCorrect) {
@@ -62,19 +62,18 @@ export default function FillInBlanks({ exercise, onComplete }) {
         onComplete(exercise.points);
       }
     } else {
-      // Count number of correct answers
       const correctCount = Object.values(newBlankStatuses).filter(Boolean).length;
       const totalCount = exercise.content.blanks.length;
-      
       setFeedback(`You got ${correctCount} out of ${totalCount} correct. Check the highlighted answers and try again.`);
     }
   };
 
-  // Split the text by blanks and create select dropdowns
+  // Split text by [id] placeholders. Supports any non-bracket id, not just digits.
   const renderContent = () => {
-    const parts = exercise.content.text.split(/(\[\d+\])/);
+    if (!exercise?.content?.text) return null;
+    const parts = exercise.content.text.split(/(\[[^\]]+\])/);
     return parts.map((part, index) => {
-      const match = part.match(/\[(\d+)\]/);
+      const match = part.match(/\[([^\]]+)\]/);
       if (match) {
         const blankId = match[1];
         const status = blankStatuses[blankId];
@@ -131,7 +130,9 @@ export default function FillInBlanks({ exercise, onComplete }) {
                   <span className={status ? "text-green-700" : "text-red-700 line-through"}>
                     {userAnswer}
                   </span>
-
+                  {!status && (
+                    <span className="ml-2 text-green-700">→ {blank.answer}</span>
+                  )}
                 </div>
               </li>
             );

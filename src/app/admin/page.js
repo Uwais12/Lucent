@@ -453,49 +453,6 @@ export default function AdminPanel() {
             </div>
           </div>
 
-          {/* Subscription Management Section */}
-          <div className="bg-white rounded-lg shadow p-6 mb-8">
-            <div className="flex items-center mb-4">
-              <CreditCard className="w-6 h-6 text-blue-600 mr-2" />
-              <h2 className="text-xl font-semibold">Subscription Management</h2>
-                    </div>
-            
-            <div className="mb-4">
-              <h3 className="text-lg font-medium mb-2">Migrate Users to Free Tier</h3>
-              <p className="text-gray-600 mb-4">
-                This action will set all users without subscription data to the FREE tier.
-                Run a dry run first to see how many users will be affected.
-              </p>
-              
-              <div className="flex space-x-4 mb-4">
-                <button
-                  onClick={() => handleDevMigration(true)}
-                  disabled={migrationLoading}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md disabled:opacity-50"
-                >
-                  {migrationLoading ? 'Processing...' : 'Test Migration (Dry Run)'}
-                </button>
-                
-                <button
-                  onClick={() => handleDevMigration(false)}
-                  disabled={migrationLoading}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md disabled:opacity-50"
-                >
-                  {migrationLoading ? 'Processing...' : 'Run Migration'}
-                </button>
-                    </div>
-              
-              {migrationStatus && (
-                <div className={`p-4 rounded-md ${migrationStatus.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-                  <p className="font-medium">{migrationStatus.message}</p>
-                  {migrationStatus.count !== undefined && (
-                    <p className="mt-1">Affected users: {migrationStatus.count}</p>
-                  )}
-                  </div>
-              )}
-            </div>
-          </div>
-
           {/* Course Management Section */}
           <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center mb-4">

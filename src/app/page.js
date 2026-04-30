@@ -23,6 +23,8 @@ import {
   Search,
   ChevronDown,
   Sparkles,
+  Plus,
+  Users,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -779,9 +781,18 @@ export default function Home() {
 
           {/* ── Explore Courses ──────────────────────────────────────────── */}
           <section className="mb-10 sm:mb-14" id="explore-courses">
-            <div className="flex items-center gap-2.5 mb-5 sm:mb-6">
-              <Sparkles className="w-5 h-5 text-accent-500" />
-              <h2 className="section-title">Explore Courses</h2>
+            <div className="flex items-center justify-between flex-wrap gap-3 mb-5 sm:mb-6">
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="w-5 h-5 text-accent-500" />
+                <h2 className="section-title">Explore Courses</h2>
+              </div>
+              <Link
+                href="/create-course"
+                className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1.5"
+              >
+                <Plus className="w-4 h-4" />
+                Create your own course
+              </Link>
             </div>
 
             {exploreCourses.length > 0 ? (
@@ -817,6 +828,12 @@ export default function Home() {
                             <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 truncate">
                               {course.title}
                             </h3>
+                            {course.isUserCreated && course.createdBy?.displayName && (
+                              <div className="inline-flex items-center gap-1 mb-1 px-2 py-0.5 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-[11px] font-medium">
+                                <Users className="w-3 h-3" />
+                                by {course.createdBy.displayName}
+                              </div>
+                            )}
                             <p className="text-sm text-surface-500 line-clamp-2">
                               {course.description}
                             </p>

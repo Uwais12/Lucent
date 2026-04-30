@@ -95,9 +95,9 @@ const QuizSchema = new mongoose.Schema({
     min: 0,
     max: 100
   },
-  duration: { 
-    type: Number, 
-    required: true,
+  duration: {
+    type: Number,
+    default: 15,
     min: 1,
     max: 180
   },
@@ -114,10 +114,7 @@ const QuizSchema = new mongoose.Schema({
   }
 });
 
-// Add validation for minimum number of questions
-QuizSchema.path('questions').validate(function(questions) {
-  return questions && questions.length > 0;
-}, 'Quiz must have at least one question');
+// Quizzes may be empty (user-created courses often ship without questions).
 
 // Virtual for total points
 QuizSchema.virtual('totalPoints').get(function() {
@@ -253,7 +250,8 @@ const ChapterSchema = new mongoose.Schema({
   description: { type: String, required: true },
   order: { type: Number, required: true },
   lessons: { type: [LessonSchema], default: [] },
-  endOfChapterQuiz: { type: QuizSchema, required: true },
+  // Relaxed: user-created chapters may not include a quiz.
+  endOfChapterQuiz: { type: QuizSchema },
   progress: {
     completed: { type: Boolean, default: false },
     lastAccessed: { type: Date },
@@ -279,7 +277,9 @@ const CourseSchema = new mongoose.Schema(
       amazonUrl: { type: String, default: "" },
     },
     chapters: { type: [ChapterSchema], default: [] },
-    endOfCourseExam: { type: QuizSchema, required: true },
+    // endOfCourseExam was previously required — relaxed for user-created courses,
+    // which often ship without a final exam.
+    endOfCourseExam: { type: QuizSchema },
     prerequisites: { type: [String], default: [] },
     learningOutcomes: { type: [String], default: [] },
     estimatedDuration: { type: Number, required: true },
@@ -294,7 +294,15 @@ const CourseSchema = new mongoose.Schema(
       lastAccessed: { type: Date },
       score: { type: Number, default: 0 },
       chaptersCompleted: [Number]
-    }
+    },
+    // Creator metadata — admin-curated courses leave these unset.
+    createdBy: {
+      clerkId: { type: String, index: true },
+      displayName: { type: String, default: '' },
+      email: { type: String, default: '' },
+    },
+    isUserCreated: { type: Boolean, default: false, index: true },
+    isPublished: { type: Boolean, default: true, index: true },
   },
   { timestamps: true }
 );

@@ -14,6 +14,10 @@ export default function MultipleChoice({ exercise, onComplete }) {
 
   const checkAnswer = () => {
     if (selectedAnswer === null) return;
+    if (!exercise?.content?.correctAnswer) {
+      setFeedback('This question is misconfigured: no correct answer was set.');
+      return;
+    }
 
     setAttempts(prev => prev + 1);
     const isAnswerCorrect = selectedAnswer === exercise.content.correctAnswer;
@@ -88,10 +92,10 @@ export default function MultipleChoice({ exercise, onComplete }) {
       </div>
 
       <div className="space-y-4 mb-6 sm:mb-8">
-        <p className="font-medium text-gray-900 text-sm sm:text-base">{exercise.content.question}</p>
+        <p className="font-medium text-gray-900 text-sm sm:text-base">{exercise.content?.question}</p>
 
         <div className="space-y-2">
-          {exercise.content.options?.map((option, index) => (
+          {(exercise.content?.options || []).map((option, index) => (
             <button
               key={index}
               onClick={() => !showExplanation && handleAnswerSelect(option)}

@@ -515,10 +515,9 @@ export default function LandingPage() {
       </Section>
 
       {/* ===================================================================
-          PRICING
+          FREE FOR EVERYONE
       =================================================================== */}
       <Section id="pricing" className="relative py-24 sm:py-32">
-        {/* Background accent */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10"
@@ -526,129 +525,31 @@ export default function LandingPage() {
           <div className="absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-brand-100/30 blur-[120px]" />
         </div>
 
-        <div className="mx-auto max-w-5xl px-6">
-          <motion.div variants={fadeUp} className="text-center">
-            <Badge>Pricing</Badge>
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <motion.div variants={fadeUp}>
+            <Badge>Free, forever</Badge>
             <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
-              Simple, transparent pricing
+              Everything on Lucent is free
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-gray-500">
-              Get started for free. Upgrade when you&apos;re ready for the full
-              experience.
+              Every course, every exercise, every quiz. No paywalls, no tiers, no upgrade
+              prompts. Sign up and start learning — and if you want to teach, build your own course too.
             </p>
-          </motion.div>
-
-          {/* Interval toggle */}
-          <motion.div
-            variants={fadeUp}
-            custom={1}
-            className="mt-10 flex justify-center"
-          >
-            <div className="inline-flex items-center rounded-full border border-gray-200 bg-white p-1 backdrop-blur">
-              {["month", "year"].map((interval) => (
-                <button
-                  key={interval}
-                  onClick={() => setSelectedInterval(interval)}
-                  className={`relative rounded-full px-5 py-2 text-sm font-medium transition-all ${
-                    selectedInterval === interval
-                      ? "bg-brand-600 text-white shadow-glow"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  {interval === "month" ? "Monthly" : "Yearly"}
-                  {interval === "year" && selectedInterval === "year" && (
-                    <span className="ml-2 text-xs text-brand-200">
-                      Save £10
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Cards */}
-          <div className="mt-12 grid gap-8 lg:grid-cols-2">
-            {/* Free tier */}
-            <motion.div
-              variants={scaleIn}
-              custom={0}
-              className="flex flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-sm"
-            >
-              <h3 className="text-lg font-semibold">Free</h3>
-              <p className="mt-2 text-sm text-gray-500">
-                Explore the platform and start learning right away.
-              </p>
-              <p className="mt-6">
-                <span className="text-4xl font-bold">£0</span>
-                <span className="ml-1 text-gray-400">/forever</span>
-              </p>
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
               <Link
                 href="/sign-up"
-                className="mt-8 flex items-center justify-center rounded-xl border border-gray-300 py-3 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900"
+                className="rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 px-7 py-3 text-sm font-semibold text-white shadow-glow transition-all hover:shadow-glow-lg hover:brightness-110"
               >
                 Get Started
               </Link>
-              <ul className="mt-8 space-y-3 text-sm text-gray-600">
-                {[
-                  "Access to first 3 lessons per course",
-                  "Basic exercise types",
-                  "Progress tracking",
-                  "Community access",
-                ].map((f) => (
-                  <li key={f} className="flex items-start gap-3">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Pro tier */}
-            <motion.div
-              variants={scaleIn}
-              custom={1}
-              className="relative flex flex-col overflow-hidden rounded-2xl border border-brand-500/30 bg-white p-8 shadow-lg shadow-brand-500/5"
-            >
-              {/* Recommended badge */}
-              <div className="absolute top-0 right-0 rounded-bl-xl bg-gradient-to-r from-brand-600 to-accent-600 px-4 py-1.5 text-xs font-semibold text-white">
-                Recommended
-              </div>
-              <h3 className="text-lg font-semibold">Pro</h3>
-              <p className="mt-2 text-sm text-gray-500">
-                Full access to everything Lucent has to offer.
-              </p>
-              <p className="mt-6 flex items-baseline gap-2">
-                <span className="text-4xl font-bold">{proPrice}</span>
-                <span className="text-gray-400">{proLabel}</span>
-                {savingsLabel && (
-                  <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-400">
-                    {savingsLabel}
-                  </span>
-                )}
-              </p>
               <Link
-                href="/sign-up"
-                className="mt-8 flex items-center justify-center rounded-xl bg-gradient-to-r from-brand-600 to-accent-600 py-3 text-sm font-semibold text-white shadow-glow transition-all hover:shadow-glow-lg hover:brightness-110"
+                href="/create-course"
+                className="rounded-xl border border-gray-300 px-7 py-3 text-sm font-semibold text-gray-700 transition-colors hover:border-gray-400 hover:text-gray-900"
               >
-                Upgrade to Pro
+                Create a Course
               </Link>
-              <ul className="mt-8 space-y-3 text-sm text-gray-600">
-                {[
-                  "Unlimited access to all lessons",
-                  "All interactive exercise types",
-                  "XP, badges & streak system",
-                  "Detailed analytics dashboard",
-                  "Priority support",
-                  "Early access to new courses",
-                ].map((f) => (
-                  <li key={f} className="flex items-start gap-3">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </Section>
 
@@ -857,7 +758,7 @@ export default function LandingPage() {
               <ul className="mt-4 space-y-3 text-sm text-gray-400">
                 {[
                   { label: "Courses", href: "#courses" },
-                  { label: "Pricing", href: "#pricing" },
+                  { label: "Create a Course", href: "/create-course" },
                   { label: "How It Works", href: "#how-it-works" },
                 ].map((link) => (
                   <li key={link.label}>

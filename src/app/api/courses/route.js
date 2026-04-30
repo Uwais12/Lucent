@@ -10,17 +10,29 @@ export async function GET(req) {
     const { userId } = getAuth(req);
     await connectToDatabase();
 
-    // Get all courses with more details
-    const courses = await Course.find({}, {
-      title: 1,
-      description: 1,
-      slug: 1,
-      difficulty: 1,
-      duration: 1,
-      chapters: 1,
-      book: 1,
-      imageUrl: 1
-    }).lean(); // Use lean() for better performance
+    // Show admin-curated courses + published user-created courses.
+    const courses = await Course.find(
+      {
+        $or: [
+          { isUserCreated: { $ne: true } },
+          { isUserCreated: true, isPublished: { $ne: false } },
+        ],
+      },
+      {
+        title: 1,
+        description: 1,
+        slug: 1,
+        level: 1,
+        chapters: 1,
+        book: 1,
+        tags: 1,
+        estimatedDuration: 1,
+        enrolledCount: 1,
+        rating: 1,
+        isUserCreated: 1,
+        createdBy: 1,
+      }
+    ).sort({ isUserCreated: 1, enrolledCount: -1 }).lean();
 
     // If user is logged in, get their enrollment status for each course
     if (userId) {

@@ -170,7 +170,7 @@ const Navbar = () => {
     { name: "Home", href: "/landing-page#", icon: Layout, section: "home" },
     { name: "Courses", href: "/landing-page#courses", icon: BookOpen, section: "courses" },
     { name: "Features", href: "/landing-page#features", icon: Code, section: "features" },
-    { name: "Pricing", href: "/landing-page#pricing", icon: CreditCard, section: "pricing" },
+    { name: "Create", href: "/create-course", icon: CreditCard, section: "create" },
     { name: "Roadmap", href: "/landing-page#roadmap", icon: Calendar, section: "roadmap" },
     { name: "Contact", href: "/contact", icon: MessageSquare },
   ];
