@@ -86,9 +86,9 @@
 | 2 (+1) | **Ring of the Faithful** (12-projectile ring, one fixed gap at her back) | Yellow ring expands → blue projectile lines | 1.0s | 35% HP each | Read her facing; the gap is behind her. |
 | 3 (+1) | **Counterpoint** (Hymn-Fan + Ring overlap, 0.5s offset) | Each pattern keeps its own telegraph | 0.7s + 1.0s | as above | Read both; gap still behind her. |
 
-**Arena event** (from Phase 2 on): every 12s, a **flooding wave** crosses from one edge (yellow line on edge for 1.0s). No damage; shoves the player 2 units. Can shove into *or* out of projectile gaps — a second clock.
+**Arena event** (Phase 2+): every 12s, a **flooding wave** crosses from one edge (yellow line on edge for 1.0s). No damage; shoves the player 2 units. Can shove into *or* out of projectile gaps — a second clock.
 
-**Arena.** Wide flooded nave, ~10×8 units, four broken pillars as cover (and corners that can trap during a flood-wave). Animated waterline; the floor itself moves.
+**Arena.** Wide flooded nave, ~10×8 units, four broken pillars as cover. Animated waterline; the floor itself moves.
 
 **Music cue.** Female choral pad on a sustained note, low organ, no percussion. Phase 2 adds a struck triangle on each wave. Phase 3 layers a soprano counter-melody **deliberately 0.5s off** the main line — the music teaches the rhythm. **Audio brief:** `MUS_BOSS_CATHEDRAL_TIDEECHO_OFFBEAT`.
 
@@ -160,9 +160,9 @@
 | 2 (+1) | **The Hammer Falls** (hammer separates and acts independently) | Hammer pulses yellow before each strike, independent of body | 0.8s | 50% HP/swing | Treat as two bosses. Hammer can be staggered for 2s but not killed. |
 | 3 (+1) | **Heart of the Forge** (every Anvil Strike leaves a permanent ~1u lava puddle) | Puddle inherits red circle outline | passive | 18% HP/s | Plan damage windows; arena ~30% lava by 10% HP. |
 
-The Phase-2 transition uses a 1.2s screen-wide telegraph (yellow flash, hammer breaks off, single bell) — phase change is unmistakable, per the wind-up rules.
+Phase-2 transition uses a 1.2s screen-wide telegraph (yellow flash, hammer breaks off, single bell) — change is unmistakable.
 
-**Arena.** Octagonal forge floor, ~10×10 units, central anvil obstacle (the hammer phases through it). Two molten-iron rim channels surge occasionally (yellow rim line for 1.0s) — passive edge hazard.
+**Arena.** Octagonal forge floor, ~10×10 units, central anvil obstacle (hammer phases through). Molten-iron rim channels surge occasionally (yellow rim line, 1.0s) — passive edge hazard.
 
 **Music cue.** Heavy percussion on a **2/4 hammer beat** matching Anvil Strike's wind-up — the boss's tempo *is* the soundtrack. Phase 2 adds a metallic ring on hammer separation. Phase 3 adds a low brass drone. **Audio brief:** `MUS_BOSS_EMBERFORGE_ANVILFATHER_HAMMERBEAT`.
 
@@ -200,7 +200,7 @@ The Phase-2 transition uses a 1.2s screen-wide telegraph (yellow flash, hammer b
 
 The Glasshound is the chapter's single most important add — beating Prismfen often means deciding when to ignore the swarm and burn it down.
 
-**Arena.** Circular grove, ~9u radius, six glass stumps as cover (block charges, hide players). Floor refracts the boss's light — the only arena where the **ground itself is bright**, so red telegraphs use a thick black outline.
+**Arena.** Circular grove, ~9u radius, six glass stumps as cover. Floor refracts the boss's light — the only arena where the **ground is bright**, so red telegraphs use a thick black outline.
 
 **Music cue.** Glass-harmonica drone with a 4-note motif that **resolves on each Glassmote spawn** — the player anticipates spawns by ear. Phase 2 adds low cello on Glasshound entry. Phase 3 layers fast pizzicato during shielded windows. **Audio brief:** `MUS_BOSS_GLASSROOT_PRISMFEN_HARMONICA`.
 
@@ -236,9 +236,9 @@ The Glasshound is the chapter's single most important add — beating Prismfen o
 | 2 (+1) | **Starfall** (3 red circles along player's last 0.5s of movement) | 3 sequential red circles, all resolve at 1.0s | 1.0s | 50% HP each | Reverse direction at telegraph spawn — prediction lags. |
 | 3 (+1) | **The Sky is Falling** (one of 4 platforms cracks every 6s) | Yellow border on doomed platform; off-screen arrow if needed | 1.0s | 100% HP if standing on it | Move; ≥2 safe platforms always remain. Platforms regenerate in 10s. |
 
-This is the chapter's signature **arena-as-attack** mechanic. Adapted from Mighty DOOM's spatial phase shifts.
+Signature **arena-as-attack** mechanic, adapted from Mighty DOOM's spatial phase shifts.
 
-**Arena.** Four floating platforms in a 2×2 grid joined by narrow light-bridges. Playable area shrinks across the fight; bridges block projectile lines but fall with their platforms. Inky void below; falling is a one-shot governed by the 4-condition rule.
+**Arena.** 4 floating platforms in a 2×2 grid joined by narrow light-bridges. Playable area shrinks across the fight; bridges block projectile lines but fall with their platforms. Falling is a one-shot governed by the 4-condition rule.
 
 **Music cue.** Glitched time-stretched main Lucent theme played backwards under a sparse synth pad. Phase 2 adds a high sine drone. Phase 3 adds a **descending** piano figure looping every 6s — perfectly synced to platform falls. The audio teaches the rhythm. **Audio brief:** `MUS_BOSS_HOLLOWSKY_STARWOUND_INVERTED`.
 
@@ -274,9 +274,9 @@ This is the chapter's signature **arena-as-attack** mechanic. Adapted from Might
 | 2 (+1) | **The Anti-Echo** (second silhouette mirrors player on opposite axis) | Boss outline at mirrored position, faint indigo trail | passive entity | per its attacks | Use as a compass for safe positioning. Stunnable 5s with 15% boss HP burst. |
 | 3 (+1) | **The Long Dark** (arena lighting drops to ~15%; only player aura, boss heart, and telegraph layer remain) | Screen-wide indigo flash, 1.2s phase transition | n/a | n/a (utility) | Trust the telegraph language. Final exam. |
 
-This is the **culmination of Pillar 8**: in the last 33% of the last boss, the arena reduces to the telegraph layer. If the player reads the language, they win.
+**Culmination of Pillar 8**: in the last 33% of the last boss, the arena reduces to the telegraph layer. If the player reads the language, they win.
 
-**Arena.** Endless dark hall, ~12×8 units, no visible walls — the floor fades into indigo beyond a radius. Central pedestal holds the boss's gold heart-shard, the only fixed reference in Phase 3.
+**Arena.** Endless dark hall, ~12×8 units, no visible walls — floor fades into indigo beyond a radius. Central pedestal holds the gold heart-shard, the only fixed reference in Phase 3.
 
 **Music cue.** The Lucent main theme drained of warmth — brass replaced with low cello, percussion gone, the narrator's whispered "*Walk in*" under the music at phase transitions. Phase 3 silences all instruments except one sustained string. **Audio brief:** `MUS_BOSS_LONGDUSK_DUSKITSELF_FINAL`.
 
@@ -306,13 +306,13 @@ This is the **culmination of Pillar 8**: in the last 33% of the last boss, the a
 | 1 | 100 → 50% | Read the active facet to predict its spread. | **Faceted Volley** (5-projectile fan; spread angle keyed to facet hue — blue=tight, red=wide, gold=arcing). 0.8s wind-up. |
 | 2 | 50 → 0% | Two facets are active at once. | Same Faceted Volley from two facets on a 0.4s offset; independent telegraphs. |
 
-**Why it works at week 50.** 4 facets × 2 active = 6 unique combinations per fight, all built from one primitive (5-projectile fan with varying spread). The combination is what's new; the language is constant.
+**Why it works at week 50.** 4 facets × 2 active = 6 unique combinations from one primitive (5-projectile fan with varying spread). The combination is new; the language is constant.
 
-**Arena & audio.** Hexagonal floor takes the host realm's palette and one local hazard (e.g., flood-wave shove in Cathedral skin, lava rim in Emberforge skin). Music is procedural — each active facet swaps an instrument (cymbal blue, snare red, brass gold). Screenshot: two facets glowing, two fans crossing.
+**Arena & audio.** Hexagonal floor in the host realm's palette + one local hazard (flood-wave in Cathedral skin, lava rim in Emberforge skin). Music procedural — each active facet swaps an instrument (cymbal blue, snare red, brass gold). Screenshot: two facets glowing, two fans crossing.
 
-**Scaling.** Higher event tiers add a 3rd active facet in Phase 2; spread precision tightens 5% per tier. Wind-ups stay ≥0.6s.
+**Scaling.** Higher tiers add a 3rd active facet in Phase 2; spread precision tightens 5% per tier. Wind-ups stay ≥0.6s.
 
-**Reward bias.** Weekly event currency **Cut-Light** + small chance at any launch-set piece.
+**Reward bias.** Weekly currency **Cut-Light** + small chance at any launch-set piece.
 
 ---
 

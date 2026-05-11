@@ -364,13 +364,12 @@ Reached when the player taps Campaign from Mode Select. The 7-realm map per `des
 - Long-press a beaten realm → see best-clear time, drops obtained, stars earned.
 
 ### States
-- **Loading** — map renders, but stars and progress as `...` until save sync completes.
-- **Empty** — never empty (Realm 1 always exists).
-- **Network failure** — uses last-cached progress; toast `Showing offline progress, may not reflect recent runs.`
+- **Loading** — stars/progress as `...` until save sync.
+- **Empty** — never (Realm 1 always exists).
+- **Network failure** — last-cached progress; offline toast.
 
 ### Deep-links out
-- Pre-Run Loadout for selected realm.
-- Heroes tab if player taps "Hero too low" hint from a realm with a level recommendation gate.
+- Pre-Run Loadout (selected realm); Heroes tab (from "hero too low" hints).
 
 ---
 
@@ -441,13 +440,12 @@ The contract screen. The player locks in hero, gear, sigils, spirit, abilities b
 - START → if energy sufficient, enter run; if not, refill modal.
 
 ### States
-- **Loading** — gear icons load progressively; START disabled until full hydration.
-- **Empty** — empty slots render as ghosted outlines with `Equip` ghost-text; allowed (player can run without a full kit).
-- **Network failure** — START still works for offline modes (Campaign/Tower/Survival/Daily). PvP loadout requires online.
+- **Loading** — gear icons load progressively; START disabled until hydrated.
+- **Empty** — empty slots render as ghosted `Equip` outlines (allowed).
+- **Network failure** — START works offline (Campaign/Tower/Survival/Daily); PvP loadout needs network.
 
 ### Deep-links out
-- Heroes / Equipment / Sigils / Spirits sub-screens.
-- Energy refill modal.
+- Heroes / Equipment / Sigils / Spirits sub-screens; energy refill modal.
 
 ---
 
@@ -504,14 +502,13 @@ The screen that matters. Per Pillar 1, controls are: joystick (left or right, pl
 - HP bar → no tap action.
 
 ### States
-- **Loading** — pre-run room transition shows a 0.4s wipe; HUD elements fade in. Joystick disabled for 200ms after fade to prevent double-input.
+- **Loading** — 0.4s room wipe; joystick disabled for 200ms to prevent double-input.
 - **Empty** — N/A.
-- **Network failure** — runs are local; on network loss the run continues silently. Reward sync deferred to end-of-run.
-- **Revive prompt** — on death, fullscreen modal: `Watch ad to revive — full HP, 1 use per run` + `Spend 30 gems` + `End run`. Capped at 2 revives/run per `design/04-progression-and-economy.md` §6.
+- **Network failure** — runs are local; reward sync deferred.
+- **Revive prompt** — on death: `Watch ad (full HP, 1/run)` / `Spend 30 gems` / `End run`. Cap 2/run.
 
 ### Deep-links out
-- Quit-run-with-confirm → Home (forfeits in-run rewards).
-- End-of-run summary (auto, on victory / final death).
+- Home (quit-with-confirm); End-of-Run Summary (auto on victory/death).
 
 ---
 
@@ -680,14 +677,12 @@ The dopamine cash-out. The x2-rewards-via-ad button is the single highest-CTR ad
 - Drop row → tap a drop to see detail; long-press to equip directly.
 
 ### States
-- **Loading** — rewards card placeholder while server confirms drops (anti-cheat); shows skeleton then fills.
-- **Empty** — Defeated runs still pay partial rewards; the rewards card is never empty.
-- **Network failure** — local-tally rewards shown, sync deferred; small offline icon on the card.
+- **Loading** — rewards card placeholder while server confirms drops (anti-cheat).
+- **Empty** — Defeated runs still pay partial rewards; never empty.
+- **Network failure** — local-tally rewards, sync deferred, offline icon.
 
 ### Deep-links out
-- Pre-Run Loadout (Run Again).
-- Home.
-- Mailbox (if a milestone reward dropped).
+- Pre-Run Loadout (Run Again); Home; Mailbox (if milestone reward dropped).
 
 ---
 
@@ -748,15 +743,11 @@ Roster grid + per-hero detail. The tab is two layers: roster overview at top, th
 
 ### States
 - **Loading** — roster tiles as skeletons.
-- **Empty** — never (one hero always granted at FTUE).
-- **Network failure** — last-cached roster shown; level-up/ascend disabled until reconnect.
+- **Empty** — never (FTUE grants one hero).
+- **Network failure** — last-cached roster; level-up/ascend disabled.
 
 ### Deep-links out
-- Equipment tab (filtered to this hero).
-- Inscription tab (per-hero scope).
-- Sigils sub-screen.
-- Spirits sub-screen.
-- Shop tab → Hero-buy SKU for locked heroes (with FOMO countdown if banner-active).
+- Equipment / Inscription / Sigils / Spirits sub-screens; Shop tab (Hero-buy SKU for locked heroes).
 
 ---
 
@@ -816,12 +807,11 @@ Bag + slots + actions. Six gear slots, the long-tail "verbs": equip, upgrade, fu
 
 ### States
 - **Loading** — bag fades in.
-- **Empty** — bag empty → `Run a chapter to find your first gear` with a deep-link to Campaign.
-- **Network failure** — read-only; all actions disabled with `Reconnect to make changes` banner.
+- **Empty** — `Run a chapter to find your first gear` with a deep-link to Campaign.
+- **Network failure** — read-only; `Reconnect to make changes` banner.
 
 ### Deep-links out
-- Heroes tab (back).
-- Campaign (when empty).
+- Heroes tab (back); Campaign (when empty).
 
 ---
 
@@ -881,12 +871,11 @@ Flat 5×4 grid per `design/04-progression-and-economy.md` §2. Each node has 20 
 - Reset → modal with cost preview + double-confirm.
 
 ### States
-- **Loading** — grid as skeletons.
-- **Empty** — all nodes at Lv 0 → `Tap a node to start your build` ghost-text.
+- **Loading** — grid skeletons.
+- **Empty** — all nodes Lv 0 → `Tap a node to start your build` ghost-text.
 - **Network failure** — read-only.
 
-### Deep-links out
-- None outbound; this is a destination tab.
+### Deep-links out: none — this is a destination tab.
 
 ---
 
