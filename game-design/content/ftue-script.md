@@ -29,102 +29,73 @@
 
 **EXT. THE VALE OF FIRST LIGHT — A SUNLIT GLADE**
 
-- [ ] Camera comes up on the **Dawnbow** (default tutorial hero) standing in the center of a small portrait-friendly arena, glowing faintly indigo. No HUD yet. No joystick yet.
-- [ ] A single shaft of warm light falls on the hero from above. The world around her is the Vale palette (`design/03-world-and-theme.md`): soft greens, lavender-violet creep at the arena edges.
-- [ ] One bird call (FMOD: `Vale_Ambient_Bird_01`). No music — just ambience.
-- [ ] After 0.8s of stillness, a soft chime plays, the joystick fades in at the bottom-left, and a single white-text prompt appears at the top-third of the screen:
+- [ ] Camera up on the **Dawnbow** (default tutorial hero) glowing faintly indigo in a small portrait arena. No HUD, no joystick yet. Vale palette: soft greens, lavender creep at the edges. One bird call (`Vale_Ambient_Bird_01`). No music.
+- [ ] After 0.8s, a chime plays, the joystick fades in bottom-left, and a single white-text prompt appears at the top third:
 
-**ON-SCREEN PROMPT (P-01):**
-> "Move."
+**ON-SCREEN PROMPT (P-01):** "Move."
 
-- [ ] The joystick has a gentle pulsing halo to draw the thumb. No arrow, no hand cartoon — the halo is enough.
-- [ ] If the player does nothing for 6 seconds, the prompt re-pulses and the halo intensifies. If they do nothing for 15 seconds, the narrator delivers the *fallback nudge* (line N-02, see Part E). This is the only voice line in the tutorial that is conditional.
+- [ ] Joystick has a pulsing halo — no arrow, no hand cartoon. If the player does nothing for 15s, the narrator delivers the *fallback nudge* (line N-02). This is the only conditional voice line in the tutorial.
 
 ### Scene 3 — First Steps, First Enemy (00:09 – 00:18)
 
-**THE GLADE — CONTINUOUS**
+- [ ] Player nudges the joystick. The Dawnbow walks. Footstep SFX, trail of indigo motes (`feel/light-trail`).
+- [ ] After 1.5s of held movement, a **Dim Husk** (simplest archetype, red-coded) materializes 5m ahead from black-violet smoke. Soft warning cue `SFX_Enemy_Spawn_Low` plays. Prompt swaps:
 
-- [ ] Player nudges the joystick. The Dawnbow walks forward. Footstep SFX. Trail of pale indigo motes behind her (`feel/light-trail`).
-- [ ] At 1.5 seconds of held movement (or as soon as the player has moved any direction at least 1.5 meters in-world), a **Dim Husk** (the simplest enemy archetype, red-coded per `design/03`) materializes from a curl of black-violet smoke 5 meters ahead of the player.
-- [ ] On enemy spawn, a soft warning audio cue (`SFX_Enemy_Spawn_Low`) plays and the prompt text fades and is replaced.
+**ON-SCREEN PROMPT (P-02):** "Stop to shoot."
 
-**ON-SCREEN PROMPT (P-02):**
-> "Stop to shoot."
+- [ ] Player releases joystick. Hero roots. Auto-fire begins after 0.25s. First arrow *thwip* (SFX_Bow_Shoot_01), tracks the Husk, kills on the third hit.
+- [ ] If the player keeps walking, the hero will not shoot — the rule is taught physically. On death: indigo confetti, pickup chime, +5 gold popup. (XP introduced in run 2.)
 
-- [ ] Player releases joystick. The hero roots. Auto-fire kicks in after 0.25 seconds. The first arrow leaves the bow with a clear *thwip* (SFX_Bow_Shoot_01), tracks the Husk, hits, knocks it back, kills it on the third arrow.
-- [ ] If the player tries to keep walking, the hero will not shoot — proving the stop-to-shoot rule physically. After 4 seconds of held movement with no kill, the prompt re-pulses.
-- [ ] On Husk death: a small burst of indigo confetti, a coin-pickup chime (SFX_Pickup_Gold_01), and a +5 gold popup. No XP yet — XP is unintroduced until run 2.
-
-**ON-SCREEN PROMPT (P-03):**
-> "More are coming."
+**ON-SCREEN PROMPT (P-03):** "More are coming."
 
 ### Scene 4 — The First Wave (00:18 – 00:30)
 
-**THE GLADE — CONTINUOUS**
+- [ ] Three Husks spawn from non-player arena edges, staggered 0.4s apart. They walk at 60% of player speed; auto-aim picks the nearest. No abilities, no choices yet.
+- [ ] All three down → north door grinds open, warm yellow light spills through.
 
-- [ ] Three Dim Husks spawn from the three non-player edges of the arena, staggered by 0.4 seconds so the player can't be sandwiched.
-- [ ] Husks walk toward the player at 60% player movement speed (Husk is the most forgiving enemy archetype in the launch roster).
-- [ ] Player kites, stops, shoots, repeats. Auto-aim picks the nearest Husk. No build choices yet, no abilities yet.
-- [ ] All three killed → arena doors at the north edge animate open with a stone-grinding SFX and a warm yellow glow spills through.
+**ON-SCREEN PROMPT (P-04):** "Through the door."
 
-**ON-SCREEN PROMPT (P-04):**
-> "Through the door."
+- [ ] Indigo waypoint marker bounces above the door. Player walks in. Fade to white over 0.6s.
 
-- [ ] An indigo waypoint marker bounces above the open door. Player walks in. Camera fades to white over 0.6 seconds.
-
-> **Checkpoint — 30 seconds elapsed.** This is the formal "tutorial complete" event we fire to analytics. KPI target: ≥ 92% of installs reach this event.
+> **Checkpoint — 30s elapsed.** Analytics event `ftue_tutorial_complete` fires here. KPI: ≥ 92% of installs reach this event.
 
 ### Scene 5 — The Ability Pick (00:30 – 00:50)
 
-**INT. THE ABILITY ROOM — A STILL, MISTY CHAMBER**
+**INT. THE ABILITY ROOM**
 
-- [ ] Fade up on the player standing in a smaller chamber. Combat music ducks to a hush.
-- [ ] Three ability cards rise from the floor in an arc in front of the player. All three are **Rare** for the tutorial pick (no Common, no Epic — Rare is the visual sweet spot; it teaches the rarity color before introducing the rarity ladder).
-- [ ] The three forced cards for the tutorial pool (rolled deterministically for the first run only):
+- [ ] Combat music ducks. Three ability cards rise in an arc. All three are **Rare** (teaches the rarity color cleanly). Tutorial pool is deterministic on first run:
   1. **Multishot I** — "+1 arrow per shot." (Front-arrow family.)
   2. **Bouncy Walls** — "Arrows bounce off walls once." (Ricochet family.)
-  3. **Burning Touch** — "Arrows ignite enemies for 2s." (DoT family.)
-- [ ] These three are chosen because each is a *seed* of one of the genre's signature build archetypes (`design/00` Pillar 2). The player picking any one of them will see a screenshot-worthy moment in the next room.
+  3. **Burning Touch** — "Arrows ignite enemies 2s." (DoT family.)
+- [ ] Each seeds a signature build archetype (`design/00` Pillar 2). Whichever the player picks creates a visible screen-effect difference in the next room — the dopamine moment.
 
-**ON-SCREEN PROMPT (P-05):**
-> "Pick a power."
+**ON-SCREEN PROMPT (P-05):** "Pick a power."
 
-- [ ] Player taps a card. The other two dissolve. The chosen card flies into a slot at the top-right of the HUD with a satisfying *clack* (SFX_UI_Ability_Lock_01).
-- [ ] No reroll button is shown in the tutorial pick (rerolls are introduced in run 2).
-- [ ] Doors open ahead. Player walks through.
+- [ ] Player taps a card; the others dissolve; the pick *clacks* into the top-right HUD slot. No reroll yet (taught in run 2). Doors open.
 
 ### Scene 6 — The Confidence Room (00:50 – 01:25)
 
-**INT. ARENA II — STONE COURTYARD**
+- [ ] Music swells (`Arena_Combat_Low → Mid`). Five Husks in two waves (3 then 2). The new ability *shines visibly* — fanning arrows, ricochets, or burn overlays — making this room obviously more impressive than room 1.
 
-- [ ] Music swells (FMOD: `Arena_Combat_Low → Mid`).
-- [ ] Five Dim Husks spawn in two waves: 3, then 2 after the first 3 die. Same archetype, no surprises.
-- [ ] The player's new ability shines visibly — Multishot players see three arrows fan out, Bouncy Walls players see arrows ping around, Burning Touch players see enemies glow orange on hit. Whichever they picked, *the screen looks more impressive than the first room.* That gap is the dopamine moment.
-- [ ] Player clears the room.
+**ON-SCREEN PROMPT (P-06):** "You're a Lucent now."
 
-**ON-SCREEN PROMPT (P-06):**
-> "You're a Lucent now."
-
-- [ ] The hero glows brighter for 0.4 seconds. A soft swelling chord plays. The exit door opens.
+- [ ] Hero glows brighter 0.4s. Swelling chord. Exit door opens.
 
 ### Scene 7 — Forced Exit to Lobby + Starter Chest (01:25 – 01:50)
 
-**INT. THE HOME / LOBBY SCREEN — FIRST APPEARANCE**
+- [ ] Cut to the Lobby (first appearance). One lit element: a glowing chest center-screen. Every other tab is dimmed and padlocked.
+- [ ] 1.2s animation of the chest hopping and unlocking on its own. The player taps nothing — this is a *gift*, not a transaction.
+- [ ] Reveal:
+  - 1× **Legendary** weapon: **The Dawnbow's First Light** (scripted, deterministic — the same weapon for every player on first run; provides a 7-day baseline).
+  - +200 **gems** (seed hard-currency reserve so they can try gacha later without IAP friction).
+  - 1× **Spirit**: **Mote** (Common; AoE pulse, +5% gold gain; visible on the player).
+- [ ] Rewards animate into inventory while the camera tilts to reveal the Lobby map behind the chest. Heroes tab pulses softly ("look here next, no rush").
 
-- [ ] Cut to the Lobby. The player has never seen this screen before. The first thing they see is *one* lit-up element: a glowing chest in the center of the screen. Every other tab (Heroes, Gear, Shop, Battle Pass, Events) is dimmed and locked with a small padlock.
-- [ ] A short animated sequence (1.2s) of the chest hopping and unlocking on its own. The player does not have to tap anything — this is a *gifted* moment, not a transaction.
-- [ ] Chest pops open. Confetti. The reveal:
-  - 1× **Legendary** weapon: **The Dawnbow's First Light** (scripted, deterministic, the same weapon for every player on first run; gives a clear baseline that scales for ~7 days). *Iconography: indigo arrow on a gold-rimmed card with a Legendary rarity halo.*
-  - +200 **gems** (immediately credited; this is the "seed" hard-currency reserve so the player can later try the gacha system before any IAP friction).
-  - 1× **Spirit**: **Mote**, a Common-rarity hovering wisp pet. Light AoE pulse, +5% gold gain. Sticks to the player visually for the rest of the run.
-- [ ] No "press to claim" beat. The rewards animate directly into the player's inventory while the camera tilts to show the Lobby map behind the chest. The Heroes tab pulses softly to suggest "look here next, but no rush."
+**ON-SCREEN PROMPT (P-07):** "Your shard. Carry it well."
 
-**ON-SCREEN PROMPT (P-07):**
-> "Your shard. Carry it well."
+- [ ] Only Lobby-side tutorial prompt. After this beat, the game is in free-play and the tutorial is officially over.
 
-- [ ] This is the only Lobby-side prompt in the entire FTUE. After this beat, the game is in "free play" — the player can tap anything they want and the tutorial is officially over.
-
-> **Tutorial KPI gate (90–110s wall clock):** the analytics event `ftue_chest_pop` fires here. Soft-launch tuning bar: ≥ 92% of installs that reach `app_launch_first` also reach `ftue_chest_pop` within 3 minutes (a fat tail for slow-thumb / interrupted players).
+> **Tutorial KPI gate (90–110s wall-clock):** analytics event `ftue_chest_pop` fires here. Bar: ≥ 92% of `app_launch_first` reach `ftue_chest_pop` within 3 minutes.
 
 ---
 

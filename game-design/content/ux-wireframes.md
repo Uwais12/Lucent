@@ -18,14 +18,14 @@ Wireframes for the 16 highest-traffic screens in the Lucent client. ASCII-art at
 
 Persistent header strip, identical position on Home, Heroes, Shop, Events, Guild, Battle Pass, Mode Select, Chapter Map, Pre-Run Loadout, and all child tabs. Specifically **not** present in-run, on the splash, on the end-of-run summary, or in full-screen modals.
 
-| Slot | Position | Element | Behavior |
-|---|---|---|---|
-| Top-left | row 4, col 2–10 | **Avatar tile** with level ring, player name, guild tag | Tap → Profile sheet (settings cog lives here too) |
-| Top-center | row 4, col 11–21 | **Energy pill** — bolt icon + `12/30` + `+` button | Tap pill → energy detail (regen timer, ad refill, gem refill). `+` tap → refill modal. |
-| Top-right | row 4, col 22–31 | **Gold pill** then **Gem pill** stacked horizontally, each with a `+` button | Tap pill → currency source/sink history sheet. `+` → corresponding store landing (gold conversion or gem-pack store). |
-| Top-right corner | row 5 col 30 | **Settings cog** | Tap → settings drawer (audio, language, account, support, credits). Long-press → quick mute. |
-| Below header right | row 6 col 28 | **Mailbox button** with red-number badge | Tap → mailbox modal. Badge shows unread count up to 99+. |
-| Bottom edge | rows 56–59 | **5-tab navigation** | See §0.3. |
+| Slot | Element | Behavior |
+|---|---|---|
+| Top-left | **Avatar tile** with level ring, name, guild tag | Tap → Profile sheet (settings cog inside) |
+| Top-center | **Energy pill** — `⚡ 12/30 +` | Tap → energy detail; `+` → refill modal |
+| Top-right | **Gold pill** + **Gem pill**, each `+` | Tap → history; `+` → store |
+| Corner | **Settings cog** | Tap → settings drawer; long-press → quick mute |
+| Below header right | **Mailbox button** with red-number badge | Tap → mailbox modal (badge max `99+`) |
+| Bottom edge | **5-tab navigation** | See §0.3 |
 
 Why a top energy pill (not top-right with the currencies): energy is the only resource that **gates entry to a mode**. Putting it center-top in primary scanning territory is deliberate; players check energy before they pick a mode.
 
@@ -153,10 +153,10 @@ The cold-open landing surface. From the user's perspective: tap app icon → 2s 
 - Long-press today's tile: previews the day's reward without claiming.
 
 ### States
-- **Loading** — branded prism loader inside the modal frame; calendar stays empty until network confirms current-day server time.
-- **Empty** — never empty by design (day 1 is always claimable).
-- **Network failure** — modal shows `Can't reach the Sun right now. Retry / Play offline.` Offline disables claim but allows starting a run; rewards queued.
-- **Returner** — if 3+ days lapsed, the 7-day calendar is replaced by a **returner mini-calendar** (5 days, richer rewards) per `research/monetization/liveops-retention.md` §7.
+- **Loading** — prism loader inside modal frame; calendar waits on server-time confirmation.
+- **Empty** — never (day 1 always claimable).
+- **Network failure** — `Can't reach the Sun. Retry / Play offline.` Offline disables claim but queues rewards.
+- **Returner (≥3 days)** — 7-day calendar replaced by richer 5-day returner mini-calendar.
 
 ### Deep-links out
 - Mailbox modal → Mailbox tab.
@@ -229,10 +229,10 @@ The "always come back here" screen. The biggest call-to-action is a single prima
 - Quest tile (incomplete) → tooltip with progress; (complete) → claim animation; long-press → quest detail.
 
 ### States
-- **Loading** — skeleton: header is real, banners show `...` placeholders, PLAY disabled.
-- **Empty** — all events ended, no BP active (off-season): replaces the banner strip with `Season 6 begins in 2d 4h — pre-purchase available.`
-- **Network failure** — header shows a small offline cloud icon. PLAY stays enabled (offline runs are queued).
-- **Returner (≥3 days)** — bottom strip is replaced by the comeback offer ladder per `research/monetization/liveops-retention.md` §7.
+- **Loading** — skeleton banners; PLAY disabled until ready.
+- **Empty** — off-season → `Season 6 begins in 2d 4h — pre-purchase available.`
+- **Network failure** — header shows offline icon; PLAY stays enabled (offline runs queued).
+- **Returner (≥3 days)** — bottom strip becomes the comeback offer ladder.
 
 ### Deep-links out
 - BP banner → Battle Pass tab.
@@ -300,14 +300,12 @@ Reached from the `Switch mode →` link. Modes laid out as a 2-column grid for t
 - Energy `Buy +30` → gem-cost confirm modal.
 
 ### States
-- **Loading** — tile content as skeletons.
-- **Empty** — no locked or unavailable variant; this screen never empties.
-- **Network failure** — PvP and Events tiles grey out (require network); Campaign/Tower/Survival/Daily remain available (offline-capable).
+- **Loading** — tile skeletons.
+- **Empty** — never empties.
+- **Network failure** — PvP and Events grey out; Campaign/Tower/Survival/Daily stay available.
 
 ### Deep-links out
-- Pre-Run Loadout (any mode).
-- Events tab.
-- Energy refill modal → gem store if player declines ad and doesn't have 50 gems.
+- Pre-Run Loadout (any mode); Events tab; gem store (from refill if no ad / gems).
 
 ---
 
