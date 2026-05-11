@@ -6,28 +6,21 @@
 
 ## 1. The Shape of the Genre's Upgrade System
 
-Across every Archero-like, the moment-to-moment fun is the same loop:
+The loop is identical across every Archero-like: clear a room, level up (or trigger an Angel/Devil offer), pick **1 of 3 random abilities**, repeat ~30 times per run. The combination of picks is the "build."
 
-1. Clear a room with auto-firing weapons.
-2. Level up (or unlock an Angel/Devil offer at fixed intervals).
-3. Get presented with a **random subset of N abilities** (almost always 3, sometimes 2 or 4).
-4. Pick one. Repeat ~30 times in a run. The combination of picks is your "build."
+A good ability pool requires (a) abilities with sharp identities, (b) some abilities that synergize loudly, and (c) some that anti-synergize so picks have cost. Reference pool sizes: Archero ~80, Archero 2 ~75, Survivor.io 22 active + 22 passive (offset by 5-level scaling), Mighty DOOM ~40, Vampire Survivors 34 passives + 50+ weapons.
 
-What separates a good ability pool from a bad one isn't quantity — it's that **every pick should feel like a real decision**. That requires (a) abilities with sharp identities, (b) some abilities that synergize loudly, and (c) some abilities that anti-synergize so picks have cost.
-
-Archero ships with ~80 abilities. Archero 2 ships with ~75. Survivor.io ships with ~22 active and ~22 passive (the smaller pool is offset by 5-level upgrade scaling per skill and EVO mergers). Mighty DOOM shipped with ~40 perks/traits. Vampire Survivors has ~34 passives plus 50+ weapons.
-
-The genre's sweet spot for first launch appears to be **60–90 distinct in-run abilities**, organized into ~10 categories, with hard rarity gating to make Legendary picks feel earned.
+Genre sweet spot for first launch: **60–90 distinct in-run abilities** across ~10 categories with hard rarity gating.
 
 ---
 
 ## 2. Category-by-Category Catalog
 
-The catalog below is **sourced from real games** (game name in parentheses on first occurrence of a name). Where multiple games use a name, the original is cited.
+Game names in parentheses cite the origin of each ability name.
 
 ### 2.1 Projectile Modifiers
 
-The single most important category — every Archero-like has 8–12 of these because they're what physically transform your weapon.
+The most important category — every Archero-like ships 8–12 of these. They physically transform the weapon.
 
 | Ability | Game(s) | Effect |
 |---|---|---|

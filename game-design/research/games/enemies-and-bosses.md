@@ -6,7 +6,7 @@ A research catalog of enemy archetypes, encounter pacing, and boss design patter
 
 ## 1. Enemy Archetypes
 
-In Archero-style combat, the player is almost always moving. Every enemy archetype exists to answer one question: **what does this enemy force the player to do?** Melee chargers force backpedaling. Snipers force perpendicular kiting. Tanks force flanking. AoE casters force re-positioning. Variety is created not by visuals but by which axis of player movement each enemy attacks.
+In Archero-style combat the player is always moving. Every archetype exists to answer one question: **what does this enemy force the player to do?** Variety comes from which axis of player movement each enemy attacks, not from visuals.
 
 | Archetype | Core Behavior | Pressure Created | Reference Examples |
 |---|---|---|---|
@@ -23,7 +23,7 @@ In Archero-style combat, the player is almost always moving. Every enemy archety
 | **Burrower / pop-up** | Hidden under terrain, surfaces near player | Forces awareness of off-screen threats | Brown Worm (Archero); sand mobs |
 | **Splitter** | Divides into smaller copies on death | Punishes greedy AoE clears | Red Slime (Archero); some Survivor.io bosses on death |
 
-**Design lesson:** the strongest rooms combine **at least two different pressure axes**. A melee charger plus a stationary sniper forces the player to dodge perpendicular while still moving away. A tank plus speeders pulls DPS away from the real threat. Same-archetype rooms feel flat regardless of enemy count.
+**Design lesson:** the strongest rooms combine at least two pressure axes. Charger + sniper forces dodging perpendicular while retreating. Tank + speeders pulls DPS off the real threat. Same-archetype rooms feel flat regardless of enemy count.
 
 ---
 
@@ -42,7 +42,7 @@ In Archero-style combat, the player is almost always moving. Every enemy archety
 
 ### Density and pacing curve in a chapter
 
-Archero chapters follow roughly: easy → mixed → hazard → elite → mini-boss → mixed → elite → boss. The cadence is intentional - rest beats between difficulty spikes let the player consume health drops and feel they "recovered" before the next test. Survivor.io's curve is shaped by time rather than rooms but follows the same logic: trash minutes → elite spawn → trash → elite + chaser → mini-boss → trash → boss at minute markers.
+Archero chapters follow: easy → mixed → hazard → elite → mini-boss → mixed → elite → boss. Rest beats between spikes let the player consume health drops and feel recovered. Survivor.io uses the same logic on a time axis: trash minutes → elite → trash → elite + chaser → mini-boss → boss.
 
 ### Spawn density over a run
 
