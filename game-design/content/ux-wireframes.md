@@ -77,15 +77,15 @@ Lock map at FTUE day 1:
 
 ### 0.6 Accessibility commitments
 
-Mobile-portrait readability is sacred (Pillar 8). These are non-negotiable:
+Mobile-portrait readability is sacred (Pillar 8). Non-negotiable commitments:
 
-1. **Color-blind mode** — three modes (Deuteranopia / Protanopia / Tritanopia) recolor the four telegraph colors (red=damage, yellow=warning, blue=friendly, green=heal). Critically, **shape primitives carry the same information** — a red AoE telegraph is also a filled circle, a yellow line attack is also a hard line, friendly auras are dashed rings. Color is redundant, not load-bearing. This was an explicit Pillar-8 commitment.
-2. **Font scaling** — `Default / Large / X-Large / XX-Large` scales all UI text by 1.00x / 1.15x / 1.30x / 1.50x. Buttons grow proportionally with text; the layout never clips. Tested on every screen.
-3. **Reduced motion** — kills incidental parallax on lobby, screen-shake on crits, and the dopamine-burst confetti on chest open. Preserves all telegraph animations (which carry combat information).
-4. **Haptic feedback** — short tap on every button, medium thud on ability pick, sharp tick on level-up, double-buzz on rare/legendary drop, long warm rumble on boss defeat. Toggleable, on by default, respects iOS system haptic settings.
-5. **Voice-over labels** — every interactive element ships with an accessibility label. Currency pills read as `Twelve hundred gems, tap to view gem store`. Locked features read as `Locked, unlocks at account level four`.
-6. **Tap-target minimum** — 44 × 44 pt minimum on every interactive element. Joystick and active button get 88 pt invisible expansion rings during runs.
-7. **High-contrast mode** — bumps UI panel contrast from 4.5:1 to 7:1 (WCAG AAA), thickens UI strokes by 1.5x.
+1. **Color-blind mode** — three modes (Deuteranopia / Protanopia / Tritanopia) recolor the four telegraph colors. Critically, **shape primitives carry the same information**: red AoE is also a filled circle, yellow line attack is also a hard line, friendly auras are dashed rings. Color is redundant, not load-bearing.
+2. **Font scaling** — Default / Large / X-Large / XX-Large at 1.00× / 1.15× / 1.30× / 1.50×. Buttons grow with text; layout never clips.
+3. **Reduced motion** — kills lobby parallax, crit screen-shake, chest-open confetti. Preserves all combat-information telegraph animations.
+4. **Haptic feedback** — full catalog in §17.4; toggleable, on by default, respects iOS system haptic settings.
+5. **Voice-over labels** — every interactive element ships with an accessibility label (e.g. `Twelve hundred gems, tap to view gem store`).
+6. **Tap-target minimum** — 44×44pt everywhere; joystick and active button get 88pt invisible expansion rings in-run.
+7. **High-contrast mode** — UI panel contrast 4.5:1 → 7:1 (WCAG AAA), strokes 1.5× thicker.
 
 ---
 

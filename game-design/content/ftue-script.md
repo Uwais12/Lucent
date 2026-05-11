@@ -10,24 +10,20 @@
 
 ## Part A — The First 30 Seconds (Tutorial Completion KPI: ≥ 92%)
 
-**Goal:** Get a fresh install from cold-boot animation to *clearing a room of their own free will* in under 30 seconds of input time. Wall-clock target from icon-tap to starter-chest pop is 90–110 seconds. No menu first. No story dump. No login wall. No questions. Just light, motion, and one voice.
+**Goal:** From a fresh install to *clearing a room of their own free will* in under 30s of input time. Wall-clock to starter chest: 90–110s. No menu first, no story dump, no login wall.
 
 ### Scene 1 — Cold Open (00:00 – 00:03)
 
 **INT. PLAYER'S PHONE — APP LAUNCH**
 
-- [ ] App icon tap.
-- [ ] Black screen for one frame, then a single soft pinprick of indigo light appears center-screen.
-- [ ] Light expands into the **Lucent** wordmark over 1.8 seconds, accompanied by a low sustained string drone (FMOD bus: `Menu_Bed_Low`).
-- [ ] At 0:02, the wordmark refracts into the subtitle: *Shards of the Shattered Sun.*
-- [ ] No "Tap to start." No splash logos. (Studio logo plays once on first-ever launch only, before the wordmark, capped at 2s and skippable on tap.)
+- [ ] App icon tap. Black for one frame; a pinprick of indigo light blooms center-screen.
+- [ ] Light expands into the **Lucent** wordmark over 1.8s with a low string drone (FMOD bus `Menu_Bed_Low`). At 0:02 the wordmark refracts into *Shards of the Shattered Sun.*
+- [ ] No "Tap to start," no splash logos. Studio logo plays once on first-ever launch only (capped 2s, skippable).
 
 **NARRATOR (V.O.) (line N-01):**
 > "Look. The light is yours to carry."
 
-- [ ] Line is delivered over the last 2.5 seconds of the splash. Lip-sync irrelevant (no character on screen).
-- [ ] No subtitle on screen during this line (it is the audio anchor; subtitle accessibility setting toggleable from later settings menu, default OFF for first launch to preserve cinematic).
-- [ ] Audio ducks the music bed –6 dB while the line plays.
+- [ ] Delivered over the last 2.5s of the splash. Music bed ducks –6 dB. No on-screen subtitle on first launch (accessibility toggle defaults OFF to preserve the cold-open).
 
 ### Scene 2 — Hard Cut to Play (00:03 – 00:09)
 
