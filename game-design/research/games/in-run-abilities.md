@@ -24,26 +24,26 @@ The most important category — every Archero-like ships 8–12 of these. They p
 
 | Ability | Game(s) | Effect |
 |---|---|---|
-| Front Arrow +1 | Archero, Archero 2 | Adds a second parallel projectile forward |
-| Side Arrows +1 | Archero | Fires two extra projectiles perpendicular (left + right) |
-| Rear Arrow +1 | Archero, Archero 2 | Adds a backward projectile |
-| Diagonal Arrows +1 | Archero, Archero 2 | Adds two forward-diagonal projectiles |
-| Multishot | Archero, Archero 2, Survivor.io | Fires a second volley of all projectiles (attack speed/frame cost) |
-| Piercing Shot / Wall-Piercing Arrow | Archero, Archero 2 | Projectiles pass through enemies (and obstacles in A2) |
-| Ricochet Arrow | Archero, Archero 2 | Projectiles bounce between monsters; 60% dmg per bounce |
-| Bouncy Walls / Bounce Arrow | Archero, Archero 2 | Projectiles bounce off walls instead of stopping |
-| Split Shot | Archero 2 | Forward projectile splits into 3 smaller (0.33x each) |
-| Charged Arrow | Archero 2 | Giant slow arrow (2x damage, 0.7x attack speed) |
-| Tracking Eye / Homing | Archero 2 | Projectiles track nearest enemy (-10% damage) |
-| Smart Targeting | Archero | Arrows auto-correct toward enemies near aim line |
-| Lightwing Arrow | Archero 2 | ~25% chance to deal 100% bonus damage on the shot |
-| Headshot | Archero | Small chance to instant-kill (random crit-like) |
-| Long-Range Power | Archero 2 | Projectiles gain up to +40% damage by travel distance |
-| Short-Range Strike | Archero 2 | +20% damage, +100% attack speed, but range cut to 7m |
-| Slow Projectile | Archero | Slows enemy projectiles (defensive read of category) |
-| Fiery Path | Archero 2 | Leaves a trail behind player (movement-as-projectile) |
-| Cloudfooted | Archero 2 | Periodic gusts knock back and damage enemies |
-| Whip / Garlic / Bible (orbit-as-projectile) | Vampire Survivors | Area attacks that count as weapon picks |
+| Front Arrow +1 | Archero, A2 | Second parallel forward projectile |
+| Side Arrows +1 | Archero | Two extra projectiles, left + right |
+| Rear Arrow +1 | Archero, A2 | Backward projectile |
+| Diagonal Arrows +1 | Archero, A2 | Two forward-diagonal projectiles |
+| Multishot | Archero, A2, Survivor.io | Second volley of all projectiles (AS cost) |
+| Piercing / Wall-Piercing | Archero, A2 | Pass through enemies (and obstacles in A2) |
+| Ricochet Arrow | Archero, A2 | Bounce between monsters; 60% per bounce |
+| Bouncy Walls / Bounce | Archero, A2 | Bounce off walls instead of stopping |
+| Split Shot | A2 | Forward shot splits into 3 (0.33x each) |
+| Charged Arrow | A2 | Giant slow shot (2x dmg, 0.7x AS) |
+| Tracking Eye / Homing | A2 | Projectiles track nearest (–10% dmg) |
+| Smart Targeting | Archero | Auto-correct toward nearby enemies |
+| Lightwing Arrow | A2 | ~25% chance to deal +100% dmg |
+| Headshot | Archero | Small chance to instakill |
+| Long-Range Power | A2 | +1–40% dmg by travel distance |
+| Short-Range Strike | A2 | +20% dmg, +100% AS, range cut to 7m |
+| Slow Projectile | Archero | Slows enemy projectiles |
+| Fiery Path | A2 | Trail behind player |
+| Cloudfooted | A2 | Periodic gusts knock back/damage |
+| Whip / Garlic / Bible | Vampire Survivors | Orbit-as-projectile area attacks |
 
 **Design notes:** shot-count modifiers should *multiply*, not add. Genre soft-counters Multishot stacking with an attack-speed or per-shot damage tax (Archero 2: Multishot costs "8 frames"; Front Arrow +1 costs –15% damage). Piercing and Ricochet are mutually exclusive in Archero 1 (Ricochet wins); Archero 2 lets them coexist — a widely-cited power-creep choice.
 
@@ -53,27 +53,27 @@ The "second sentence" of every projectile — DoTs, debuffs, and amplifiers.
 
 | Ability | Game(s) | Effect |
 |---|---|---|
-| Blaze / Burn | Archero, Archero 2 | Hits apply Burn DoT (~0.2x ATK per tick) |
-| Super Blaze | Archero 2 | Burn damage +150%; tick rate doubled |
-| Bolt / Lightning | Archero, Archero 2 | Chain lightning to 4 nearby (0.3x ATK) |
-| Super Bolt | Archero 2 | Chain to 8 targets; +50% lightning damage |
-| Venom / Poison | Archero, Archero 2 | Hits poison; ticks until enemy dies |
-| Super Venom | Archero 2 | Venom +200%, extra proc chance |
-| Freeze | Archero, Archero 2 | Hits freeze for 1.5s; deals 1x ATK |
-| Super Freeze | Archero 2 | Freeze damage 3x ATK; 2.1s duration |
-| Poisoned Touch | Archero | Melee/proximity poison aura |
-| Holy Touch | Archero | Hit enemies fire 2 holy projectiles outward |
+| Blaze / Burn | Archero, A2 | Burn DoT (~0.2x ATK/tick) |
+| Super Blaze | A2 | +150% Burn dmg, doubled tick rate |
+| Bolt / Lightning | Archero, A2 | Chain to 4 nearby (0.3x ATK) |
+| Super Bolt | A2 | Chain to 8; +50% lightning dmg |
+| Venom / Poison | Archero, A2 | Poison ticks until death |
+| Super Venom | A2 | Venom +200%, extra proc |
+| Freeze | Archero, A2 | 1.5s freeze, 1x ATK |
+| Super Freeze | A2 | Freeze 3x ATK, 2.1s |
+| Poisoned Touch | Archero | Proximity poison aura |
+| Holy Touch | Archero | Hit enemies fire 2 holy projectiles |
 | Dark Touch | Archero | Death-burst dark damage |
-| Corrosive Field | Archero 2 | Vulnerability zone, +35% damage taken in it |
-| Crit Master | Archero | +crit chance and crit damage |
-| Crit Plus / Crit Aura | Archero | Smaller crit chance scaling |
-| Vulnerability stacks | Hades (Doom debuff) | Reference: stacking debuff increases damage taken |
-| Bleed | (Hades, Slay the Spire reference) | DoT not gated by enemy armor |
-| Wound | Hades (Ares) | Stacking DoT applied on hit |
-| Weak | Hades (Aphrodite) | Target deals less damage; pairs with defense |
-| Charm | Hades (Aphrodite) | Enemy temporarily fights for you |
-| Mark / Hunter's Mark | Hades (Artemis ref) | Tagged enemy takes more damage |
-| True Damage | (Archero boss build ref) | Bypasses armor/resistance — see §2.9 |
+| Corrosive Field | A2 | Vulnerability zone, +35% dmg taken |
+| Crit Master | Archero | +crit chance + crit damage |
+| Crit Plus / Crit Aura | Archero | Smaller crit scaling |
+| Vulnerability stacks | Hades | Stacking debuff, +dmg taken |
+| Bleed | Hades/StS | DoT bypassing armor |
+| Wound | Hades (Ares) | Stacking on-hit DoT |
+| Weak | Hades (Aphrodite) | Target deals less dmg |
+| Charm | Hades (Aphrodite) | Enemy fights for you briefly |
+| Mark | Hades (Artemis) | Tagged enemy takes +dmg |
+| True Damage | Archero boss ref | Bypasses armor/resist (see §2.9) |
 
 Design pattern: each elemental status ships in a **base tier** (Common/Rare) and a **Super tier** (Epic) that scales it dramatically. This is the genre's primary justification for Epic rarity — Epics upgrade Commons you already own.
 
@@ -83,30 +83,26 @@ Design pattern: each elemental status ships in a **base tier** (Common/Rare) and
 |---|---|---|
 | HP Boost | Archero | +20% max HP |
 | HP Plus | Archero | +small flat HP |
-| Strength Blood | Archero 2 | +10% max HP |
-| Soul of Strength | Archero 2 | +40% max HP (Legendary) |
-| Heal / Restore HP | Archero, Archero 2 | One-time heal of random/% HP |
-| Fountain of Life | Archero 2 | +15% max HP and full heal |
-| Bloodthirst | Archero | Heal 1.5% current HP per kill |
-| Demon Recovery | Archero 2 | Chance to heal 5% max HP on kill |
-| Heart of Vitality | Archero 2 | +15% max HP, enhanced heart pickups |
-| Lucky Heart | Archero 2 | +3% max HP per heart pickup (cap 30%) |
-| Warrior's Heart | Archero 2 | +5% ATK per heart pickup (cap 50%) |
-| Extra Life / Revive | Archero, Archero 2 | One-time revive with full HP |
-| Angelic Shelter | Archero 2 | +15% max HP, 2s iframes after damage |
+| Strength Blood | A2 | +10% max HP |
+| Soul of Strength | A2 | +40% max HP (Leg.) |
+| Heal / Restore HP | Archero, A2 | One-time heal |
+| Fountain of Life | A2 | +15% max HP + full heal |
+| Bloodthirst | Archero | 1.5% HP heal per kill |
+| Demon Recovery | A2 | Chance to heal 5% on kill |
+| Heart of Vitality | A2 | +15% HP, better heart pickups |
+| Extra Life / Revive | Archero, A2 | One-time revive at full HP |
+| Angelic Shelter | A2 | +15% HP, 2s iframes after damage |
 | Invincibility Star | Archero | 2s shield every 10s |
-| Invincibility Potion | Archero 2 | 2s iframes on pickup |
-| Sacred Protection | Archero 2 | Blocks 1 hit per wave (Legendary) |
+| Invincibility Potion | A2 | 2s iframes on pickup |
+| Sacred Protection | A2 | Blocks 1 hit/wave (Leg.) |
 | Shield Guard | Archero | 2 orbiting shields block projectiles |
-| Bouncy Walls (defensive read) | Archero | Bouncing arrows also clear projectiles on collision |
-| Dodge Master | Archero | +20% dodge chance |
-| Wind Blessing | Archero 2 | +MS, smaller hitbox, dodge chance |
-| Lucky Cracker | Archero 2 | +Luck, +Dodge |
-| Wingman | Archero | Spirit absorbs enemy projectiles |
-| Fairy of the Wind | Archero 2 | +10% AS and MS |
-| Stand Strong | Archero 2 | Standing still stacks ATK and AS |
-| Perilous Recovery | Archero 2 | Below 30% HP slowly regen to 30% |
-| Saving Throw (reference) | DOOM Eternal rune | Fatal hit leaves 1 HP + time slow |
+| Dodge Master | Archero | +20% dodge |
+| Wind Blessing | A2 | +MS, smaller hitbox, dodge |
+| Lucky Cracker | A2 | +Luck, +Dodge |
+| Wingman | Archero | Spirit absorbs projectiles |
+| Fairy of the Wind | A2 | +10% AS and MS |
+| Perilous Recovery | A2 | <30% HP slowly regens to 30% |
+| Saving Throw (ref.) | DOOM Eternal | Fatal hit leaves 1 HP, time slow |
 
 ### 2.4 Movement Abilities
 
@@ -131,25 +127,18 @@ Lucent take: Archero-likes intentionally **limit hard mobility** because dodging
 
 | Ability | Game(s) | Effect |
 |---|---|---|
-| Bomb Sprite | Archero 2 | Companion, 0.4x ATK, 5 hits |
-| Flame Sprite | Archero 2 | Companion deals Blaze |
-| Lightning Sprite | Archero 2 | Companion deals Bolt |
-| Venom Sprite | Archero 2 | Companion deals Venom |
-| Ice Spike Sprite | Archero 2 | Companion deals Freeze |
-| Laser Sprite | Archero 2 | Companion fires beam (Epic) |
-| Sprite King | Archero 2 | Tracking beam companion (Legendary) |
-| Sprite Boost | Archero 2 | +40% sprite damage |
-| Sprite Frenzy | Archero 2 | +50% sprite damage, +AS |
-| Wingman | Archero | Spirit absorbs projectiles + attacks |
-| Shadow Clone | Archero | Spawn arrow-firing clone on enemy death |
-| Summon One-Eyed Bat | Archero | Additional bat spirit |
-| Spirit Multi-Shot | Archero | Sprite copies your Multishot |
-| Spirit Front Arrow | Archero | Sprite copies your Front Arrow |
-| Spirit Diagonal Arrow | Archero | Sprite copies your Diagonal Arrows |
-| Spirit Crit Boost | Archero | +Crit for sprite |
-| Spirit Attack Boost | Archero | +ATK for sprite |
-| Spirit Attack Speed Boost | Archero | +AS for sprite |
-| Pet (Mighty DOOM) | Mighty DOOM | Permanent secondary follower with proc |
+| Bomb Sprite | A2 | Companion, 0.4x ATK, 5 hits |
+| Flame/Lightning/Venom/Ice Sprite | A2 | Elemental companions apply status |
+| Laser Sprite | A2 | Beam companion (Epic) |
+| Sprite King | A2 | Tracking beam companion (Leg.) |
+| Sprite Boost | A2 | +40% sprite dmg |
+| Sprite Frenzy | A2 | +50% sprite dmg, +AS |
+| Wingman | Archero | Spirit absorbs + attacks |
+| Shadow Clone | Archero | Arrow-firing clone on kill |
+| Summon One-Eyed Bat | Archero | Extra bat spirit |
+| Spirit Multi-Shot / Front / Diagonal | Archero | Sprite mirrors player arrow mods |
+| Spirit Crit / ATK / AS Boost | Archero | Sprite stat scaling |
+| Pet (Mighty DOOM) | Mighty DOOM | Permanent secondary follower |
 
 Design note: summons in this genre mirror the player's stats, scaled down. Keeps balance one-axis.
 
@@ -159,20 +148,19 @@ Design note: summons in this genre mirror the player's stats, scaled down. Keeps
 |---|---|---|
 | Attack Boost (Major/Minor) | Archero | +ATK passive |
 | Attack Speed Aura | Archero | Pulsing AS bonus |
-| Crit Aura | Archero | +crit while in zone |
+| Crit Aura | Archero | +crit in zone |
 | HP Gain Aura | Archero | Regen pulse |
 | Speed Aura | Archero | +MS aura |
-| Slow Field | Archero 2 | Slows nearby enemies & projectiles |
-| Corrosive Field | Archero 2 | Vulnerability aura |
-| Vampiric Circle | Archero 2 | Orbit orbs heal 2% max HP on hit |
-| Garlic (reference) | Vampire Survivors | Damage aura |
-| Sandalwood / Holy Water | Vampire Survivors | Ground AoE pools |
-| Power Trio | Archero 2 | +15% ATK, +20% AS, +20% HP (Legendary triple-passive) |
-| Warrior's Soul | Archero 2 | +30% ATK (Legendary) |
-| Warrior's Breath | Archero 2 | +10% ATK (Common) |
-| Fairy's Breath | Archero 2 | +10% AS (Common) |
-| Giant's Strength | Archero 2 | +20% ATK, +25% HP, –MS |
-| ATK Increase | Archero 2 | +25% ATK (Epic) |
+| Slow Field | A2 | Slows nearby enemies + projectiles |
+| Corrosive Field | A2 | Vulnerability aura |
+| Vampiric Circle | A2 | Orb hits heal 2% max HP |
+| Garlic | VS | Damage aura |
+| Sandalwood / Holy Water | VS | Ground AoE pools |
+| Power Trio | A2 | +15% ATK / +20% AS / +20% HP (Leg.) |
+| Warrior's Soul | A2 | +30% ATK (Leg.) |
+| Warrior's / Fairy's Breath | A2 | +10% ATK / +10% AS (Common) |
+| Giant's Strength | A2 | +20% ATK, +25% HP, –MS |
+| ATK Increase | A2 | +25% ATK (Epic) |
 
 ### 2.7 Special Weapons / Orbs / Independent Damage
 
@@ -180,33 +168,30 @@ This category fires on its own clock, independent of the player's weapon. Vampir
 
 | Ability | Game(s) | Effect |
 |---|---|---|
-| Fire Circle | Archero, Archero 2 | 2 orbiting fire orbs apply Burn |
-| Bolt Circle | Archero, Archero 2 | 2 orbiting lightning orbs |
-| Poison Circle | Archero, Archero 2 | 2 orbiting venom orbs |
-| Ice Circle | Archero, Archero 2 | 2 orbiting frost orbs |
-| Vampiric Circle | Archero 2 | Orbiting healing orbs |
+| Fire / Bolt / Poison / Ice Circle | Archero, A2 | 2 orbiting elemental orbs apply status |
+| Vampiric Circle | A2 | Orbiting healing orbs |
 | Obsidian Circle | Archero | Dark damage orbiters |
-| Beam Circle | Archero 2 | 2 orbiting laser orbs (Epic) |
-| Super Circle | Archero 2 | 4 orbiting non-elemental orbs (Epic) |
-| Circle Web / Rotating Web | Archero 2 | Orbs form web; web hits deal damage |
-| Circle Boost | Archero 2 | +50% orb damage |
-| Energy Ring | Archero 2 | Charged ring up to 11 hits |
-| Energy Beam | Archero 2 | Charged beam, 4 hits at 0.7x |
-| Fire Sword / Ice Sword / Poison Sword / Bolt Sword | Archero | Orbiting elemental swords (single-element flavor) |
-| Frost / Bolt / Toxic / Blazing Star | Archero | Random falling elemental stars |
-| Frost / Bolt / Toxic / Blazing Meteor | Archero | Larger random falling meteors |
-| Super Meteor | Archero 2 | Meteor every 4s, 1.25x ATK (Legendary) |
-| Meteor Pursuit | Archero 2 | Attack-triggered meteor proc |
-| Chain Meteors | Archero 2 | Doubles meteor proc rate |
-| Demonslayer Meteor | Archero 2 | Meteor on kill |
-| Blaze / Bolt / Toxic / Frost Meteor Potion | Archero 2 | One-shot meteor with element |
-| Magic Strike / Strike Boost / Twin Strike | Archero 2 | Strikes inherit weapon element, +50% dmg, doubled count |
-| Blitz Strike | Archero 2 | 5 strikes per wave |
-| Instant Strike | Archero 2 | Strike every 1.5s |
-| Assault Strike | Archero 2 | Chance to strike on attack |
-| Pursuit Strike | Archero 2 | Strike on kill |
-| Riposte Strike | Archero 2 | 5 strikes when damaged |
-| Beam Strike | Archero 2 | Beam summons every 2.5s (Legendary, top tier) |
+| Beam Circle | A2 | 2 orbiting laser orbs (Epic) |
+| Super Circle | A2 | 4 orbiting non-elemental orbs (Epic) |
+| Circle Web / Rotating Web | A2 | Orbs form web; hits damage |
+| Circle Boost | A2 | +50% orb damage |
+| Energy Ring | A2 | Charged ring up to 11 hits |
+| Energy Beam | A2 | Charged beam, 4 hits at 0.7x |
+| Fire/Ice/Poison/Bolt Sword | Archero | Orbiting elemental swords |
+| Frost/Bolt/Toxic/Blazing Star | Archero | Random falling elemental stars |
+| Frost/Bolt/Toxic/Blazing Meteor | Archero | Larger random falling meteors |
+| Super Meteor | A2 | Meteor every 4s, 1.25x ATK (Leg.) |
+| Meteor Pursuit | A2 | Attack-triggered meteor |
+| Chain Meteors | A2 | Doubles meteor proc rate |
+| Demonslayer Meteor | A2 | Meteor on kill |
+| Meteor Potions (4 elements) | A2 | One-shot elemental meteor |
+| Magic / Strike Boost / Twin Strike | A2 | Strikes inherit element; +50% dmg; 2x count |
+| Blitz Strike | A2 | 5 strikes per wave |
+| Instant Strike | A2 | Strike every 1.5s |
+| Assault Strike | A2 | Chance to strike on attack |
+| Pursuit Strike | A2 | Strike on kill |
+| Riposte Strike | A2 | 5 strikes when damaged |
+| Beam Strike | A2 | Beam summons every 2.5s (Leg.) |
 | Whip / King Bible / Magic Wand / Lightning Ring | Vampire Survivors | Independent weapon picks |
 | Death Bomb / Death Nova / Chilling Blast | Archero | Enemy explodes on death |
 
@@ -216,29 +201,28 @@ Where build identity lives — conditional multipliers turn a stat-stick run int
 
 | Ability | Game(s) | Effect |
 |---|---|---|
-| Rage | Archero | More damage the lower your HP |
-| Perilous Fervor | Archero 2 | Below 50% HP: +30% ATK and AS |
-| Wounded Warrior | Archero 2 | After taking damage: +50% ATK for 5s |
-| Stand Strong | Archero 2 | Standing still stacks +ATK and +AS |
-| Demon Slayer | Archero 2 | +10% ATK per kill, max 50% |
-| Warrior's Heart | Archero 2 | +5% ATK per heart pickup, max 50% |
-| Lucky Heart | Archero 2 | +3% HP per heart pickup, max 30% |
-| Underworld Warrior | Archero 2 | Guarantees Demon offer after boss |
-| Boss Slayer | Archero 2 | +25% boss damage, full heal before boss |
-| Frenzy Potion | Archero 2 | +50% AS and high crit for 5s on pickup |
-| Long-Range Power | Archero 2 | +1–40% damage by projectile travel |
-| Grace | Archero | Heal more the lower your HP |
-| Flexible | Archero | Dodge more the lower your HP |
+| Rage | Archero | +dmg as HP drops |
+| Perilous Fervor | A2 | <50% HP: +30% ATK and AS |
+| Wounded Warrior | A2 | After damage: +50% ATK for 5s |
+| Stand Strong | A2 | Stand still stacks +ATK, +AS |
+| Demon Slayer | A2 | +10% ATK per kill, max 50% |
+| Warrior's Heart | A2 | +5% ATK per heart, cap 50% |
+| Lucky Heart | A2 | +3% HP per heart, cap 30% |
+| Underworld Warrior | A2 | Forces Demon offer post-boss |
+| Boss Slayer | A2 | +25% boss dmg, full heal pre-boss |
+| Frenzy Potion | A2 | +50% AS, high crit for 5s |
+| Long-Range Power | A2 | +1–40% dmg by travel |
+| Grace | Archero | More heal at low HP |
+| Flexible | Archero | More dodge at low HP |
 | Strong Heart | Archero | Heals restore more |
 | Smart | Archero | More coins/XP per kill |
-| Fury | Archero | +AS based on missing HP |
+| Fury | Archero | +AS by missing HP |
 | Headshot | Archero | RNG instakill |
-| Combo / Streak | Archero 2 (Oracle gear) | Continuous attacks build stacking damage |
-| Killstreak rewards | Mighty DOOM | Glory Kill chain refunds ammo / heals |
-| Killing Spree | Hades (Hermes) | Speed bonus while streaking |
-| Origination / "every Nth shot" | Hades (Daedalus) | Every Nth attack deals bonus / different effect |
-| Low HP = damage | (genre) | Cf. Rage, Perilous Fervor |
-| Full HP = damage | (Hades Aphrodite ref) | Inverse: rewards untouched runs |
+| Combo / Streak | A2 (Oracle) | Continuous attacks stack dmg |
+| Killstreak | Mighty DOOM | Glory chains refund ammo/heal |
+| Killing Spree | Hades (Hermes) | +MS while streaking |
+| "Every Nth shot" | Hades (Daedalus) | Periodic bonus shot |
+| Full HP = dmg | Hades (Aphro) | Rewards untouched runs |
 | Crit on full HP | (genre) | Static crit when uninjured |
 
 ### 2.9 Boss-Shredder / Single-Target Abilities
@@ -326,17 +310,15 @@ Archero 2 simplifies: roll a rarity *first* (weighted by hero level), then sampl
 
 ### 3.3 Pick-3-of-N: How the Random Pool Works
 
-The standard pattern across the genre:
-
-| Element | Common implementation |
+| Element | Standard implementation |
 |---|---|
-| **Pool size offered** | 3 abilities (sometimes 2 with a re-roll button) |
-| **Sampling** | Without replacement within the level-up; with replacement across level-ups (you can be offered the same Common twice on different levels) |
-| **Stacking rule** | Most picks are stackable up to a cap (Front Arrow can be picked 2–3 times) |
-| **Rarity weighting** | Pre-roll the rarity (e.g. 70/20/8/2 for Common/Rare/Epic/Legendary at level 1, sliding to ~30/30/30/10 at level 20), THEN sample within rarity |
-| **Re-roll** | Some games (Vampire Survivors, Survivor.io) sell a re-roll currency; Archero 2 grants free re-rolls via runes |
-| **Lock / Banish** | Slay the Spire and modern roguelikes let you remove an option from future pools |
-| **Smart filters** | Archero 2 won't offer a Common at high hero level if the player has all Commons; it upgrades the offer to Rare |
+| **Pool size** | 3 abilities (sometimes 2 + re-roll button) |
+| **Sampling** | Without replacement within level-up; with replacement across level-ups |
+| **Stacking** | Most picks stackable up to a cap (Front Arrow 2–3x) |
+| **Rarity weighting** | Pre-roll rarity (e.g. 70/20/8/2 at lvl 1, ~30/30/30/10 at lvl 20), then sample within rarity |
+| **Re-roll** | Vampire Survivors and Survivor.io sell rerolls; Archero 2 grants them via runes |
+| **Lock / Banish** | Slay the Spire removes options from future pools |
+| **Smart filters** | Archero 2 upgrades a Common offer to Rare if the player owns all Commons |
 
 "3" is the number: 2 feels stingy, 4 paralyses on a mobile UI. Lucent should ship **3 picks with a paid re-roll**.
 
@@ -348,18 +330,18 @@ Most-cited synergies in the genre:
 
 | Build | Core Pieces | Reason it works |
 |---|---|---|
-| **Bullet Hell** | Multishot + Front Arrow +1 + Side Arrows +1 + Diagonal Arrows | All arrow modifiers multiply: a 1-shot becomes 10+ projectiles per click |
-| **Ricochet Storm** | Ricochet + Multishot + Blaze + Poisoned Touch | Each bounce reapplies status to a new target — DoTs blanket the room |
-| **Bouncing Bullets** | Piercing Shot + Bouncy Walls + Side Arrows + Multishot | Arrows pass through enemies AND bounce off walls = corridor wipe |
-| **Combo Crit** | Crit Master + Multishot + Combo gear + Stand Strong | Stacking crit chance + continuous AS multiplier (Archero 2 Combo build) |
-| **Orbit Bot** | All 4 Circles + Circle Boost + Vampiric Circle + Beam Circle | Player is a damage aura; just needs to walk |
-| **Sprite Army** | All 4 Sprites + Sprite Boost + Sprite Frenzy + Sprite King | Player kites, companions kill |
-| **Glass Cannon** | Rage + Perilous Fervor + Swift Arrow + Wounded Warrior | Sit at 30% HP, deal +120% damage |
-| **Beam Channel** | Energy Beam + Energy Ring + Charged Arrow + Tracking Eye | Sustained DPS optimized for bosses |
-| **Meteor Rain** | Super Meteor + Chain Meteors + Meteor Pursuit + Demonslayer Meteor | Independent damage source, hands-free clearing |
-| **Strike Spam** | Blitz Strike + Instant Strike + Twin Strike + Magic Strike | Strikes inherit elements; constant procs |
+| **Bullet Hell** | Multishot + Front Arrow + Side + Diagonal | Arrow modifiers multiply: 1 shot → 10+ projectiles |
+| **Ricochet Storm** | Ricochet + Multishot + Blaze + Poison Touch | Each bounce reapplies status; DoTs blanket the room |
+| **Bouncing Bullets** | Piercing + Bouncy Walls + Side + Multishot | Pass-through + wall bounce = corridor wipe |
+| **Combo Crit** | Crit Master + Multishot + Combo gear + Stand Strong | Stacking crit + AS multiplier |
+| **Orbit Bot** | All 4 Circles + Circle Boost + Vampiric + Beam Circle | Player is a damage aura |
+| **Sprite Army** | All 4 Sprites + Sprite Boost + Frenzy + King | Companions out-DPS player |
+| **Glass Cannon** | Rage + Perilous Fervor + Swift + Wounded Warrior | 30% HP = +120% damage |
+| **Beam Channel** | Energy Beam + Ring + Charged Arrow + Tracking Eye | Sustained DPS for bosses |
+| **Meteor Rain** | Super Meteor + Chain + Pursuit + Demonslayer | Independent damage, hands-free |
+| **Strike Spam** | Blitz + Instant + Twin + Magic Strike | Strikes inherit elements; constant procs |
 
-**Source consensus:** the top-tier "always pick" abilities are Revive, Multishot, Tracking Eye, Soul of Swiftness, Front Arrow, and Power Trio. These are deliberately strong because they enable the largest number of build branches.
+**Consensus auto-picks:** Revive, Multishot, Tracking Eye, Soul of Swiftness, Front Arrow, Power Trio. Strong because each enables many build branches.
 
 ---
 
@@ -367,29 +349,29 @@ Most-cited synergies in the genre:
 
 | Anti-Synergy | Why it's bad |
 |---|---|
-| **Piercing + Ricochet** (Archero 1) | Ricochet wins; Piercing wasted |
-| **Holy Touch + Piercing / Bouncy Walls** | Holy procs require a "hit-stop" the pierce/bounce skips |
-| **Multishot + Front Arrow +1 (Archero 2)** | Each Front Arrow taxes Main weapon damage 15%; stacking taxes Multishot |
-| **Tracking Eye + Long-Range Power** | Tracking arrows zig-zag short; never reach max travel for bonus |
-| **Bouncy Walls + Smart Targeting** | Smart re-aims toward enemies; bounces miss original wall geometry |
-| **Stand Strong + Cloudfooted / Wind Blessing** | Stand-still build conflicts with mobility procs |
-| **Soul of Strength + Rage / Perilous Fervor** | More max HP makes low-HP triggers harder to reach |
-| **Frenzy Potion + Charged Arrow** | Charged arrow has –AS; frenzy gives +AS that's wasted |
-| **Slow Field + Combo gear** | Combo requires constant attacking; slowed enemies means fewer hits per second |
-| **Swift Arrow (–20% dmg) + Front Arrow (–15% dmg) + Tracking Eye (–10% dmg)** | Damage taxes stack multiplicatively to ~–40% |
-| **Multishot + Rotating Web** | Web procs ignore Multishot proc count; one Web hit per shot |
+| **Piercing + Ricochet** (A1) | Ricochet wins; Piercing wasted |
+| **Holy Touch + Piercing/Bouncy** | Holy needs hit-stop the pierce/bounce skips |
+| **Multishot + Front Arrow stacks (A2)** | Each Front Arrow taxes –15%; stacks against Multishot |
+| **Tracking Eye + Long-Range Power** | Tracking arrows zig-zag short; never hit max travel |
+| **Bouncy Walls + Smart Targeting** | Smart re-aims; bounces miss intended wall geometry |
+| **Stand Strong + Cloudfooted/Wind** | Stand-still build vs. mobility procs |
+| **Soul of Strength + Rage/Perilous** | More HP = low-HP triggers harder to reach |
+| **Frenzy Potion + Charged Arrow** | Charged is –AS; Frenzy gives +AS, wasted |
+| **Slow Field + Combo gear** | Slow enemies = fewer hits per second |
+| **Swift + Front + Tracking** | Damage taxes stack multiplicatively to ~–40% |
+| **Multishot + Rotating Web** | Web ignores Multishot count; 1 web/shot |
 
-The genre's deliberate anti-synergies exist so that **the third pick isn't always obvious**. A skilled player should be punished for taking +shots without considering the per-shot taxes.
+Deliberate anti-synergies exist so the third pick isn't always obvious — a skilled player must weigh per-shot taxes.
 
 ---
 
-## 6. Cross-Genre Lessons (Hades, Vampire Survivors, Slay the Spire)
+## 6. Cross-Genre Lessons
 
-- **Hades** rolls "Boon rarity" before showing the offer (same trick Archero 2 uses) and reveals it visually with a glow tier. Steal this UX.
-- **Hades' Duo Boons** require having Boons from two specific gods. They are vanishingly rare but become a player's whole identity. Lucent should ship 6–10 of these.
-- **Vampire Survivors' evolution** (weapon at L5 + matching passive → evolved weapon) is a great mid-run goal. Survivor.io and Archero 2 (Super-tier elementals) clone the pattern.
-- **Slay the Spire** offers 3 cards from a deeply-weighted pool, with a Singing Bowl item that lets you skip for +max HP. Including a "skip = small permanent reward" softens runs where all 3 picks are bad.
-- **Mighty DOOM's Slayer-specific perks** show how cosmetic-character identity can be wedded to in-run picks. Lucent should consider hero-conditional Legendary picks.
+- **Hades** rolls Boon rarity before showing the offer (Archero 2 copies this) and reveals it with a glow tier — steal this UX.
+- **Hades Duo Boons** require Boons from two specific gods. Vanishingly rare but become identity. Ship 6–10.
+- **Vampire Survivors evolution** (weapon L5 + matching passive → evolved weapon) is a great mid-run goal. Survivor.io and Archero 2 (Super-tier elementals) clone the pattern.
+- **Slay the Spire** offers 3 cards plus a Singing Bowl item that lets you skip for +max HP — a "skip = small permanent reward" softens bad-offer runs.
+- **Mighty DOOM Slayer perks** show character identity married to in-run picks. Consider hero-conditional Legendaries.
 
 ---
 
@@ -397,7 +379,7 @@ The genre's deliberate anti-synergies exist so that **the third pick isn't alway
 
 ### 7.1 Total Ability Count
 
-Target **75 abilities at launch**, with room to add 5–10 per major update. This matches Archero 2's pool and is enough that no two runs feel identical, but small enough that a player can learn the full pool in ~10 hours.
+Target **75 abilities at launch**, +5–10 per major update. Matches Archero 2; enough that no two runs feel identical, small enough to learn in ~10 hours.
 
 ### 7.2 Recommended Rarity Distribution
 
@@ -418,7 +400,7 @@ Target **75 abilities at launch**, with room to add 5–10 per major update. Thi
 | 13+ | 15% | 30% | 35% | 20% |
 | Angel / Devil offer | 0% | 20% | 40% | 40% |
 
-Boss-room Angel and HP-cost Devil are how we deliver Legendaries reliably without level grinding.
+Boss-room Angel + HP-cost Devil deliver Legendaries reliably without level grinding.
 
 ### 7.4 Pool Distribution by Category
 
@@ -435,9 +417,9 @@ Boss-room Angel and HP-cost Devil are how we deliver Legendaries reliably withou
 | Boss & utility | 4 | Boss Slayer, Lucky Band-Aid, etc. |
 | **Total** | **75** | |
 
-### 7.5 Six Build Archetypes Lucent Must Support
+### 7.5 Build Archetypes to Support
 
-These are the builds players will recognize from other games and seek out — every one must be reachable from any starting hero with average luck:
+Recognized from other games and sought out; each must be reachable from any starting hero with average luck:
 
 1. **Bullet Hell Archer** — Stack projectile-count picks. Identity: every shot is a fan of 10+ arrows.
 2. **Ricochet DoT** — Bouncing arrows + Burn/Poison. Identity: full-room damage from a single shot.
@@ -448,24 +430,24 @@ These are the builds players will recognize from other games and seek out — ev
 7. **Meteor Rain** — Super Meteor + Chain Meteors + Demonslayer Meteor. Identity: hands-free clearing.
 8. **Combo Brawler** — Stand Strong + AS picks + Combo passive. Identity: don't move, attack speed maxes out.
 
-Each archetype's "core 3 abilities" should appear at roughly the right rarity to be reachable by level 10–12 with normal RNG.
+Each archetype's "core 3 abilities" should appear at the right rarities to be reachable by level 10–12 with normal RNG.
 
 ### 7.6 Anti-Synergy Discipline
 
-Ship at least these intentional anti-synergies on day one — they make picks feel like decisions, not collectibles:
+Ship these intentional anti-synergies day one so picks feel like decisions, not collectibles:
 
-- Tax every projectile-modifier with a small damage debuff (–10 to –15% per pick) so stacking has cost.
-- Make Piercing and Ricochet mutually exclusive (or strongly diminishing). Both feel like the same fantasy.
-- Sit any "low HP" synergy in the same pool as +max HP options so the player must commit.
-- Lock Combo-gear from Stand Strong (or impose a movement-attack tradeoff).
+- Tax every projectile-modifier with –10 to –15% per pick so stacking has cost.
+- Piercing and Ricochet mutually exclusive (or strongly diminishing) — same fantasy.
+- "Low HP" synergies share offers with +max HP options so the player must commit.
+- Combo-scaling vs. Stand Strong: impose a movement/attack tradeoff.
 
-### 7.7 Pick UX Recommendations
+### 7.7 Pick UX
 
-- Show **3 picks** with rarity color glow (white/blue/purple/gold).
-- Always allow **1 free re-roll** in the first 3 levels (training), and offer paid re-rolls via a gem currency thereafter.
-- Allow **skip → small heal or coin** so the player isn't forced into a bad build.
-- After Boss kills, offer a **forced rarity-Epic pick of 3** (Angel-style).
-- After taking 0 damage on a boss, offer a **Devil pick** — 3 Legendaries at HP cost. This is the genre's iconic "skill rewards loot" moment.
+- 3 picks with rarity glow (white/blue/purple/gold).
+- 1 free re-roll for the first 3 levels (training); paid via gems thereafter.
+- Skip → small heal/coin so a bad offer isn't forced.
+- Boss kill → forced Epic-pick of 3 (Angel).
+- 0-damage boss → Devil pick: 3 Legendaries at HP cost.
 
 ---
 
