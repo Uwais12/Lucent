@@ -38,7 +38,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Flutters in a slow loop above the hero's left shoulder. Pulses brighter when the hero is at full HP.
 - **Passive (while equipped):** +6% pickup radius. +1 starting Sigil Dust per run.
 - **Active (every 22s):** Releases a **dust pulse** in a 4m radius — every enemy hit takes 80% ATK damage and is **revealed** (highlights through walls for 6s).
-- **Cooldown:** 22s.
 
 ### Per-rarity stat curve (passive ATK boost added on top of utility)
 
@@ -74,7 +73,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Trots on the ground beside the hero, occasionally pouncing at corpses.
 - **Passive:** +5% attack speed. Hero's first hit on a fresh enemy chains a small lightning arc to one nearby foe.
 - **Active (every 18s):** **Sparkpounce.** Leaps at the nearest enemy, dealing 150% ATK as lightning and stunning for 0.6s.
-- **Cooldown:** 18s.
 
 ### Per-rarity stat curve
 
@@ -110,7 +108,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Hovers on a small disc of moss behind the hero, drifting in a lazy arc.
 - **Passive:** +8% max HP. Out-of-combat regen +1% max HP/sec.
 - **Active (every 25s):** **Greenward.** Plants a 4m radius healing puddle that heals 6% max HP per second to anyone standing in it for up to 4s.
-- **Cooldown:** 25s.
 
 ### Per-rarity stat curve
 
@@ -146,7 +143,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Orbits the hero at 2m, leaving a trail of color shards.
 - **Passive:** +1 starting Ability Reroll per run. +8% crit damage.
 - **Active (every 24s):** **Refraction Burst.** Splits the hero's next 3 projectiles into 5-projectile fans (multishot +2 for 4 seconds, or 3 shots, whichever ends first).
-- **Cooldown:** 24s.
 
 ### Per-rarity stat curve
 
@@ -182,7 +178,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Phases in and out at the hero's flank, occasionally vanishing entirely for 2–3s.
 - **Passive:** +4% lifesteal. On-kill heal +0.4% max HP.
 - **Active (every 20s):** **Soulbite.** Marks the strongest enemy on screen; the next 5 hits on the marked target heal the hero for 2% max HP each.
-- **Cooldown:** 20s.
 
 ### Per-rarity stat curve
 
@@ -218,7 +213,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Waddles on the ground beside the hero, leaving tiny frosted footprints.
 - **Passive:** +6% damage to frozen/slowed enemies. Hero hits apply **Chillstack** (slows by 4% per stack, max 5).
 - **Active (every 22s):** **Frostshrug.** AoE blast 4m radius, deals 130% ATK and freezes affected enemies for 1.2s.
-- **Cooldown:** 22s.
 
 ### Per-rarity stat curve
 
@@ -254,7 +248,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Floats at hero's right shoulder, head rotating to track threats.
 - **Passive:** +12% damage to elites and bosses. Reveals room treasure chests when entering a new room.
 - **Active (every 26s):** **Eyestrike.** Channels a 0.8s beam onto the highest-HP target, dealing 350% ATK and **piercing armor** (ignores 30% of target's defense for 8s).
-- **Cooldown:** 26s.
 
 ### Per-rarity stat curve
 
@@ -290,7 +283,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Rides on the hero's shoulder; occasionally drops to floor to spin a small web at the hero's feet.
 - **Passive:** +10% burn damage. Hero attacks have a 5% chance to **ignite** for 80% ATK over 3s.
 - **Active (every 20s):** **Forgeweb.** Spins a 3m web on the ground; enemies stepping in are slowed by 40% and take 60% ATK/s as burn for 5s.
-- **Cooldown:** 20s.
 
 ### Per-rarity stat curve
 
@@ -326,7 +318,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Swims in slow loops around the hero, leaving a faint wake of golden water.
 - **Passive:** +1 starting Sigil Dust per run. +10% to gold gained from rooms.
 - **Active (every 24s):** **Tidesummon.** Summons 3 spectral koi that swim outward 6m, each dealing 90% ATK to the first enemy hit and applying **Blessed** (next ability pickup is upgraded one rarity tier; consumed on use, lasts 2 rooms).
-- **Cooldown:** 24s.
 
 ### Per-rarity stat curve
 
@@ -362,7 +353,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Trots a few meters ahead of the hero, antlers shedding aurora dust where it walks.
 - **Passive:** +8% all damage. **Resonance:** at the start of every room, the hero gains a buff matching their build's currently-strongest archetype (one of: +10% multishot damage, +10% burn damage, +10% lightning damage, +10% crit damage, +10% summon damage). Auto-detected from in-run ability picks.
 - **Active (every 25s):** **Antlerfall.** 3 light-shards fall from above on a 5m radius, each dealing 250% ATK and stunning for 0.4s.
-- **Cooldown:** 25s.
 
 ### Per-rarity stat curve
 
@@ -398,7 +388,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Flies in a wide circle 4m around the hero. Caws on cooldown ready.
 - **Passive:** +12% damage to Dim-corrupted enemies (the standard enemy archetype across all 7 realms — i.e., **most** of the roster). +6% move speed.
 - **Active (every 30s):** **Truename.** The raven calls out and a 6m radius shockwave **strips one buff** from all enemies, deals 300% ATK, and inflicts **Vulnerable** (+25% damage taken for 6s).
-- **Cooldown:** 30s.
 
 ### Per-rarity stat curve
 
@@ -434,7 +423,6 @@ Per-rarity power weight (at level 80, 6-star, before ascension multipliers):
 - **Visual:** Floats above the hero's head in a slow halo. The hero glows brighter while it is equipped. In dark rooms the screen edges lift one notch.
 - **Passive:** +10% all damage. **Sunbearer:** the hero starts every run with **1 free Legendary ability pre-equipped**, chosen from a pool of 6 build-defining Legendaries (multishot, ricochet, fire trail, frostbind, lifesteal aura, summon ally). Pool weighted to match strongest archetype detected on prior runs.
 - **Active (every 35s):** **Suncall.** Channels for 1s, then a beam of light descends on the boss/strongest enemy for 800% ATK, dispels all enemy buffs in 8m, and grants the hero **invulnerability for 1.5s**.
-- **Cooldown:** 35s.
 
 ### Per-rarity stat curve
 
@@ -521,113 +509,42 @@ How well each Spirit pairs with each of the 8 hero archetypes from `design/03-wo
 | Dimcaller Raven | **A** | B | **A** | B | B | B | **S** | **A** |
 | Solchild | **A** | **A** | **A** | **A** | **A** | **A** | **A** | **A** |
 
-**Non-redundancy check** (no Spirit is a strict upgrade of another):
-
-- **Glimwing vs Prismfox** — Glimwing emphasizes pickup utility + sustained reveal; Prismfox emphasizes burst multishot + reroll economy. Different verbs.
-- **Spinekitten vs Wraithpup** — Spinekitten is offensive/stun; Wraithpup is sustain/finisher. No overlap.
-- **Mosslet vs Frost Yeti-cub** — Mosslet is passive sustain; Yeti-cub is active CC + slowed-target damage.
-- **Hollow Owl vs Aurorhart** — Hollow Owl is single-target boss specialist; Aurorhart is generalist build-amplifier.
-- **Aurorhart vs Solchild** — Aurorhart **scales through the run** (resonance stacks over rooms); Solchild **front-loads** the run (free Legendary in room 1). Different power curves, similar total AUC.
-- **Dimcaller Raven vs Hollow Owl** — Raven debuffs/AoE-shockwaves; Owl burst-pierces a single target. Different priority targets.
-- **Sunkin Carp vs Glimwing** — Both economy-flavored, but Carp scales in offer-quality (run-shaping); Glimwing scales in pickup/Sigil Dust (long-term meta currency).
-
-Every Spirit has at least one **S** or **A** column it owns. No Spirit is dominated row-wise.
+**Non-redundancy**: every Spirit has at least one **S** or **A** column it owns, and no row is dominated by another. Adjacent-flavor pairs are differentiated by *verb*, not magnitude — Glimwing (pickup utility) vs Prismfox (burst multishot); Mosslet (passive sustain) vs Frost Yeti-cub (active CC); Hollow Owl (single-target nuke) vs Dimcaller Raven (AoE debuff); **Aurorhart scales through the run** (resonance stacks per room) while **Solchild front-loads** it (free Legendary in room 1) — different power curves, similar AUC.
 
 ---
 
 # Balance Checks
 
-### 1. Power budget — Spirits sum to ~5% of endgame total power
+### 1. Power budget — Spirits sum to ~5% at endgame
 
-Per `04-progression-and-economy.md` §2, Spirits hold a **5% slot** of the 100% endgame power budget. We verify by walking a maxed-out endgame loadout (player 1 year in, hero level 80, full Mythic gear, full Inscription grid, Sigils equipped):
+A maxed Legendary Spirit at L80 6★ provides ~+12% damage (passive) and a triggered active firing ~12× per 5-min run. Passive contributes ~2–3% of total combat power; active contributes ~3–4%. Sum: **~5%**, matching the §2 budget. Median across rarities equipped: Common 3%, Rare 4%, Epic 4.5%, Legendary 5%, Mythic 6%. The 5% target is preserved at the **median**, with Mythic occupying its expected ceiling.
 
-| Source | Share | Source of stat |
-|---|---|---|
-| Hero level + Mastery | 20% | passive HP/ATK |
-| Inscription (talents) | 20% | flat % stacks |
-| Forge (gear + rarity) | 35% | the big lever |
-| Resonance (set bonuses) | 12% | 2/4/6-piece bonuses |
-| Sigils (runes) | 8% | flat + enchants |
-| **Spirits (this doc)** | **5%** | **passive + active** |
-| Total | **100%** | |
+### 2. No Spirit active outclasses a Legendary in-run ability
 
-**Spirit contribution math**: a maxed Legendary Spirit at L80 6★ provides roughly +12% damage (passive) + the equivalent of ~one extra Epic in-run ability worth of contribution (active). Across a 5-min run, the active fires ~12 times, contributing ~3–4% of total run damage; the passive contributes ~2–3%. Sum: **~5% of total combat power**. A Mythic Solchild contributes ~6%, a Common Glimwing ~3% — averages out to 5% at the median equipped Spirit.
+Reference: 15 Legendary in-run abilities at launch (per `05-launch-scope.md`), typically granting permanent run-wide effects like *"+30% damage for the run"* or *"+2 projectiles permanent."* Spirit actives are **time-windowed** equivalents at lower magnitude. Spot checks:
 
-Verified: **Spirits as a layer occupy 5% of the power budget**, matching the design pillar of "no single layer dominates."
+- Mosslet's Greenward (8%/s for 4s every 25s) < Legendary Holy Aura (10%/s permanent).
+- Prismfox's burst (+2 projectiles for 4s) < Legendary Multishot (+2 permanent).
+- Wraithpup's Soulbite (15% heal/cast) < Legendary Lifesteal Aura (8% lifesteal permanent).
+- Hollow Owl's Eyestrike (820% ATK, 26s CD) ≈ one cast of a Legendary nuke; far less DPS over time than a sustained Legendary Energy Beam.
+- **Solchild's Suncall** (1600% ATK + invuln, 35s CD) is the strongest single active but trails a sustained Legendary Energy Beam in cumulative damage over the same 35s window. Mythic-gating + anniversary-only acquisition justifies the ceiling.
 
-### 2. No Spirit active is more impactful than a Legendary in-run ability
+Verdict: Spirits **augment** in-run builds; they never **substitute** for Legendary picks.
 
-Reference: at launch we ship **15 Legendary in-run abilities** (per `05-launch-scope.md`). A Legendary ability typically grants something like *"+30% damage to all attacks for the run"* or *"each attack splits into 3 projectiles, costing -20% damage."*
+### 3. ≥3 free-path Spirits remain endgame-competitive
 
-| Spirit Active | Compared to a Legendary ability | Verdict |
-|---|---|---|
-| Glimwing — pulse 280% ATK + reveal | < single-cast of a Legendary "Energy Beam"-tier ability | OK |
-| Spinekitten — Sparkpounce 530% ATK + stun | ≈ rare-tier ability, fires every 18s | OK |
-| Mosslet — Greenward heal 8%/s for 4s | < Legendary "Holy Aura" (10%/s, permanent) | OK |
-| Prismfox — multishot +2 for 4s | < Legendary "Multishot" (+2 permanent) | OK |
-| Wraithpup — 5 hits heal 3% each = 15% total | < Legendary "Lifesteal Aura" (8% lifesteal permanent) | OK |
-| Frost Yeti-cub — 510% ATK + freeze 1.2s | ≈ Epic-tier ability, fires every 22s | OK |
-| Hollow Owl — Eyestrike 820% ATK + armor pierce | Strong single-target nuke; fires every 26s. < Legendary "Energy Beam" channeled DPS | OK |
-| Ember Spider — Forgeweb 160% ATK/s × 5s + slow | Comparable to Epic "Lava Field"; less than Legendary "Inferno" | OK |
-| Sunkin Carp — 3 koi shots + Blessed upgrade | Run-shaping, not damage-shaping. Not directly comparable; gated to 1 use/24s | OK |
-| Aurorhart — Antlerfall 610% × 3 shards | Strong AoE burst. Fires every 25s. Roughly equal to a Rare in-run ability cast | OK |
-| Dimcaller Raven — Truename 720% ATK + Vuln 25% | Damage debuff is potent, but Vuln only 6s/30s = 20% uptime → effective +5% damage during fight | OK |
-| Solchild — Suncall 1600% ATK + invuln 1.5s | The standout. Fires every 35s. **Less raw damage** than a Legendary "Energy Beam" sustained over the same 35s, but combined with the invuln + free-Legendary passive, it's the strongest. Justified by Mythic gating + anniversary-only. | OK at Mythic |
+Free-path Spirits (Common + Rare): Glimwing, Spinekitten, Mosslet, Prismfox, Wraithpup, Frost Yeti-cub. Of these, **four are endgame-competitive in at least one meta build at 6★**:
 
-**Verdict: no Spirit active is a strict replacement for a Legendary in-run ability.** Spirits are *augmenters*, not *substitutes*.
+- **Spinekitten** — Stormpelt's lightning stack is a Spinekind build keystone.
+- **Mosslet** — Eldermoss's persistent Greenward is a guild-boss MVP for Wardlight/Wraithsworn sustain.
+- **Frost Yeti-cub** — Avalanche Calf is the cheapest freeze-stack source, required for Frostshard's signature build.
+- **Glimwing** — Wakemoth's Lucent Trail scales hard in Tower/Survival modes.
 
-### 3. At least 3 free-path Spirits remain endgame-competitive
+Exceeds the 3-minimum design target. No archetype except Sunkin Heir requires a gacha Spirit for its signature build — and Sunkin Heir's signature Spirit (Sunkin Carp) is the **featured Epic on the launch banner**, reachable in ~10 pulls via soft pity. F2P-accessible across all 8 archetypes.
 
-The free-path Spirits are: **Glimwing, Spinekitten, Mosslet, Prismfox, Wraithpup, Frost Yeti-cub** (all Common + Rare, unlocked via tutorial/account-level/chapter-completion/weekly missions).
+### 4. Active cooldown sanity
 
-**Endgame-competitive criteria**: the Spirit appears in at least one **S** or **A** column in the synergy table at full ascension, can sustain a meta-build at endgame, and provides ≥ 80% of the power of the Legendary tier when fully maxed.
-
-| Free-path Spirit | Best fit | Endgame competitive? |
-|---|---|---|
-| Glimwing | Dawnbow, Prismborn — pickup/economy build | **YES** — 6★ Wakemoth's Lucent Trail buff scales with run length, very strong in Tower/Survival modes. |
-| Spinekitten | Spinekind — lightning chain core | **YES** — 6★ Stormpelt's lightning damage stack is a build keystone for Spinekind. |
-| Mosslet | Wardlight tank, Wraithsworn sustain | **YES** — 6★ Eldermoss's persistent Greenward + damage buff is a guild boss MVP item. |
-| Prismfox | Prismborn — multishot | Approaching meta but **Aurorhart is better at +9★** — Prismfox remains the *F2P* answer. |
-| Wraithpup | Wraithsworn, Embercaller | Mid-tier; competitive but not signature. |
-| Frost Yeti-cub | Frostshard — freeze | **YES** — Frostshard's core build *requires* slow/freeze stacking; Yeti-cub is the cheapest source. |
-
-**Verdict: 4 free-path Spirits (Glimwing, Spinekitten, Mosslet, Frost Yeti-cub) remain endgame-competitive in at least one meta build.** Exceeds the 3-minimum design target. F2P players are not paywalled from any of the 8 archetypes.
-
-### 4. Cross-check — no archetype is paywalled
-
-For each of the 8 hero archetypes, at least one **A**-or-better Spirit is on a free-path:
-
-| Archetype | Best free-path Spirit | Score |
-|---|---|---|
-| Dawnbow | Glimwing, Spinekitten, Prismfox | A |
-| Wardlight | Mosslet, Frost Yeti-cub | S / A |
-| Spinekind | Spinekitten | S |
-| Embercaller | Wraithpup | A |
-| Frostshard | Frost Yeti-cub | S |
-| Prismborn | Prismfox, Glimwing | S / A |
-| Wraithsworn | Mosslet, Wraithpup | A / S |
-| Sunkin Heir | (gacha-leaning — best F2P is Glimwing/Mosslet at B) | B |
-
-**One soft warning**: Sunkin Heir is the archetype most reliant on gacha Spirits (Sunkin Carp, Dimcaller Raven). Mitigation: Sunkin Carp is featured on the launch banner and is the easiest Epic Spirit to obtain via 10-pull soft pity. Acceptable but worth tracking in soft launch metrics.
-
-### 5. Active cooldown sanity
-
-| Spirit | CD | Active per 5-min run | Notes |
-|---|---|---|---|
-| Glimwing | 22s | ~13 fires | OK |
-| Spinekitten | 18s | ~16 fires | OK |
-| Mosslet | 25s | ~12 fires | OK |
-| Prismfox | 24s | ~12 fires | OK |
-| Wraithpup | 20s | ~15 fires | OK |
-| Frost Yeti-cub | 22s | ~13 fires | OK |
-| Hollow Owl | 26s | ~11 fires | Boss-specialist; slightly slower CD justified |
-| Ember Spider | 20s | ~15 fires | OK |
-| Sunkin Carp | 24s | ~12 fires | OK |
-| Aurorhart | 25s | ~12 fires | OK |
-| Dimcaller Raven | 30s | ~10 fires | Strong debuff; slower CD justified |
-| Solchild | 35s | ~8 fires | Highest single-cast impact; slowest CD justified |
-
-Cooldown range **18–35s** keeps active triggers as moments of agency without flooding the screen (every Spirit fires 8–16 times per 5-min run). Aligns with `00-design-pillars.md` Pillar 8 — readability stays intact.
+Cooldown range across the 12 Spirits: **18–35s**. Per 5-min run, every Spirit fires **8–16 times** — enough to feel agentic, not enough to flood the portrait-scale screen (preserves Pillar 8 readability). Slower CDs (26–35s) are reserved for the highest-impact actives (Hollow Owl, Dimcaller Raven, Solchild).
 
 ---
 

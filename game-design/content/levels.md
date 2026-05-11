@@ -304,7 +304,7 @@ All multipliers are relative to **Chapter 1 baseline = 1.00×**. Multipliers app
 | 6 — Hollow Sky | 4.55× | 3.40× | 6.8 | 28% | Warden (chapter-elite) | Void edges, collapsing bridges, Starshatter |
 | 7 — Long Dusk | **6.10×** | **4.40×** | 7.4 | 40% | Dim-Echo variants of all 12 | Dim creep + all prior |
 
-Scaling cadence is **superlinear in HP, sublinear in damage** — the goal is "fights take longer and require more positional discipline" rather than "you die in two hits." Per `research/games/enemies-and-bosses.md` §8.4, preferred scaling levers in order are attack frequency, projectile count, projectile speed, phase compression, density, damage — and we use them in that priority. Telegraph durations never shrink below 0.6 s for normal attacks or 1.0 s for one-shots, ever, at any chapter.
+Scaling is **superlinear in HP, sublinear in damage** — fights get longer and demand more positional discipline, rather than two-shotting the player. Per `research/games/enemies-and-bosses.md` §8.4, preferred levers in order: attack frequency, projectile count, projectile speed, phase compression, density, damage. Telegraphs never drop below 0.6 s (normal) or 1.0 s (one-shot) at any chapter.
 
 Boss HP scaling follows a separate, gentler curve (×1.0 / ×1.4 / ×1.9 / ×2.5 / ×3.3 / ×4.4 / ×5.8) so that boss fights stay in the 75–110 second window across all chapters at appropriate gear levels.
 
@@ -335,9 +335,9 @@ On first failure at room 13 or beyond in Chapter 4, the death screen surfaces a 
 
 ### Why this works
 
-The wall stays — without one, payers don't pay and progress feels meaningless. But it stops being a "wall," it becomes a **gate with multiple keys**. Per pillar 5 ("fair-to-F2P, generous-to-payers"), the wall must be **bypassable through play time, not just dollars**. The expected F2P time-cost of breaking through chapter 4 wall is **3–5 calendar days**, not the 3–5 weeks Archero 1 inflicted. Payers can compress this to under 24 hours, but cannot skip it entirely — the gear check exists for everyone.
+The wall stays — without one, payers don't pay and progress feels meaningless. But it stops being a "wall" and becomes a **gate with multiple keys**. Per pillar 5, the wall must be **bypassable through play time, not just dollars**. Expected F2P time-cost: **3–5 calendar days**, not Archero's 3–5 weeks. Payers compress to <24 hours but cannot skip the gear check.
 
-A secondary, gentler wall sits at **Chapter 6 room 17–18** (the bridge-break composition tests gear AND build mastery). That wall is handled by Resonance unlocking (Hero Mastery passive borrowing) at hero level 45, which happens naturally during the Chapter 5 farm.
+A secondary, gentler wall sits at **Chapter 6 room 17–18**, handled by Resonance unlocking at hero level 45 during the Chapter 5 farm.
 
 ---
 
@@ -373,19 +373,18 @@ Per pillar 1 ("positional decisions made under pressure"), the player must be ab
 
 ### Seeded per run (varies)
 
-- **Enemy spawn positions** — each enemy slot has a designed spawn-arc (e.g., "left half of arena, behind cover"), and the seed picks a position within that arc.
-- **Spawn order within a wave** — if a wave has 3 Husks and 1 Slinger, the order of door-openings is shuffled.
-- **Wave timing micro-variance** — ±0.4 s on inter-wave gaps.
-- **Specific Mote / Splitkin spawn count within a designed band** (e.g., "4–6 motes" picks one value per run).
-- **Mender priority position** — Mender always spawns within range of an ally, but which ally is seeded.
-- **Cosmetic variance** — particle density, ambient creature placement, etc.
+- **Enemy spawn positions** within designed spawn-arcs per slot (e.g., "left half, behind cover").
+- **Spawn order within a wave** (door-opening order shuffled).
+- **Wave timing micro-variance** ±0.4 s on inter-wave gaps.
+- **Mote / Splitkin count within a designed band** (e.g., "4–6 motes" picks one per run).
+- **Mender priority assignment** — within ally range, but which ally is seeded.
+- **Cosmetic variance** (particle density, ambient creatures).
 
 ### Player-impact guardrails
 
-- A seed never makes a room **unwinnable**. No spawn config can put a Lancer's first shot at the player's starting position.
-- A seed never makes a room **trivial**. No spawn config can put all enemies in a single AoE-able cluster.
-- Bosses have a **fixed opening sequence** for 4 seconds. The first attack of every boss is always identical, regardless of seed — players need to learn the encounter.
-- Same daily seed across all players for Daily Dungeon mode (enables leaderboards).
+- A seed never makes a room unwinnable (no Lancer first-shot at player spawn) and never trivial (no all-enemies-in-one-AoE cluster).
+- Bosses have a fixed 4-second opening sequence regardless of seed — the encounter is learnable.
+- Daily Dungeon uses a shared global daily seed (enables leaderboards).
 
 ---
 
@@ -403,7 +402,7 @@ Per pillar 1 ("positional decisions made under pressure"), the player must be ab
 | 6 — Hollow Sky | 20–26 | 12–13 | 2400 | 58 | 2100 | 80% Epic, 18% Legendary, 0.5% Mythic | 32% |
 | 7 — Long Dusk | 25–32 | 14–16 | 3500 | 80 | 3000 | 90% Legendary, 1.5% Mythic | 40% (chapter-set guaranteed every 3 clears) |
 
-A clear also rolls 1 ability scroll (1–3 per chapter), 0–2 keys, and Pass Points (60–120 depending on chapter).
+A clear also rolls 1–3 ability scrolls, 0–2 keys, and 60–120 Pass Points.
 
 ### Energy pacing
 
@@ -426,10 +425,8 @@ Per `design/04-progression-and-economy.md` §4: cap 30, regen 1 per 12 min (full
 | Day 23–35 | Chapter 7 first-clear | 35 min/day |
 | Day 35+ | Heroic/Nightmare farming, Tower, Survival, PvP, events | Open-ended |
 
-Total first-clear of all 7 chapters: **~30–35 days of F2P play at the recommended pace**. This is the explicit retention target — D30 retention of 10% (per `design/05-launch-scope.md`) requires a goal still 3 days away on D30.
-
-A payer with the Monthly Card and Battle Pass Premium can compress this to **~10–14 days** of first-clear, but cannot complete chapter 7 inside the first 7 days regardless of spend — the gear-tier gate makes that impossible. We never sell a cap-skip.
+Total first-clear of all 7 chapters: **~30–35 days of F2P play**. This is the explicit retention target — D30 retention of 10% (per `design/05-launch-scope.md`) requires a goal still 3 days away on D30. Payers (Monthly Card + Battle Pass Premium) compress to **~10–14 days**, but cannot complete chapter 7 inside week 1 regardless of spend. We never sell a cap-skip.
 
 ---
 
-*End of levels spec. Encounter-level scripting and exact enemy spawn coordinates per room template live in `content/encounters/` (one file per chapter, generated from this spec). Boss internals in `content/bosses.md`. Enemy stat blocks in `content/enemies.md`.*
+*End of levels spec. Per-room spawn coordinates live in `content/encounters/`. Boss internals in `content/bosses.md`. Enemy stats in `content/enemies.md`.*

@@ -1,69 +1,23 @@
 # Equipment & Gear Catalog — Lucent: Shards of the Shattered Sun
 
-> **Locked-in spec.** Implements **The Forge** (L4 of the Lucent Spiral), the **35% power-budget** layer defined in `design/04-progression-and-economy.md` §2. Per-slot bases, six rarities, fusion / enchanting / reforging, eight sets mapped to the eight launch build archetypes, slot-bound upgrades (Archero 2 QoL lift), and a salvage table that closes the Ember faucet/sink loop.
-
-The Spirit / Pet slot is **out of scope** for this document — handled by `content/pets.md`.
+> **Locked-in spec.** Implements **The Forge** (L4 of the Lucent Spiral), the **35% power-budget** layer of `design/04-progression-and-economy.md` §2. Covers per-slot bases, six rarities, fusion/enchant/reforge, eight sets mapped to launch archetypes, slot-bound upgrades, and the Ember salvage loop. Spirit slot is out of scope — see `content/pets.md`.
 
 ---
 
-## 0. Slot, rarity, and curve summary
+## 0. Slot & rarity summary
 
-**Six gear slots** (Spirit is separate):
+**Six gear slots** (the Spirit slot belongs to `content/pets.md`):
 
-| Slot | Function in the build | Color of light when equipped |
+| Slot | Build function | Equip glow |
 |---|---|---|
 | **Weapon** | Primary damage profile; defines projectile feel | Sun-gold |
-| **Helm** | Defensive crown; HP & crit-resist | Pale-blue corona |
-| **Armor** | Chest piece; the largest stat block on the body | Indigo |
-| **Ring** | Modifier; offensive % multipliers | Prismatic spark |
-| **Locket** | Modifier; on-hit and sustain effects | Soft white |
-| **Bracelet** | Modifier; movement, attack speed, dodge | Pale violet |
+| **Helm** | HP & crit-resist; the universal stat block | Pale-blue corona |
+| **Armor** | Chest piece; largest single stat block | Indigo |
+| **Ring** | Offensive % modifier | Prismatic spark |
+| **Locket** | On-hit / sustain modifier | Soft white |
+| **Bracelet** | Movement / tempo modifier | Pale violet |
 
-**Six rarities**, color-coded to match the world palette:
-
-| # | Rarity | Color | World-flavor name (UI subtitle) |
-|---|---|---|---|
-| 1 | Common | Slate gray | "Tarnished" |
-| 2 | Rare | Vale green | "Burnished" |
-| 3 | Epic | Cathedral cyan | "Radiant" |
-| 4 | Legendary | Sun-gold | "Lucent" |
-| 5 | Mythic | Dawn-crimson | "Auric" |
-| 6 | Chaos | Iridescent black-prism | "Shardborn" |
-
-**Stat magnitude curve** (multiplier vs Common base; clean exponential ≈ ×1.62 per step):
-
-| Rarity | Multiplier vs Common | % of Common |
-|---|---|---|
-| Common | **1.0×** | 100% |
-| Rare | **1.5×** | 150% |
-| Epic | **2.4×** | 240% |
-| Legendary | **4.0×** | 400% |
-| Mythic | **6.5×** | 650% |
-| Chaos | **11.0×** | 1100% |
-
-This is the genre-standard exponential lift — about 1.62× per step — that lets each rarity be "the one I'm chasing" without making the previous tier instantly obsolete (a Mythic +25 is competitive with a Chaos +1 on raw numbers; only the inherent passive and the affix ceiling separate them).
-
-**Drop probabilities** (Forge gacha, per `design/04-progression-and-economy.md` §7):
-
-| Rarity | Forge drop rate | Notes |
-|---|---|---|
-| Common | 50% | Bulk salvage fodder past week 1. |
-| Rare | 30% | Mid-floor staple. |
-| Epic | 15% | First "real" upgrade. |
-| Legendary | 4% | Unlocks inherent passives. |
-| Mythic | 0.95% | Pity-tracked; soft pity at pull 80, hard pity at pull 200. |
-| Chaos | 0.05% | Cannot drop directly until account level 60; before that, Chaos slot rolls re-roll as Mythic. |
-
-**Per-rarity upgrade-level caps** (slot-bound, see §4):
-
-| Rarity | Level cap |
-|---|---|
-| Common | +10 |
-| Rare | +15 |
-| Epic | +20 |
-| Legendary | +20 |
-| Mythic | +25 |
-| Chaos | +30 |
+**Six rarities** — UI names: Common ("Tarnished"), Rare ("Burnished"), Epic ("Radiant"), Legendary ("Lucent"), Mythic ("Auric"), Chaos ("Shardborn"). Full numbers (drop rate, stat multiplier, level cap) are consolidated in §2; the curve is a clean ~1.62× exponential. A Mythic +25 is competitive with a Chaos +1 on raw numbers — only the inherent passive and the affix ceiling separate them.
 
 ---
 
@@ -224,7 +178,7 @@ Spend **Embers + Sigil Dust** to roll affixes. Affixes are the variance layer th
 | 4th affix | Mythic |
 | 5th affix | Chaos |
 
-**Sample affix pool** (each piece rolls 1 of 18 affixes per slot at random; affix strength scales with rarity):
+**Sample affix pool** (each affix slot rolls 1 of 18 at random; strength scales with rarity):
 
 | Affix | Range at Rare | Range at Chaos |
 |---|---|---|
@@ -357,7 +311,7 @@ Each set is a **4-piece composition** (the launch-scope `design/05-launch-scope.
 | Sunward Bulwark | | ✓ | ✓ | ✓ | | ✓ | Tank-Anchor |
 | Husk of the Long Dusk | | ✓ | ✓ | ✓ | ✓ | | Chaos-Cycler |
 
-> **Note on slot variety.** The Weapon slot is used by 5 of 8 sets (offensive builds), Helm by 7 of 8 (the universal staple), Armor by only 3 (defensive identity). This is intentional — Weapon is the build's identity for damage archetypes; Helm is the universal stat block; Armor differentiates the defensive builds. Ring/Locket/Bracelet are flex.
+> **Slot variety.** Weapon appears in 5/8 sets (offensive identity), Helm in 7/8 (universal stat block), Armor in 3/8 (defensive differentiator). Ring/Locket/Bracelet flex across both.
 
 ---
 
