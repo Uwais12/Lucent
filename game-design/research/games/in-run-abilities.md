@@ -45,10 +45,7 @@ The most important category — every Archero-like ships 8–12 of these. They p
 | Cloudfooted | Archero 2 | Periodic gusts knock back and damage enemies |
 | Whip / Garlic / Bible (orbit-as-projectile) | Vampire Survivors | Area attacks that count as weapon picks |
 
-**Design notes from the genre:**
-- Every shot-count modifier should multiply, not add, with others — that's where build identity is born.
-- Most games soft-counter Multishot stacking with an attack-speed or per-shot damage tax (Archero 2 explicitly costs "8 frames" on Multishot, -15% on Front Arrow +1).
-- Piercing and Ricochet are mutually exclusive in Archero 1 (Ricochet wins). Archero 2 lets them coexist, which is widely cited as a power-creep choice.
+**Design notes:** shot-count modifiers should *multiply*, not add. Genre soft-counters Multishot stacking with an attack-speed or per-shot damage tax (Archero 2: Multishot costs "8 frames"; Front Arrow +1 costs –15% damage). Piercing and Ricochet are mutually exclusive in Archero 1 (Ricochet wins); Archero 2 lets them coexist — a widely-cited power-creep choice.
 
 ### 2.2 Damage Types & Status Effects
 
@@ -78,7 +75,7 @@ The "second sentence" of every projectile — DoTs, debuffs, and amplifiers.
 | Mark / Hunter's Mark | Hades (Artemis ref) | Tagged enemy takes more damage |
 | True Damage | (Archero boss build ref) | Bypasses armor/resistance — see §2.9 |
 
-Design pattern: every elemental status has a **base tier** (Common/Rare) and a **Super tier** (Epic) that scales it dramatically. This is the genre's main way of giving Epic abilities a clean reason to exist — they upgrade a Common you already have.
+Design pattern: each elemental status ships in a **base tier** (Common/Rare) and a **Super tier** (Epic) that scales it dramatically. This is the genre's primary justification for Epic rarity — Epics upgrade Commons you already own.
 
 ### 2.3 Defensive Abilities
 
@@ -128,7 +125,7 @@ Design pattern: every elemental status has a **base tier** (Common/Rare) and a *
 | Short-Range Strike (movement-shaping) | Archero 2 | Forces close play; +AS reward |
 | Fiery Path | Archero 2 | Trail that punishes chasers |
 
-Lucent take: Archero-likes intentionally **limit hard mobility** (no dash by default) because dodging is the skill ceiling. Add 2–3 mobility picks max or it trivializes positioning.
+Lucent take: Archero-likes intentionally **limit hard mobility** because dodging is the skill ceiling. Ship 2–3 mobility picks max.
 
 ### 2.5 Summons / Minions / Drones (a.k.a. "Sprites")
 
@@ -154,7 +151,7 @@ Lucent take: Archero-likes intentionally **limit hard mobility** (no dash by def
 | Spirit Attack Speed Boost | Archero | +AS for sprite |
 | Pet (Mighty DOOM) | Mighty DOOM | Permanent secondary follower with proc |
 
-Design note: summons in this genre are almost always **mirrors of the player's stats**, scaled down. That keeps balance one-axis.
+Design note: summons in this genre mirror the player's stats, scaled down. Keeps balance one-axis.
 
 ### 2.6 Auras & Passives (Player-Centered AoE)
 
@@ -179,7 +176,7 @@ Design note: summons in this genre are almost always **mirrors of the player's s
 
 ### 2.7 Special Weapons / Orbs / Independent Damage
 
-This category fires on its own clock — independent of your weapon. Vampire Survivors is the spiritual home of this category but every Archero-like has stolen from it.
+This category fires on its own clock, independent of the player's weapon. Vampire Survivors is the spiritual home; every Archero-like has cribbed from it.
 
 | Ability | Game(s) | Effect |
 |---|---|---|

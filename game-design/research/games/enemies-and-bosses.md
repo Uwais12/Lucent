@@ -53,7 +53,7 @@ Archero chapters follow: easy → mixed → hazard → elite → mini-boss → m
 
 ### Push-pull dynamic
 
-Melee enemies push the player away from them; ranged enemies pull the player toward them (the player wants to close and burst them down before another wave). Designers use this to **route the player around the room**. A shooter in the upper right plus a charger in the lower left literally steers the player through the middle - where you can plant a hazard or a bomb.
+Melee enemies push the player away, ranged enemies pull them in. Designers use this to **route the player around the room**: a shooter top-right plus a charger bottom-left steers the player through the middle - where you can plant a hazard.
 
 ---
 
@@ -99,7 +99,7 @@ A reliable rule: each phase should add **one new question** for the player. Addi
 
 ### Difficulty scaling at higher chapters
 
-Archero's chapter 1 Tornado boss reappears in modified form many chapters later with: faster projectiles, more projectile waves per cycle, smaller dodge gaps, lingering hazards added, and frequently a +1 to phase count. The fight is still recognizable - the player's pattern knowledge has value - but every variable has been turned up. Sky Tower in Archero 2 follows the same principle: floors 96-100 stack five reskinned chapter bosses at once.
+Archero's Tornado reappears later with faster projectiles, more waves per cycle, smaller dodge gaps, lingering hazards, and +1 phase. The fight stays recognizable so pattern knowledge has value, but every variable is turned up. Archero 2's Sky Tower follows the same principle: floors 96-100 stack five reskinned chapter bosses.
 
 ---
 
@@ -116,7 +116,7 @@ Archero's chapter 1 Tornado boss reappears in modified form many chapters later 
 | Drop | Currency + maybe rare drop | Guaranteed unique drop, key, or chapter unlock |
 | Player expectation | Stumbling block, can be steamrolled | Marquee fight, expected death on first try |
 
-Mini-bosses exist to **stress test a single mechanic** (e.g., a Red Slime mini-boss teaches the player about splitters before the real boss exploits it). World bosses are **compositional**: they combine 4-6 mechanics the player has already met into a single sustained encounter.
+Mini-bosses **stress-test a single mechanic** (a Red Slime mini-boss teaches splitters before the boss exploits them). World bosses are **compositional**: 4-6 already-known mechanics in one sustained encounter.
 
 ---
 
