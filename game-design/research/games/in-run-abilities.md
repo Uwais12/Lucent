@@ -212,7 +212,7 @@ This category fires on its own clock, independent of the player's weapon. Vampir
 
 ### 2.8 Synergy / Scaling Abilities (Conditional Multipliers)
 
-The category that creates **build identity**. These are the abilities that take a flat stat-stick run and turn it into a strategy.
+Where build identity lives — conditional multipliers turn a stat-stick run into a strategy.
 
 | Ability | Game(s) | Effect |
 |---|---|---|
@@ -259,7 +259,7 @@ The category that creates **build identity**. These are the abilities that take 
 | Tracking Eye + slow projectiles | Archero 2 | Lets you kite boss without aim |
 | True Damage / Armor Penetration | (genre reference) | Bypasses boss armor entirely |
 
-Design note: most Archero-likes do NOT include explicit "boss-only" abilities — instead, generic damage picks like Multishot, Energy Beam, and Crit Master happen to also dominate bosses. Including 2–3 explicit boss multipliers (like Boss Slayer) gives players a way to pivot a clear-focused run when they see the boss coming.
+Design note: most Archero-likes ship few explicit "boss-only" abilities; generic damage picks (Multishot, Energy Beam, Crit Master) dominate bosses anyway. Ship 2–3 explicit boss multipliers so players can pivot a clear-focused run when the boss is announced.
 
 ### 2.10 Combo / Chain Mechanics
 
@@ -279,7 +279,7 @@ Design note: most Archero-likes do NOT include explicit "boss-only" abilities �
 
 ### 2.11 Hero-Specific / Weapon-Specific Abilities
 
-The Archero-like usually offers **a small number of hero-flavored picks** that only appear if the hero is using that weapon class. Archero 2's recent skills below appear conditionally based on weapon.
+A small subset of picks appear conditionally based on hero or weapon class.
 
 | Ability | Game / Weapon | Effect |
 |---|---|---|
@@ -296,7 +296,7 @@ The Archero-like usually offers **a small number of hero-flavored picks** that o
 | Mini Slayer headshot | Mighty DOOM | Slayer-specific instakill |
 | Doomicorn Trail | Mighty DOOM | Slayer-specific rainbow damage trail |
 
-Lucent take: weapon-conditional picks are great for replayability but **demand careful pool weighting** — if 1/3 of your pool is locked behind hero choice, the random offers feel thin in the first 5 levels. The Archero 2 model (hero-specific *runes* equipped pre-run, hero-agnostic *skills* in-run) cleanly separates the two.
+Lucent take: weapon-conditional picks help replayability but demand careful pool weighting — if 1/3 of the pool is locked behind hero, early offers feel thin. The Archero 2 model (hero-specific *runes* pre-run, hero-agnostic *skills* in-run) is the cleanest split.
 
 ---
 

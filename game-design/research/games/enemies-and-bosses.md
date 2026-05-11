@@ -200,7 +200,7 @@ Additional softening tricks used in mobile roguelites:
 | **Mender** | Healer | Low | Med | None | Short | Heals nearest ally 5% HP/s, priority target. |
 | **Warden** | Elite/bullet sponge | Med | V. high | High | Mixed | Reskinned/scaled-up Husk or Slinger with 1 special attack. |
 
-Stat profiles are relative - we tune to feel, not to absolute numbers. The point is each archetype occupies a distinct cell on (range x speed x HP).
+Stat profiles are relative - tune to feel. Each archetype occupies a distinct cell on (range x speed x HP).
 
 ### 8.2 Wave / room pacing curve (per chapter, ~15-20 rooms)
 
@@ -246,7 +246,7 @@ Scaling levers, in order of preference:
 5. Enemy density
 6. Damage values (least fun to scale - prefer adding mechanics over numbers)
 
-We **never** scale by removing telegraphs or shortening them below the minimum (0.6s for normal, 1.0s for one-shot). Difficulty comes from compounding patterns, not from making them less readable.
+Never scale by shortening telegraphs below the minimum (0.6s normal, 1.0s one-shot). Difficulty comes from compounding patterns, not from making them less readable.
 
 ---
 
