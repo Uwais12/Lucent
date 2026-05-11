@@ -483,16 +483,16 @@ The screen that matters. Per Pillar 1, controls are: joystick (left or right, pl
 ```
 
 ### Components
-1. **HP bar** — top edge, color shifts red below 30%, segmented at every 1k HP threshold so big-HP heroes are readable.
-2. **Pause + run info** — pause icon, floor / room counter, settings cog (in-run audio + reduced motion).
-3. **Gold ticker** — bottom-right of header; small particle-stream when picking up gold orbs.
-4. **Ability stack** — horizontally scrolling row of acquired ability icons, capped at 7 visible (scroll to see more). Newest pick highlighted for 3 seconds.
-5. **Arena play surface** — the actual playable area, ~70% of vertical real estate. No HUD overlays this region except the HP bar.
-6. **Ult meter** — fills with damage dealt + time-on-screen; when full, the ult button pulses.
-7. **Joystick** (player-config left or right) — 88pt touch radius, sticky-thumb tracking with a 20pt dead-zone.
-8. **Ult / active button** — opposite corner; greyed when meter not full, pulses ready.
+1. **HP bar** — top edge, segmented every 1k, shifts red under 30%.
+2. **Pause + run info** — pause icon, floor/room counter, in-run settings cog.
+3. **Gold ticker** — top-right header, particle stream on pickup.
+4. **Ability stack** — horizontally scrolling acquired-abilities row, 7 visible, newest highlighted 3s.
+5. **Arena play surface** — ~70% of vertical real estate; no HUD overlay except HP bar.
+6. **Ult meter** — fills with damage + time-on-screen; pulses when ready.
+7. **Joystick** (left or right, player-config) — 88pt touch radius, 20pt dead-zone.
+8. **Ult / active button** — opposite corner; greyed off-cd, pulses when ready.
 
-**No mini-map.** Decision rationale: per Pillar 8, screen real estate is sacred in portrait; a mini-map would consume telegraph-readability area, and rooms are small enough that a mini-map adds no information. The room-counter (component 2) tells the player where they are in the floor. Survivor.io and Archero 2 also ship without mini-maps for the same reason.
+**No mini-map.** Per Pillar 8, portrait real estate is sacred and rooms are small enough that a mini-map adds no information; the room counter (component 2) is sufficient. Survivor.io and Archero 2 ship without mini-maps for the same reason.
 
 ### Tap targets
 - Pause → in-run pause sheet (resume / settings / quit-run with confirm).
@@ -547,12 +547,12 @@ The 3-card draft. Appears between rooms. The "I built a build" decision moment p
 ```
 
 ### Components
-1. **Banner** — `Pick an Ability` with a soft animated frame.
-2. **Run buff strip** — what the player already has, scrollable; helps inform the pick.
-3. **3 cards** — drawn with rarity-coded frames (white/green/blue/purple/orange/red for Common→Chaos). Big enough that card art and text are legible without zoom.
-4. **Synergy hint** — appears only when one of the cards completes a known recipe; **for hidden Awakened recipes** the hint is suppressed (Pillar 7 — hidden weapon evolutions, Survivor.io style). The hint is shown only for the **named build archetypes** the player has already discovered or for explicitly-revealed synergies.
-5. **Reroll** — gold-cost reroll; first reroll free per room.
-6. **Skip for reward** — small gold or HP reward in exchange for declining all three; introduced via tutorial in FTUE day 1.
+1. **Banner** — `Pick an Ability`, animated frame.
+2. **Run buff strip** — scrollable list of what the player has, to inform the pick.
+3. **3 cards** — rarity-coded frames (white/green/blue/purple/orange/red for Common→Chaos), legible without zoom.
+4. **Synergy hint** — appears only for known recipes / discovered archetypes. **Hidden Awakened recipes are never hinted** (Pillar 7).
+5. **Reroll** — gold cost; first reroll per room is free.
+6. **Skip for reward** — small gold or HP in exchange for declining all three.
 
 ### Tap targets
 - Tap card → tap a second time within 2s to confirm; double-tap-to-confirm prevents thumb-skid mistakes on the most consequential decision in the run.
@@ -663,12 +663,12 @@ The dopamine cash-out. The x2-rewards-via-ad button is the single highest-CTR ad
 ```
 
 ### Components
-1. **Result banner** — Victory or Defeated; haptic + audio sting.
-2. **Run stats card** — time, rooms cleared, kills, named-archetype detected.
+1. **Result banner** — Victory / Defeated, with haptic + audio sting.
+2. **Run stats card** — time, rooms cleared, kills, archetype detected.
 3. **Rewards card** — XP, gold, embers, drops.
-4. **2× rewards ad button** — primary action, large, pulses for 5s then settles.
-5. **Quest + BP progress strip** — what this run did for the meta layer.
-6. **Run Again / Home** — Run Again returns to Pre-Run Loadout pre-filled; Home returns to lobby.
+4. **2× rewards ad button** — primary action, pulses 5s then settles.
+5. **Quest + BP progress strip** — what this run advanced.
+6. **Run Again / Home** — Run Again returns to Pre-Run Loadout pre-filled.
 
 ### Tap targets
 - Ad button → mediation → on success, animate rewards doubling; on fail, soft toast `Ad unavailable — rewards already claimed.`
@@ -729,10 +729,7 @@ Roster grid + per-hero detail. The tab is two layers: roster overview at top, th
 ```
 
 ### Components
-1. **Header**.
-2. **Filter pills** — quick scope.
-3. **Roster grid** — 4-wide, owned heroes first, locked heroes greyed but visible.
-4. **Detail panel** — sticky beneath the grid; sub-tabs for Equip / Inscription / Sigils / Spirits hand off to dedicated sub-screens.
+1. **Header**. 2. **Filter pills** — quick scope. 3. **Roster grid** — 4-wide, owned first, locked greyed but visible. 4. **Detail panel** — sticky; sub-tabs (Equip / Inscription / Sigils / Spirits) hand off to dedicated sub-screens.
 
 ### Tap targets
 - Hero tile → updates detail panel; double-tap → set as active hero.
@@ -959,12 +956,11 @@ Per `design/04-progression-and-economy.md` §5. Daily Deal, Premium Deal, Gem Pa
 
 ### States
 - **Loading** — skeleton.
-- **Empty** — Beacon Pack disappears after first purchase, Daily Deals always present.
+- **Empty** — Beacon Pack hides after first purchase; Daily Deals always present.
 - **Network failure** — full screen `Shop unavailable offline. Reconnect to view offers.`
 
 ### Deep-links out
-- Gacha screen.
-- BP tab (via the BP-Hero card).
+- Gacha screen; BP tab (via BP-Hero card).
 
 ---
 
@@ -1036,8 +1032,7 @@ Per Pillar 4 and `research/monetization/liveops-retention.md` §3. Free + Premiu
 - **Empty** — between seasons → `Season 6 begins in 2d` with pre-purchase CTA.
 - **Network failure** — read-only.
 
-### Deep-links out
-- Shop tab (purchase failures bounce to gem store).
+### Deep-links out: Shop tab (purchase failures bounce to gem store).
 
 ---
 
@@ -1102,11 +1097,10 @@ The single highest-risk screen on the app. **Hard rule: max 4 cards visible.** P
 
 ### States
 - **Loading** — card skeletons.
-- **Empty** — no live events (rare; should not occur post-launch per LiveOps calendar) → `New events drop daily — check back soon` with a deep-link to the BP tab as a consolation surface.
-- **Network failure** — last-cached event list shown with a `Showing offline event list` toast; entry disabled.
+- **Empty** — `New events drop daily — check back soon`, deep-link to BP tab as consolation.
+- **Network failure** — last-cached list shown, entry disabled.
 
-### Deep-links out
-- Event-specific detail screens (designed per event, not catalogued here).
+### Deep-links out: event-specific detail screens (designed per event).
 
 ---
 
@@ -1170,12 +1164,11 @@ Per Pillar 6 and `research/monetization/liveops-retention.md` §5. Chat, members
 
 ### States
 - **Loading** — chat skeleton, sub-tabs disabled.
-- **Empty (no guild)** — guildless replacement screen: `Join or create a guild` with a guild-finder list and a `Create new (250 gems)` CTA.
-- **Network failure** — Chat shows the last-loaded messages with a `Reconnecting...` strip; Donate and Boss disabled.
+- **Empty (no guild)** — replacement screen: `Join or create a guild` with finder list and `Create new (250 gems)` CTA.
+- **Network failure** — Chat shows last-loaded with `Reconnecting...` strip; Donate/Boss disabled.
 
 ### Deep-links out
-- Pre-Run Loadout (Fight).
-- Heroes tab (member profile inspect).
+- Pre-Run Loadout (Fight); Heroes tab (member profile inspect).
 
 ---
 
@@ -1183,22 +1176,15 @@ Per Pillar 6 and `research/monetization/liveops-retention.md` §5. Chat, members
 
 ### 17.1 Concurrent LiveOps surface count
 
-At any moment a typical day-30 player faces:
-
-1. Daily quests strip on Home (always-on).
-2. Battle Pass banner on Home + Battle Pass tab.
-3. Weekly missions (surfaced inside the Events tab as one of the 4 cards, or as a sub-strip on Home).
-4. At least one special event card on the Events tab.
-
-That's 4 concurrent surfaces — the Pillar-4 minimum. We can ramp to 6 visible (Home quest strip, BP banner, Home event teaser, Events tab cards × 4) without crowding **any one tab** beyond comfort. The Events tab itself never shows more than 4 cards on a page — that's the hard restraint we're paying to keep.
+At any moment a day-30 player faces (1) daily quests strip on Home, (2) Battle Pass banner on Home + BP tab, (3) weekly missions (surfaced inside Events or as a Home sub-strip), and (4) at least one special event card on the Events tab — meeting the Pillar-4 minimum of four concurrent surfaces. We can ramp to six visible without crowding any one tab, but the Events tab itself never shows more than four cards per page. That's the hard restraint we're paying to keep.
 
 ### 17.2 The biggest UX risk we spotted
 
 **The Heroes-tab-as-mega-router problem.** Heroes is the entry point to Equipment, Inscription, Sigils, Spirits, level-up, and ascension — six destinations behind one tab via sub-tabs. If any one of these grows post-launch (Sigils is designed to), the Heroes tab risks becoming the new Events tab: overloaded, intimidating, hostile to new players. Mitigations baked in: the detail panel only exposes the four sub-tabs after the player owns ≥2 heroes (day 1 it's a single Level-up button); sub-tabs unlock progressively as features unlock; and the top-level filter pills add an `Equipped` filter at account level 10 so the working set narrows automatically. Re-evaluate if any sub-screen accumulates ≥6 verbs.
 
-### 17.3 Universal modal stack rules
+### 17.3 Modal stack rules
 
-The daily-flush splash (§1) is the only place we chain modals. Everywhere else: **one modal at a time, dismissible by tapping outside or swipe-down.** No nested confirms; one decision per modal. The pause sheet during in-run is the explicit exception (resume / settings / quit-run all live in one modal because we want to preempt accidental quits).
+The daily-flush splash (§1) is the only place we chain modals. Everywhere else: one modal at a time, dismissible by tapping outside or swipe-down. No nested confirms; one decision per modal. In-run pause is the exception (resume / settings / quit all in one sheet to preempt accidental quits).
 
 ### 17.4 Haptic catalog
 
@@ -1206,17 +1192,7 @@ Light impact on every button tap. Medium impact on ability-pick confirm and dail
 
 ### 17.5 Color and shape discipline
 
-Per Pillar 8, telegraph color and shape map is fixed for the lifetime of the game:
-
-| Color | Shape | Meaning |
-|---|---|---|
-| Red | filled circle / sector | Damage AoE (incoming) |
-| Yellow | hard line | Damage line attack (incoming) |
-| Blue | dashed ring | Friendly aura (heal, buff) |
-| Green | upward arrow | Heal pickup / friendly projectile |
-| Indigo (Lucent) | prismatic shimmer | Lucent / ability / hero-unique FX |
-
-In color-blind mode, the colors shift but shape primitives remain identical, so telegraph readability is preserved.
+Per Pillar 8, telegraph map is fixed: red filled circle/sector = incoming damage AoE; yellow hard line = incoming line attack; blue dashed ring = friendly aura (heal/buff); green upward arrow = heal pickup / friendly projectile; indigo prismatic shimmer = Lucent / hero-unique FX. In color-blind mode colors shift but shape primitives stay identical, preserving readability.
 
 ### 17.6 What we are deliberately not building (yet)
 

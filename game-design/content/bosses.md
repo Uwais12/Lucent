@@ -33,7 +33,7 @@
 
 **Lore stinger.** *He was the village lampkeeper. When the Dim came, he kept lighting the lamps anyway — and never stopped.*
 
-**Visual key.** A hulking armored figure carrying a six-foot iron lantern on a pole. Portrait silhouette = **two stacked rectangles** (wide body, lantern offset high right), pale-gold lantern is the only warm light. Palette: rusted iron, oxidized bronze, lavender Dim leaking from joints.
+**Visual key.** Hulking armored figure carrying a six-foot iron lantern on a pole. Portrait silhouette = **two stacked rectangles** (wide body, lantern offset high right); pale-gold lantern is the only warm light. Palette: rusted iron, oxidized bronze, lavender Dim leaking from joints.
 
 ### Phases
 
@@ -330,13 +330,13 @@ Signature **arena-as-attack** mechanic, adapted from Mighty DOOM's spatial phase
 | 1 | 100 → 50% | Shield blocks all damage from front 180°; flank him. | **Bulwark** (passive). **Charge** (straight dash, 1.0s wind-up, leaves 4s red trail). **Shield-Slam** (red half-circle front, 0.9s, 60% HP). |
 | 2 | 50 → 0% | Shield drops and becomes a movable hazard. | **Bulwark** off; faster. **Shield-Punt** (kicks shield like a puck, 1.0s wind-up, blue trajectory line, 50% HP, bounces off walls 2×). |
 
-**Why it works at week 50.** Built around a **positional puzzle** (front vs back), legible at guild-of-8 scale without voice chat ("flank"). Phase 2 inverts the puzzle — everyone safe from front, the shield is the threat. Two simple mutually-exclusive questions, repeated weekly.
+**Why it works at week 50.** A **positional puzzle** (front vs back) legible at guild-of-8 scale without voice chat ("flank"). Phase 2 inverts the puzzle — everyone safe from front, the shield is the threat. Two simple mutually exclusive questions, repeated weekly.
 
-**Arena & audio.** Round courtyard, ~14×14u (larger for guild scale). Music: military low brass + male chorus on each Charge wind-up. Screenshot: 8 guild heroes flanking, his shield half-arc telegraphed across the front.
+**Arena & audio.** Round courtyard, ~14×14u (larger for guild scale). Music: military low brass + male chorus on each Charge wind-up. Screenshot: 8 heroes flanking, shield half-arc telegraphed across the front.
 
-**Scaling.** HP scales linearly with guild count + difficulty rank. Charge cadence tightens. Shield-Punt becomes 2 simultaneous shields at top tier. **Never** a new attack — purely scales the existing two.
+**Scaling.** HP scales linearly with guild count + tier. Charge cadence tightens. Shield-Punt becomes 2 simultaneous shields at top tier. **Never** a new attack.
 
-**Reward bias.** Guild currency **Oathmark** + chance at **Sothren's Plate** consumable (one-time damage shield in next run). No gear drops — Sothren is a currency boss.
+**Reward bias.** Guild currency **Oathmark** + chance at **Sothren's Plate** consumable (one-time damage shield in next run). No gear drops.
 
 ---
 
@@ -355,11 +355,11 @@ Signature **arena-as-attack** mechanic, adapted from Mighty DOOM's spatial phase
 | 2 | 66 → 33% | Open windows spawn swarmers. | Open spawns 3 Glassmotes each cycle. |
 | 3 | 33 → 0% | Persistent floor hazard at petal bases. | **Bloom-Floor** (5 slow indigo puddles grow from petal-base positions; 25% slow). |
 
-**Why it works at week 50.** The only world boss with a **damage-window mechanic** — players must rebuild burst-damage habit each week. Different heroes solve it differently (Frostshard freeze-locks petals open; Dawnbow lines up multishot down the corridor between petals).
+**Why it works at week 50.** The only world boss with a **damage-window mechanic** — players rebuild burst-damage habit each week. Heroes solve it differently (Frostshard freeze-locks petals open; Dawnbow lines a multishot down the gap between petals).
 
-**Arena & audio.** Circular glass-floored garden with 5 stone basins on the rim (cover). Music: slow 6/8 waltz pausing on each "Closed" phase, resuming on "Open." Phase 3 adds a hum that grows with each Bloom-Floor puddle. Screenshot: petals fully open, 12-projectile ring resolving, hero firing a multishot down the gap.
+**Arena & audio.** Circular glass garden with 5 rim basins for cover. Music: slow 6/8 waltz pausing on each Closed phase, resuming on Open. Phase 3 adds a hum growing per Bloom-Floor puddle. Screenshot: petals fully open, ring resolving, hero firing down the gap.
 
-**Scaling.** Open windows shorten with tier (3 → 2.5 → 2s). Mote spawns 3 → 4 → 5. Bloom-Floor capped at 8 puddles.
+**Scaling.** Open windows: 3 → 2.5 → 2s. Mote spawns 3 → 4 → 5. Bloom-Floor capped at 8.
 
 **Reward bias.** Weekly currency **Lightseed** + **Memory** consumables that reroll the next run's first 3 ability picks.
 
@@ -367,7 +367,7 @@ Signature **arena-as-attack** mechanic, adapted from Mighty DOOM's spatial phase
 
 # Sky Tower Capstone
 
-> Per `research/games/archero-2.md`: Archero 2's Sky Tower floor 95–100 difficulty cliff is the **#1 endgame complaint** — players bounce because the spike is **unsignaled** and **unfair**. The Lucent capstone fixes that pattern: hard but **fair**, with difficulty from **combinations the player has already faced**, not new attacks.
+> Per `research/games/archero-2.md`: Archero 2's Sky Tower floor 95–100 difficulty cliff is the **#1 endgame complaint** — players bounce because the spike is unsignaled and unfair. The Lucent capstone is hard but **fair**: difficulty comes from **combinations the player has already faced**, never new attacks.
 
 ## 11. The Compound
 
@@ -398,11 +398,11 @@ These are non-negotiable; they exist to prevent the Archero 2 cliff.
 5. **Revives are unrestricted at the Compound floor.** One extra revive in addition to the standard one — two chances at the wall.
 6. **Failure is legible.** Every death traces to a missed read, not a hidden mechanic. Replay the last 4 seconds and explain it.
 
-**Arena.** Shifting backdrop swaps between the 3 source arenas in sync with phase transitions. Phase transition includes a 1.5s "loading" beat — short enough not to break flow, long enough to reset reading.
+**Arena.** Shifting backdrop swaps between the 3 source arenas in sync with phase transitions. A 1.5s "loading" beat at each transition — short enough not to break flow, long enough to reset reading.
 
-**Music cue.** Medley — each phase plays its **original boss's music** at +1 BPM. The medley structure is itself an audio cue. **Audio brief:** `MUS_BOSS_TOWER_COMPOUND_MEDLEY`.
+**Music cue.** Medley — each phase plays its source boss's music at +1 BPM. The medley structure is itself an audio cue. **Audio brief:** `MUS_BOSS_TOWER_COMPOUND_MEDLEY`.
 
-**Signature screenshot moment.** Floor 150 Phase 3 — the Long Dark — boss in Long Dusk silhouette, two yellow cone telegraphs glowing in near-pure-black, hero glowing indigo at center, "150" floor counter at the screen edge. **The endgame screenshot.**
+**Signature screenshot moment.** Floor 150 Phase 3 — the Long Dark — boss in Long Dusk silhouette, two yellow cones glowing in near-pure-black, hero glowing indigo at center, "150" at the screen edge. **The endgame screenshot.**
 
 ### Reward bias
 
@@ -416,33 +416,32 @@ These are non-negotiable; they exist to prevent the Archero 2 cliff.
 
 # Readability Checklist (Sign-Off Contract)
 
-> Every boss in this document — and every boss authored post-launch — must pass this checklist before milestone review. If a boss fails any single item, it does not ship. This is a gate, not a guideline. Reviewed and signed off by the design lead at QA milestone.
+> Every boss in this document — and every boss authored post-launch — must pass this checklist before milestone review. If a boss fails any single item, it does not ship. Gate, not guideline. Signed off by the design lead at QA milestone.
 
 ### Color discipline
-- [ ] **Red** = "this will damage you now or imminently." Never for friendly effects, never for boss HP bars, never for environment art readable as a hazard.
-- [ ] **Yellow** = "warning, soon." Only for telegraph rings, wind-up halos, off-screen indicators.
-- [ ] **Blue** = projectile paths and friendly effects. Boss projectile trajectories are blue *before* resolution, red *during* damage frames.
-- [ ] No third-party color carries threat semantics in any boss fight.
+- [ ] **Red** = damage now / imminent. Never friendly effects, never boss HP bars, never environment art readable as hazard.
+- [ ] **Yellow** = warning, soon. Only telegraph rings, wind-up halos, off-screen indicators.
+- [ ] **Blue** = projectile paths and friendly effects. Boss projectile trajectories blue *before* resolution, red *during* damage frames.
+- [ ] No third color carries threat semantics in any boss fight.
 
 ### Shape primitives only
-- [ ] All AoEs are **filled circle**, **filled rectangle (line/beam)**, **filled cone**, or **ring**. No bespoke organic shapes, no irregular polygons.
-- [ ] Persistent floor hazards inherit the shape of their generating attack (Anvilfather's lava puddles use Anvil Strike's circle outline).
-- [ ] No two AoE shapes may be visually identical at the same time unless they are the same attack.
+- [ ] All AoEs are **filled circle**, **filled rectangle (line/beam)**, **filled cone**, or **ring**. No bespoke organic shapes.
+- [ ] Persistent floor hazards inherit the shape of their generating attack.
+- [ ] No two simultaneous AoEs may be visually identical unless they are the same attack.
 
 ### Wind-up minimums
 - [ ] **≥0.6s** on every regular attack.
-- [ ] **≥1.0s** on phase-transition attacks and on any attack that can do >50% HP.
+- [ ] **≥1.0s** on phase-transition attacks and any attack that can do >50% HP.
 - [ ] **≥1.2s** on one-shot mechanics and phase-transition stingers.
-- [ ] **No wind-up drops below 0.6s at any Tower scaling tier**, ever.
+- [ ] **No wind-up drops below 0.6s at any Tower tier**, ever.
 
 ### Audio cue parity
-- [ ] Every visual telegraph has a layered audio cue. Off-screen audio cues are mixed louder than on-screen ones (the thumb covers ~20% of the screen).
-- [ ] One-shot mechanics get a **unique audio cue** — different timbre, not just louder.
-- [ ] Phase transitions use a distinct bell-tone or brass swell, not in-fight audio.
+- [ ] Every visual telegraph has a layered audio cue. Off-screen cues are mixed louder than on-screen (thumb covers ~20% of screen).
+- [ ] One-shot mechanics get a **unique timbre**, not a louder normal cue.
+- [ ] Phase transitions use a distinct bell-tone or brass swell.
 
 ### Off-screen attack indicators
-- [ ] Any attack telegraphing off-screen has an **arrow at the screen edge**, ≥1.0s duration, yellow (or red if imminent).
-- [ ] Star-Wound's platform-fall is the test case.
+- [ ] Any attack telegraphing off-screen has a screen-edge arrow ≥1.0s, yellow (red if imminent). Star-Wound's platform-fall is the test case.
 
 ### One-shot 4-condition rule
 Every one-shot mechanic must satisfy **all four** (per `enemies-and-bosses.md` §7):
@@ -453,18 +452,16 @@ Every one-shot mechanic must satisfy **all four** (per `enemies-and-bosses.md` �
 - [ ] **Failure is legible** — on death the player can replay the last 2s and say "I should have moved left."
 
 ### Additional invariants
-- [ ] Max **3 simultaneous telegraph indicators** on-screen. Excess attacks queue.
+- [ ] Max **3 simultaneous telegraph indicators** on-screen. Excess queues.
 - [ ] Telegraph layer renders **above** enemy bodies, **below** player + HUD.
 - [ ] Cancelled telegraphs **fade or pop**, never blink off.
-- [ ] No single attack at chapter level deals >70% HP on a clean hit at recommended gear power. (Players must survive at least one mistake.)
+- [ ] No single attack at chapter level deals >70% HP on a clean hit at recommended gear (players must survive one mistake).
 
 ---
 
 # Boss Difficulty Curve (Chapters 1→7)
 
-> **Design goal:** a player with chapter-appropriate gear and average build luck beats the chapter boss in **≤3 attempts**. Tighter = too easy; looser = we lose F2P players (Mighty DOOM chapter-5–6 lesson, Pillar 5). Numbers are relative; tune in playtest.
->
-> **Power assumptions.** HP and damage are normalized to player's **expected HP at chapter unlock**. "1.0×" damage = expected max HP at that chapter in one hit. Player HP grows ~25% per chapter via gear and talents.
+> **Design goal:** a player with chapter-appropriate gear and average build luck beats the chapter boss in **≤3 attempts**. Tighter = too easy; looser = we lose F2P players (Mighty DOOM ch. 5–6 lesson, Pillar 5). Numbers relative; tune in playtest. HP / damage normalized to player's expected HP at chapter unlock (1.0× = one-shot at that chapter). Player HP grows ~25% per chapter via gear + talents.
 
 | Ch. | Boss | Template | Boss HP (× chapter elite) | Per-hit dmg (× player HP) | Phases | Distinct attacks | One-shots | Expected attempts |
 |---|---|---|---|---|---|---|---|---|
@@ -486,12 +483,12 @@ Every one-shot mechanic must satisfy **all four** (per `enemies-and-bosses.md` �
 
 ### Scaling levers in order of preference (per `enemies-and-bosses.md` §8.4)
 
-1. **Attack frequency** (most fun to scale).
-2. **Projectile count per attack.**
-3. **Projectile speed.**
-4. **Phase compression** — phases trigger earlier.
-5. **Enemy / add density** — for Mother-template bosses.
-6. **Damage values** (least fun; only when other levers exhausted).
+1. Attack frequency (most fun).
+2. Projectile count per attack.
+3. Projectile speed.
+4. Phase compression (phases trigger earlier).
+5. Add density (Mother-template only).
+6. Damage values (least fun; last resort).
 
-**Never scale by shortening telegraphs below the minimum (0.6s normal, 1.0s one-shot, 1.2s phase-transition).** This is the readability checklist's hardest rule, and the curve respects it across every chapter and every Tower floor.
+**Never scale by shortening telegraphs below the minimum (0.6s normal, 1.0s one-shot, 1.2s phase-transition).** Hardest rule on the checklist; the curve respects it across every chapter and every Tower floor.
 

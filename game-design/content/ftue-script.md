@@ -101,112 +101,82 @@
 
 ## Part B — Day 1, First 10 Minutes (after Starter Chest)
 
-**Goal:** Take the player through *one* full Campaign run (Chapter 1, Floor 1: all 20 rooms) so they understand the run loop, see the talent grid, see the first IAP offer, and grant push notification permission at a clean, earned moment. Total wall-clock for Part B: 8–10 minutes.
+**Goal:** One full Campaign run (Chapter 1, Floor 1: rooms 1–19, boss deferred) so the player understands the run loop, sees the Heroes/Mastery surface, sees the first IAP offer, and grants push permission at an earned moment. Wall-clock for Part B: 8–10 minutes.
 
 ### Scene 8 — The Lobby Settles (~01:50 – 02:30)
 
-- [ ] After the starter chest pop, the Lobby UI lights up *one* element at a time over 5 seconds, in this order:
-  1. The **Play** button at the bottom-center (largest, glowing).
-  2. The **Heroes** tab (a tiny indigo pip flickers on it — the new Legendary weapon is auto-equipped, but the pip signals "you have something new to inspect").
-  3. The **Daily Login Calendar** card in the top-right corner (shows day 1 reward already claimed in a tick-mark; day 2 reward visible behind a soft veil).
-- [ ] No shop tab visible yet. No battle pass tab visible yet. No gacha tab visible yet. (Progressive monetization unlock — first IAP surface comes only *after* the first run ends.)
-- [ ] The **Play** button label reads "Begin." Not "Start." Not "Campaign." One word, mythic register.
+- [ ] Lobby lights up *one* element at a time over 5s: (1) the **Play** button bottom-center (labelled "Begin," mythic register), (2) the **Heroes** tab with a small indigo pip ("you have something new"), (3) the **Daily Login Calendar** top-right (day 1 already ticked, days 2–7 veiled).
+- [ ] No shop, battle pass, or gacha tab yet — those unlock on days 2, 3, 7. **Progressive monetization.**
 
-**ON-SCREEN PROMPT (P-08, ambient, not voiced):**
-> "Begin."
+**ON-SCREEN PROMPT (P-08):** "Begin."
 
-- [ ] If the player idles on the Lobby for 12 seconds, the Play button does a soft single-pulse animation. No nag text.
+- [ ] If the player idles 12s, Play does a single soft pulse. No nag text.
 
 ### Scene 9 — Chapter 1, Floor 1, Rooms 1–4 (Light Combat) (~02:30 – 04:00)
 
-- [ ] Player taps Begin. A 1.5-second map-zoom transition lands them at the entrance to the Vale.
-- [ ] A short narrator stinger plays on first chapter entry (line N-03, see Part E):
+- [ ] Tap Begin. 1.5s map-zoom transition into the Vale.
 
-**NARRATOR (V.O.) (line N-03):**
-> "They left the lanterns burning."
+**NARRATOR (V.O.) (line N-03):** "They left the lanterns burning."
 
-- [ ] Rooms 1–4 follow standard floor composition (`design/01` §3): 1–2 archetypes, ≤ 4 enemies on screen, no AoE telegraphs. Player should clear each room in 20–35 seconds.
-- [ ] After room 1, the **gold/XP HUD bar** animates in for the first time (was hidden during the tutorial proper). A small label briefly explains it: "Gold + XP." 2-second fade. No voice line.
-- [ ] After room 2, the **pause button** appears in the top-right and animates in with a soft tick. No prompt — it's intuitive. (Confirmed via wave-1 playtest: ≥ 95% of players ignore it until they need it.)
-- [ ] Rooms 3 and 4 introduce a second enemy archetype: **Husk Archer** (ranged, blue-coded). Telegraph: a thin blue line from archer to player 0.9 seconds before the shot, per `design/00` Pillar 8.
+- [ ] Rooms 1–4 follow `design/01` §3 light-combat composition (1–2 archetypes, ≤ 4 enemies). 20–35s per room.
+- [ ] After room 1, the gold/XP HUD bar fades in with a 2s label "Gold + XP."
+- [ ] After room 2, the pause button appears top-right.
+- [ ] Rooms 3–4 introduce the **Husk Archer** (ranged, blue-coded) with a 0.9s blue-line telegraph (`design/00` Pillar 8).
 
 ### Scene 10 — Room 5: The First Offer-Giver (~04:00 – 04:45)
 
-- [ ] Room 5 is the first **offer-giver room** (`design/01` §4). Player walks in to find three NPC silhouettes in an arc:
-  - **Angel of Dawn** (golden silhouette).
-  - **Devil of Dusk** (deep red silhouette).
-  - **The Lucent Sprite** (small, indigo).
-- [ ] A *non-voiced* on-screen tooltip explains each on hover/tap. No combat in this room. Music switches to a hushed contemplative cue.
-- [ ] **First-run scripting:** the Angel of Dawn is gently highlighted (a soft yellow ring on her plinth). Players who tap her get a free Epic ability — high-value reward, low-risk choice. The other two are fully selectable; if the player picks Devil or Sprite they get the standard outcome with no scripted bonus.
-- [ ] **ON-SCREEN PROMPT (P-09):** "Choose what carries you."
-- [ ] After the choice, player walks through the exit door. No voice line here — the offer-giver beat is light text only to preserve the 30-line voice budget.
+- [ ] First **offer-giver room** (`design/01` §4). Three silhouettes in an arc: Angel of Dawn (gold), Devil of Dusk (red), Lucent Sprite (indigo). Tooltip on tap explains each. No combat.
+- [ ] **First-run scripting:** Angel of Dawn has a soft yellow ring (gentle highlight). Players who tap her get a free Epic ability — low-risk choice. Devil and Sprite are fully selectable for confident players.
 
-### Scene 11 — Rooms 6–9, the Shop Room, and Rooms 11–14 (~04:45 – 06:30)
+**ON-SCREEN PROMPT (P-09):** "Choose what carries you."
 
-- [ ] Rooms 6–9: medium combat, mix of archetypes (Husk + Husk Archer + a small Husk Skirmisher elite in room 8). Light AoE telegraphs introduced in room 9.
-- [ ] Room 10: **Shop Room**. The player has accumulated ~300 gold by this point (tuned by the balance-curves agent later). Three offers:
-  1. Heal 50% HP — 100 gold.
-  2. Reroll your ability arsenal — 150 gold.
-  3. Upgrade a current ability one tier — 200 gold.
-- [ ] Tooltip-only explanation. No voice line.
-- [ ] Rooms 11–14: heavy combat. Difficulty scales gently — a player who has been picking sensible abilities should still be at full or near-full HP entering room 15.
+### Scene 11 — Rooms 6–14 (Mid Combat + Shop) (~04:45 – 06:30)
+
+- [ ] Rooms 6–9: medium combat. Husk + Husk Archer + a Husk Skirmisher elite in room 8. Light AoE telegraphs in room 9.
+- [ ] Room 10: **Shop Room** (~300 gold by now): Heal 50% HP (100g), Reroll abilities (150g), Upgrade ability one tier (200g). Tooltip only.
+- [ ] Rooms 11–14: heavy combat. Player should be at full/near-full HP entering 15.
 
 ### Scene 12 — Room 15: Second Offer-Giver (~06:30 – 07:00)
 
-- [ ] Standard offer-giver room. No scripting this time; the player has earned the right to pick freely.
-- [ ] Player chooses. Continues.
+- [ ] Standard offer-giver room. No scripting — the player has earned a free choice.
 
-### Scene 13 — Rooms 16–19 (Hard Combat, Mini-Boss in 19) (~07:00 – 08:30)
+### Scene 13 — Rooms 16–19 (Hard Combat + Mini-Boss) (~07:00 – 08:30)
 
-- [ ] Rooms 16–18: hardest standard rooms. Multi-archetype waves.
-- [ ] Room 19: a **mini-boss** — the **Withered Stag**, a Vale-themed Echo of a creature that used to wander the meadow. 3 telegraphs to learn, 30–45 second fight. Drops a small gear chest.
-- [ ] If the player drops below 25% HP at any point in room 17–19, a **rewarded-video revive offer** appears on death only (not pre-death) — see Part D for the failure flow. We do not pop a $0.99 revive IAP on the first run; ad-only revive in week 1 to protect the early-funnel.
+- [ ] Rooms 16–18: hardest standard rooms, multi-archetype waves.
+- [ ] Room 19: **Withered Stag** mini-boss (Vale Echo). 3 telegraphs, 30–45s fight. Drops a small gear chest.
+- [ ] Sub-25% HP from room 17 on: rewarded-video revive offer surfaces *on death only*, not pre-death. No $0.99 revive IAP in week 1 — protects the funnel.
 
 ### Scene 14 — The Cliffhanger (Room 20 Boss — Deferred) (~08:30 – 09:00)
 
-- [ ] Player approaches room 20. The boss door is visible — a tall stone arch with carved suns, light glowing from behind it.
-- [ ] **Subtle cliffhanger:** before the player can enter, a soft fade-to-Lobby trigger fires *not* on energy depletion (the player still has energy) but on a scripted **"first floor pre-boss" exit moment** that frames as a *natural rest beat*, not a paywall.
-- [ ] An end-of-floor screen rises: "Floor 1 Cleared — Bonus Run Tomorrow." Shows the run's drops, gold earned (animated count-up), XP earned, and a *single* tomorrow-tile that says "Day 2: New Quests + Daily Dungeon Unlocks."
-- [ ] **Critical design rule:** the cliffhanger must *never* feel forced. The boss is reachable in run 2. Players who want to fight the boss immediately can; the "rest tomorrow" copy is a *suggestion*, not a gate. (A gate here would tank D1 retention — see `research/monetization/f2p-patterns.md` §8: "let the player win for the first 10 minutes.")
+- [ ] Player approaches room 20. Tall stone boss-arch glows.
+- [ ] **Subtle cliffhanger:** scripted "first floor pre-boss" Lobby exit fires *not* on energy depletion but as a framed *rest beat*. End-of-floor screen rises: "Floor 1 Cleared — Bonus Run Tomorrow." A single tomorrow-tile teases "Day 2: New Quests + Daily Dungeon."
+- [ ] **Design rule:** the cliffhanger must never feel forced. The boss is reachable in run 2. Rest copy is a suggestion, not a gate — gates here tank D1.
 
-**NARRATOR (V.O.) (line N-04):**
-> "Come back. There is more light to carry."
+**NARRATOR (V.O.) (line N-04):** "Come back. There is more light to carry."
 
-### Scene 15 — Heroes Tab Lights Up + Mastery Node Unlocks (~09:00 – 09:30)
+### Scene 15 — Heroes Tab + Mastery (~09:00 – 09:30)
 
-- [ ] Back at Lobby. The Heroes tab pulses brighter than before. A small "1" badge sits on it.
-- [ ] Player taps it. The Heroes screen opens, the Dawnbow is centered, and a **Mastery Path node** at the level-20 ring lights up with a soft chime (line N-05 is *not* played here — UI sound only, to preserve the voice budget).
-- [ ] Tooltip: "Mastery Path: Level her up to unlock." No deep tutorial yet. The grid is visible but only the first ring is interactive.
-- [ ] Player can close the tab and continue.
+- [ ] Heroes tab pulses with a "1" badge. Tap opens the Heroes screen; the Dawnbow centered. A **Mastery Path node** on the level-20 ring lights up. Tooltip: "Mastery Path: level her up to unlock." UI chime only — no voice line spent here.
 
-### Scene 16 — The Starter Pack Offer Appears (~09:30 – 09:45)
+### Scene 16 — Starter Pack Offer (~09:30 – 09:45)
 
-- [ ] As the player closes the Heroes tab, a one-time modal slides in from the bottom of the screen.
-- [ ] **The Beacon Pack** ($0.99, 48h timer) — sourced from `design/04` §5:
-  - +600 gems (3× the seed grant).
-  - +5,000 gold.
-  - 3× Energy refill stones.
-  - 1× guaranteed Epic ability scroll (usable on next run for a free pick).
-- [ ] The modal has a single "View" CTA and a clear "Maybe later" X in the corner. **No dark patterns.** Dismissing it does not hide the offer permanently; it surfaces again only as a non-modal Lobby card with a visible countdown.
-- [ ] No voice line on the offer. Voice budget is reserved for in-world beats.
+- [ ] One-time modal slides up: **Beacon Pack** ($0.99, 48h, from `design/04` §5):
+  - +600 gems · +5,000 gold · 3× Energy refill stones · 1× guaranteed Epic ability scroll.
+- [ ] CTA: "View" / "Maybe later" (X). Dismissing does not hide it; it persists as a non-modal Lobby card with countdown. **No dark patterns.**
 
-### Scene 17 — The Daily Login Calendar Reveal (~09:45 – 10:00)
+### Scene 17 — Daily Login Calendar Reveal (~09:45 – 10:00)
 
-- [ ] Immediately after the Beacon Pack modal closes (or is dismissed), the **Daily Login Calendar** card in the top-right pulses and auto-opens once.
-- [ ] Day 1 is already claimed (animation: chest icon swaps to checkmark). Days 2–7 are visible with reward icons. Day 7 is highlighted as the "wow" day with a hero-shard icon (the season hero teaser).
-- [ ] Player taps to dismiss. The card collapses back to the corner.
+- [ ] Calendar card pulses and auto-opens once. Day 1 ticked. Days 2–7 visible; day 7 is the "wow" day (hero-shard icon — the season hero teaser). Tap to dismiss.
 
-### Scene 18 — The Push Notification Pre-Prompt (~10:00 – 10:30)
+### Scene 18 — Push Notification Pre-Prompt (~10:00 – 10:30)
 
-- [ ] One natural, earned beat for the push permission ask. This is the only iOS-system prompt fired on day 1.
-- [ ] **In-game pre-prompt** (modal, before the OS dialog), worded to drive opt-in:
+- [ ] In-game pre-prompt fires before the OS dialog:
   > **Title:** Keep your light burning.
-  > **Body:** We'll let you know when your energy is full and when a daily quest is waiting. That's it. No spam.
-  > **CTAs:** "Notify me" (primary) / "Not now" (secondary).
-- [ ] If the player taps **Notify me**, the iOS OS-level prompt fires immediately after. If they tap **Not now**, no OS prompt is shown today; the pre-prompt may re-fire on day 3 *only* if the player has logged in both day 2 and day 3 (one re-ask per week max).
-- [ ] Best-practice opt-in rate: 60–70% with this pattern, per `research/monetization/liveops-retention.md` §6.3.
+  > **Body:** We'll let you know when your energy is full and when a daily quest is waiting. No spam.
+  > **CTAs:** "Notify me" / "Not now."
+- [ ] Tap "Notify me" → OS-level prompt fires. Tap "Not now" → no OS prompt today; re-ask on day 3 only if player logged in days 2 and 3. Max one re-ask per week. Target opt-in: 60–70% (`research/monetization/liveops-retention.md` §6.3).
 
-> **Day 1 wrap.** The player now: knows how to play, has a Legendary weapon and a Spirit, has cleared a Floor up to the boss-door cliffhanger, has seen the Heroes tab and the Mastery system, has seen their first IAP offer, has joined the Daily Login chain, and (probably) has push notifications on. Every system shown so far has been *earned*, not pushed. No shop tab, no gacha tab, no battle pass tab yet. Those come on days 2, 3, and 7.
+> **Day 1 wrap.** Player knows how to play, holds a Legendary weapon + Spirit, has cleared Floor 1 to the cliffhanger, has seen Heroes/Mastery, has seen their first IAP offer, has joined the Daily Login chain, has (likely) push on. No shop/gacha/battle-pass tabs yet.
 
 ---
 
@@ -232,150 +202,118 @@ This part directly fulfills `design/01-core-loop-spec.md` §6. Each day adds **o
 
 ### Day 2 — "The Habit Starts"
 
-**Hook:** First daily login bonus reward + first daily quests panel + first new mode (Daily Dungeon, an energy-free 1–2 minute mini-run).
+**Hook:** First daily login claim, first daily quests, first new mode (Daily Dungeon — energy-free, 1–2 min).
 
-**Voice line on app open (line N-06):**
-> "Day breaks. Walk with me."
+**Voice line (N-06):** "Day breaks. Walk with me."
 
-- [ ] App opens to a 1-second Lobby fade-in. The Daily Login Calendar slides forward, day-2 reward (200 gold + 1 ability scroll) animates into the inventory, and the card returns to the corner.
-- [ ] A new card appears in the Lobby: **Daily Quests** (3 tasks for week 1; 6 for veterans). The 3 launch-week tasks:
+- [ ] 1s Lobby fade-in. Daily Login Calendar slides forward, day-2 reward (200 gold + 1 ability scroll) animates into inventory.
+- [ ] New Lobby card: **Daily Quests** (3 tasks for week 1; 6 for veterans):
   1. Clear 5 rooms in any mode.
   2. Kill 100 enemies.
   3. Pick 5 abilities in a run.
-- [ ] Each quest pays Pass Points + a small gold/gem stipend. Filling the **activity bar** unlocks a small chest.
-- [ ] The Lobby's bottom-bar surface gains a new icon: **Daily Dungeon** (a soft purple gate). It is the new mode unlocked today.
-- [ ] **On-screen prompt (P-10):** "A new path opens."
-- [ ] Player taps Daily Dungeon → enters a short 5-room mini-floor with a guaranteed gear drop. No energy cost. Designed to be completed in ≤ 2 minutes even by a slow player.
+- [ ] Each task pays Pass Points + gold/gem stipend. Filling the activity bar unlocks a small chest.
+- [ ] New bottom-bar icon: **Daily Dungeon** (purple gate). 5-room mini-floor, guaranteed gear drop, ≤ 2 min.
+- [ ] **P-10:** "A new path opens."
 
-**Push notification (sent at 09:05 player local, morning of day 2):**
-> "Your daily quests are open in Lucent."
+**Push (09:05 local):** "Your daily quests are open in Lucent."
 
-**IAP surface today:** the **Daily Deal** card surfaces in the bottom-bar. A $0.99 rotating bundle (today's roll: 200 gems + 1,000 gold + 1 Spirit fragment). 24-hour timer.
+**IAP today:** **Daily Deal** card (24h, $0.99 rotation; today's roll: 200 gems + 1,000 gold + 1 Spirit fragment). Beacon Pack still active.
 
 ---
 
 ### Day 3 — "A Season Begins"
 
-**Hook:** Battle Pass intro with a free 5-tier headstart so the pass feels half-complete before the player engages with it. (`research/monetization/f2p-patterns.md` §7 "instant rewards on purchase" pattern, applied to free track for trust-building.)
+**Hook:** Battle Pass intro with a free 5-tier headstart (trust-building per `f2p-patterns.md` §7).
 
-**Voice line on app open (line N-07):**
-> "The seasons turn. So do you."
+**Voice line (N-07):** "The seasons turn. So do you."
 
-- [ ] Lobby opens. The Battle Pass tab unlocks with a soft fanfare (FMOD: `UI_Unlock_BattlePass`). A glowing icon labeled "Season 1: Vale of First Light" appears in the bottom-bar.
-- [ ] Tapping the tab reveals the 45-day season pass. Free track is on the left; premium track is on the right. Tiers 1–5 are auto-claimed (the headstart).
-- [ ] A small modal explains the pass in three lines of text + one image:
-  - "Play to earn Pass Points."
-  - "Free rewards every tier."
-  - "Unlock premium for the season hero, more gems, exclusive cosmetics."
-- [ ] **Two IAP cards** appear in the pass modal:
-  - **Battle Pass — Lite** at $4.99: unlocks the paid track.
-  - **Battle Pass — Premium** at $14.99: paid track + 5-tier skip + cosmetic + 1 free 10-pull.
-- [ ] *No "Buy a Hero" pass-tier shown on day 3* — that surface is locked until the player has completed at least one full chapter. Drip-feed the high-ARPU surfaces.
+- [ ] Battle Pass tab unlocks with a soft fanfare. Bottom-bar gains "Season 1: Vale of First Light."
+- [ ] 45-day season pass: free track left, premium right. Tiers 1–5 auto-claimed (the headstart).
+- [ ] Three-line explainer modal: "Play to earn Pass Points. Free rewards every tier. Unlock premium for the season hero and more."
+- [ ] Two IAP cards: **Battle Pass — Lite** $4.99 (unlocks paid track) and **Battle Pass — Premium** $14.99 (paid track + 5-tier skip + cosmetic + free 10-pull).
+- [ ] *Buy-a-Hero ($39.99) tier is hidden until chapter 1 fully cleared* — drip-feed the high-ARPU surfaces.
 
-**Push notification (sent at 19:30 player local, evening of day 3):**
-> "A new season has begun in the Vale."
+**Push (19:30 local):** "A new season has begun in the Vale."
 
-**IAP surface today:** Battle Pass Lite + Premium. Beacon Pack still active for the rest of the day.
+**IAP today:** Battle Pass Lite + Premium.
 
 ---
 
 ### Day 4 — "The First Weekly Boss"
 
-**Hook:** Weekly Boss room unlocks. Ad-watch chests + ad-watch energy refills surface in the Lobby for the first time.
+**Hook:** Weekly Boss room + ad-watch reward panel.
 
-**Voice line on app open (line N-08):**
-> "Something old wakes in the Vale."
+**Voice line (N-08):** "Something old wakes in the Vale."
 
-- [ ] The Lobby gains a new card: **Weekly Boss** ("The Withering Stag, awakened"). Players get 3 attempts/day, can deal damage cumulatively, and unlock damage-tier rewards. A bracketed leaderboard (50-player shards) shows the current top of the player's bracket.
-- [ ] A new **Free Chests** panel appears in the Lobby (sourced from `design/04` §6). It has 5 ad-watch slots:
-  1. Free chest (4/day cap).
-  2. Energy +5 (4/day cap).
-  3. Free spin (1/day cap).
-  4. Battle Pass +Pass Points (1/day cap).
-  5. Lucky shop refresh (1/day cap).
-- [ ] **On-screen prompt (P-11):** "Watch. Earn. Repeat."
+- [ ] New Lobby card: **Weekly Boss** ("The Withering Stag, awakened"). 3 attempts/day, cumulative damage tiers, bracketed leaderboard (50-player shards).
+- [ ] New **Free Chests** panel (per `design/04` §6) with 5 ad-watch slots: free chest (4/day), energy +5 (4/day), free spin (1/day), Pass Points (1/day), lucky shop refresh (1/day).
+- [ ] **P-11:** "Watch. Earn. Repeat."
 
-**Push notification (sent at 09:30 player local, morning of day 4):**
-> "The Withering Stag stirs. Strike first."
+**Push (09:30 local):** "The Withering Stag stirs. Strike first."
 
-**IAP surface today:** **Gem Packs** surface in the shop for the first time, but only the bottom three tiers ($0.99, $4.99, $9.99). The $19.99/$49.99/$99.99 tiers remain hidden until day 8+ (post-FTUE-window) — these are the whale-anchor tiers and we want them to land *after* the player has formed a daily habit, not before. (Progressive monetization unlock — `research/monetization/f2p-patterns.md` §8, Survivor.io pattern.)
+**IAP today:** **Gem Packs** appear in shop — but **only the bottom three tiers** ($0.99, $4.99, $9.99). The $19.99/$49.99/$99.99 whale anchors remain hidden until day 8+. Progressive unlock per `f2p-patterns.md` §8 (Survivor.io).
 
 ---
 
 ### Day 5 — "First Boss, First Mode"
 
-**Hook:** The player returns to Chapter 1, Floor 1's boss room and kills the chapter boss. This unlocks the **Tower** mode.
+**Hook:** Return to the boss room. Kill the chapter boss. Unlock Tower.
 
-**Voice line on the boss-room approach (line N-09):**
-> "The first dark thing was never the worst."
+**Voice line (boss approach, N-09):** "The first dark thing was never the worst."
+**Voice line (victory, N-10):** "One realm. Now six more."
 
-**Voice line on boss-room victory (line N-10):**
-> "One realm. Now six more."
+- [ ] Boss: **Tatterhorn, the Forgotten Watcher** — Vale-themed corrupted shepherd-Echo. 3 phases, ~90s.
+- [ ] On kill: long victory beat, end-of-run screen, narrator line N-10.
+- [ ] Bottom-bar gains **Tower** (spire silhouette, "NEW" pip). Brief tutorial card: endless floors, escalating difficulty, leaderboard, 3 energy per run. No forced first-Tower run.
+- [ ] **P-12:** "Climb."
 
-- [ ] Player picks Campaign, enters Floor 1 of the Vale, plays through (the boss is also reachable by the much-shorter "skip to boss" option that unlocks at run-2; see Part D edge case for that branch).
-- [ ] Boss is **Tatterhorn, the Forgotten Watcher** — a Vale-themed corrupted shepherd-Echo. 3 phases, ~90 seconds total.
-- [ ] On boss kill: a long victory beat. Confetti. End-of-run screen. A short narrator victory line (N-10).
-- [ ] Lobby returns. The bottom-bar gains a new icon: **Tower** (a tall spire silhouette). It's a mode badge with a small "NEW" pip.
-- [ ] **On-screen prompt (P-12):** "Climb."
-- [ ] Brief Tower tutorial card explains: endless floors, escalating difficulty, leaderboard, 3 energy per run. No forced first-Tower-run — the player can ignore Tower and come back to it later.
+**Push (09:30 local):** "The Vale awaits its champion."
 
-**Push notification (sent at 09:30 player local, morning of day 5):**
-> "The Vale awaits its champion."
-
-**IAP surface today:** **Privilege Card** subscription $4.99/30d surfaces in the shop with a "First Subscription" 3-day-free-trial offer (per `research/monetization/f2p-patterns.md` §11.1). No banner-style modal — it joins the shop tab quietly.
+**IAP today:** **Privilege Card** $4.99/30d surfaces quietly in shop with a 3-day free-trial offer (per `f2p-patterns.md` §11.1). No modal.
 
 ---
 
 ### Day 6 — "You Are Not Alone"
 
-**Hook:** First guild invite prompt + Async PvP arena introduction. Day 6 is *the social day*, because Pillar 6 makes social the D30+ extender.
+**Hook:** First guild invite + Async PvP Arena (Pillar 6 — social as D30+ extender).
 
-**Voice line on app open (line N-11):**
-> "Others walk this path. Find them."
+**Voice line (N-11):** "Others walk this path. Find them."
 
-- [ ] On Lobby open, a soft notification slides down from the top: "You've been seen by a Guild." The guild **The Lanternbearers** (a launch-seeded NPC guild that auto-accepts new players to keep the social pool warm during soft launch — see Part D for the offline / no-real-guild case) extends an invite.
-- [ ] Player taps to view. The Guild screen opens: 30/30 members (filled with low-activity NPCs + real returning players, mixed seamlessly), guild chat (read-only until accept), guild boss preview, donation panel.
-- [ ] **On-screen prompt (P-13):** "Join, or walk alone."
-- [ ] If the player accepts: a Guild-tab icon appears in the bottom-bar permanently.
-- [ ] If the player declines: the prompt re-fires once on day 8 with a different guild option. After that, the Guilds tab is still discoverable from the Lobby menu but no longer pushed.
-- [ ] Independently, the **Async PvP Arena** is surfaced as a side-card in the Guilds tab UI (it's its own mode, but day-6 reveal is bundled because both are "social" in player mental model). 5 daily PvP attempts, replay-based, bracketed.
+- [ ] Top-of-screen banner: "You've been seen by a Guild." The seeded NPC guild **The Lanternbearers** auto-extends an invite (keeps the social pool warm during soft launch; degraded mode in Part D).
+- [ ] Guild screen: 30/30 members (real returners + low-activity NPCs mixed seamlessly), chat (read-only until accept), guild boss preview, donations.
+- [ ] Accept → permanent Guilds tab. Decline → one re-ask on day 8 with a different guild, then the tab is discoverable but not pushed.
+- [ ] **Async PvP Arena** surfaces as a sibling card in the Guilds tab. 5 attempts/day, replay-based, bracketed.
+- [ ] **P-13:** "Join, or walk alone."
 
-**Push notification (sent the evening of day 6, ~20:00 local):**
-> "A guild has invited you. Tap to see."
+**Push (~20:00 local):** "A guild has invited you. Tap to see."
 
-**IAP surface today:** **No new IAP surfaces today.** This is the intentional rest day for offer pressure. Player should *feel* a quiet day. (Critically important: monetization fatigue is real, and the day before the big day-7 surge needs to be calm.)
+**IAP today:** **No new IAP surfaces.** Intentional rest day before the day-7 surge.
 
 ---
 
 ### Day 7 — "The First Long Run"
 
-**Hook:** Survival mode unlocks. The first Hero Gacha banner opens with a 10-pull featured offer. The **Beacon Pack starter offer expires today** (48h timer placed it here intentionally — Beacon Pack started day 1, 48h means it dies during the day-7 wave; we want one final visible countdown).
+**Hook:** Survival mode unlocks. Hero Gacha banner opens. Beacon Pack expires today (48h timer placed here intentionally — one last visible countdown).
 
-**Voice line on app open (line N-12):**
-> "Stand. The light remembers."
+**Voice line (N-12):** "Stand. The light remembers."
 
-- [ ] The bottom-bar's last empty slot lights up: **Survival** (a circular arena icon). Tapping it explains the mode in one line: "Survive as long as you can. The horde grows."
-- [ ] First Survival run is energy-cost-discounted by 50% (a 2-energy run instead of 4), once per player, to lower friction on first try.
-- [ ] **On-screen prompt (P-14):** "Hold the light."
-- [ ] After (or before) the player tries Survival, the **Hero Gacha banner** unlocks. Featured: **The Prismborn**, a launch hero per `design/03` Hero Fantasy Framework. 10-pull soft pity, 50-pull hard pity. Rates are visible on the banner entry screen (Apple compliance + `design/00` Pillar 5).
-- [ ] Free **first 10-pull** is gifted — every new player gets one guaranteed Epic+ in their first pull (the "first gacha pull guaranteed Epic" from `design/01` §6 day-1 table is intentionally **slid to day 7** in this script to align with the gacha tab reveal; this matches the progressive-unlock pattern and protects the day-1 funnel from gacha-overwhelm).
+- [ ] Last empty bottom-bar slot lights up: **Survival** (circular arena icon). One-line explainer: "Survive as long as you can. The horde grows."
+- [ ] First Survival is energy-discounted 50% (2 energy instead of 4) once per player.
+- [ ] **Hero Gacha** banner opens. Featured: **The Prismborn**. 10-pull soft pity, 50-pull hard pity. Rates visible at banner entry (Apple compliance + Pillar 5).
+- [ ] Free **first 10-pull** gifted — guaranteed Epic+. (`design/01` §6 lists the "guaranteed Epic" on day 1; we deliberately slide it to day 7 to align with the gacha tab reveal and avoid day-1 overwhelm.)
+- [ ] **P-14:** "Hold the light."
 
-**Push notification (sent the night of day 6, ~21:00 local, "tomorrow's hook"):**
-> "Tomorrow: the first banner opens. The first hero waits."
+**Push (day-6 night, ~21:00):** "Tomorrow: the first banner opens. The first hero waits."
+**Push (day 7 morning, ~09:30):** "Your first Survival is open. The horde gathers."
+**Push (day 7 evening, ~20:00):** "The Beacon fades at midnight. One last chance."
 
-**Push notification (sent the morning of day 7, ~09:30 local):**
-> "Your first Survival is open. The horde gathers."
+**IAP today (the big wave):**
+- **Monthly Card** $9.99/30d goes live with the gem-drip preview ("+200 now / +100 daily for 30 days = 3,200 gems").
+- **Hero Gacha** single-pull (60 gems) + 10-pull (540 gems). First 10-pull free.
+- **Beacon Pack** expires at midnight with visible countdown.
+- **Daily Premium Deal** $2.99 joins the Daily Deal as a sibling.
 
-**Push notification (sent the evening of day 7, ~20:00 local, urgency):**
-> "The Beacon fades at midnight. One last chance."
-
-**IAP surfaces today (the big wave):**
-- **Monthly Card** $9.99/30d goes live. Visible as a permanent Lobby card with the gem-drip preview ("+200 immediate / +100 daily for 30 days = 3,200 gems total").
-- **Hero Gacha** banner with single-pull (60 gems) and 10-pull (540 gems) buttons. First 10-pull is free.
-- **Beacon Pack** expires at midnight tonight with a visible countdown the player has now seen for ~36 hours.
-- **Daily Premium Deal** $2.99 surfaces today (was hidden during days 1–6; today it joins the Daily Deal as a sibling).
-
-> **End of Day 7 wrap.** The player has seen and engaged with all 4 launch modes (Campaign, Daily Dungeon, Tower, Survival), the Battle Pass, Daily Quests, Guilds + Async PvP, Heroes/Mastery, the Talent Grid (Inscription), the Forge (gear upgrade), the Hero Gacha banner with rates published, all 5 ad placements, and the full launch IAP catalog except the $39.99 "Buy a Hero" pass tier and the largest gem packs ($19.99+). Those will land in week 2 once daily habit is firmly established. **D7 retention KPI target: ≥ 20%** per `design/05` and per the genre's top-quartile benchmark in `research/monetization/liveops-retention.md` §8.
+> **End of Day 7 wrap.** Player has engaged with all 4 modes (Campaign, Daily Dungeon, Tower, Survival), Battle Pass, Daily Quests, Guilds + Async PvP, Heroes/Mastery, Talent Grid, the Forge, the gacha banner, all 5 ad placements, and the full launch IAP catalog except the $39.99 Buy-a-Hero tier and the largest gem packs ($19.99+) — both delivered in week 2. **D7 retention KPI: ≥ 20%** (`design/05`, top-quartile per `liveops-retention.md` §8).
 
 ---
 

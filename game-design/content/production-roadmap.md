@@ -145,18 +145,17 @@ Three staffing scenarios, each producing the same launch scope from `design/05-l
 
 ### 2.1 Scenario A — Solo + outsourcing (18–24 months)
 
-| Role | FTE | Monthly cost | Notes |
-|---|---|---|---|
-| Solo dev (design + client + backend) | 1.0 | $11,000 | Salary; cofounder taking minimum |
-| Outsourced art (rolling) | 0.5-equivalent | $1,800 | Synty + Upwork artist on retainer per `research/games/art-audio-direction.md` |
-| Outsourced audio (composer + sound design) | 0.2-equivalent | $500 | SoundBetter composer + Sonniss SFX |
-| Voice (narrator, 30 lines) | one-shot | $200 | $1,800 over 9-month amortized |
-| Tools / Apple / Firebase / RevenueCat | flat | $150 | See `02-tech-stack-decision.md` |
-| **Total monthly** | — | **~$13,650** | |
-| **Duration to global** | 18–24 months | | Vertical slice slips from week 16 to ~week 32 |
-| **Total dev cost** | — | **~$273k (24-month worst case)** | Pre-launch only |
+| Role | FTE | Monthly cost |
+|---|---|---|
+| Solo dev (design + client + backend) | 1.0 | $11,000 |
+| Outsourced art (rolling) | 0.5-eq | $1,800 |
+| Outsourced audio | 0.2-eq | $500 |
+| Voice (narrator, 30 lines) | one-shot | $200 amortized |
+| Tools / Apple / Firebase / RevenueCat | flat | $150 |
+| **Total monthly** | — | **~$13,650** |
+| **Total dev cost (24-month worst case)** | — | **~$273k pre-launch** |
 
-Timeline implication: every Phase doubles. Vertical slice at ~Wk32. Global launch at month 22 (mid-case). Solo developer takes on burnout risk (see §3). **Not recommended for a category as competitive as iOS hybrid action.**
+Every Phase doubles. Vertical slice at ~Wk32; global at month 22 mid-case. High burnout risk (see §3). **Not recommended for this category.**
 
 ### 2.2 Scenario B — Lean indie (12 months) — **RECOMMENDED**
 
@@ -179,35 +178,33 @@ Backend engineering is split across the two client engineers, with Cloud Functio
 
 ### 2.3 Scenario C — Funded indie (10 months)
 
-| Role | FTE | Monthly cost | Notes |
-|---|---|---|---|
-| Design lead | 1.0 | $12,500 | |
-| Client engineer #1 | 1.0 | $13,500 | |
-| Client engineer #2 | 1.0 | $13,500 | |
-| Backend / LiveOps engineer | 1.0 | $14,000 | Dedicated; Cloud Functions, anti-cheat, gacha |
-| Art lead | 1.0 | $11,000 | |
-| Outsourced artist #1 (heroes / bosses) | 1.0-equivalent retainer | $5,000 | Rolling contract |
-| Outsourced artist #2 (envs / VFX) | 1.0-equivalent retainer | $4,500 | Rolling contract |
-| Producer | 0.5 | $6,000 | Shared with publishing partner |
-| Outsourced audio | 0.3-equivalent | $1,800 | Higher cadence than Lean |
-| Voice | one-shot | $300/mo amortized | $3k total over 10 months |
-| Tools / Apple / Firebase / RevenueCat / FMOD | flat | $400 | |
-| **Total monthly** | — | **~$82,500** | |
-| **Duration to global** | 10 months | | Schedule compressed by ~2 months via parallelization in Phases 3 and 4 |
-| **Total pre-launch dev cost** | — | **~$825k** | Pre-launch only |
+| Role | FTE | Monthly cost |
+|---|---|---|
+| Design lead | 1.0 | $12,500 |
+| Client engineer #1 | 1.0 | $13,500 |
+| Client engineer #2 | 1.0 | $13,500 |
+| Backend / LiveOps engineer | 1.0 | $14,000 |
+| Art lead | 1.0 | $11,000 |
+| Outsourced artist #1 (heroes / bosses) | 1.0-eq retainer | $5,000 |
+| Outsourced artist #2 (envs / VFX) | 1.0-eq retainer | $4,500 |
+| Producer | 0.5 | $6,000 |
+| Outsourced audio | 0.3-eq | $1,800 |
+| Voice | one-shot | $300 amortized |
+| Tools / Apple / Firebase / RevenueCat / FMOD | flat | $400 |
+| **Total monthly** | — | **~$82,500** |
+| **Total pre-launch dev cost (10 months)** | — | **~$825k** |
 
-Faster, more expensive, lower per-person risk (two-engineer redundancy on every code surface). The funded scenario also unlocks a Funded-tier UA budget (see §6) — that, not the dev cost, is the real reason to take outside capital.
+Compresses Phases 3 + 4 via parallelization. Lower per-person risk (engineer redundancy). The real reason to take funded-tier capital is the UA tier it unlocks (see §6), not the dev compression.
 
 ### 2.4 Recommendation
 
 **Choose Scenario B — Lean indie.** Reasoning:
 
-1. The scope in `design/05-launch-scope.md` is genuinely a 5-person job at 12 months. Scenario A is a 5-person job for 2 years and a burnout risk; Scenario C costs ~$70k more in dev (and ~$440k more in UA at the mid tier) without a proportionate quality lift.
-2. Scenario B leaves room to add a backend engineer in Phase 5 if needed without breaking the budget envelope.
-3. Scenario B can be funded by a single seed cheque ($1.0–1.5M including UA + 6 months runway after launch). Scenario C requires a Series-Seed or publisher deal which carries deal terms that often outweigh the speed advantage.
-4. Scenario B matches the Lean-indie UA budget tier in `research/tech/app-store-launch-aso.md` §7 — which is the recommended tier for first-launch indies.
+1. The launch scope is genuinely a 5-person, 12-month job. Scenario A doubles the timeline and adds burnout risk; Scenario C costs ~$70k more in dev and ~$440k more in UA at mid tier without a proportionate quality lift.
+2. Scenario B can be funded by a single seed cheque (~$1.1M including UA + 6 months post-launch runway). Scenario C needs a Series Seed or publisher deal whose terms often outweigh the speed advantage.
+3. Scenario B matches the Lean-indie UA budget tier in `research/tech/app-store-launch-aso.md` §7.
 
-All of the rest of this document assumes Scenario B unless explicitly called out.
+Rest of this document assumes Scenario B unless called out.
 
 ---
 
@@ -305,15 +302,15 @@ Scoring: **Probability** and **Impact** are each Low (L), Medium (M), or High (H
 | S4 | App Review rejection at Wk52 — global slips by 2 weeks | M | M | Pre-submission checklist (§7 sign-off); external lawyer review; sandbox + age-rating audit | Resubmit on 24-hour cycle until accepted; communicate any creator/PR commitments | Prod |
 | S5 | Localization wave 2 (ja/ko/zh-Hans/pt-BR) slips past Wk4 post-global | M | L | Translator engaged in Wk42; string freeze in Wk42 | Slip CJK markets to month 2 post-global; accept lower CVR in those locales for 30 days | Prod |
 
-### 3.10 Risk register: top-5 by composite
+### 3.10 Top-5 risks by composite
 
-1. **D1 — Ability stacking unbalanced** (M × H) — highest design risk, gates retention and feel.
-2. **T3 — Cheating breaks PvP leaderboard** (M × H) — highest tech risk; existential for D30 social engagement.
-3. **AP1 — Gacha-odds App Review rejection** (M × H) — highest Apple risk; blocks launch.
-4. **R1 — D7 retention <18% in soft launch** (M × H) — gates global launch.
-5. **S3 — Soft-launch KPIs fail → 1-quarter push** (M × H) — cash-flow stress for Lean team.
+1. **D1 — Ability stacking unbalanced** (M × H) — gates retention and feel.
+2. **T3 — Cheating breaks PvP** (M × H) — existential for D30 social.
+3. **AP1 — Gacha-odds App Review rejection** (M × H) — blocks launch.
+4. **R1 — D7 retention <18% in soft launch** (M × H) — gates global.
+5. **S3 — Soft-launch KPIs fail → 1-quarter push** (M × H) — cash-flow stress.
 
-All five have explicit Wk-numbered mitigations above. Schedule slack (Phase 7 has 4 weeks; Phase 8 has 10 weeks; 8 days/phase folded) is sufficient to absorb any one major slip.
+All have Wk-numbered mitigations above. Schedule slack (Phase 7 = 4 wks; Phase 8 = 10 wks) absorbs any single major slip.
 
 ---
 
@@ -340,28 +337,20 @@ The single most important milestone in this plan. The point of the vertical slic
 
 ### 4.2 Explicitly **out of scope** at Wk16
 
-- No monetization: no RevenueCat, no SKUs, no IAP, no ads, no gacha.
-- No meta-progression beyond an in-run loadout: no gear, no runes, no pets, no talent grid, no battle pass, no daily quests.
-- No social: no guilds, no PvP, no leaderboards (Game Center stub OK; no Apple submission yet).
-- No localization: English only.
-- No FMOD: placeholder audio is fine.
-- No anti-cheat hardening: App Check + HMAC summaries deferred to Phase 5 / 6.
-- No App Store Connect listing yet (TestFlight internal only).
+No monetization (RevenueCat, SKUs, IAP, ads, gacha); no meta-progression (gear, runes, pets, talents, battle pass, daily quests); no social (guilds, PvP, leaderboards); no localization (English only); no FMOD (placeholder audio); no anti-cheat hardening (deferred to Phases 5/6); no App Store Connect listing yet (TestFlight internal only).
 
 ### 4.3 Exit criteria (the Wk16 playtest)
 
-The vertical slice is **shipped** if and only if:
+Vertical slice ships if and only if:
 
-1. **10 internal testers** on iPhone 12 / 13 / 14 / 15 each complete one full run from room 1 to The Veiled Sentinel kill **without a crash**.
-2. **Save / load works** on each tester's device: kill the app between rooms 5 and 6, reopen, resume at room 6 with the same hero + abilities + HP.
-3. **60fps stable** measured by Unity Profiler in the boss arena, ≥95% of frames within the 16.67ms budget on iPhone 12.
-4. **Subjective "feels good" rating** ≥4/5 from 8 of the 10 testers, measured by a 1-pager survey with 5 questions (loop, controls, juice, ability-pick clarity, boss-fight satisfaction).
-5. **FTUE completion** rate ≥85% measured across the same 10 testers (1 of 10 may bounce in rooms 1–3 for tutorial frustration; more than that fails the gate).
-6. The **save / load schema** in Firestore matches the design doc in `design/06-data-schema.md` (to be authored in Wk6); no manual edits in production.
+1. **10 internal testers** on iPhone 12/13/14/15 each complete a full run from room 1 to The Veiled Sentinel kill **without a crash**.
+2. **Save/load works** on each device: kill app between rooms 5 and 6, reopen, resume at room 6 with same hero + abilities + HP.
+3. **60fps stable** in boss arena per Unity Profiler — ≥95% of frames within 16.67ms on iPhone 12.
+4. **Subjective "feels good" ≥4/5** from 8 of 10 testers (5-question survey: loop, controls, juice, pick-screen clarity, boss satisfaction).
+5. **FTUE completion ≥85%** across the same testers.
+6. **Save schema** matches `design/06-data-schema.md` (authored Wk6); no manual edits in prod.
 
-**Pass → Phase 3 begins Wk17.** **Fail → re-scope, schedule a 2-week recovery sprint, redo the playtest at Wk18.**
-
-This is the only milestone in the project where a "fail" is genuinely acceptable. Better to discover the loop doesn't feel right at Wk16 than to discover it at Wk52.
+**Pass → Phase 3 begins Wk17. Fail → re-scope, 2-week recovery sprint, redo playtest Wk18.** This is the only milestone where "fail" is acceptable — better at Wk16 than Wk52.
 
 ---
 
@@ -371,47 +360,29 @@ Per `research/tech/app-store-launch-aso.md` §4. Three stages, 10 weeks total (W
 
 ### 5.1 Stage 1 — Philippines (Wks 43–44, **technical**)
 
-- **Geos:** PH only.
-- **Why:** Cheap CPIs (≤$0.40), large English-speaking install base, good for stress-testing crash-free + FTUE funnel signal.
-- **UA spend:** $1,500–$3,000 total (Apple Search Ads Basic + 1 Meta Reels campaign).
-- **Channels:** ASA Basic (cap at $1k/mo), 1 Meta Reels concept × 3 creative variants.
-- **Daily review:** Crash rate, FTUE-step funnel, day-of-install retention, first-session length.
-- **Stage-1 KPI gates (to proceed to Stage 2):**
-  - Crash-free sessions ≥ 99.0% (will need to reach 99.5% by global)
-  - FTUE completion ≥ 80% (will need 90% by global)
-  - Install → tutorial complete ≥ 65%
-  - No P0 / P1 bugs open
-- **Pass action:** add CA + AU at Wk45. **Fail action:** hotfix, hold in PH for 2 more weeks.
+- **Geo:** PH only. Cheap CPIs, English-speaking — best for crash + FTUE signal.
+- **UA spend:** $1,500–$3,000 (ASA Basic + 1 Meta Reels concept × 3 variants).
+- **Daily review:** crash rate, FTUE funnel, first-session length.
+- **KPI gates to advance:** crash-free ≥99.0%; FTUE completion ≥80%; install→tutorial ≥65%; no P0/P1 open.
+- **Fail action:** hotfix, hold in PH 2 more weeks.
 
-### 5.2 Stage 2 — add Canada + Australia (Wks 45–48, **retention**)
+### 5.2 Stage 2 — add CA + AU (Wks 45–48, **retention**)
 
-- **Geos:** PH + CA + AU.
-- **Why:** CA + AU are Western-ARPU proxies for the US with cheaper CPIs and lower fraud; statistically meaningful retention data within 2–3 weeks.
-- **UA spend:** $7,000–$15,000 total. CA + AU at $500–$1,000/day/channel/geo per `research/tech/app-store-launch-aso.md` §7.1.
-- **Channels:** ASA Advanced (Discovery + Brand + Category + Competitor); Meta Reels (3–6 creatives weekly); TikTok concept-testing wave 1.
-- **A/B tests live this stage:** ability-pick 3-vs-4 cards; energy refill 5-vs-6 min; chapter-4 boss difficulty curve.
-- **Stage-2 KPI gates (to proceed to Stage 3):**
-  - D1 retention ≥ 40%
-  - D7 retention ≥ 18%
-  - Crash-free ≥ 99.5%
-  - Tutorial completion ≥ 90%
-- **Pass action:** add BR + Nordics at Wk49. **Fail action:** extend Stage 2 by 2 weeks; tune; re-test.
+- **Geos:** PH + CA + AU. Western-ARPU proxies; statistically meaningful retention in 2–3 weeks.
+- **UA spend:** $7,000–$15,000; $500–$1,000/day/channel/geo per `research/tech/app-store-launch-aso.md` §7.1.
+- **Channels:** ASA Advanced (Discovery + Brand + Category + Competitor); Meta Reels (3–6 creatives/wk); TikTok wave 1.
+- **A/B tests live:** ability-pick 3-vs-4 cards; energy refill 5-vs-6 min; chapter-4 boss difficulty.
+- **KPI gates to advance:** D1 ≥40%, D7 ≥18%, crash-free ≥99.5%, tutorial completion ≥90%.
+- **Fail action:** extend Stage 2 by 2 weeks; tune; re-test.
 
-### 5.3 Stage 3 — add Brazil + Nordics (Wks 49–52, **monetization**)
+### 5.3 Stage 3 — add BR + Nordics (Wks 49–52, **monetization**)
 
-- **Geos:** PH + CA + AU + BR + SE + NO + DK + FI.
-- **Why:** BR for cheap CPI volume + Portuguese localization stress test; Nordics for high-ARPU + relatively unbiased early-adopter behavior.
-- **UA spend:** $7,000–$12,000 total. Note: total Lean soft-launch UA stays inside $15–30k per `research/tech/app-store-launch-aso.md` §7.1.
-- **Channels:** ASA Advanced expanded geos; Meta + TikTok creative wave 2 + 3; AppLovin test campaign; first influencer slate (5 mid-tier creators at $1–3k each).
-- **A/B tests live this stage:** gacha pity-soft vs pity-hard; battle pass $4.99 vs $9.99; first-IAP $0.99 starter pack timing (FTUE end vs chapter-1 boss).
-- **Stage-3 KPI gates (to proceed to global launch at Wk53):**
-  - D1 ≥ 40%, **D7 ≥ 20%**, **D30 ≥ 10%**
-  - **D7 ROAS ≥ 15%** (trending toward 30% per `design/05-launch-scope.md`)
-  - **ARPDAU ≥ $0.15** (target $0.20+)
-  - D90 payback trajectory ≤ 180 days
-  - Crash-free ≥ 99.7%
-  - LiveOps event ran end-to-end with no manual intervention
-- **Pass action:** go global, Wk53. **Fail action:** §3.S3 — extend soft launch by 1 quarter; reset UA model; tune economy.
+- **Geos:** PH + CA + AU + BR + SE + NO + DK + FI. BR for volume + PT loc test; Nordics for high-ARPU.
+- **UA spend:** $7,000–$12,000. Lean soft-launch total stays inside $15–30k.
+- **Channels:** ASA Advanced expanded; Meta + TikTok waves 2 + 3; AppLovin test; first influencer slate (5 × $1–3k).
+- **A/B tests live:** gacha pity-soft vs pity-hard; battle pass $4.99 vs $9.99; first-IAP $0.99 timing (FTUE end vs ch.1 boss).
+- **KPI gates to launch global:** D1 ≥40%, **D7 ≥20%**, **D30 ≥10%**, **D7 ROAS ≥15%**, **ARPDAU ≥$0.15**, D90 payback ≤180d, crash-free ≥99.7%, one mock LiveOps event ran end-to-end.
+- **Pass:** go global Wk53. **Fail:** S3 contingency — extend soft launch by 1 quarter; reset UA model.
 
 ### 5.4 UA-budget summary (soft launch)
 
