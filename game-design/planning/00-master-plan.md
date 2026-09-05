@@ -1,6 +1,7 @@
 # Master Plan — Lucent Mobile Game
 
-**Status**: Phase 0 — Research & Planning
+**Status**: **Phase 0 — Research & Planning: COMPLETE**. Next up: Phase 1 (Vertical Slice prototype).
+**Master GDD**: [`03-master-gdd.md`](03-master-gdd.md) — read this first.
 **Last updated**: 2026-05-11
 
 ---

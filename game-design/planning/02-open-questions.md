@@ -1,5 +1,9 @@
 # Open Questions
 
+> **Status: HISTORICAL.** All open questions listed below were resolved during Phase 0. See [`01-decisions.md`](01-decisions.md) for the 20 locked decisions and [`03-master-gdd.md`](03-master-gdd.md) for the master synthesis. Kept in the repo for provenance.
+
+---
+
 Questions that we need to answer before committing to a direction. Each will be resolved into the decisions log.
 
 ## Genre & gameplay
